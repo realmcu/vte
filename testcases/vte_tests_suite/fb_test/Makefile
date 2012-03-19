@@ -17,7 +17,7 @@
 SUBDIRS = mxcfb_test
 
 all:
-	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILER)gcc; done
+	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILE)gcc; done
 
 install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done

@@ -7,7 +7,7 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 
-CC = $(CROSS_COMPILER)gcc
+CC = $(CROSS_COMPILE)gcc
 
 ifeq ($(CONFIG_VTE_IMX6),y)
 CFLAGS += -DMX6

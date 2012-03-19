@@ -4,7 +4,7 @@ SUBDIR = fmtools-1.0.2
 
 
 all:
-	$(MAKE) -C $(SUBDIR) CC=$(CROSS_COMPILER)gcc
+	$(MAKE) -C $(SUBDIR) CC=$(CROSS_COMPILE)gcc
 install:
 	-ln -f $(SUBDIR)/fm ../../bin/
 	-ln -f $(SUBDIR)/fmscan ../../bin/

@@ -1,7 +1,7 @@
 SUBDIR = c-ray-1.1
 
 all: c-ray-f
-	$(MAKE) -C $(SUBDIR) CC=$(CROSS_COMPILER)gcc
+	$(MAKE) -C $(SUBDIR) CC=$(CROSS_COMPILE)gcc
 
 c-ray-f:
 	$(CC) $(CFLAGS) $(SUBDIR)/c-ray-f.c -o c-ray-f -lm

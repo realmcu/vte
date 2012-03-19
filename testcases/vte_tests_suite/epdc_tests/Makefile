@@ -15,7 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-CC = $(CROSS_COMPILER)gcc
+CC = $(CROSS_COMPILE)gcc
 CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -trigraphs
 LDFLAGS += -L../../../lib -lltp -lpthread
 

@@ -13,10 +13,10 @@ obj-m += mtd_torturetest.o
 
 
 modules:
-	make -C $(KERNEL_PATH) SUBDIRS=$$PWD ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	make -C $(KERNEL_PATH) SUBDIRS=$$PWD ARCH=$(ARCH_CPU) modules
 
 modules_install:
-	make -C $(KERNEL_PATH) SUBDIRS=$$PWD ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules_install
+	make -C $(KERNEL_PATH) SUBDIRS=$$PWD ARCH=$(ARCH_CPU) modules_install
 
 install:
 	@set -e; ln -f *.ko ../../../bin/

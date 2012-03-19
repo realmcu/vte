@@ -1,2 +1,2 @@
 #!/bin/sh
-./configure --host=arm-none-linux-gnueabi CC=${CROSS_COMPILER}gcc 
+./configure --host=arm-none-linux-gnueabi CC=${CROSS_COMPILE}gcc

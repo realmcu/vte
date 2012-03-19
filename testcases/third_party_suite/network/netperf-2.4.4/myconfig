@@ -3,4 +3,4 @@ aclocal
 autoconf
 automake -a
 ac_cv_func_setpgrp_void=yes \
-./configure --host=arm-none-linux-gnueabi --build=arm CC=${CROSS_COMPILER}gcc
+./configure --host=arm-none-linux-gnueabi --build=arm CC=${CROSS_COMPILE}gcc

@@ -3,7 +3,7 @@
 
 # list of platforms which want this test case
 
-CC = $(CROSS_COMPILER)gcc
+CC = $(CROSS_COMPILE)gcc
 OBJ = pxp_lib.o
 INCLUDE = -I$(KLINUX_SRCDIR)/include
 #INCLUDE = -I/home/smb/nfs_server/linux-2.6-testbuild/include
