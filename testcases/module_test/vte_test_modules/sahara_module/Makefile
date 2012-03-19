@@ -31,7 +31,7 @@ obj-m = sahara_module.o
 TARGET = sahara_module.ko
 
 all:
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	rm -rf *.mod.ko *.mod.c .*.cmd *.o .tmp_versions
 	@echo "***********************************************"
 	@echo "** ALL : SAHARA_MODULE                       **"

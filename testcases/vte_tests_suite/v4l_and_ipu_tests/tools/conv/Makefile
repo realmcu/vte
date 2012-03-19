@@ -8,7 +8,6 @@
 #http://www.gnu.org/copyleft/gpl.html
 
 
-#CC = $(CROSS_COMPILER)gcc
 CFLAGS += -O3 
 LDFLAGS += -lpthread
 

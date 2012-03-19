@@ -23,7 +23,7 @@ obj-m = brd.o
 TARGET = brd.ko
 
 all: 
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@echo "***********************************************"
 	@echo "** ALL : TEST_RAMDISK_MODULE                 **"
 	@echo "***********************************************"

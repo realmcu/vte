@@ -48,5 +48,5 @@ clean:
 	@echo "************************************************"
 
 $(TARGET): Makefile
-	$(CROSS_COMPILER)gcc $(CFLAGS) stream.c -o stream_benchmark
+	$(CROSS_COMPILE)gcc $(CFLAGS) stream.c -o stream_benchmark
 

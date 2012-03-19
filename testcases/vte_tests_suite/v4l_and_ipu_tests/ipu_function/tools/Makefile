@@ -6,7 +6,7 @@
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
 
-CC = $(CROSS_COMPILER)gcc
+CC = $(CROSS_COMPILE)gcc
 CFLAGS += -O3 -I$(KLINUX_SRCDIR)/include -I../../../../../include
 LDFLAGS +=  -L../../../../../lib -lltp 
 

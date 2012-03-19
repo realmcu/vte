@@ -3,9 +3,9 @@ KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 ARCH_CPU=arm
 ARCH_PLATFORM=imx28
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM
-#CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
-CROSS_COMPILER=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
-export CROSS_COMPILER
+#CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
+CROSS_COMPILE=/opt/freescale/usr/local/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin/arm-none-linux-gnueabi-
+export CROSS_COMPILE
 #export CFLAGS="-DPROJECT_MX28=1 -O2 -fsigned-char -msoft-float "
 export CFLAGS="-Wall -DPROJECT_MX28=1 -fsigned-char -O2 -march=armv5te "
-export CC=${CROSS_COMPILER}gcc
+export CC=${CROSS_COMPILE}gcc

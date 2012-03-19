@@ -1,6 +1,6 @@
 # list of platforms which want this test case
 
-CC = $(CROSS_COMPILER)gcc
+CC = $(CROSS_COMPILE)gcc
 #CFLAGS +=
 
 SRC = $(wildcard *.c)

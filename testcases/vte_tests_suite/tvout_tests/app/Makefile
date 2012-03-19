@@ -25,10 +25,9 @@
 ###################################################################################################
 LTP_DIR = ../../../../
 BIN_DIR = $(LTP_DIR)testcases/
-#CROSS_COMPILER = /opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi/bin/arm-none-linux-gnueabi-
 
-CC=$(CROSS_COMPILER)gcc
-LINK=$(CROSS_COMPILER)gcc
+CC=$(CROSS_COMPILE)gcc
+LINK=$(CROSS_COMPILE)gcc
 
 TARGET_BIN = tvout_cd
 

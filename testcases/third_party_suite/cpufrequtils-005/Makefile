@@ -78,7 +78,7 @@ LIBTOOL = /usr/bin/libtool
 # If you are running a cross compiler, you may want to set this
 # to something more interesting, like "arm-linux-".  If you want
 # to compile vs uClibc, that can be done here as well.
-CROSS = $(CROSS_COMPILER)#/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
+CROSS = $(CROSS_COMPILE)#/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
 CC = $(CROSS)gcc
 LD = $(CROSS)gcc
 AR = $(CROSS)ar

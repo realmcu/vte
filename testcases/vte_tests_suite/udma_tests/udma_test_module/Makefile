@@ -36,7 +36,7 @@ obj-m  = udma_test_module.o
 TARGET = udma_test_module.ko
 
 all: 
-	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	rm -rf *.mod.ko *.mod.c .*.cmd *.o .*.o.d .tmp_versions
 	@echo "***********************************************"
 	@echo "** ALL : UDMA_TEST_MODULE                    **"

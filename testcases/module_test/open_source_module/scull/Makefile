@@ -26,7 +26,7 @@ scull-objs := main.o
 obj-m := scull.o
 TARGETS = scull.ko
 all:
-	$(MAKE) -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	$(MAKE) -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 
 install:
 	@echo "****************************************"

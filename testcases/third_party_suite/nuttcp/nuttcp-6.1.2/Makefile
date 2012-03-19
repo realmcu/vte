@@ -1,6 +1,6 @@
 APP = nuttcp
 #EXTRAVERSION=-pre1
-CC = ${CROSS_COMPILER}gcc -Wall
+CC = ${CROSS_COMPILE}gcc -Wall
 #OPT = -g -O0
 OPT = -O3
 CFLAGS = $(OPT) $(NOIPV6)

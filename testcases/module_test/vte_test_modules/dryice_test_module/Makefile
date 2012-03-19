@@ -17,7 +17,7 @@ EXTRA_CFLAGS += -Wall \
 
 # Need to remove sahara objects because the test app uses same objects
 all:
-	$(MAKE) -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) CROSS_COMPILE=$(CROSS_COMPILER) modules
+	$(MAKE) -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 
 install:
 	-ln -f $(TARGET) ../../../bin/

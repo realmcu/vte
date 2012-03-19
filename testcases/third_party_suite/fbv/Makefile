@@ -4,7 +4,7 @@ SUBDIR = fbv-1.0b
 
 all:
 	cd $(SUBDIR); ./myconfig ; \
-	$(MAKE) CC=$(CROSS_COMPILER)gcc
+	$(MAKE) CC=$(CROSS_COMPILE)gcc
 
 install:
 	-ln -f $(SUBDIR)/$(TARGET) ../../bin/

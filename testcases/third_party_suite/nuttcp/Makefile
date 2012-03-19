@@ -12,8 +12,8 @@ TARGETS=
 BINS=nuttcp
  
 all:
-	cd nuttcp-6.1.2; CC=${CROSS_COMPILER}gcc;
-	$(MAKE) -C nuttcp-6.1.2 CC=${CROSS_COMPILER}gcc
+	cd nuttcp-6.1.2; CC=${CROSS_COMPILE}gcc;
+	$(MAKE) -C nuttcp-6.1.2 CC=${CROSS_COMPILE}gcc
 
 install:
 		ln -f $(SUBDIRS)/$(BINS) ../../bin/

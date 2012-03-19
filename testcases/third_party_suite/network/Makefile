@@ -36,7 +36,7 @@ clean: $(clean_SUBDIR-y)
 
 ethtool-6: blank
 	cd $@;./myconfig; cd ..
-	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
+	$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
 
 clean_ethtool-6:
 	-$(MAKE) -C ethtool-6 clean
@@ -44,7 +44,7 @@ clean_ethtool-6:
 
 ppp-2.4.3: blank
 	cd $@;./myconfig; cd ..
-	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
+	$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
 
 clean_ppp-2.4.3:
 	-$(MAKE) -C ppp-2.4.3 clean
@@ -52,7 +52,7 @@ clean_ppp-2.4.3:
 
 netperf-2.4.4: blank
 	cd $@; ./myconfig; cd ..
-	ac_cv_func_setpgrp_void=yes $(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
+	ac_cv_func_setpgrp_void=yes $(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
 
 clean_netperf-2.4.4:
 	-$(MAKE) -C netperf-2.4.4 clean
@@ -68,14 +68,14 @@ clean_tcpdump-3.9.8:
 	$(MAKE) -C $$(pwd)/../../../openlibs clean
 
 mii-tool-1.9.1.1: blank
-	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
+	$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
 
 clean_mii-tool-1.9.1.1:
 	-$(MAKE) -C mii-tool-1.9.1.1 clean
 	-$(MAKE) -C mii-tool-1.9.1.1 distclean
 
 iproute-20090324: blank
-	$(MAKE) -C $@ CC=$(CROSS_COMPILER)gcc
+	$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
 
 clean_iproute-20090324:
 	$(MAKE) -C iproute-20090324 distclean

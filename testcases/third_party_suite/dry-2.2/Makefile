@@ -19,7 +19,7 @@
 LTP_DIR=../../../..
 BIN_DIR=../../
 
-CC=$(CROSS_COMPILER)gcc
+CC=$(CROSS_COMPILE)gcc
 
 LOADLIBES+= -L$(LTP_DIR)/lib -lltp
 
