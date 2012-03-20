@@ -31,6 +31,7 @@ TGE-LV-FEC-0010 fec_testapp -T 0
 TGE-LV-FEC-0012 fec_testapp -T 2
 TGE-LV-FEC-0011 if ifconfig |grep 10.200; then fec_testapp -T 1 -H 10.200.1.1; else fec_testapp -T 1 -H 10.192.225.219; fi
 TGE-LV-GPT-0010 gpt_testapp
+TGE-LV-HRT-0020 insmod ${LTPROOT}/testcase/bin/hrtimer_test.ko && sleep 1 && rmmod hrtimer_test && demsg | grep hrtimer_callback
 TGE-LV-I2C-0001 i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
 TGE-LV-IPU_DEV-0010 ipu_test.sh 1
 TGE-LV-IPU_DEV-0020 ipu_test.sh 2
