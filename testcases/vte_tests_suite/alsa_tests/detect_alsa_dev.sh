@@ -50,8 +50,7 @@ else
    HW_keyword=imx3stack
 fi
 
-if [ $(platfm.sh) = "IMX6-SABREAUTO" ] || [ $(platfm.sh) = "IMX6ARM2" ] || [ $(p
-latfm.sh) = "IMX6DL-ARM2" ]; then
+if [ $(platfm.sh) = "IMX6-SABREAUTO" ] || [ $(platfm.sh) = "IMX6ARM2" ] || [ $(platfm.sh) = "IMX6DL-ARM2" ]; then
    HW_keyword="card 0"
 fi
 
