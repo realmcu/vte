@@ -11,43 +11,49 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=4
+    #TODO Total test case
+    export TST_TOTAL=5
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
-i=0
-count=$(cpufreq-info -s | wc -w)
-while [ $i -lt $count ]
-do  
-freq=$(cpufreq-info -s | cut -d " " -f $i | cut -d ":" -f 1)
-if [ ! -z $freq ]; then
-cpufreq_value[$i]=${freq}
-i=$(expr $i + 1)
-TOTAL_PT=$(expr $TOTAL_PT + 1)
-fi
-done
-#TODO add setup scripts
+    trap "cleanup" 0
+    i=0
+    count=$(cpufreq-info -s | wc -w)
+    while [ $i -lt $count ]
+    do  
+        # cut: fields and positions are numbered from 1
+        field=$(expr $i + 1)
+        freq=$(cpufreq-info -s | cut -d " " -f $field | cut -d ":" -f 1)
+        if [ ! -z $freq ]; then
+            cpufreq_value[$i]=${freq}
+        fi
+        i=$(expr $i + 1)
+    done
 
-#check for right uart port to test
+    TOTAL_PT=${#cpufreq_value[@]}
+    echo -n "CPUFREQ is:"
+    for (( i = 0; i < TOTAL_PT; i++ )); do
+        echo -n " ${cpufreq_value[$i]}"
+    done
+    echo
+    
+    #check for right uart port to test
+    cn=$(cat /proc/cmdline | wc -w)
+    i=1
+    while [ $i -le $cn ]
+    do
+        pw=$(cat /proc/cmdline | cut -d " " -f $i)
+        var=$(echo $pw | cut -d "=" -f 2 | cut -d "," -f 1)
+        match=$(echo $var | grep ttymxc | wc -l)
+        if [ $match -eq 1 ]; then
+            UART=/dev/${var}
+        fi
+        i=$(expr $i + 1)
+    done
 
-cn=$(cat /proc/cmdline | wc -w)
-i=0
-while [ $i -lt $cn ]
-do
-	pw=$(cat /proc/cmdline | cut -d " " -f $i)
-	var=$(echo $pw | cut -d "=" -f 2 | cut -d "," -f 1)
-	match=$(echo $var | grep ttymxc | wc -l)
-	if [ $match -eq 1 ]; then
-		UART=/dev/${var}
-	fi
-	i=$(expr $i + 1)
-done
-
-return $RC
+    return $RC
 }
 
 # Function:     cleanup
@@ -58,107 +64,107 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
+    #TODO add cleanup code here
 
 
-return $RC
+    return $RC
 }
 
 
 run_manual_test_list()
 {
- RC=1
- errcnt=0
- echo "please insert usb hard disk with partion 1 is vfat"
- echo "please connect cpu board jp17 1,2,3 pin"
- read -p "press any key when ready" key
- modprobe ehci-hcd
- sleep 20
- mkfs.vfat /dev/sda1 || return $RC
- mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 || return $RC
- bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 || return $RC
- dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || return $RC
- modprobe -r ehci-hcd
- echo "please un plug the usb card"
- read -p "press any key when ready" key
- sleep 3
+    RC=1
+    errcnt=0
+    echo "please insert usb hard disk with partion 1 is vfat"
+    echo "please connect cpu board jp17 1,2,3 pin"
+    read -p "press any key when ready" key
+    modprobe ehci-hcd
+    sleep 20
+    mkfs.vfat /dev/sda1 || return $RC
+    mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 || return $RC
+    bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 || return $RC
+    dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || return $RC
+    modprobe -r ehci-hcd
+    echo "please un plug the usb card"
+    read -p "press any key when ready" key
+    sleep 3
 
- echo "  "
- echo "  "
- echo "usb otg storage test"
- echo "please connect make sure the jp17 usb pin is not power"
- echo "please connect usb cable to pc host"
- read -p "press any key when ready" key
- echo "on PC host please run:"
- echo " modprobe usb-storage"
- echo "mkdir /mnt/flash"
- read -p "press any key when ready" key
- dd if=/dev/zero of=/var/storage.img bs=1M count=64
- mkfs.ext3 /var/storage.img
- modprobe g_file_storage file=/var/storage.img
- echo "now please mount the usb device on PC"
- echo "please run bwloe on pc"
- echo "mount -t ext3 /dev/sd? /mnt/flash"
- echo "bonnie\+\+ -d /mnt/flash -u 0:0 -s 10 -r 5"
- echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
+    echo "  "
+    echo "  "
+    echo "usb otg storage test"
+    echo "please connect make sure the jp17 usb pin is not power"
+    echo "please connect usb cable to pc host"
+    read -p "press any key when ready" key
+    echo "on PC host please run:"
+    echo " modprobe usb-storage"
+    echo "mkdir /mnt/flash"
+    read -p "press any key when ready" key
+    dd if=/dev/zero of=/var/storage.img bs=1M count=64
+    mkfs.ext3 /var/storage.img
+    modprobe g_file_storage file=/var/storage.img
+    echo "now please mount the usb device on PC"
+    echo "please run bwloe on pc"
+    echo "mount -t ext3 /dev/sd? /mnt/flash"
+    echo "bonnie\+\+ -d /mnt/flash -u 0:0 -s 10 -r 5"
+    echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
 
- read -p "is pc run above case ok? y/n" key
- if [ "$key" = 'n' ]; then
-    errcnt=$(expr $errcnt + 1) 
- fi
- modprobe -r g_file_storage
+    read -p "is pc run above case ok? y/n" key
+    if [ "$key" = 'n' ]; then
+        errcnt=$(expr $errcnt + 1) 
+    fi
+    modprobe -r g_file_storage
 
 
- read -p "is above case ok? y/n" key
- if [ "$key" = 'n' ]; then
-    errcnt=$(expr $errcnt + 1) 
- fi
+    read -p "is above case ok? y/n" key
+    if [ "$key" = 'n' ]; then
+        errcnt=$(expr $errcnt + 1) 
+    fi
 
- echo "SD test"
- echo "please insert SD card"
- read -p "press any key when ready" key
- mkfs.vfat /dev/mmcblk0p1 
- mkdir -p /mnt/mmc
- mount -t vfat /dev/mmcblk0p1 /mnt/mmc
- bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 
- dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20
- 
- RC=0
- return $RC
+    echo "SD test"
+    echo "please insert SD card"
+    read -p "press any key when ready" key
+    mkfs.vfat /dev/mmcblk0p1 
+    mkdir -p /mnt/mmc
+    mount -t vfat /dev/mmcblk0p1 /mnt/mmc
+    bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 
+    dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20
+
+    RC=0
+    return $RC
 }
 
 run_auto_test_list()
 {
-	RC=0
-	echo "uart test"
-	cat /etc/passwd > ${UART} || RC=$(expr $RC + 1)
-	echo "frame buffer test"
-	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || RC=$(expr $RC + 3)
-	echo "tv out test"
-	echo 0 > /sys/class/graphics/fb0/blank || RC=$(expr $RC + 5)
-	echo "core test"
-	coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 \
-	&& coremark_F4.exe 8 8 8 0 7 1 1200 || RC=$(expr $RC + 7)
-	echo "storage"
-	modprobe ahci_platform
-	storage_all.sh 4 || RC=$(expr $RC + 9)
-	modprobe -r ahci_platform
-	echo "v4l"
-	v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24 || RC=$(expr $RC + 11)
-	echo "vpu dec"
-	vpu_dec_test.sh 1 || RC=$(expr $RC + 13)
-	echo "vpu_enc"
-	vpu_enc_test.sh 1 || RC=$(expr $RC + 17)
-	echo "gpu"
-	gles_viv.sh 1 || RC=$(expr $RC + 19)
-	echo "ALSA test"
-	aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || RC=$(expr $RC + 23)
+    RC=0
+    echo "uart test"
+    cat /etc/passwd > ${UART} || RC=$(expr $RC + 1)
+    echo "frame buffer test"
+    dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || RC=$(expr $RC + 3)
+    echo "tv out test"
+    echo 0 > /sys/class/graphics/fb0/blank || RC=$(expr $RC + 5)
+    echo "core test"
+    coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 \
+        && coremark_F4.exe 8 8 8 0 7 1 1200 || RC=$(expr $RC + 7)
+    echo "storage"
+    modprobe ahci_platform
+    storage_all.sh 4 || RC=$(expr $RC + 9)
+    modprobe -r ahci_platform
+    echo "v4l"
+    v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24 || RC=$(expr $RC + 11)
+    echo "vpu dec"
+    vpu_dec_test.sh 1 || RC=$(expr $RC + 13)
+    echo "vpu_enc"
+    vpu_enc_test.sh 1 || RC=$(expr $RC + 17)
+    echo "gpu"
+    gles_viv.sh 1 || RC=$(expr $RC + 19)
+    echo "ALSA test"
+    aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || RC=$(expr $RC + 23)
     echo "display video"
-	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=$(expr $RC + 29)
-	return $RC
+    a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+    /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=$(expr $RC + 29)
+    return $RC
 }
 
 
@@ -167,39 +173,39 @@ run_auto_test_list()
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="test_CPUFreq_stress"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="test_CPUFreq_stress"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
 
-count=0
+    count=0
 
-while [ $count -lt 7 ]; do
-  count=$(expr $count + 1)
-  value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
-	echo $value
-  cpufreq-set -f ${value}
-  value_ret=$(cpufreq-info -f | grep $value | wc -l)
-if [ $value_ret -eq 1 ] ; then
-   echo sleep...
-   sleep 3
-   echo "TSTINFO: CPUFREQ at $value "
-   #test list
-   run_auto_test_list || RC=$(expr $RC + 1)
-else
-  return $RC
-fi
-done
+    while [ $count -lt 7 ]; do
+        count=$(expr $count + 1)
+        value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
+        echo $value
+        cpufreq-set -f ${value}
+        value_ret=$(cpufreq-info -f | grep $value | wc -l)
+        if [ $value_ret -eq 1 ] ; then
+            echo sleep...
+            sleep 3
+            echo "TSTINFO: CPUFREQ at $value "
+            #test list
+            run_auto_test_list || RC=$(expr $RC + 1)
+        else
+            return $RC
+        fi
+    done
 
-cpufreq-set -f ${cpufreq_value[0]}
-return $RC
+    cpufreq-set -f ${cpufreq_value[0]}
+    return $RC
 
 }
 
@@ -208,22 +214,22 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="PMIC_DVFS_core_test"
-#TODO give TST_COUNT
-TST_COUNT=2
-RC=0
+    #TODO give TCID 
+    TCID="PMIC_DVFS_core_test"
+    #TODO give TST_COUNT
+    TST_COUNT=2
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-echo 1 > /sys/devices/platform/imx_dvfscore.0/enable
+    #TODO add function test scripte here
+    echo 1 > /sys/devices/platform/imx_dvfscore.0/enable
 
-sleep 5
-run_auto_test_list || RC=$(expr $RC + 1)
+    sleep 5
+    run_auto_test_list || RC=$(expr $RC + 1)
 
-return $RC
+    return $RC
 
 }
 
@@ -232,38 +238,38 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="test_demo3_test"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=0
+    #TODO give TCID 
+    TCID="test_demo3_test"
+    #TODO give TST_COUNT
+    TST_COUNT=3
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-count=0
+    #TODO add function test scripte here
+    count=0
 
-while [ $count -lt 7 ]; do
-  count=$(expr $count + 1)
-  value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
-	echo $value
-  cpufreq-set -f ${value}
-  value_ret=$(cpufreq-info -f | grep $value | wc -l)
-if [ $value_ret -eq 1 ] ; then
-   echo sleep...
-   sleep 3
-   echo "TSTINFO: CPUFREQ at $value "
-   #test list
-   powerstate_test.sh  || RC=$(expr $RC + 1)
-else
-  return $RC
-fi
-done
+    while [ $count -lt 7 ]; do
+        count=$(expr $count + 1)
+        value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
+        echo $value
+        cpufreq-set -f ${value}
+        value_ret=$(cpufreq-info -f | grep $value | wc -l)
+        if [ $value_ret -eq 1 ] ; then
+            echo sleep...
+            sleep 3
+            echo "TSTINFO: CPUFREQ at $value "
+            #test list
+            powerstate_test.sh  || RC=$(expr $RC + 1)
+        else
+            return $RC
+        fi
+    done
 
-cpufreq-set -f ${cpufreq_value[0]}
+    cpufreq-set -f ${cpufreq_value[0]}
 
-return $RC
+    return $RC
 
 }
 
@@ -272,44 +278,44 @@ return $RC
 #  
 test_case_04()
 {
-#TODO give TCID 
-TCID="test_demo4_test"
-#TODO give TST_COUNT
-TST_COUNT=4
-RC=0
+    #TODO give TCID 
+    TCID="test_demo4_test"
+    #TODO give TST_COUNT
+    TST_COUNT=4
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-run_auto_test_list &
-cpid=$!
+    run_auto_test_list &
+    cpid=$!
 
-sleep 2
-pth_count=1
-while [ $pth_count -gt 0 ]; do
-	count=$(expr $count + 1)
-	value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
-	echo $value
-	cpufreq-set -f ${value}
-	value_ret=$(cpufreq-info -f | grep $value | wc -l)
-	if [ $value_ret -eq 1 ] ; then
-		echo sleep...
-		sleep 3
-	else
-    	break;
-	fi
-	jobs -l
-	pth_count=$(ps | grep $cpid | grep -v "grep" | wc -l)
-done
+    sleep 2
+    pth_count=1
+    while [ $pth_count -gt 0 ]; do
+        count=$(expr $count + 1)
+        value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
+        echo $value
+        cpufreq-set -f ${value}
+        value_ret=$(cpufreq-info -f | grep $value | wc -l)
+        if [ $value_ret -eq 1 ] ; then
+            echo sleep...
+            sleep 3
+        else
+            break;
+        fi
+        jobs -l
+        pth_count=$(ps | grep $cpid | grep -v "grep" | wc -l)
+    done
 
-wait $cpid
-RT=$?
+    wait $cpid
+    RT=$?
 
-cpufreq-set -f ${cpufreq_value[0]}
+    cpufreq-set -f ${cpufreq_value[0]}
 
-return $RC
+    return $RC
 
 }
 
@@ -318,36 +324,36 @@ return $RC
 #  
 test_case_05()
 {
-#TODO give TCID 
-TCID="test_demo5_test"
-#TODO give TST_COUNT
-TST_COUNT=5
-RC=0
+    #TODO give TCID 
+    TCID="test_demo5_test"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-i=1
-while [ $i -lt 500 ]
-do
-echo $i 
-test_case_04 || RC=$(expr $RC + 1)
-i=$(expr $i + 1)
-done
+    #TODO add function test scripte here
+    i=1
+    while [ $i -lt 500 ]
+    do
+        echo $i 
+        test_case_04 || RC=$(expr $RC + 1)
+        i=$(expr $i + 1)
+    done
 
-return $RC
+    return $RC
 
 }
 
 usage()
 {
-echo "$0 [case ID]"
-echo "1: "
-echo "2: "
-echo "3: "
-echo "4: "
-echo "5: "
+    echo "$0 [case ID]"
+    echo "1: "
+    echo "2: "
+    echo "3: "
+    echo "4: "
+    echo "5: "
 }
 
 # main function
@@ -359,33 +365,33 @@ TOTAL_PT=0
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1 
+    usage
+    exit 1 
 fi
 
-declare -a cpufreq_value;
-cpufreq_value=(1200000 992000 792000 400000 167000);
+# cpufreq_value[] array will be discovered in setup()
+declare -a cpufreq_value
 setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
-  ;;
+    test_case_01 || exit $RC 
+    ;;
 2)
-  test_case_02 || exit $RC
-  ;;
+    test_case_02 || exit $RC
+    ;;
 3)
-  test_case_03 || exit $RC
-  ;;
+    test_case_03 || exit $RC
+    ;;
 4)
-  test_case_04 || exit $RC
-  ;;
+    test_case_04 || exit $RC
+    ;;
 5)
-  test_case_05 || exit $RC
-  ;;
+    test_case_05 || exit $RC
+    ;;
 *)
-  usage
-  ;;
+    usage
+    ;;
 esac
 
 tst_resm TINFO "Test PASS"
