@@ -100,10 +100,10 @@ do
 			echo "epdc_test -T $i -R $j"
 			for k in $EPDC_FLAGS
 			do
-      epdc_test -T $i -R $j -S 0 -l $k || RC=$(expr $RC + 1)
-			epdc_test -T $i -R $j -S 0 -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
-			epdc_test -T $i -R $j -S 1 -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
-			epdc_test -T $i -R $j -S 2 -s 0:0:128:128,257,0,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
+                        epdc_test -T $i -R $j -S 0 -l $k || RC=$(expr $RC + 1)
+			epdc_test -T $i -R $j -S 0 -s 0:0:128:128,257,1,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
+			epdc_test -T $i -R $j -S 1 -s 0:0:128:128,257,1,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
+			epdc_test -T $i -R $j -S 2 -s 0:0:128:128,257,1,0,$k,0,0,0:0:0:0 || RC=$(expr $RC + 1)
 			done
 		done
 	done
