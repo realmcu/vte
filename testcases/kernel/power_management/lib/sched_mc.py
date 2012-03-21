@@ -160,12 +160,13 @@ def map_cpuid_pkgid():
                 cpu_phy_id = open(phy_pkg_file).read().rstrip()
                 if not cpu_phy_id in cpu_map.keys():
                     core_info = {}
+                else:
+                    core_info = cpu_map[cpu_phy_id] 
                 if not core_id in core_info.keys():
                     core_info[core_id] = [i]
                 else:
                     core_info[core_id].append(i)
-                if not cpu_phy_id in cpu_map.keys():
-                    cpu_map[cpu_phy_id]= core_info
+                cpu_map[cpu_phy_id] = core_info
         except Exception, details:
             print "Package, core & cpu map table creation failed", e
             sys.exit(1)
@@ -668,7 +669,7 @@ def verify_sched_domain_dmesg(sched_mc_level, sched_smt_level):
                         group_info=group_info.replace\
                             (group_info[openindex:closeindex+1],"")
 
-                    subgroup = group_info.split()
+                    subgroup = group_info.split(",")
                     for j in range(0, len(subgroup)):
                         cpu_group = expand_range(subgroup[j])
                         status = validate_cpugrp_map(cpu_group, sched_mc_level,\

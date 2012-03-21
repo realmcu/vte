@@ -17,10 +17,28 @@
 #  02110-1301, USA.
 #
 
-top_srcdir              ?= ../../../..
+top_srcdir		?= ../../../..
 
 include $(top_srcdir)/include/mk/testcases.mk
 
-LDLIBS 			+= $(NUMA_LIBS) -lm
+LDLIBS 			+= $(NUMA_LIBS) -lmem -lltp -lm
+LIBDIR			:= ../lib
+LIB			:= $(LIBDIR)/libmem.a
+FILTER_OUT_DIRS		:= $(LIBDIR)
+CFLAGS			+= -I../include
+LDFLAGS			+= -L$(LIBDIR)
+
+$(LIBDIR):
+	mkdir -p "$@"
+
+$(LIB): $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" all
+
+MAKE_DEPS		:= $(LIB)
+
+trunk-clean:: | lib-clean
+
+lib-clean:: $(LIBDIR)
+	$(MAKE) -C $^ -f "$(abs_srcdir)/$^/Makefile" clean
 
 include $(top_srcdir)/include/mk/generic_leaf_target.mk

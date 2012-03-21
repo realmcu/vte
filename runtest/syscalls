@@ -274,7 +274,7 @@ fork08 fork08
 fork09 fork09
 fork10 fork10
 fork11 fork11
-fork13 fork13 -c 2 -i 1000000
+fork13 fork13 -i 1000000
 
 fpathconf01 fpathconf01
 
@@ -423,6 +423,7 @@ getuid03_16 getuid03_16
 
 getxattr01 getxattr01
 getxattr02 getxattr02
+getxattr03 getxattr03
 
 #Needs tty device.
 #ioctl01 ioctl01 -D /dev/tty0
@@ -574,8 +575,6 @@ mount01 mount01 -D DEVICE -T DEVICE_FS_TYPE
 mount02 mount02 -D DEVICE -T DEVICE_FS_TYPE
 mount03 mount03 -D DEVICE -T DEVICE_FS_TYPE
 mount04 mount04 -D DEVICE -T DEVICE_FS_TYPE
-
-mount1234 test_mount
 
 move_pages01 move_pages.sh 01
 move_pages02 move_pages.sh 02
@@ -891,6 +890,8 @@ sendfile06 sendfile06
 sendfile06_64 sendfile06_64
 sendfile07 sendfile07
 sendfile07_64 sendfile07_64
+sendfile08 sendfile08
+sendfile08_64 sendfile08_64
 
 
 sendmsg01 sendmsg01
@@ -1024,6 +1025,7 @@ setuid04_16 setuid04_16
 
 setxattr01 setxattr01
 setxattr02 setxattr02
+setxattr03 setxattr03
 
 shmat01 shmat01
 shmat02 shmat02
@@ -1239,8 +1241,6 @@ unshare02 unshare02
 umount01 umount01 -D DEVICE -T DEVICE_FS_TYPE
 umount02 umount02 -D DEVICE -T DEVICE_FS_TYPE
 umount03 umount03 -D DEVICE -T DEVICE_FS_TYPE
-
-umount123 test_umount
 
 ustat01 ustat01
 ustat02 ustat02

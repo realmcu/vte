@@ -36,6 +36,7 @@ AC_CHECK_HEADERS([ \
     libaio.h \
     mm.h \
     pthread.h \
+    attr/xattr.h \
     linux/genetlink.h \
     linux/mempolicy.h \
     linux/module.h \
@@ -163,5 +164,7 @@ LTP_CHECK_TASKSTATS
 LTP_CHECK_TIME
 LTP_CHECK_MADVISE
 LTP_CHECK_ACL_SUPPORT
+LTP_CHECK_FS_IOC_FLAGS
+LTP_CHECK_MREMAP_FIXED
 
 AC_OUTPUT
