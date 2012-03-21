@@ -4,5 +4,6 @@ if [ ! -e config.h ]; then
 ./configure \
 --without-libungif \
 --without-libjpeg \
---libs="$(pwd)/../../../../openlibs/lib/libpng.a $(pwd)/../../../../openlibs/lib/libz.a -lm"
+--libs="$(pwd)/../../../../openlibs/lib/libpng.a $(pwd)/../../../../openlibs/lib/libz.a -lm" \
+CC=${CROSS_COMPILE}gcc CXX=${CROSS_COMPILE}g++
 fi

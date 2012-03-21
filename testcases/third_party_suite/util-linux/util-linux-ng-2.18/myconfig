@@ -2,5 +2,6 @@
 
 if [ ! -e Makefile ]; then
 ./autogen.sh
-./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/../ --without-ncurses
+./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/../ --without-ncurses \
+CC=${CROSS_COMPILE}gcc CXX=${CROSS_COMPILE}g++
 fi

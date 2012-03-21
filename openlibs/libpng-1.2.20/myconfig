@@ -3,7 +3,9 @@
 if [ ! -e Makefile ]; then
 ./configure --host=arm-none-linux-gnueabi \
 CFLAGS="-I../zlib-1.2.3" \
+CXXFLAGS="-I../zlib-1.2.3" \
 LDFLAGS="-L../lib" \
-CC=arm-none-linux-gnueabi-gcc \
+CC=${CROSS_COMPILE}gcc \
+CXX=${CROSS_COMPILE}g++ \
 --prefix=$(pwd)/../
 fi

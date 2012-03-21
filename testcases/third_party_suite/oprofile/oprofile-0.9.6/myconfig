@@ -5,5 +5,6 @@ if [ ! -z makefile ]; then
 --with-kernel-support \
 --with-extra-includes=$(pwd)/../../../../openlibs/include/ \
 --with-extra-libs=$(pwd)/../../../../openlibs/lib/  \
---with-x
+--with-x \
+CC=${CROSS_COMPILE}gcc CXX=${CROSS_COMPILE}g++
 fi
