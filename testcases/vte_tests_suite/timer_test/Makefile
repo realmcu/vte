@@ -1,4 +1,4 @@
-TARGET = timer_resolution nanosleep_test
+TARGET = timer_resolution nanosleep_test timer_interrupt
 
 CFLAGS  +=  -Wall -I../../../include
 LDFLAGS +=  -L../../../lib -lltp
@@ -19,3 +19,7 @@ timer_resolution:
 nanosleep_test:
 	$(CC)  $(CFLAGS) nanosleep_test.c $(LDFLAGS) -o $@
 
+.PHONY: timer_interrupt
+timer_interrupt:
+	$(CC)  $(CFLAGS) timer_interrupt.c $(LDFLAGS) -o $@
+	
