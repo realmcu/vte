@@ -80,7 +80,7 @@ INSTALL_SCRIPT = ${INSTALL_PROGRAM}
 # If you are running a cross compiler, you may want to set this
 # to something more interesting, like "arm-linux-".  If you want
 # to compile vs uClibc, that can be done here as well.
-CROSS = #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
+CROSS = $(CROSS_COMPILE)
 CC = $(CROSS)gcc
 LD = $(CROSS)gcc
 AR = $(CROSS)ar
@@ -164,17 +164,19 @@ build/ccdv: build/ccdv.c
 lib/%.o: $(LIB_SRC) $(LIB_HEADERS) build/ccdv
 	$(QUIET) $(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -o $@ -c lib/$*.c
 
-libcpufreq.so.$(LIB_MAJ): $(LIB_OBJS)
-	$(QUIET) $(CC) -shared $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ \
+libcpufreq.la: ccdv $(LIB_OBJS) $(LIB_HEADERS) $(LIB_PARTS) Makefile
+	$(AR) -rc libcpufreq.a lib/*.o
+
+#	$(QUIET) $(CC) -shared $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ \
 		-Wl,-soname,libcpufreq.so.$(LIB_MIN) $(LIB_OBJS)
-	@ln -sf $@ libcpufreq.so
-	@ln -sf $@ libcpufreq.so.$(LIB_MIN)
+#	@ln -sf $@ libcpufreq.so
+#	@ln -sf $@ libcpufreq.so.$(LIB_MIN)
 
-libcpufreq: libcpufreq.so.$(LIB_MAJ)
+libcpufreq: libcpufreq.la
 
-cpufreq-%: libcpufreq.so.$(LIB_MAJ) $(UTIL_SRC)
+cpufreq-%: libcpufreq.la $(UTIL_SRC)
 	$(QUIET) $(CC) $(CPPFLAGS) $(CFLAGS) -I. -I./lib/ -c -o utils/$@.o utils/$*.c
-	$(QUIET) $(CC) $(CFLAGS) $(LDFLAGS) -L. -o $@ utils/$@.o -lcpufreq
+	$(QUIET) $(CC) $(CFLAGS) $(LDFLAGS) -L. -o $@ utils/$@.o libcpufreq.a
 	$(QUIET) $(STRIPCMD) $@
 
 utils: cpufreq-info cpufreq-set cpufreq-aperf
@@ -205,7 +207,7 @@ clean:
 	-find . \( -not -type d \) -and \( -name '*~' -o -name '*.[oas]' \) -type f -print \
 	 | xargs rm -f
 	-rm -f cpufreq-info cpufreq-set cpufreq-aperf
-	-rm -f libcpufreq.so*
+	-rm -f libcpufreq.a
 	-rm -f build/ccdv
 	-rm -rf po/*.gmo po/*.pot
 	$(MAKE) -C bench clean
@@ -213,7 +215,7 @@ clean:
 
 install-lib:
 	$(INSTALL) -d $(DESTDIR)${libdir}
-	$(CP) libcpufreq.so* $(DESTDIR)${libdir}/
+	$(CP) libcpufreq.a $(DESTDIR)${libdir}/libcpufreq.a
 	$(INSTALL) -d $(DESTDIR)${includedir}
 	$(INSTALL_DATA) lib/cpufreq.h $(DESTDIR)${includedir}/cpufreq.h
 
@@ -238,7 +240,10 @@ install-bench:
 	@#DESTDIR must be set from outside to survive
 	@sbindir=$(sbindir) bindir=$(bindir) docdir=$(docdir) confdir=$(confdir) $(MAKE) -C bench install
        
-install: all install-lib install-tools install-man $(INSTALL_NLS) $(INSTALL_BENCH)
+install:
+	-ln -f cpufreq-info ../../bin/
+	-ln -f cpufreq-set ../../bin/
+	-ln -f cpufreq-aperf ../../bin/
 
 uninstall:
 	- rm -f $(DESTDIR)${libdir}/libcpufreq.*
