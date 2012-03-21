@@ -1,4 +1,4 @@
 #!/bin/bash
 export ac_cv_linux_vers=2.6.35 && ./configure --host=arm-none-linux-gnueabi \
-CC=${CROSS_COMPILE}arm-none-linux-gnueabi-gcc \
+CC=${CROSS_COMPILE}gcc \
 --with-pcap=linux --prefix=$(pwd)/../
