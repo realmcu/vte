@@ -164,6 +164,8 @@ run_auto_test_list()
     echo "display video"
     a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
     /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=$(expr $RC + 29)
+	echo "timer interrupt"
+	timer_interrupt
     return $RC
 }
 
@@ -346,6 +348,35 @@ test_case_05()
 
 }
 
+# Function:     test_case_06
+# Description   - Test if interrupt latency measurement
+#  
+test_case_06()
+{
+    #TODO give TCID 
+    TCID="test_temers_dvfs"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    #TODO add function test scripte here
+	i=0
+	while [ $i -lt $TOTAL_PT ];do
+		value=${cpufreq_value[$i]}
+        cpufreq-set -f ${value}
+        value_ret=$(cpufreq-info -f | grep $value | wc -l)
+        if [ $value_ret -eq 1 ] ; then
+			timer_interrupt
+		else
+			RC=$(echo $RC $i)
+		fi
+	done
+    return $RC
+}
+
 usage()
 {
     echo "$0 [case ID]"
@@ -354,6 +385,7 @@ usage()
     echo "3: "
     echo "4: "
     echo "5: "
+    echo "6: "
 }
 
 # main function
@@ -388,6 +420,9 @@ case "$1" in
     ;;
 5)
     test_case_05 || exit $RC
+    ;;
+5)
+    test_case_06 || exit $RC
     ;;
 *)
     usage
