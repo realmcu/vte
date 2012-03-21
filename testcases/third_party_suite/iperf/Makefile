@@ -11,9 +11,8 @@ SUBDIRS=iperf-2.0.5
 TARGETS=
 BINS=iperf
  
-all:
-	cd iperf-2.0.5; ./autogen.sh ;ac_cv_func_malloc_0_nonnull=yes ./configure --host=arm-none-linux-gnueabi CC=${CROSS_COMPILE}gcc;
-	$(MAKE) -C iperf-2.0.5 CC=${CROSS_COMPILE}gcc
+all:config
+	$(MAKE) -C iperf-2.0.5 CC=${CROSS_COMPILE}gcc CXX=${CROSS_COMPILE}g++
 
 install:
 		ln -f $(SUBDIRS)/src/$(BINS) ../../bin/
@@ -22,4 +21,7 @@ clean:
 	-$(MAKE) -C $(SUBDIRS) clean
 	-$(MAKE) -C $(SUBDIRS) distclean
 
+config:
+	cd iperf-2.0.5; ./autogen.sh ;ac_cv_func_malloc_0_nonnull=yes ./configure --host=arm-none-linux-gnueabi \
+	CC=${CROSS_COMPILE}gcc CXX=${CROSS_COMPILE}g++ 
 
