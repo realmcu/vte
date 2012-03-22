@@ -213,13 +213,18 @@ determine_platform()
     if [ $find -eq 1 ]
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-        p=IMX6-SABREAUTO
+		if [ $find -eq 1 ]; then
+        	p=IMX6-SABREAUTO
+		fi
     fi
 
-	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Solo" | grep "Sabre Auto" | wc -l`;
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "Solo" | grep "Sabre Auto" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX6Solo-SABREAUTO
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
+		if [ $find -eq 1 ]; then
+        	p=IMX6Solo-SABREAUTO
+		fi
     fi
 
 
