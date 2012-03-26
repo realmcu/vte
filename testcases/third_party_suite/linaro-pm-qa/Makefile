@@ -41,6 +41,9 @@ uncheck:
 
 recheck: uncheck check
 
+install:
+	    cp -rf ./ ../../bin/linaro-pm-qa
+
 clean:
 	@(cd utils; $(MAKE) clean)
 	@(cd testcases; $(MAKE) clean)
