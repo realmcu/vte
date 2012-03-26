@@ -42,10 +42,9 @@ setup()
         LTPTMP=/tmp
     fi
 
-    if [ $# -lt 2 ]
+    if [ $# -lt 1 ]
     then
         usage
-        exit 1
     fi
 
     trap "cleanup" 0
@@ -115,11 +114,19 @@ overload_test()
 {
     RC=0    # Return value from setup, and test functions.
 
+    if [ $# -le 0 ]; then
+        usage
+    fi
+
     while [ $# -gt 0 ]; do
         case $1 in
             audio)
-            while true; do aplay $STREAM_PATH/alsa_stream/audio44k16S_long.wav; done &
-            audio_pid=$!
+            if [ aplay -l |grep 'card 0' ]; then
+                while true; do aplay $STREAM_PATH/alsa_stream/audio44k16S_long.wav; done &
+                audio_pid=$!
+            else
+                echo "WARNING: No sound card found, won't proceed with audio test"
+            fi
             shift;;
             camera)
             v4l_capture_testapp -T 1800 &
@@ -128,11 +135,16 @@ overload_test()
             hdmi)
             old_dir=$(pwd)
             mkdir -p /mnt/stream && mount -t nfs -o nolock 10.192.225.210:/d2/01_CodecVectors /mnt/stream && cd /mnt/stream/SHAVectors/H264Dec/Conformance/1080p
-            if [ -d /mnt/stream/SHAVectors/H264Dec/Conformance/1080p ];then
+            if [ ! -d /mnt/stream/SHAVectors/H264Dec/Conformance/1080p ];then
                 echo "WARNING: HDMI test stream mount failed, ignore HDMI test, please check."
             else
-                while true; do gplay H264_MP40_1920x1080_23.976_9682_AACLC_44.1_98_2_CBR_donmckay.mov; done &
-                hdmi_pid=$!
+                gplay H264_MP40_1920x1080_23.976_9682_AACLC_44.1_98_2_CBR_donmckay.mov
+                if [ $? -eq 0 ]; then
+                    while true; do gplay H264_MP40_1920x1080_23.976_9682_AACLC_44.1_98_2_CBR_donmckay.mov; done &
+                    hdmi_pid=$!
+                else
+                    echo "WARNING: gplay can't play the streams, please check."
+                fi
             fi
             shift;;
             ts)
@@ -173,6 +185,7 @@ usage()
             ./${0##*/} 2 audio camera hdmi ts acc sensor
     e.g.: ./${0##*/} 2 audio hdmi ts
 EOF
+    exit 1
 }
 
 # Function:     main
@@ -197,6 +210,5 @@ case "$1" in
     ;;
     *)
     usage
-    exit 1
     ;;
 esac
