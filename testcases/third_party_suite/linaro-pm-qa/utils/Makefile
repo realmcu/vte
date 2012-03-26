@@ -23,7 +23,7 @@
 #
 
 CFLAGS?=-g -Wall
-CC?=gcc
+CC?=$(CROSS_COMPILE)gcc
 SRC=$(wildcard *.c)
 EXEC=$(SRC:%.c=%)
 

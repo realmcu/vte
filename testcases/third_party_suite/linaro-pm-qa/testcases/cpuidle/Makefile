@@ -22,7 +22,7 @@
 #       - initial API and implementation
 #
 
-CC=gcc 
+CC=$(CROSS_COMPILE)gcc
 CFLAGS=-Wall
 
 all: test_usb_cpuidle
