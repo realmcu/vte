@@ -35,9 +35,9 @@
 
 include ./vte_configs/$(ARCH_PLATFORM)_tp_configs
 
-SUBDIRS-y                        += util-linux
-SUBDIRS-y                        += coremark
 SUBDIRS-y                        += c-ray
+SUBDIRS-y                        += coremark
+SUBDIRS-y                        += util-linux
 SUBDIRS-$(CONFIG_TP_BONNIE)      += bonnie++ 
 SUBDIRS-$(CONFIG_TP_BC)          += bc
 SUBDIRS-$(CONFIG_TP_CANSOCKET)   += can
@@ -45,8 +45,8 @@ SUBDIRS-$(CONFIG_TP_CPUFREQ)     += cpufrequtils-008
 SUBDIRS-$(CONFIG_TP_CPUPOWER)    += cpupowerutils
 SUBDIRS-$(CONFIG_TP_CRASHME)     += crashme-2.4 
 SUBDIRS-$(CONFIG_TP_CRYPTO_APP)  += crypto_app
-SUBDIRS-$(CONFIG_TP_DT)          += dt 
 SUBDIRS-$(CONFIG_TP_DRY)         += dry-2.2 
+SUBDIRS-$(CONFIG_TP_DT)          += dt 
 SUBDIRS-$(CONFIG_TP_FBSET)       += fbset
 SUBDIRS-$(CONFIG_TP_FBV)         +=	fbv
 SUBDIRS-$(CONFIG_TP_FMTOOL)      += fm_tool
@@ -56,12 +56,12 @@ SUBDIRS-$(CONFIG_TP_I2C)         += i2c-tools
 SUBDIRS-$(CONFIG_TP_IPERF)       += iperf
 SUBDIRS-$(CONFIG_TP_LMBENCH)     += lmbench
 SUBDIRS-$(CONFIG_TP_NETWORK)     += network 
+SUBDIRS-$(CONFIG_TP_NUTTCP)      += nuttcp
 SUBDIRS-$(CONFIG_TP_OPROFILE)    +=	oprofile
 SUBDIRS-$(CONFIG_TP_PFM)         += pfm
 SUBDIRS-$(CONFIG_TP_STREAMBENCH) += streambench 
 SUBDIRS-$(CONFIG_TP_USB)         += usb_test
 SUBDIRS-$(CONFIG_TP_WHETS)       += whets
-SUBDIRS-$(CONFIG_TP_NUTTCP)      += nuttcp
 
 all:
 	for i in $(SUBDIRS-y); do \
