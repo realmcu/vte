@@ -218,6 +218,19 @@ determine_platform()
 		fi
     fi
 
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "Sabre-SD" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+		if [ $find -eq 1 ]; then
+        	p=IMX6Q-Sabre-SD
+		fi
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
+		if [ $find -eq 1 ]; then
+        	p=IMX6DL-Sabre-SD
+		fi
+    fi
+
 	find=`cat /proc/cpuinfo | grep "Hardware" | grep "Solo" | grep "Sabre Auto" | wc -l`;
     if [ $find -eq 1 ]
     then
@@ -283,10 +296,10 @@ determine_platform()
     elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
     then
         RC=50
-    elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ]
+    elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ] || [ $p = "IMX6Q-Sabre-SD" ]
     then
         RC=63
-    elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ]
+    elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ] || [ $p = "IMX6DL-Sabre-SD"  ]
     then
         RC=61
     else
