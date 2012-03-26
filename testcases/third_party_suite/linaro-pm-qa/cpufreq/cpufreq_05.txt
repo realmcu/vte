@@ -1,0 +1,1 @@
+test 'ondemand' and 'conservative' trigger correctly the configuration directory

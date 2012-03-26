@@ -1,0 +1,1 @@
+test the presence of the 'sched_mc_power_savings' file

@@ -1,0 +1,1 @@
+test the affinity does not work on an offline cpu
