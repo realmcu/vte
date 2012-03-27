@@ -461,9 +461,18 @@ usage()
     8: USB
     9: VPU
     10: Ethernet
-    EOF
+EOF
 
     exit 1
+}
+
+#check the result
+check_result()
+{
+    if [ $RC -ne 0 ]; then
+        echo "TINFO Test FAIL"
+        exit $RC
+    fi
 }
 
 # main function
@@ -480,34 +489,34 @@ setup || exit $RC
 
 case "$1" in
 1|"audio")
-    test_case_01 || exit $RC
+    test_case_01 || check_result
     ;;
 2|"can")
-    test_case_02 || exit $RC
+    test_case_02 || check_result
     ;;
 3|"display")
-    test_case_03 || exit $RC
+    test_case_03 || check_result
     ;;
 4|"gpu")
-    test_case_04 || exit $RC
+    test_case_04 || check_result
     ;;
 5|"i2c")
-    test_case_05 || exit $RC
+    test_case_05 || check_result
     ;;
 6|"sd")
-    test_case_06 || exit $RC
+    test_case_06 || check_result
     ;;
 7|"uart")
-    test_case_07 || exit $RC
+    test_case_07 || check_result
     ;;
 8|"usb")
-    test_case_08 || exit $RC
+    test_case_08 || check_result
     ;;
 9|"vpu")
-    test_case_09 || exit $RC
+    test_case_09 || check_result
     ;;
 10|"ethernet")
-    test_case_10 || exit $RC
+    test_case_10 || check_result
     ;;
 *)
     usage
