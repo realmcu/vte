@@ -1,0 +1,7 @@
+pm-qa-cexists proof_o_concept PM-list_c_states.sh
+pm-qa-pexists proof_o_concept PM-list_p_states.sh
+pm-qa-availfreq01 cpufreq avail_freq01.sh
+pm-qa-availfreq02 cpufreq avail_freq02.sh
+pm-qa-availgov01 cpufreq avail_gov01.sh
+pm-qa-availgov02 cpufreq avail_gov02.sh
+pm-qa-cpuidle cpuidle test_usb_cpuidle /dev/sdb 5 10000

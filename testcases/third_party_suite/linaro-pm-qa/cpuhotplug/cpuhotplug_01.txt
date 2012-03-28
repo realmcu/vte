@@ -1,0 +1,1 @@
+test the sysfs files are present

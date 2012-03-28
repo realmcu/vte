@@ -1,0 +1,1 @@
+test interrupts show the right configuration in /proc/interrupts

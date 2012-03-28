@@ -1,0 +1,1 @@
+test cpus are reflected on /proc/cpuinfo correctly

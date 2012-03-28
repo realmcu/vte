@@ -1,0 +1,1 @@
+test the load of the cpu does not affect the frequency with 'powersave'

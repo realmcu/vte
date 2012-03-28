@@ -1,0 +1,1 @@
+test the change of the frequency is effective in 'userspace' mode

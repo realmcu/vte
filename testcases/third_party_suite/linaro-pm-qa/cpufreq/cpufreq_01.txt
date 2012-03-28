@@ -1,0 +1,1 @@
+test the cpufreq framework is available for frequency

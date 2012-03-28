@@ -1,0 +1,12 @@
+In order to run the tests, invoke as root:
+
+	make check
+
+If you want the test suite to continue when one error has been found, do:
+
+	make -k check
+
+If you want to run a subset of the tests, do:
+
+	make -C sched_mc check
+	make -C cpufreq check
