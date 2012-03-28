@@ -59,12 +59,13 @@ setup()
         LTPTMP=/tmp
     fi
 
-    while getopts f:ANMD arg
+    while getopts f:ANMDH arg
     do 
         case $arg in
         f) FILE=$OPTARG;;
         A) AUTO="true";;
         D) HW="true";;
+	H) HDMI="true";;
         N|M) ;;
         \?) usage
         exit 67;;
@@ -87,7 +88,7 @@ setup()
         return $RC
     fi
 
-    detect_alsa_dev.sh
+    detect_alsa_dev.sh $HDMI
     dfl_alsa_dev=$?
     #parameter of HW playback and plughw playback
     hw_play="-Dhw:${dfl_alsa_dev},0"
