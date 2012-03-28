@@ -27,7 +27,7 @@ OBJS=$(patsubst %.c,%*.o,$(SRCS))
 TARGET=stream_benchmark
 
 CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a  -mfpu=neon -mfloat-abi=softfp
-#CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a
+SOFT_CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a
 
 all: $(TARGET)
 	@echo "************************************************"
@@ -40,13 +40,15 @@ install:
 	@echo "** INSTALL : $(TARGET)             **"
 	@echo "************************************************"
 	ln -f $(TARGET) $(BIN_DIR)/bin
+	ln -f stream_benchmark_soft $(BIN_DIR)/bin
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) stream_benchmark_soft
 	@echo "************************************************"
 	@echo "** CLEAN : $(TARGET)               **"
 	@echo "************************************************"
 
 $(TARGET): Makefile
 	$(CROSS_COMPILE)gcc $(CFLAGS) stream.c -o stream_benchmark
+	$(CROSS_COMPILE)gcc $(SOFT_CFLAGS) stream.c -o stream_benchmark_soft
 
