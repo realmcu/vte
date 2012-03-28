@@ -45,6 +45,9 @@ fi
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
+mkdir /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || RC=1
+
 sleep 1
 return $RC
 }
@@ -61,6 +64,7 @@ RC=0
 
 #TODO add cleanup code here
 
+umount /mnt/temp
 return $RC
 }
 
@@ -82,6 +86,7 @@ stream_path=/mnt/nfs/test_stream/video/mx51_vpu_performance_testvector
 
 stream_list=mx51_vpu_performance_test_filelist.txt
 
+
 cat ${stream_path}/${stream_list} |
 while read line
 do
@@ -90,17 +95,20 @@ do
 	filedir=$(echo $line | cut -d " " -f 3)
 	echo "--------------------------------"
 	echo "start decode $filename"
-  time -p ${TSTCMD} -D "-i ${stream_path}/${filedir}/${filename} \
+	cp ${stream_path}/${filedir}/${filename} /mnt/temp/${filename}
+  time -p ${TSTCMD} -D "-i /mnt/temp/${filename} \
   -f ${fileformat}"
+	 rm -rf /mnt/temp/${filename}
 	echo "end of decoding $filename"
 	echo "================================"
 done
+
 
 RC=0
 return $RC
 }
 
-# Function:     test_case_01
+# Function:     test_case_02
 # Description   - Test if MPEG2 decode ok
 #  
 test_case_02()
