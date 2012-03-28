@@ -26,10 +26,7 @@
 LTP_DIR = ../../../../
 BIN_DIR = $(LTP_DIR)testcases/
 
-ifeq ($(ARCH_PLATFORM), $(filter imx233, $(ARCH_PLATFORM)))
-#TARGET = $(wildcard *.sh)
 TARGET = uart_test.sh
-endif
 
 
 all:
