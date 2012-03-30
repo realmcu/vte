@@ -104,7 +104,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	#3 if no former fail data
 				ll=$(echo $line | head -n 1)
 			fi
-	 		llc=$(echo $line | wc -l)
+	 		llc=$(echo $line | wc -w)
 			if [ $llc -gt 1 ]; then
 	#3 if there are multi cases for same ID
 				myline=$line
@@ -112,7 +112,11 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 				for ilc in $myline
 				do
 					if [ $ilc -eq $ll ]; then
-						$line=$ll
+						line=$ll
+						break;
+					elif [ $ilc -gt $ll ]; then
+						line=$ilc
+						break;
 					else
 						echo $line > /dev/null
 					fi
