@@ -47,6 +47,8 @@
     }\
 }
 
+#define EPDC_STR_ID		"mxc_epdc_fb"
+
 struct mrect{
 int l;
 int t;
@@ -103,7 +105,6 @@ static void copy_image_to_fb(int left, int top, int width, int height, uint *img
 static int update_to_display(int left, int top, int width, int height, int wave_mode, int wait_for_complete)
 {
 	struct mxcfb_update_data upd_data;
-	int retval;
 
 	upd_data.update_mode = UPDATE_MODE_FULL;
 	upd_data.waveform_mode = wave_mode;
@@ -111,23 +112,19 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 	upd_data.update_region.width = width;
 	upd_data.update_region.top = top;
 	upd_data.update_region.height = height;
-	upd_data.temp = 24; //TEMP_USE_AMBIENT;
+	upd_data.temp = TEMP_USE_AMBIENT;
 	upd_data.flags = 0;
-
 	if (wait_for_complete) {
 		/* Get unique marker value */
 		upd_data.update_marker = marker_val++;
 	} else {
 		upd_data.update_marker = 0;
 	}
-	retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
-	while (retval < 0 && quitflag == 0) {
+	while( ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data) < 0){
 		static int cnt = 0;
 		sleep(1);
-		retval = ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data);
 		if(cnt++ == 10)
 		{
-			CALL_IOCTL(ioctl(fd_fb, MXCFB_SEND_UPDATE, &upd_data));
 			printf("retry 10 s abort\n");
 			cnt = 0;
 			break;
@@ -139,10 +136,16 @@ static int update_to_display(int left, int top, int width, int height, int wave_
 
 	if (wait_for_complete) {
 		/* Wait for update to complete */
-		retval = ioctl(fd_fb, MXCFB_WAIT_FOR_UPDATE_COMPLETE, &upd_data.update_marker);
-		if (retval < 0) {
-			printf("Wait for update complete failed.  Error = 0x%x", retval);
-			return retval;
+	#define MAX_WAIT 5
+	int wait_time = 0;
+	struct mxcfb_update_marker_data upd_marker_data;
+	upd_marker_data.update_marker = upd_data.update_marker;
+	while(ioctl(fd_fb, MXCFB_WAIT_FOR_UPDATE_COMPLETE,&upd_marker_data) < 0) {
+			wait_time++;
+			if (wait_time > MAX_WAIT) {
+				printf("TINFO: full mode wait time exceed!!!\n");
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -159,21 +162,14 @@ int run_test(void * p_opts)
 	pxp_chan_handle_t pxp_chan;
 	struct fb_var_screeninfo var;
 	struct fb_fix_screeninfo fix;
-	char fb_device[] = "/dev/fb0";
 	struct S_OPT im_opts;
 
   if(p_opts == NULL)
 		return -1;
 
+	
 	memcpy(&im_opts,p_opts,sizeof(struct S_OPT));
-  if(fd_fb == 0)
-	{
-		if ((fd_fb = open(fb_device, O_RDWR )) < 0)
-		{
-			printf("Unable to open frame buffer\n");
-			return 1;
-		}
-	}
+
 	ioctl(fd_fb, FBIOGET_VSCREENINFO, &var);
 	width = im_opts.rsize.w == 0? width:im_opts.rsize.w;
 	height = im_opts.rsize.h == 0? height:im_opts.rsize.h;
@@ -390,28 +386,44 @@ static int signal_thread(void *arg)
 
 int main(int argc, char ** argv)
 {
-  int oc,ret = 0;
+  	int oc,ret = 0;
+	int fb_num = 0;
 	int g_fb0_size = 0;
 	pthread_t sigtid;
 	struct S_OPT m_opts;
 	struct fb_var_screeninfo var;
+	struct fb_fix_screeninfo fix;
+	char fb_device[10] = "/dev/fb0";
 
-	/*kept the system on*/
-	{
-			int tfd = open("/dev/tty0", O_RDWR);
-			write(tfd, "\033[9;0]", 7);
-			close(tfd);
-	}
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGINT);
 	pthread_sigmask(SIG_BLOCK, &sigset, NULL);
 	pthread_create(&sigtid, NULL, (void *)&signal_thread, NULL);
 
-	memset(&m_opts,0,sizeof(struct S_OPT));
-	if ((fd_fb = open(fb_device, O_RDWR )) < 0) {
-		printf("Unable to open frame buffer\n");
-		return -1;
+	while (1) {
+		fb_device[7] = '0' + fb_num;
+		fd_fb = open(fb_device, O_RDWR, 0);
+		if (fd_fb < 0) {
+			printf("TINFO,Unable to open %s\n", fb_device);
+			return -1;
+		}
+		/* Check that fb device is EPDC */
+		/* First get screen_info */
+		ret = ioctl(fd_fb, FBIOGET_FSCREENINFO,
+			   &fix);
+		if (ret < 0) {
+			printf("TINFO,Unable to read fixed screeninfo for %s\n",
+				 fb_device);
+			close(fd_fb);
+		}
+		/* If we found EPDC, exit loop */
+		if (!strcmp(EPDC_STR_ID, fix.id))
+			break;
+		fb_num++;
 	}
+
+
+	memset(&m_opts,0,sizeof(struct S_OPT));
 	/*default setting goes here*/
 	m_opts.m = 1;
 	m_opts.rsize.l = 0;
