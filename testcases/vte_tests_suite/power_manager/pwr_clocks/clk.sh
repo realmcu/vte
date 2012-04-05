@@ -79,7 +79,7 @@ test_case_01()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     #now check the clocks
@@ -153,7 +153,7 @@ test_case_03()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
     echo 1 > /sys/class/graphics/fb0/blank
     echo 1 > /sys/class/graphics/fb2/blank
@@ -199,7 +199,7 @@ test_case_04()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     gpu=0
@@ -235,7 +235,7 @@ test_case_05()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     i2c_list=$(find ${mount_pt}  -name "i2c*")
@@ -271,7 +271,7 @@ test_case_06()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     #now check the clocks
@@ -301,7 +301,7 @@ test_case_07()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     uart_list=$(find ${mount_pt}  -name "uart*")
@@ -310,7 +310,10 @@ test_case_07()
     do
         if [ -e "${i}/usecount"  ]; then
             temp=$(cat ${i}/usecount)
-            uart=$(expr $temp + $uart)
+            if [ $temp -gt 0 ]; then
+                # only add 1 if usecount > 0
+                uart=$(expr 1 + $uart)
+            fi
         fi
     done
 
@@ -337,19 +340,17 @@ test_case_08()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     usb_list=$(find ${mount_pt}  -name "usb*")
     usb=0
-    for i in $usb_list
-    do
+    for i in $usb_list; do
         if [ -e "${i}/usecount" ]; then
             temp=$(cat ${i}/usecount)
             usb=$(expr $temp + $usb)
         fi
     done
-
 
     if [ $usb -gt 0 ]; then
         RC=8
@@ -374,7 +375,7 @@ test_case_09()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     vpu=0
@@ -420,7 +421,7 @@ test_case_10()
 
     ifconfig eth0 down || return $?
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     #disable the framebuffer
 
     enet=0
