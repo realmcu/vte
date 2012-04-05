@@ -115,35 +115,22 @@ init_device() {
 	return ${RET}
 }
 
-#fdisk cmd: 1st partition from 20~disk/4, 2st partition from disk/4~END
-gen_fdisk_cmd()
+#part disk: 1st partition from 20~disk/4, 2st partition from disk/4~END
+part_disk()
 {
     cylinders=`fdisk -l $DEVNODE |grep cylinders|grep -v of | awk '{print $5}'`
     #leave 1% space(40MB for 4G) for uboot, its env and partition table
     partition1_start=`expr $cylinders / 100`
     partition1_end=`expr $cylinders / 4 + $partition1_start`
     partition2_start=`expr $partition1_end + 1`
-    echo ""
-    echo "d"
-    echo "1"
-    echo "d"
-    echo "2"
-    echo "d"
-    echo "3"
-    echo "d"
-    echo "4"
-    echo ""
-    echo "n"
-    echo "p"
-    echo "1"
-    echo "$partition1_start"
-    echo "$partition1_end"
-    echo "n"
-    echo "p"
-    echo "2"
-    echo "$partition2_start"
-    echo ""
-    echo "w"
+    sfdisk --force $1 << EOF
+${partition1_start},${partition1_end},0c
+${partition2_start}
+EOF
+
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
 }
 
 	
@@ -279,8 +266,7 @@ if [ $DO_RFS -eq 1 ] ; then
     fi
 
     #fdisk & format
-    gen_fdisk_cmd  > ./format_rootfs.cmd
-    fdisk $DEVNODE < ./format_rootfs.cmd >> ${LOGFILE} 2>&1
+    part_disk $DEVNODE >> ${LOGFILE} 2>&1
     #determine if it's MMC card node, /dev/mmcblkX, if yes, add 'p'
     if [ "$prefix_DEVNODE" = "/dev/mmc" ]; then
         DEVNODE="${DEVNODE}p"
