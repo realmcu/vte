@@ -234,6 +234,50 @@ run_single_test_list()
 	 return $RC
 }
 
+run_iozone_test_list()
+{
+   RC=0
+   need_umount=1
+	 for i in $target_list
+	 do
+    #test if already mout
+	if [ ! -z "$1" ]; then
+		meet=$(echo $i | grep $1 | wc -l)
+		if [ $meet -eq 0 ];then
+	  		continue;
+		fi
+	fi
+    mount | grep $i
+		if [ $? -eq 0 ]; then
+     #is mounted
+		 mount_point=$(mount | grep $i |cut -d" " -f 3)
+		 need_umount=0
+    else
+	
+     #not mount
+     mount_point=$(mktemp -d -p /tmp)
+		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
+     need_umount=1
+		fi
+		for j in $mount_point
+		do
+		 free_size=$(df -m $j | tail -1 | awk '{print $4}')
+		 free_size=$(expr $free_size - 50)
+	 	 iozone -a -n $free_size -g $free_size -i 0 -i 1 -f $j/iozone.tmpfile || RC=$(echo $RC i$i)
+		 if [ $need_umount -eq 1  ];then
+      umount $mount_point || RC=$(echo $RC u$i)
+			rm -rf $mount_point
+		 fi
+		 break
+		done
+	 done
+	 if [ "$RC" != "0"  ];then
+	 echo $RC
+	 RC=1
+	 fi
+	 return $RC
+}
+
 
 # Function:     test_case_01
 # Description   - Test if single ok
@@ -259,10 +303,38 @@ return $RC
 }
 
 
+# Function:     test_case_02
+# Description   - Test if single ok
+#  
+test_case_02()
+{
+#TODO give TCID 
+TCID="test_storage_single"
+#TODO give TST_COUNT
+TST_COUNT=1
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+#test list
+loop=1000
+while [ $loop -gt 0 ] && [ $RC -eq 0 ]; do
+run_iozone_test_list $1 || RC=1
+loop=$(expr $loop - 1)
+done
+
+return $RC
+
+}
+
 usage()
 {
 echo "$0 [case ID]"
 echo "1: full patrition read/write test"
+echo "2: full patrition iozone test"
 }
 
 # main function
@@ -275,17 +347,15 @@ on_chip_controller_device_list="mmcblk.*[0-9]"
 target_list=""
 
 #TODO check parameter
-if [ $# -ne 1 ]
-then
-usage
-exit 1 
-fi
 
 setup || exit $RC
 
 case "$1" in
 1)
   test_case_01 || exit $RC 
+  ;;
+2)
+  test_case_02 $2 || exit $RC 
   ;;
 *)
   usage
