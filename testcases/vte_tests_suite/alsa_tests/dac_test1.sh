@@ -21,6 +21,7 @@
 # Spring                22/12/2010    Use temp direcotry
 # Spring                17/03/2011    Match right ALSA device
 # Spring                30/03/2012    Remove dependency of alsa dev detect
+# Spring                06/04/2012    Use config file to get default device
 #############################################################################
 
 # Function:     setup
@@ -49,12 +50,16 @@ setup()
         LTPTMP=/tmp
     fi
 
-    while getopts f:d:s:MDNh arg
+    while getopts f:c:d:s:aAMDNh arg
     do
         case $arg in
         f) FILE=$OPTARG;;
+        c) CFG_FILE=$OPTARG;;
         d) CARD=$OPTARG;;
         s) SEARCH_STR=$OPTARG;;
+        a) RUN_ALL="true";;
+        # A is abandoned, used for auto, now it's default behavior
+        A) ;;
         M) MANUAL="true";;
         D) HW="true";;
         N) ;;
@@ -65,17 +70,39 @@ setup()
     trap "cleanup" 0
 
     if [ ! -e /usr/bin/aplay ]; then
-        tst_resm TBROK "Test #1: ALSA utilities are not ready, \
-        pls check..."
+        tst_resm TBROK "ALSA utilities are not ready, pls check..."
         RC=65
         return $RC
     fi
 
     if [ ! -e $FILE ]; then
-        tst_resm TBROK "Test #1: audio stream is not ready, \
-             pls check..."
+        tst_resm TBROK "audio stream is not ready, pls check..."
         RC=66
         return $RC
+    fi
+
+    if [ -n "$CFG_FILE" ]; then
+        if [ -e "$CFG_FILE" ]; then
+            tst_resm TBROK "Specified config file can't find, pls check..."
+            RC=67
+            return $RC
+        fi
+    fi
+
+    if [ -z "$CARD" ]
+        if [ -z "$SEARCH_STR" ]; then
+            platfm=`platfm.sh`
+            eval def_cfg_name="audio_dac_${platfm}.cfg"
+            if [ -e /etc/asound/$def_cfg_name ]; then
+                CFG_FILE=/etc/asound/$def_cfg_name
+            elif [ -e $LTPROOT/testcases/bin/$def_cfg_name ]; then
+                CFG_FILE=$LTPROOT/testcases/bin/$def_cfg_name
+            else
+                tst_resm TBROK "Default config file can't find, pls check..."
+                RC=67
+                return $RC
+            fi
+        fi
     fi
 }
 
@@ -110,15 +137,15 @@ cleanup()
 #
 dac_play()
 {
-    RC=5
+    RC=0
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if there is voice."
     basefn=$(basename $FILE)
     tmpdir=`mktemp -d -p $LTPTMP`
     if [ -e $tmpdir ]; then
-        cp -f $FILE $tmpdir
-        if [ $? -ne 0 ]; then
+        cp -f $FILE $tmpdir || RC=$?
+        if [ $RC -ne 0 ]; then
             tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in $LTPTMP"
             return $RC
         fi
@@ -127,7 +154,17 @@ dac_play()
         return $RC
     fi
 
-    HW_keyword="card 0"
+    if [ -z "$CARD" ]; then
+        if [ -z "$SEARCH_STR" ]; then
+            # get keyword from config file
+            HW_keyword=`head -n 1 $CFG_FILE`
+            # consider it as card index
+            if [ `echo $HW_keyword| wc -c` -eq 1 ]; then
+                HW_keyword="card $HW_keyword"
+            fi
+        fi
+    fi
+
     if_card_specified=""
     #if card is specified
     if [ -n "$CARD" ]; then
@@ -139,7 +176,7 @@ dac_play()
         if_card_specified="pattern"
     fi
 
-    if [ -n "$if_card_specified" ]; then
+    if [ -z "$RUN_ALL" ]; then
         alsa_dev=`aplay -l |grep card| grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
         if [ -z "$alsa_dev" ]; then
             RC=69
@@ -163,11 +200,12 @@ dac_play()
         #parameter of HW playback and plughw playback
         play_iface="-D${plugin}hw:${alsa_dev}"
         card_name=`aplay -l | grep -i "$HW_keyword" | awk '{ print $3 }'`
-        aplay ${play_iface} $tmpdir/$basefn
-        if [ $? -eq 0 ]; then
+        echo
+        echo "TINFO play on: $card_name"
+        aplay ${play_iface} $tmpdir/$basefn || RC=$?
+        if [ $RC -eq 0 ]; then
             echo
             echo "TPASS play on: $card_name"
-            RC=0
         else
             echo
             echo "TFAIL play on: $card_name"
@@ -179,9 +217,10 @@ dac_play()
         fi
 
         return $RC
-    else
-        total_card_num=`aplay -l| grep card |wc -l`
     fi
+
+    # Now start to play on all devices
+    total_card_num=`aplay -l| grep card |wc -l`
 
     # if card is not specified, try loop on all cards
     i=0
@@ -211,12 +250,11 @@ dac_play()
         alsa_dev=""
         echo
         echo "TINFO play on: $card_name"
-        aplay ${play_iface} $tmpdir/$basefn
-        if [ $? -eq 0 ]; then
+        aplay ${play_iface} $tmpdir/$basefn ||RC=$?
+        if [ $RC -eq 0 ]; then
             test_results="$test_results PASS"
             echo
             echo "TPASS play on: $card_name"
-            RC=0
         else
             test_results="$test_results FAIL"
             echo
@@ -275,6 +313,8 @@ usage()
     Use this command to test ALSA DAC play functions.
     usage: ./${0##*/} -f [audio stream] -D -M -d [card num] -s [card string]
             -D: if using hw to playback
+            -a: Test on all devices, but it will report failure if either one fails
+            -c: specify configuration file, or it will load from default place
             -M: manual mode check
             -d: specify card num, e.g. 0, 1, 2
             -s: specify card search string, e.g. wm8962, sgtl5000, hdmi
@@ -283,7 +323,11 @@ usage()
     Play on "hdmi" card:
     e.g.: ./${0##*/} -f audio44k16M.wav -s hdmi
     Play on all available sound cards:
-    e.g.: ./${0##*/} -f audio44k16M.wav
+    e.g.: ./${0##*/} -f audio44k16M.wav -a
+
+    Default config file store place: /etc/asound, $LTPROOT/testcases/bin
+    The file name should be like audio_dac_${platfm}.cfg
+    The file only contain one line: the card keyword, e.g. wm8962, sgtl5000
 
 EOF
     exit 1
