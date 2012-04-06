@@ -142,10 +142,10 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 		#3 has last success case 
 					if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-						line=$(expr $ll + 1)
+						line=$ll
 					else
 			#4 former fail cases is before the last success cases 
-						line=$(expr $line + 1)
+						line=$(expr $ll + 1)
 					fi
 				else
 					line=$(expr $ll + 1)
@@ -175,9 +175,7 @@ lastcmd=$(cat ${TEST_PATH}/runtest/$CMDFILE | grep -v "#" |grep "TGE-" | tail -n
 rlastcmd=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | tail -n 1 | awk '{print $1}')
 flastcmd=$(cat ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed | grep "TGE-" | tail -n 1 | awk '{print $1}')
 if [ -z $(echo lastcmd | grep $rlastcmd)  ];then
- if [ -z $( echo $lastcmd | grep  $flastcmd)  ]; then
      exit 251
- fi
 fi
 /mnt/nfs/util/ntpdate 10.192.225.222
 mv ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y)
