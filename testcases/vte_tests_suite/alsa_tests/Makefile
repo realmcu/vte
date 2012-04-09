@@ -31,7 +31,7 @@
 SUBDIRS=
 TARGETS=dac_test1.sh adc_test1.sh dac_vol_adj.sh alsa_ctl.sh dac_channel_swap.sh
 TARGETS+=speaker_test1.sh speaker_switch_headset.sh
-TARGETS+=detect_alsa_dev.sh
+TARGETS+=audio_dac_IMX6DL-Sabre-SD.cfg audio_dac_IMX6Solo-SABREAUTO.cfg audio_dac_IMX6Q-Sabre-SD.cfg
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
