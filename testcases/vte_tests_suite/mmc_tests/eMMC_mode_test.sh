@@ -48,7 +48,15 @@ return $RC
 #main
 setup
 
-clock=$(cat /sys/kernel/debug/mmc1/ios | grep clock | awk '{print $2}')
+platStr=`platfm.sh`
+
+if [ "$platStr" = 'IMX6Q-Sabre-SD' ] || [ "$platStr" = 'IMX6DL-Sabre-SD' ]; then
+	mmc=mmc0
+else
+	mmc=mmc1
+fi
+
+clock=$(cat /sys/kernel/debug/$mmc/ios | grep clock | awk '{print $2}')
 
 [ $clock -eq 52000000 ] || RC=1
 
