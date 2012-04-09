@@ -142,10 +142,10 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 		#3 has last success case 
 					if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-						line=$ll
+						line=$(expr $ll + 1)
 					else
 			#4 former fail cases is before the last success cases 
-						line=$(expr $ll + 1)
+						line=$(expr $line + 1)
 					fi
 				else
 					line=$(expr $ll + 1)
