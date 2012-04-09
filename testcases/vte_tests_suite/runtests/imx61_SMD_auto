@@ -1,0 +1,440 @@
+TGE-LV-ALSA-0501	adc_test1.sh -f S16_LE -d 5 -c 1 -r 8000 -A
+TGE-LV-ALSA-0502	adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A
+TGE-LV-ALSA-0503	adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A
+TGE-LV-ALSA-0504	adc_test1.sh -f S16_LE -d 5 -c 1 -r 22050 -A
+TGE-LV-ALSA-0506	adc_test1.sh -f S16_LE -d 5 -c 1 -r 32000 -A
+TGE-LV-ALSA-0507	adc_test1.sh -f S16_LE -d 5 -c 1 -r 44100 -A
+TGE-LV-ALSA-0508	adc_test1.sh -f S16_LE -d 5 -c 1 -r 48000 -A
+TGE-LV-ALSA-0509	adc_test1.sh -f S16_LE -d 5 -c 1 -r 88200 -A
+TGE-LV-ALSA-0510	adc_test1.sh -f S16_LE -d 5 -c 1 -r 96000 -A
+TGE-LV-ALSA-0511	adc_test1.sh -f S16_LE -d 5 -c 2 -r 8000 -A
+TGE-LV-ALSA-0513	adc_test1.sh -f S16_LE -d 5 -c 2 -r 16000 -A
+TGE-LV-ALSA-0516	adc_test1.sh -f S16_LE -d 5 -c 2 -r 32000 -A
+TGE-LV-ALSA-0517	adc_test1.sh -f S16_LE -d 5 -c 2 -r 44100 -A
+TGE-LV-ALSA-0518	adc_test1.sh -f S16_LE -d 5 -c 2 -r 48000 -A
+TGE-LV-ALSA-0519	adc_test1.sh -f S16_LE -d 5 -c 2 -r 88200 -A
+TGE-LV-ALSA-0520	adc_test1.sh -f S16_LE -d 5 -c 2 -r 96000 -A
+TGE-LV-ALSA-0521	adc_test1.sh -f S16_LE -d 5 -c 1 -r 12000 -A
+TGE-LV-ALSA-0101	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16M.wav -A
+TGE-LV-ALSA-0102	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16M.wav -A
+TGE-LV-ALSA-0103	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
+TGE-LV-ALSA-0104	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k16M.wav -A
+TGE-LV-ALSA-0105	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k16M.wav -A
+TGE-LV-ALSA-0106	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16M.wav -A
+TGE-LV-ALSA-0107	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k16M.wav -A
+TGE-LV-ALSA-0108	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k16M.wav -A
+TGE-LV-ALSA-0109	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k16M.wav -A
+TGE-LV-ALSA-0110	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k16M.wav -A
+TGE-LV-ALSA-0111	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k16S.wav -A -D
+TGE-LV-ALSA-0112	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k16S.wav -A -D
+TGE-LV-ALSA-0113	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16S.wav -A -D
+TGE-LV-ALSA-0114	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k16S.wav -A -D
+TGE-LV-ALSA-0115	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k16S.wav -A
+TGE-LV-ALSA-0116	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S.wav -A -D
+TGE-LV-ALSA-0117	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k16S.wav -A -D
+TGE-LV-ALSA-0118	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k16S.wav -A -D
+TGE-LV-ALSA-0119	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k16S.wav -A
+TGE-LV-ALSA-0120	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k16S.wav -A -D
+TGE-LV-ALSA-0121	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k24M-S24_LE.wav -A
+TGE-LV-ALSA-0122	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k24M-S24_LE.wav -A
+TGE-LV-ALSA-0123	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24M-S24_LE.wav -A
+TGE-LV-ALSA-0124	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24M-S24_LE.wav -A
+TGE-LV-ALSA-0125	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24M-S24_LE.wav -A
+TGE-LV-ALSA-0126	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24M-S24_LE.wav -A
+TGE-LV-ALSA-0127	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24M-S24_LE.wav -A
+TGE-LV-ALSA-0128	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k24M-S24_LE.wav -A
+TGE-LV-ALSA-0129	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k24M-S24_LE.wav -A
+TGE-LV-ALSA-0130	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k24M-S24_LE.wav -A
+TGE-LV-ALSA-0131	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0132	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0133	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0134	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0135	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k24S-S24_LE.wav -A
+TGE-LV-ALSA-0136	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0137	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0138	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0139	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k24S-S24_LE.wav -A
+TGE-LV-ALSA-0140	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k24S-S24_LE.wav -A -D
+TGE-LV-ALSA-0146	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k24S-S24_LE.wav -A
+TGE-LV-ALSA-0147	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k24M-S24_LE.wav -A
+TGE-LV-ALSA-0150	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k16S.wav -A
+TGE-LV-ALSA-0151	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k16M.wav -A
+TGE-LV-ALSA-0152	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k16M.wav -A
+TGE-LV-ALSA-0153	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k16S.wav -A
+TGE-LV-ALSA-0154	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k24M-S24_LE.wav -A
+TGE-LV-ALSA-0155	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k24S-S24_LE.wav -A
+TGE-LV-ALSA-0156	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32M.wav -A
+TGE-LV-ALSA-0157	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio12k32S.wav -A
+TGE-LV-ALSA-0171	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k32M.wav -A
+TGE-LV-ALSA-0172	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32M.wav -A
+TGE-LV-ALSA-0173	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k32M.wav -A
+TGE-LV-ALSA-0174	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k32M.wav -A
+TGE-LV-ALSA-0175	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k32M.wav -A
+TGE-LV-ALSA-0176	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k32M.wav -A
+TGE-LV-ALSA-0177	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k32M.wav -A
+TGE-LV-ALSA-0178	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k32M.wav -A
+TGE-LV-ALSA-0179	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k32M.wav -A
+TGE-LV-ALSA-0180	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k32M.wav -A
+TGE-LV-ALSA-0181	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio8k32S.wav -A
+TGE-LV-ALSA-0182	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio11k32S.wav -A
+TGE-LV-ALSA-0183	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k32S.wav -A
+TGE-LV-ALSA-0184	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k32S.wav -A
+TGE-LV-ALSA-0185	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k32S.wav -A
+TGE-LV-ALSA-0186	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k32S.wav -A
+TGE-LV-ALSA-0187	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k32S.wav -A
+TGE-LV-ALSA-0188	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio64k32S.wav -A
+TGE-LV-ALSA-0189	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio88k32S.wav -A
+TGE-LV-ALSA-0190	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio96k32S.wav -A
+TGE-LV-ALSA-0191	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k32M.wav -A
+TGE-LV-ALSA-0192	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio24k32S.wav -A
+TGE-LV-ALSA-0221	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k16M.wav -A
+TGE-LV-ALSA-0222	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k16S.wav -A
+TGE-LV-ALSA-0223	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k24M-S24_LE.wav -A
+TGE-LV-ALSA-0224	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k24S-S24_LE.wav -A
+TGE-LV-ALSA-0225	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k32M.wav -A
+TGE-LV-ALSA-0226	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio128k32S.wav -A
+TGE-LV-ALSA-0231	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k16M.wav -A
+TGE-LV-ALSA-0232	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k16S.wav -A
+TGE-LV-ALSA-0233	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k24M-S24_LE.wav -A
+TGE-LV-ALSA-0234	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k24S-S24_LE.wav -A
+TGE-LV-ALSA-0235	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k32M.wav -A
+TGE-LV-ALSA-0236	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio176k32S.wav -A
+TGE-LV-ALSA-0241	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k16M.wav -A
+TGE-LV-ALSA-0242	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k16S.wav -A
+TGE-LV-ALSA-0243	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24M-S24_LE.wav -A
+TGE-LV-ALSA-0244	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24S-S24_LE.wav -A
+TGE-LV-ALSA-0245	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
+TGE-LV-ALSA-0246	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
+TGE-LV-ALSA-0302	aplay /mnt/nfs/test_stream/alsa_stream_music/*.wav && echo "PASS"
+TGE-LV-ALSA-3002	arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
+TGE-LV-ASRC-0201	asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-ASRC-0202	asrc_test1.sh -to 96000 $STREAM_PATH/asrc_stream/audio48k16S.wav
+TGE-LV-ASRC-0203	asrc_test1.sh -to 88200 $STREAM_PATH/asrc_stream/audio96k16S.wav
+TGE-LV-ASRC-0204	asrc_test1.sh -to 44100 $STREAM_PATH/asrc_stream/audio88k16S.wav
+TGE-LV-ASRC-0205	asrc_grp_conv.sh 44
+TGE-LV-ASRC-0206	asrc_grp_conv.sh 32
+TGE-LV-ASRC-0207	asrc_grp_conv.sh 48
+TGE-LV-ASRC-0208	asrc_grp_conv.sh 96
+TGE-LV-ASRC-0210	asrc_test1.sh -to 96000 $STREAM_PATH/asrc_stream/audio48k24S-S24_LE.wav
+TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
+TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
+TGE-LV-BENCH-10003	c-ray.sh
+TGE-LV-PerfMon-10000	modprobe mxs-perfmon.ko && cd /sys/devices/platform/mxs-perfmon.0 && echo read > Monitor && echo start > Monitor && cat Monitor | grep "Run mode" && echo stop > Monitor && cat Monitor | grep "Stop mode" && rmmod mxs-perfmon.ko
+TGE-LV-APP-0001	gst-inspect
+TGE-LV-UBOOT-0060	ls
+TGE-LV-I2C-0001	i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
+TGE-LV-I2C-CLK-0001	clk.sh i2c
+TGE-LV-BENCH-10001	coremark_F2.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F2.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F2.exe 8 8 8 0 7 1 1200
+TGE-LV-BENCH-10002	coremark_P2.exe 0x0 0x0 0x66 0 7 1 2000 && coremark_P2.exe 0x3415 0x3415 0x66 0 7 1 2000 && coremark_P2.exe 8 8 8 0 7 1 1200
+TGE-LV-CORE-0001	validate
+TGE-LV-CORE-0002	check_events
+TGE-LV-ACC-0010	acc_test_MMA845x.sh -m MODE_8G
+TGE-LV-ACC-0011	acc_test_MMA845x.sh -m MODE_4G
+TGE-LV-ACC-0012	acc_test_MMA845x.sh -m MODE_2G
+TGE-LV-ACC-0013	acc_test_MMA845x.sh -m MODE_STANDBY
+TGE-LV-MAGN-0010	ecompass_mag3110.sh 1
+TGE-LV-MAGN-0011	ecompass_mag3110.sh 2
+TGE-LV-DISPLAY-0002	dd if=/dev/urandom of=/dev/fb2 bs=1024 count=100
+TGE-LV-DISPLAY-DUAL-0001	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png && lcd_testapp -T 1 -B /dev/fb2 -D 16 -X 10
+TGE-LV-PMICLIGHT-0091_LightSensor	isl_test.sh 1
+TGE-LV-WIFI-0043	modprobe ar6000; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001  && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprobe -r ar6000;
+TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ar6000; sleep 20; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && RT=0 ; modprobe -r ar6000; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
+TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
+TGE-LV-ETHERNET-1003	ethtool eth0
+TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1005	udp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
+TGE-LV-ETHERNET-1008	ethtool eth0 | grep 1000
+TGE-LV-ETHERNET-1009	ifconfig eth0 | grep "dropped:0"
+TGE-LV-ETHERNET-1011	ifconfig eth0 | grep "overruns:0"
+TGE-LV-FEC-0010	fec_testapp -T 0
+TGE-LV-FEC-0011	if ifconfig |grep 10.200; then fec_testapp -T 1 -H 10.200.1.1; else fec_testapp -T 1 -H 10.192.225.219; fi
+TGE-LV-FEC-0012	fec_testapp -T 2
+TGE-LV-ESLCD-0151	lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10
+TGE-LV-ESLCD-0161	lcd_testapp -T 2 -B /dev/fb0 -D 16 -X 10 -N 10
+TGE-LV-ESLCD-0600	lcd_testapp_power -F /dev/fb0
+TGE-LV-ESLCD-0702	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150
+TGE-LV-ESLCD-0703	echo q | fbv -d /dev/fb2 ${LTPROOT}/testcases/bin/butterfly.png
+TGE-LV-ESLCD-0710	sh -c "fbset -depth 32" && lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
+TGE-LV-ESLCD-0800	mxcfb_test -T 1 -D /dev/fb0 -d /dev/fb1
+TGE-LV-ESLCD-0810	mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb1
+TGE-LV-ESLCD-0820	mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb1
+TGE-LV-ESLCD-0830	RC=0;LOOP=20; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb1 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
+TGE-LV-ESLCD-0840	mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb1
+TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
+TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset -depth 16
+TGE-LV-FB-1002	fbset && fbset -depth 32 &&  fbset -depth 16 && fbset -depth 24 && fbset -depth 32
+TGE-LV-FB-1003	cat /dev/vcs
+TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
+TGE-LV-FB-1007	clk.sh display
+TGE-LV-FB-1019	echo 1 > /sys/class/graphics/fb0/rotate && echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
+TGE-LV-FB-EPDC-0001	epdc_test -T 0 -g 1 && epdc_test -T 2
+TGE-LV-FB-EPDC-0002	epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,0,1,0,0,0,0,0:0:0:0 && epdc_test -T 0 -u 1 && epdc_test -T 2 -d /dev/fb0
+TGE-LV-FB-EPDC-0003	epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,257,1,0,0,0,0,0:0:0:0
+TGE-LV-FB-EPDC-0004	epdc_test -T 0 -u 0 && epdc_test -T 3
+TGE-LV-FB-EPDC-0005	epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 4
+TGE-LV-FB-EPDC-0006	epdc_test -T 2 && epdc_test -T 5
+TGE-LV-FB-EPDC-0007	epdc_test -T 2 && epdc_test -T 6
+TGE-LV-FB-EPDC-0008	epdc_test -T 0 -g 2 && epdc_test -T 2
+TGE-LV-FB-EPDC-0009	epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2
+TGE-LV-FB-EPDC-0010	epdc_test -T 1
+TGE-LV-FB-EPDC-0012	epdc_test -T 2; epdc_test -T 7
+TGE-LV-FB-EPDC-0013	epdc_full.sh 1
+TGE-LV-FB-EPDC-0016	epdc_test -T 8 -y 10
+TGE-LV-FB-EPDC-0017	epdc_test -T 0 -S 0 && epdc_test -T 0 -S 1 && epdc_test -T 0 -S 2
+TGE-LV-GPT-0010	gpt_testapp
+TGE-LV-HRT-0020	insmod ${LTPROOT}/testcase/bin/hrtimer_test.ko && sleep 1 && rmmod hrtimer_test && dmesg | grep hrtimer_callback
+TGE-LV-TIMER-FREQ-0001	timer_interrupt
+TGE-LV-GPU-CLOCK-0001	clk.sh gpu
+TGE-LV-GPU-EGL-FB-0001	gles_viv.sh 1
+TGE-LV-GPU-EGL-FB-0011	export FB_MULTI_BUFFER=4;gles_viv.sh 1
+TGE-LV-GPU-FB-CL11-0001	cl_gc2000.sh 1
+TGE-LV-GPU-FB-CL11-0002	cl_gc2000.sh 2
+TGE-LV-GPU-FB-CL11-0003	cl_gc2000.sh 3
+TGE-LV-GPU-FB-CONF-VG-0002	vg_gc2000.sh 2
+TGE-LV-GPU-FB-MULTI-0001	( vg_gc2000.sh 2 & ); gles_viv.sh 2; wait
+TGE-LV-GPU-FB-PERF-GLES-0006	gles_viv.sh 2
+TGE-LV-GPU-PERF-OPENVG-0001	vg_gc2000.sh 1
+TGE-LV-KMEM-0001	insmod ${LTPROOT}/testcases/bin/memory_test.ko && rmmod memory_test
+TGE-LV-KERNEL-CLOCK-0001	count=`cat /proc/timer_list | grep clock | wc -l`; [ $count -gt 0 ]
+TGE-LV-KERNEL-SMP-0002	[ $(cat /proc/cpuinfo | grep processor | wc -l ) -eq 2 ]
+TGE-LV-KERNEL-SMP-0003	cd $LTPROOT/testcases/bin/cpu_hotplug && ./runtests.sh
+TGE-LV-KERNEL-SMP-0005	smp_test.sh 1
+TGE-LV-KERNEL-SMP-0006	smp_test.sh 2
+TGE-LV-KERNEL-SMP-0009	smp_test.sh 4
+TGE-LV-KERNEL-SMP-0010	smp_test.sh 5
+TGE-LV-KERNEL_BOOT-0001	dmesg -c
+TGE-LV-KERNEL-10002	timer_resolution
+TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
+TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
+TGE-LV-NOR-1102	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
+TGE-LV-NOR-1103	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x00100000 -V
+TGE-LV-NOR-1104	nor_mtd_testapp -T THRDRWE -D /dev/mtd1 -L 0x00100000 -V
+TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000  -V
+TGE-LV-NOR-1116	nor_mtd_testapp -T PERFORM -D /dev/mtd0 -V
+TGE-LV-NOR-1301	nor_test.sh 1 && nor_test.sh 2
+TGE-LV-DVFS-0140	dvfs_mx61.sh 1
+TGE-LV-DVFS-0141	dvfs_mx61.sh 2
+TGE-LV-DVFS-0145	dvfs_mx61.sh 4
+TGE-LV-DVFS-0160	dvfs_mx61.sh 5
+TGE-LV-DVFS-0200	cpufreq-info
+TGE-LV-DVFS-0304	dvfs_mx61.sh 3
+TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
+TGE-LV-ALSA-1161	power_test_alsa.sh 1
+TGE-LV-ALSA-1163	power_test_alsa.sh 3
+TGE-LV-ALSA-3005	clk.sh audio
+TGE-LV-ASRC-0211	rtc_testapp_6 -T 15; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 10 && ifconfig eth0
+TGE-LV-FB-1004	mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 5 && echo q > /tmp/fbv && rm -f /tmp/fbv
+TGE-LV-GPT-0011	gpt_test_pm.sh 1
+TGE-LV-GPU-1005	gles_viv.sh 4 ; vg_gc2000.sh 4
+TGE-LV-GPU-1006	power_test_gpu.sh 1
+TGE-LV-GPU-1008	power_test_gpu.sh 3
+TGE-LV-MMC-1201	storage_all.sh 3
+TGE-LV-PM-0001	powerstate_test.sh
+TGE-LV-PM-PCIE-0001	clk.sh pcie
+TGE-LV-PM-USB-0010	stop-usb.sh
+TGE-LV-RTC-0102	rtc_test_7.sh
+TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 15 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
+TGE-LV-STORAGE-0001	power_test_storage.sh 1
+TGE-LV-STORAGE-0003	power_test_storage.sh 3
+TGE-LV-USB-HOST-DVFS-0001	mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/imx_dvfscore.0/enable  && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt  && umount /mnt/msc && cat /sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state ; echo 0 > /sys/devices/platform/imx_dvfscore.0/enable
+TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 15 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-V4L2-2030	power_test_v4l.sh 1
+TGE-LV-V4L2-2032	power_test_v4l.sh 3
+TGE-LV-VPU-1020	vpu_pm_test.sh 1
+TGE-LV-VPU-1030	vpu_pm_test.sh 2
+TGE-LV-VPU-2020	power_test_vpu.sh 1
+TGE-LV-VPU-2022	power_test_vpu.sh 3
+TGE-LV-RTC-0010	rtc_testapp_1
+TGE-LV-RTC-0011	rtc_testapp_2
+TGE-LV-RTC-0013	rtc_testapp_5 -T POLL
+TGE-LV-RTC-0014	rtc_testapp_5 -T FASYNC
+TGE-LV-RTC-0015	rtc_testapp_5 -T READ_WAIT
+TGE-LV-RTC-0020	rtc_testapp_4
+TGE-LV-RTC-0100	rtc_test.sh 2
+TGE-LV-RTC-2000	rtc_test.sh 3
+TGE-LV-SD-1010	mmc_transfer.sh
+TGE-LV-SD-1050	clk.sh sd
+TGE-LV-SD-1800	cat /proc/partitions | grep mmc
+TGE-LV-OTP-0001	otp_test.sh
+TGE-LV-STORAGE-2001	storage_all.sh 1
+TGE-LV-STORAGE-2002	storage_all.sh 2
+TGE-LV-VIIM-0001	iim_test
+TGE-LV-SYS_DISPLAY-0001	display_stress.sh 1
+TGE-LV-SYS_DISPLAY-0002	display_stress.sh 2
+TGE-LV-SYS_DISPLAY-0006	display_stress.sh 6
+TGE-LV-THERMO-0001	ls /sys/devices/virtual/thermal/thermal_zone0/*temp | xargs cat
+TGE-LV-THERMO-0002	ls /sys/devices/virtual/thermal/thermal_zone0/*type | xargs cat
+TGE-LV-THERMO-0004	thermal_freq.sh
+TGE-LV-UART-0017	uart_test.sh /dev/ttymxc0 interrupt
+TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc3 && stty -a -F /dev/ttymxc3  | grep cs8 &&  stty -a -F /dev/ttymxc3  | grep cstopb && stty -a -F /dev/ttymxc3  | grep crtscts && stty -a  -F /dev/ttymxc3 | grep ignbrk
+TGE-LV-UART-0020	clk.sh uart
+TGE-LV-UART-0510	RT=0; for i in 9600 115200; do echo "======== Test Baud rate $i ======" && uart_testapp_11 /dev/ttymxc1 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
+TGE-LV-USB-CLK-0001	clk.sh usb
+TGE-LV-USB-HOST-0010	cat /proc/partitions | grep sd
+TGE-LV-USB-HOST-0030	mkfs.ext3 /dev/sda1
+TGE-LV-USB-HOST-0040	mkdir -p /media/sda1; mount /dev/sda1 /media/sda1 && bonnie++ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 && umount /media/sda1
+TGE-LV-V4L2-0010	v4l_capture_testapp -T 10
+TGE-LV-V4L2-0011	v4l_capture_testapp -T 300
+TGE-LV-V4L2-0012	v4l_capture_testapp -H 320 -W 240
+TGE-LV-V4L2-0013	v4l_capture_testapp -H 160 -W 120
+TGE-LV-V4L2-0015	v4l_capture_testapp -H 100 -W 100
+TGE-LV-V4L2-0016	v4l_capture_testapp -H 10 -W 200
+TGE-LV-V4L2-0017	v4l_capture_testapp -H 220 -W 176
+TGE-LV-V4L2-0018	v4l_capture_testapp -S
+TGE-LV-V4L2-0019	v4l_capture_testapp -B 0,0,100,100 -v 1
+TGE-LV-V4L2-0020	v4l_capture_testapp -B 0,0,320,240 -v 1
+TGE-LV-V4L2-0021	v4l_capture_testapp -B 100,100,320,240 -v 1
+TGE-LV-V4L2-0022	v4l_capture_testapp -B 10,10,320,240 -v 1
+TGE-LV-V4L2-0023	v4l_capture_testapp -B 50,50,100,100 -v 1
+TGE-LV-V4L2-0024	v4l_capture_testapp -B 0,0,220,176 -v 1
+TGE-LV-V4L2-0025	v4l_capture_testapp -B 100,100,100,100 -v 1
+TGE-LV-V4L2-0026	v4l_capture_testapp -B 0,200,100,100 -v 1
+TGE-LV-V4L2-0028	v4l_capture_testapp -B 320,240,100,100 -v 1
+TGE-LV-V4L2-0029	v4l_capture_testapp -B 0,0,640,480 -v 1
+TGE-LV-V4L2-0030	v4l_capture_testapp -R 1 -C 1
+TGE-LV-V4L2-0030_VF	v4l_capture_testapp -R 10
+TGE-LV-V4L2-0031	v4l_capture_testapp -R 2 -C 1
+TGE-LV-V4L2-0032	v4l_capture_testapp -R 3 -C 1
+TGE-LV-V4L2-0033	v4l_capture_testapp -R 4 -C 1
+TGE-LV-V4L2-0034	v4l_capture_testapp -R 5 -C 1
+TGE-LV-V4L2-0035	v4l_capture_testapp -R 6 -C 1
+TGE-LV-V4L2-0036	v4l_capture_testapp -R 7 -C 1
+TGE-LV-V4L2-0038	v4l_capture_testapp -Y2
+TGE-LV-V4L2-0039	v4l_capture_testapp -Y1
+TGE-LV-V4L2-0040	v4l_capture_testapp -C 2 -H 100  -W 200
+TGE-LV-V4L2-0041	v4l_capture_testapp -C2 -R 9
+TGE-LV-V4L2-0042	v4l_capture_testapp -C2 -R 10
+TGE-LV-V4L2-0043	v4l_capture_testapp -C2 -R 11
+TGE-LV-V4L2-0044	v4l_capture_testapp -C2 -R 12
+TGE-LV-V4L2-0045	v4l_capture_testapp -C2 -R 13
+TGE-LV-V4L2-0046	v4l_capture_testapp -C2 -R 14
+TGE-LV-V4L2-0047	v4l_capture_testapp -C2 -R 15
+TGE-LV-V4L2-0048	v4l_capture_testapp -C2 -R 16
+TGE-LV-V4L2-0050	v4l_capture_testapp -C 3 -O BGR24 -o ./output
+TGE-LV-V4L2-0051	v4l_capture_testapp -C 3 -O BGR32 -o ./output
+TGE-LV-V4L2-0052	v4l_capture_testapp -C 3 -O RGB565 -o ./output
+TGE-LV-V4L2-0053	v4l_capture_testapp -C 3 -O RGB24 -o ./output
+TGE-LV-V4L2-0054	v4l_capture_testapp -C 3 -O RGB32 -o ./output
+TGE-LV-V4L2-0055	v4l_capture_testapp -C 3 -O YUV422P -o ./output && cp output_YUV422P /mnt/nfs/temp/ipu_YUV422P_240_190.bin && rm -f output_YUV422P
+TGE-LV-V4L2-0056	v4l_capture_testapp -C 3 -O YUV420 -o ./output && cp output_YUV420 /mnt/nfs/temp/ipu_YUV420_240_190.bin && rm -rf output_YUV420
+TGE-LV-V4L2-0058	v4l_capture_testapp -C 3 -H 100  -W 100
+TGE-LV-V4L2-0059	v4l_capture_testapp -C 3 -H 480  -W 640
+TGE-LV-V4L2-0064	v4l_capture_testapp -C 2 -H 480  -W 640 -T 20
+TGE-LV-V4L2-0065	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X
+TGE-LV-V4L2-0067	v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 0 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 1 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 2 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 3 -r 30 && v4l_capture_testapp -C 2 -H 240 -W 320 -T 100 -X -M 4 -r 30 && v4l_capture_testapp -C 2 -H 720 -W 480 -T 100 -X -M 4 -r 30
+TGE-LV-V4L2-0068	v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 6 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15
+TGE-LV-V4L2-0069	v4l_capture_testapp -C 3 -H 1080 -W 1920 -r 15 -M 5 -O BGR24 -o /mnt/nfs/temp/output_1920_1080 && v4l_capture_testapp -C 3 -H 1944 -W 2592 -r 15 -M 6 -O BGR24 -o /mnt/nfs/temp/output_1944_2592 && conv -i /mnt/nfs/temp/output_1920_1080 -b 256 -I BGR24 -x 1920 -y 1080 -o /mnt/nfs/temp/out_1920_1080.bmp && conv -i /rootfs/wb/temp/output_1944_2592 -b 256 -I BGR24 -x 2592 -y 1944 -o /mnt/nfs/temp/out_2592_1944.bmp
+TGE-LV-V4L2-0090	v4l_capture_testapp -S -R 10
+TGE-LV-V4L2-0091	v4l_capture_testapp -S -R 11
+TGE-LV-V4L2-0092	v4l_capture_testapp -S -R 12
+TGE-LV-V4L2-0093	v4l_capture_testapp -S -R 13
+TGE-LV-V4L2-0094	v4l_capture_testapp -S -R 14
+TGE-LV-V4L2-0095	v4l_capture_testapp -S -R 15
+TGE-LV-V4L2-0096	v4l_capture_testapp -S -R 16
+TGE-LV-V4L2-0100	v4l_capture_testapp -R 9 -N 5 -X
+TGE-LV-V4L2-0101	v4l_capture_testapp -R 11 -N 5 -X
+TGE-LV-V4L2-0102	v4l_capture_testapp -R 12 -N 5 -X
+TGE-LV-V4L2-0103	v4l_capture_testapp -R 13 -N 5 -X
+TGE-LV-V4L2-0104	v4l_capture_testapp -R 14 -N 5 -X
+TGE-LV-V4L2-0105	v4l_capture_testapp -R 15 -N 5 -X
+TGE-LV-V4L2-0106	v4l_capture_testapp -R 16 -N 5 -X
+TGE-LV-V4L2-0107	v4l_capture_testapp -R 11 -N  -T 5
+TGE-LV-V4L2-0108	v4l_capture_testapp -R 10 -N 5 -X
+TGE-LV-V4L2-0120	v4l_capture_testapp -C 3 -H 240  -W 320
+TGE-LV-V4L2-0121	v4l_capture_testapp -C 3 -H 240  -W 320 -K 1
+TGE-LV-V4L2-0122	v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_IC_MEM
+TGE-LV-V4L2-0123	v4l_capture_testapp -C 3 -H 240  -W 320 -s CSI_MEM
+TGE-LV-V4L2-0124	v4l_capture_testapp -C 3 -H 480  -W 640 -O YUV420 -o ./test -s CSI_MEM && rm -f test_YUV420
+TGE-LV-V4L2-0125	v4l_capture_testapp -C 2 -H 240  -W 320 -s CSI_IC_MEM
+TGE-LV-V4L2-0126	v4l_capture_testapp  -C 3 -T 100 -Z
+TGE-LV-V4L2-0127	v4l_capture_testapp -C 3 -T 100  -r 15 -Z
+TGE-LV-V4L2-0128	v4l_capture_testapp -C 3 -T 1000 -Z && v4l_capture_testapp -C 3 -T 1000  -r 15 -Z
+TGE-LV-V4L2-0130	v4l2_basic_test.sh
+TGE-LV-V4L2-0131	v4l2_still_test.sh
+TGE-LV-V4L2-0136	mxc_v4l2_overlay.sh 1
+TGE-LV-V4L2-0137	mxc_v4l2_overlay.sh 2
+TGE-LV-V4L2-0138	mxc_v4l2_overlay.sh 3
+TGE-LV-V4L2-0139	mxc_v4l2_overlay.sh 4
+TGE-LV-V4L2-0140	mxc_v4l2_overlay.sh 5
+TGE-LV-V4L2-0141	mxc_v4l2_overlay.sh 6
+TGE-LV-V4L2-0152	echo 1 > /sys/class/graphics/fb0/blank ; echo 1 > /sys/class/graphics/fb2/blank ; sleep 5 && v4l_capture_testapp -C 3 -O RGB565 -o ./output && echo 0 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb2/blank
+TGE-LV-V4L2-0158	v4l_capture_testapp -C 3 -O YUYV -o ./output && cp output_YUYV /mnt/nfs/temp/ipu_YUYV.bin && rm -rf output_YUYV
+TGE-LV-V4L2-0159	v4l_capture_testapp -C 3 -O UYVY -o ./output && cp output_UYVY /mnt/nfs/temp/ipu_UYVY.bin && rm -rf output_UYVY
+TGE-LV-V4L2-0165	v4l_capture_testapp -C 2 -H 240  -W 320 -T 100 -X -K 1
+TGE-LV-V4L2-0171-stress	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4l2-1001W	v4l_module.sh setup;/unit_tests/mxc_v4l2_still.out -f YUYV -w 640 -h 480 && cp -f still.yuv /mnt/nfs/temp/still_YUYV_640_480.yuv; v4l_module.sh cleanup
+TGE-LV-V4L2-1011	echo 1 > /sys/class/graphics/fb0/blank && v4l_capture_testapp -T 10 && echo 1 > /sys/class/graphics/fb0/blank
+TGE-LV-V4L2-1131	export CAMERA=ov8820_mipi; v4l2_still_test.sh
+TGE-LV-V4L2-1137	export CAMERA=ov8820_mipi; mxc_v4l2_overlay.sh 2
+TGE-LV-V4L2-1138	export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 3
+TGE-LV-V4L2-1139	export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 4
+TGE-LV-V4L2-1140	export CAMERA=ov5640_mipi; mxc_v4l2_overlay.sh 5
+TGE-LV-V4L2-2010	(v4l_capture_testapp -T 300 -X &) &&  v4l_capture_testapp -C 3 -H 240 -W 320 -K 1
+TGE-LV-V4L2-4010	export CAMERA=ov5640_mipi ; v4l_capture_testapp -T 10
+TGE-LV-IPU_DEV-0010	ipu_test.sh 1
+TGE-LV-IPU_DEV-0020	ipu_test.sh 2
+TGE-LV-IPU_DEV-0030	ipu_test.sh 3
+TGE-LV-IPU_DEV-0040	ipu_test.sh 4
+TGE-LV-IPU_DEV-0055	ipu_test.sh 5
+TGE-LV-IPU_DEV-0070	ipu_test.sh 7
+TGE-LV-V4L2-0070	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-V4L2-0071	v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4L2-0072	v4l_output_testapp  -C 2 -F $LTPROOT/testcases/bin/yuv420
+TGE-LV-V4L2-0073	v4l_output_testapp -C 2 -R 1 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-0074	v4l_output_testapp -C 2 -R 2 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-0075	v4l_output_testapp -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24
+TGE-LV-V4L2-0076	v4l_output_testapp -C 2 -R 4 -F $LTPROOT/testcases/bin/green_RGB24
+TGE-LV-V4L2-0077	v4l_output_testapp -C 2 -R 5 -F $LTPROOT/testcases/bin/yellow_BGR32
+TGE-LV-V4L2-0078	v4l_output_testapp -C 2 -R 6 -F $LTPROOT/testcases/bin/yellow_BGR32
+TGE-LV-V4L2-0079	v4l_output_testapp -C 2 -R 7 -F $LTPROOT/testcases/bin/yellow_BGR32
+TGE-LV-V4L2-0084	v4l_output_testapp -C 2 -F $LTPROOT/testcases/bin/yuv422p
+TGE-LV-V4L2-1070	v4l_output_testapp -B 10,10,320,240 -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-V4L2-1071	v4l_output_testapp -B 10,10,320,240 -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24
+TGE-LV-V4L2-1072	v4l_output_testapp  -B 10,10,320,240 -C 2 -F $LTPROOT/testcases/bin/yuv420
+TGE-LV-V4L2-1073	v4l_output_testapp -B 10,10,320,240 -C 2 -R 1 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-1074	v4l_output_testapp -B 10,10,320,240 -C 2 -R 2 -F $LTPROOT/testcases/bin/cyan_RGB32
+TGE-LV-V4L2-1075	v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24
+TGE-LV-V4L2-1076	ipuv3_test.sh 3
+TGE-LV-V4L2-1077	/unit_tests/mxc_v4l2_output.out -iw 352 -ih 240 -fr 80  ${LTPROOT}/testcases/bin/fb-352x240.yuv
+TGE-LV-V4L2-1078	mxc_v4l2_output.sh 1
+TGE-LV-V4L2-1079	mxc_v4l2_output.sh 2
+TGE-LV-V4L2-1080	mxc_v4l2_output.sh 3
+TGE-LV-V4L2-1081	mxc_v4l2_output.sh 4
+TGE-LV-V4L2-1082	mxc_v4l2_output.sh 5
+TGE-LV-VPU-0001	vpu_dec_test.sh 1
+TGE-LV-VPU-0002	vpu_dec_test.sh 2
+TGE-LV-VPU-0004	vpu_dec_test.sh 4
+TGE-LV-VPU-0005	vpu_dec_test.sh 5
+TGE-LV-VPU-0006	vpu_dec_test.sh 6
+TGE-LV-VPU-0007	vpu_dec_test.sh 7
+TGE-LV-VPU-0008	vpu_dec_test.sh 8
+TGE-LV-VPU-0009	vpu_dec_test.sh 9
+TGE-LV-VPU-0010	vpu_dec_test.sh 11
+TGE-LV-VPU-1010	vpu_dec_test.sh 10
+TGE-LV-VPU-1011	vpu_multi_dec_test.sh 1
+TGE-LV-VPU-1012	vpu_dec_test.sh 12
+TGE-LV-VPU-1013	vpu_dec_test.sh 13
+TGE-LV-VPU-1015	vpu_multi_dec_test.sh 2
+TGE-LV-VPU-1016	vpu_multi_dec_test.sh 3
+TGE-LV-VPU-1017	vpu_dec_test.sh 15
+TGE-LV-VPU-1018	vpu_dec_test.sh 16
+TGE-LV-VPU-20001	vpu_app_test.sh 1
+TGE-LV-VPU-20002	vpu_app_test.sh 2
+TGE-LV-VPU-20003	vpu_app_test.sh 3
+TGE-LV-VPU-20004	vpu_app_test.sh 4
+TGE-LV-VPU-20005	vpu_app_test.sh 5
+TGE-LV-VPU-20006	vpu_app_test.sh 6
+TGE-LV-VPU-20015	export CAMERA=ov5640_mipi ; vpu_app_test.sh 5
+TGE-LV-VPU-CLOCK-0001	clk.sh vpu
+TGE-LV-VPU-10000	vpu_enc_test.sh 1
+TGE-LV-VPU-10010	vpu_enc_test.sh 2
+TGE-LV-VPU-10020	vpu_enc_test.sh 3
+TGE-LV-VPU-10030	vpu_enc_test.sh 4
+TGE-LV-VPU-10040	vpu_enc_test.sh 5
+TGE-LV-VPU-10210	vpu_multi_enc_test.sh 1
+TGE-LV-VPU-10220	vpu_multi_enc_test.sh 2
+TGE-LV-VPU-10221	vpu_multi_enc_test.sh 3
+TGE-LV-VPU-20007	vpu_app_test.sh 7
+TGE-LV-VPU-20008	vpu_app_test.sh 8
