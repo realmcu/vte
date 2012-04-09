@@ -1,5 +1,5 @@
 #!/bin/sh
-#Copyright (C) 2008,2010,2011 Freescale Semiconductor, Inc. 
+#Copyright (C) 2008,2010-2012 Freescale Semiconductor, Inc.
 #All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -11,27 +11,17 @@
 ##############################################################################
 #
 # Revision History:
-#                      Modification     Tracking
-# Author                   Date          Number    Description of Changes
-#-------------------   ------------    ----------  ---------------------
-# Spring Zhang          25/07/2008       n/a        Initial ver. 
-# Spring                24/10/2008       n/a        Add -A automation option   
-# Spring                28/11/2008       n/a        Modify COPYRIGHT header
-# Spring                06/07/2010       n/a        Add -D hw option
-# Spring                22/12/2010       n/a        Use temp direcotry
-# Spring                17/03/2011       n/a        Match right ALSA device
+#                      Modification
+# Author                   Date       Description of Changes
+#-------------------   ------------   ---------------------
+# Spring Zhang          25/07/2008    Initial ver.
+# Spring                24/10/2008    Add -A automation option
+# Spring                28/11/2008    Modify COPYRIGHT header
+# Spring                06/07/2010    Add -D hw option
+# Spring                22/12/2010    Use temp direcotry
+# Spring                17/03/2011    Match right ALSA device
+# Spring                30/03/2012    Remove dependency of alsa dev detect
 #############################################################################
-# Portability:  ARM sh 
-#
-# File Name:    
-# Total Tests:        1
-# Test Strategy: play audio streams
-# 
-# Input:	- $1 - audio stream
-#
-# Return:       - 
-#
-# Use command "./dac_test1.sh [audio stream]" 
 
 # Function:     setup
 #
@@ -59,16 +49,16 @@ setup()
         LTPTMP=/tmp
     fi
 
-    while getopts f:ANMDH arg
-    do 
+    while getopts f:d:s:MDNh arg
+    do
         case $arg in
         f) FILE=$OPTARG;;
-        A) AUTO="true";;
+        d) CARD=$OPTARG;;
+        s) SEARCH_STR=$OPTARG;;
+        M) MANUAL="true";;
         D) HW="true";;
-	H) HDMI="true";;
-        N|M) ;;
-        \?) usage
-        exit 67;;
+        N) ;;
+        \?|h) usage;;
         esac
     done
 
@@ -87,12 +77,6 @@ setup()
         RC=66
         return $RC
     fi
-
-    detect_alsa_dev.sh $HDMI
-    dfl_alsa_dev=$?
-    #parameter of HW playback and plughw playback
-    hw_play="-Dhw:${dfl_alsa_dev},0"
-    plughw_play="-Dplughw:${dfl_alsa_dev},0"
 }
 
 # Function:     cleanup
@@ -101,16 +85,19 @@ setup()
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
-cleanup() 
+cleanup()
 {
     RC=0
 
     needpause=$(cat /proc/cpuinfo | grep 378 | wc -l)
     if [ ! -z $needpause ]; then
-      sleep 3;
+      sleep 3
     fi
-    
-    rm -f $tmpdir/$basefn
+
+    if [ -e $tmpdir ]; then
+        rm -rf $tmpdir
+    fi
+
     return $RC
 }
 
@@ -123,47 +110,157 @@ cleanup()
 #
 dac_play()
 {
-    RC=0    # Return value from setup, and test functions.
+    RC=5
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if there is voice."
     basefn=$(basename $FILE)
-    tmpdir=`mktemp -d -p /tmp`
-    cp -f $FILE $tmpdir || RC=$?
-    if [ $RC -ne 0 ]; then
-        tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in /tmp"
-        return $RC
-    fi
-
-    if [ -n "$HW" ]; then
-        aplay ${hw_play} -N -M $tmpdir/$basefn || RC=$?
-        if [ $RC -ne 0 ]; then
-            tst_resm TFAIL "Test #1: play error with HW, please check"
+    tmpdir=`mktemp -d -p $LTPTMP`
+    if [ -e $tmpdir ]; then
+        cp -f $FILE $tmpdir
+        if [ $? -ne 0 ]; then
+            tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in $LTPTMP"
             return $RC
         fi
-    fi
-
-    aplay $plughw_play -N -M $tmpdir/$basefn || RC=$?
-    if [ $RC -ne 0 ]; then
-        tst_resm TFAIL "Test #2: play error, please check"
+    else
+        RC=2
         return $RC
     fi
 
-    #if auto, ignore ask the answer!
-    if [ -n "$AUTO" ]; then
-        return $RC
+    HW_keyword="card 0"
+    if_card_specified=""
+    #if card is specified
+    if [ -n "$CARD" ]; then
+        HW_keyword="card $CARD"
+        if_card_specified="card"
+    elif [ -n "$SEARCH_STR" ]; then
+        #if search string is specified
+        HW_keyword=$SEARCH_STR
+        if_card_specified="pattern"
     fi
 
+    if [ -n "$if_card_specified" ]; then
+        alsa_dev=`aplay -l |grep card| grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
+        if [ -z "$alsa_dev" ]; then
+            RC=69
+            tst_resm TFAIL "Specified card $HW_keyword not found, please check."
+            return $RC
+        fi
+        dev_num=0
+        for dev in $alsa_dev; do
+            dev_num=`expr $dev_num + 1`
+        done
+        if [ $dev_num -gt 1 ]; then
+            RC=70
+            tst_resm TFAIL "Specified card $HW_keyword match num is not single, please provide more detail name"
+            return $RC
+        fi
+        #in case there are more than one card match the search pattern
+        total_card_num=1
+        if [ -z "$HW" ]; then
+            plugin="plug"
+        fi
+        #parameter of HW playback and plughw playback
+        play_iface="-D${plugin}hw:${alsa_dev}"
+        card_name=`aplay -l | grep -i "$HW_keyword" | awk '{ print $3 }'`
+        aplay ${play_iface} $tmpdir/$basefn
+        if [ $? -eq 0 ]; then
+            echo
+            echo "TPASS play on: $card_name"
+            RC=0
+        else
+            echo
+            echo "TFAIL play on: $card_name"
+        fi
+
+        #if manual is set, ask the answer!
+        if [ -n "$MANUAL" ]; then
+            manual_check || RC=$?
+        fi
+
+        return $RC
+    else
+        total_card_num=`aplay -l| grep card |wc -l`
+    fi
+
+    # if card is not specified, try loop on all cards
+    i=0
+    while [ $i -lt $total_card_num ]; do
+        if [ -z "$alsa_dev" ]; then
+            HW_keyword="card $i"
+            alsa_dev=`aplay -l |grep card| grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
+        fi
+
+        #in case 'continue' in the middle
+        i=`expr $i + 1`
+
+        if [ -z "$alsa_dev" ]; then
+            tst_resm TFAIL "Specified card can not find, please check"
+            RC=68
+            continue
+        fi
+
+        if [ -z "$HW" ]; then
+            plugin="plug"
+        fi
+        #parameter of HW playback and plughw playback
+        play_iface="-D${plugin}hw:${alsa_dev}"
+        card_name=`aplay -l | grep -i "$HW_keyword" | awk '{ print $3 }'`
+        test_cards="$test_cards $card_name"
+        #empty it to loop to next card
+        alsa_dev=""
+        echo
+        echo "TINFO play on: $card_name"
+        aplay ${play_iface} $tmpdir/$basefn
+        if [ $? -eq 0 ]; then
+            test_results="$test_results PASS"
+            echo
+            echo "TPASS play on: $card_name"
+            RC=0
+        else
+            test_results="$test_results FAIL"
+            echo
+            echo "TFAIL play error on: $card_name, please check"
+            continue
+        fi
+
+        #if manual is set, ask the answer!
+        if [ -n "$MANUAL" ]; then
+            manual_check || RC=$?
+        fi
+
+    done
+
+    echo "====================="
+    echo "=====Test Results===="
+    for name in $test_cards; do
+        echo -n "$name "
+    done
+    echo
+    for result in $test_results; do
+        echo -n "$result \t"
+    done
+    echo
+    echo "====================="
+
+    if [ $RC -eq 0 ]; then
+        tst_resm TPASS "Pass playback on all available or specified ALSA device"
+    fi
+
+    return $RC
+}
+
+manual_check()
+{
     tst_resm TINFO "Do you hear the music from the headphone?[y/n]"
     read answer
-    if [ $answer = "y" ]; then
+    if [ "$answer" = "y" ]; then
         tst_resm TPASS "Test #1: ALSA DAC test success."
+        return 0
     else
         tst_resm TFAIL "Test #1: ALSA DAC play audio fail"
         RC=67
     fi
-
-    return $RC
 }
 
 # Function:     usage
@@ -173,15 +270,23 @@ dac_play()
 # Return        - none
 usage()
 {
-    cat <<-EOF 
+    cat <<-EOF
 
     Use this command to test ALSA DAC play functions.
-    usage: ./${0##*/} -f [audio stream] -D
+    usage: ./${0##*/} -f [audio stream] -D -M -d [card num] -s [card string]
             -D: if using hw to playback
-            -A: automation mode without interaction
-    e.g.: ./${0##*/} -f audio44k16M.wav -A -D
+            -M: manual mode check
+            -d: specify card num, e.g. 0, 1, 2
+            -s: specify card search string, e.g. wm8962, sgtl5000, hdmi
+    Play on card 0 with manual check, only use hardware supported stream
+    e.g.: ./${0##*/} -f audio44k16M.wav -M -D -d 0
+    Play on "hdmi" card:
+    e.g.: ./${0##*/} -f audio44k16M.wav -s hdmi
+    Play on all available sound cards:
+    e.g.: ./${0##*/} -f audio44k16M.wav
 
 EOF
+    exit 1
 }
 
 
@@ -193,6 +298,10 @@ EOF
 #               - non-zero on failure.
 #
 RC=0    # Return value from setup, and test functions.
+
+if [ $# -le 1 ]; then
+    usage
+fi
 
 #"" will pass the whole args to function setup()
 setup "$@" || exit $RC
