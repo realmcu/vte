@@ -16,6 +16,7 @@
 #-------------------   ------------ -----------------------
 # Spring Zhang          15/03/2012  Initial ver., integrate old separate script
 # Spring Zhang          15/03/2012  Add ethernet clock check
+# Andy Tian             09/04/2012  Add pcie clock check
 
 
 # Function:     setup
@@ -446,6 +447,40 @@ test_case_10()
     return $RC
 }
 
+# Function:     test_case_11
+# Description   - Test pcie clk
+#
+test_case_11()
+{
+    #TODO give TCID
+    TCID="PCIe clock test"
+    #TODO give TST_COUNT
+    TST_COUNT=11
+    RC=11
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    #TODO add function test script here
+    pcie_list=$(find ${mount_pt}  -name "pcie*")
+
+    pcie=0
+    for i in $pcie_list
+    do
+        temp=$(cat ${i}/usecount)
+        pcie=$(expr $temp + $pcie)
+    done
+
+
+    if [ $pcie -gt 0 ]; then
+        RC=11
+    else
+        RC=0
+    fi
+
+    return $RC
+}
+
 usage()
 {
     cat <<-EOF
@@ -462,6 +497,7 @@ usage()
     8: USB
     9: VPU
     10: Ethernet
+	11: PCIe
 EOF
 
     exit 1
@@ -518,6 +554,9 @@ case "$1" in
     ;;
 10|"ethernet")
     test_case_10 || check_result
+    ;;
+11|"pcie")
+    test_case_11 || check_result
     ;;
 *)
     usage
