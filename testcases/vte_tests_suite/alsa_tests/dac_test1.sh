@@ -82,27 +82,27 @@ setup()
     fi
 
     if [ -n "$CFG_FILE" ]; then
-        if [ -e "$CFG_FILE" ]; then
+        if [ ! -e "$CFG_FILE" ]; then
             tst_resm TBROK "Specified config file can't find, pls check..."
             RC=67
             return $RC
         fi
-    fi
-
-    if [ -z "$CARD" ]
-        if [ -z "$SEARCH_STR" ]; then
-            platfm=`platfm.sh`
-            eval def_cfg_name="audio_dac_${platfm}.cfg"
-            if [ -e /etc/asound/$def_cfg_name ]; then
-                CFG_FILE=/etc/asound/$def_cfg_name
-            elif [ -e $LTPROOT/testcases/bin/$def_cfg_name ]; then
-                CFG_FILE=$LTPROOT/testcases/bin/$def_cfg_name
-            else
-                tst_resm TBROK "Default config file can't find, pls check..."
-                RC=67
-                return $RC
+    else
+	    if [ -z "$CARD" ]; then
+            if [ -z "$SEARCH_STR" ]; then
+                platfm=`platfm.sh`
+                eval def_cfg_name="audio_dac_${platfm}.cfg"
+                if [ -e /etc/asound/$def_cfg_name ]; then
+                    CFG_FILE=/etc/asound/$def_cfg_name
+                elif [ -e $LTPROOT/testcases/bin/$def_cfg_name ]; then
+                    CFG_FILE=$LTPROOT/testcases/bin/$def_cfg_name
+                else
+                    tst_resm TBROK "Default config file can't find, pls check..."
+                    RC=67
+                    return $RC
+                fi
             fi
-        fi
+	    fi
     fi
 }
 
