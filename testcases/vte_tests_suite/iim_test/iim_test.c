@@ -90,7 +90,8 @@ int main()
 
 #if (defined MX5) || (defined MX6)
   printf("print the fuse map for ocotp\n");
-	for (i=0x1000; i<0x1fff; i = i + 4)
+  /*the otp si word align*/
+	for (i=0x1000; i<0x1fff; i = i + 0x10)
 	{
 		static int ci = 0;
 		printf("word %d, value 0x%x\n", ci++,*(int *)(piim+i));
