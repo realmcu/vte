@@ -101,6 +101,7 @@ RC=0
 trap "cleanup" 0 
  
 #TODO add setup scripts
+IBUSID=0
 
 CTRL_INTERFACE=/dev/null
  case "$mode" in
@@ -117,8 +118,16 @@ CTRL_INTERFACE=/dev/null
 	 cmd=3
 	 ;;
 	esac
+
+buses=3
+i=0
+while [ $i -lt $buses ]; do
+	i2cdetect -y $i 0x1c 0x1c | grep UU && IBUSID=$i
+	i=$(expr $i + 1)
+done
+
 #echo $cmd > $CTRL_INTERFACE
-write_reg 0 0x1c MMA8450_CTRL_REG1 $cmd
+write_reg $IBUSID 0x1c MMA8450_CTRL_REG1 $cmd
 RC=$?
 
 list=$(find /sys/class/input/ -name event*)
