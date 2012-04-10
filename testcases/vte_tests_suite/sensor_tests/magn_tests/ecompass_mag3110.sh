@@ -120,7 +120,7 @@ cleanup()
     RC=0
 
     #disable mag3110
-    echo 0 > ${SYS_DIR}/enable
+    echo 0 > /sys/devices/virtual/input/input${event_no}/enable    
     rm -rf $TMPDIR
 
     return $RC
@@ -142,8 +142,9 @@ ecompass_test()
 
     tst_resm TINFO "Magnetic ecompass function."
     tst_resm TINFO "Operation directory in i2c is: ${SYS_DIR}"
-    #enable mag3110
-    echo 1 > ${SYS_DIR}/enable
+    echo ======enable mag3110
+    find_event_entry
+    echo 1 > /sys/devices/virtual/input/input${event_no}/enable
 
     #determine event testapp
     EV_TEST_APP=evtest
@@ -151,7 +152,6 @@ ecompass_test()
     tst_resm TINFO "Capture data from mag3110."
 
     #event handler dynamically determined.
-    find_event_entry
     TMPDIR=`mktemp -d`
     sh -c "$EV_TEST_APP $event_entry 2>&1 | tee $TMPDIR/mag3110.output" &
 
@@ -160,8 +160,8 @@ ecompass_test()
         #clean up the data before suspend
         echo > $TMPDIR/mag3110.output
     fi
-    #2 seconds to allow data capturing
-    sleep 2
+    #10 seconds to allow data capturing
+    sleep 10
     killall $EV_TEST_APP
 
     grep -i "mag3110" $TMPDIR/mag3110.output || RC=69
