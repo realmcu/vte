@@ -79,7 +79,9 @@ env_test()
         RGB_DIR=0
     fi
 
-    platfm.sh || platfm=$?
+    platStr=`platfm.sh`
+    platfm=$?
+
     if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
         BL_DIR=/sys/class/backlight/pwm-backlight.0
         RGB_DIR=/sys/class/leds/pmic_leds
@@ -93,8 +95,12 @@ env_test()
         BL_DIR=/sys/class/backlight/pwm-backlight.0
     fi
 
-    if [ $platfm -eq 63 ]; then  #LVDS
-        BL_DIR=/sys/class/backlight/pwm-backlight.3
+    if [ $platfm -eq 63 ]; then
+	    if [ "$platStr" = "IMX6Q-Sabre-SD" ]; then  #LVDS
+			BL_DIR=/sys/class/backlight/pwm-backlight.0
+		else 
+			BL_DIR=/sys/class/backlight/pwm-backlight.3
+		fi
     fi
 
     if [ ! -d $BL_DIR ]
