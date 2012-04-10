@@ -131,6 +131,14 @@ break
 fi
 done
 
+#enable it before using
+enable_list=$(find /sys/devices/virtual/input -name enable)
+for i in $enable_list
+do
+echo $i
+echo 1 > $i
+done
+
 return $RC 
 }
 # Function:     cleanup 
