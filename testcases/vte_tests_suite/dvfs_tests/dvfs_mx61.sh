@@ -1,4 +1,15 @@
 #!/bin/bash -x
+##############################################################################
+#Copyright (C) 2011,2012 Freescale Semiconductor, Inc.
+#All Rights Reserved.
+#
+#The code contained herein is licensed under the GNU General Public
+#License. You may obtain a copy of the GNU General Public License
+#Version 2 or later at the following locations:
+#
+#http://www.opensource.org/licenses/gpl-license.html
+#http://www.gnu.org/copyleft/gpl.html
+##############################################################################
 
 # Function:     setup
 #
@@ -12,9 +23,9 @@
 setup()
 {
     #TODO Total test case
-    export TST_TOTAL=5
+    export TST_TOTAL=6
 
-    export TCID="setup"
+    export TCID="SETUP"
     export TST_COUNT=0
     RC=0
 
@@ -169,6 +180,17 @@ run_auto_test_list()
     return $RC
 }
 
+# Set cpufreq governor to userspace
+set_governor_userspace()
+{
+    # Set cpufreq governor to userspace
+    cpufreq-set -g userspace || {
+        RC=$?
+        echo "CPUFreq governor can't set to userspace"
+        exit $RC
+    }
+}
+
 
 # Function:     test_case_01
 # Description   - Test if <CPU freq> ok
@@ -176,18 +198,19 @@ run_auto_test_list()
 test_case_01()
 {
     #TODO give TCID 
-    TCID="test_CPUFreq_stress"
+    TCID="CPUFreq_STRESS"
     #TODO give TST_COUNT
     TST_COUNT=1
     RC=1
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+    echo "TINFO test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
 
 
     count=0
+    set_governor_userspace
 
     while [ $count -lt 7 ]; do
         count=$(expr $count + 1)
@@ -223,9 +246,9 @@ test_case_02()
     RC=0
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+    echo TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     echo 1 > /sys/devices/platform/imx_dvfscore.0/enable
 
     sleep 5
@@ -236,21 +259,22 @@ test_case_02()
 }
 
 # Function:     test_case_03
-# Description   - Test if <TODO test function> ok
+# Description   - Test if wait mode ok at different freq
 #  
 test_case_03()
 {
     #TODO give TCID 
-    TCID="test_demo3_test"
+    TCID="CPUFREQ_WAIT_MODE"
     #TODO give TST_COUNT
     TST_COUNT=3
     RC=0
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+    echo TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     count=0
+    set_governor_userspace
 
     while [ $count -lt 7 ]; do
         count=$(expr $count + 1)
@@ -281,16 +305,15 @@ test_case_03()
 test_case_04()
 {
     #TODO give TCID 
-    TCID="test_demo4_test"
+    TCID="CPUFreq_change_on_the_fly"
     #TODO give TST_COUNT
     TST_COUNT=4
     RC=0
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+    echo TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
-
+    set_governor_userspace
     run_auto_test_list &
     cpid=$!
 
@@ -322,23 +345,21 @@ test_case_04()
 }
 
 # Function:     test_case_05
-# Description   - Test if <TODO test function> ok
+# Description   - CPUFreq change freq on the fly overnight test
 #  
 test_case_05()
 {
     #TODO give TCID 
-    TCID="test_demo5_test"
+    TCID="CPUFreq_overnight_change"
     #TODO give TST_COUNT
     TST_COUNT=5
     RC=0
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+    echo TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
     i=1
-    while [ $i -lt 500 ]
-    do
+    while [ $i -lt 500 ]; do
         echo $i 
         test_case_04 || RC=$(expr $RC + 1)
         i=$(expr $i + 1)
@@ -354,15 +375,15 @@ test_case_05()
 test_case_06()
 {
     #TODO give TCID 
-    TCID="test_temers_dvfs"
+    TCID="CPUFreq_timer"
     #TODO give TST_COUNT
     TST_COUNT=5
     RC=0
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+    echo TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    set_governor_userspace
 	i=0
 	while [ $i -lt $TOTAL_PT ];do
 		value=${cpufreq_value[$i]}
@@ -386,6 +407,7 @@ usage()
     echo "4: "
     echo "5: "
     echo "6: "
+    exit 1
 }
 
 # main function
@@ -421,7 +443,7 @@ case "$1" in
 5)
     test_case_05 || exit $RC
     ;;
-5)
+6)
     test_case_06 || exit $RC
     ;;
 *)
@@ -429,5 +451,5 @@ case "$1" in
     ;;
 esac
 
-tst_resm TINFO "Test PASS"
+echo TINFO "Test PASS"
 
