@@ -91,13 +91,13 @@ TGE-LV-ASRC-0207 asrc_grp_conv.sh 48
 TGE-LV-ASRC-0208 asrc_grp_conv.sh 96
 TGE-LV-ASRC-0210 asrc_test1.sh -to 96000 $STREAM_PATH/asrc_stream/audio48k24S-S24_LE.wav
 TGE-LV-ETHERNET-1007 touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
-TGE-LV-ETHERNET-1005 udp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1005 udp_stream_script 10.192.244.7 CPU
 TGE-LV-ETHERNET-1000 tcpdump -c 10 -i eth0
 TGE-LV-ETHERNET-1008 ethtool eth0 | grep 1000
 TGE-LV-ETHERNET-1003 ethtool eth0
 TGE-LV-ETHERNET-1009 ifconfig eth0 | grep "dropped:0"
 TGE-LV-ETHERNET-1011 ifconfig eth0 | grep "overruns:0"
-TGE-LV-ETHERNET-1004 tcp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1004 tcp_stream_script 10.192.244.7 CPU
 TGE-LV-SYS_DISPLAY-0001 display_stress.sh 1
 TGE-LV-SYS_DISPLAY-0002_LL display_stress.sh 2
 TGE-LV-SYS_DISPLAY-0006 display_stress.sh 6

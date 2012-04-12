@@ -397,8 +397,8 @@ TGE-LV-ETHERNET-1011 ifconfig eth0 | grep "overruns:0"
 TGE-LV-CORE-0001 validate
 TGE-LV-CORE-0002 check_events
 TGE-LV-UART-0018 stty 115200 cs8 -F /dev/ttymxc3 && stty -a -F /dev/ttymxc3  | grep cs8 &&  stty -a -F /dev/ttymxc3  | grep cstopb && stty -a -F /dev/ttymxc3  | grep crtscts && stty -a  -F /dev/ttymxc3 | grep ignbrk
-TGE-LV-ETHERNET-1004_LL tcp_stream_script 10.192.225.222 CPU
-TGE-LV-ETHERNET-1005_LL udp_stream_script 10.192.225.222 CPU
+TGE-LV-ETHERNET-1004_LL tcp_stream_script 10.192.244.7 CPU
+TGE-LV-ETHERNET-1005_LL udp_stream_script 10.192.244.7 CPU
 TGE-LV-KERNEL-SMP-0010 smp_test.sh 5
 TGE-LV-UART-0020 clk.sh uart
 TGE-LV-USB-CLK-0001 clk.sh usb
