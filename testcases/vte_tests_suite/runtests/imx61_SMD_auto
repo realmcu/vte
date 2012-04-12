@@ -168,20 +168,6 @@ TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
 TGE-LV-FB-1007	clk.sh display
 TGE-LV-FB-1019	echo 1 > /sys/class/graphics/fb0/rotate && echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
-TGE-LV-FB-EPDC-0001	epdc_test -T 0 -g 1 && epdc_test -T 2
-TGE-LV-FB-EPDC-0002	epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,0,1,0,0,0,0,0:0:0:0 && epdc_test -T 0 -u 1 && epdc_test -T 2 -d /dev/fb0
-TGE-LV-FB-EPDC-0003	epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 0 -s 0:0:128:128,257,1,0,0,0,0,0:0:0:0
-TGE-LV-FB-EPDC-0004	epdc_test -T 0 -u 0 && epdc_test -T 3
-TGE-LV-FB-EPDC-0005	epdc_test -T 0 -u 0 && epdc_test -T 2 && epdc_test -T 4
-TGE-LV-FB-EPDC-0006	epdc_test -T 2 && epdc_test -T 5
-TGE-LV-FB-EPDC-0007	epdc_test -T 2 && epdc_test -T 6
-TGE-LV-FB-EPDC-0008	epdc_test -T 0 -g 2 && epdc_test -T 2
-TGE-LV-FB-EPDC-0009	epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2
-TGE-LV-FB-EPDC-0010	epdc_test -T 1
-TGE-LV-FB-EPDC-0012	epdc_test -T 2; epdc_test -T 7
-TGE-LV-FB-EPDC-0013	epdc_full.sh 1
-TGE-LV-FB-EPDC-0016	epdc_test -T 8 -y 10
-TGE-LV-FB-EPDC-0017	epdc_test -T 0 -S 0 && epdc_test -T 0 -S 1 && epdc_test -T 0 -S 2
 TGE-LV-GPT-0010	gpt_testapp
 TGE-LV-HRT-0020	insmod ${LTPROOT}/testcase/bin/hrtimer_test.ko && sleep 1 && rmmod hrtimer_test && dmesg | grep hrtimer_callback
 TGE-LV-TIMER-FREQ-0001	timer_interrupt
@@ -213,12 +199,7 @@ TGE-LV-NOR-1104	nor_mtd_testapp -T THRDRWE -D /dev/mtd1 -L 0x00100000 -V
 TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000  -V
 TGE-LV-NOR-1116	nor_mtd_testapp -T PERFORM -D /dev/mtd0 -V
 TGE-LV-NOR-1301	nor_test.sh 1 && nor_test.sh 2
-TGE-LV-DVFS-0140	dvfs_mx61.sh 1
-TGE-LV-DVFS-0141	dvfs_mx61.sh 2
-TGE-LV-DVFS-0145	dvfs_mx61.sh 4
-TGE-LV-DVFS-0160	dvfs_mx61.sh 5
 TGE-LV-DVFS-0200	cpufreq-info
-TGE-LV-DVFS-0304	dvfs_mx61.sh 3
 TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
 TGE-LV-ALSA-1161	power_test_alsa.sh 1
 TGE-LV-ALSA-1163	power_test_alsa.sh 3
