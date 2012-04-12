@@ -38,7 +38,7 @@ setup()
         field=$(expr $i + 1)
         freq=$(cpufreq-info -s | cut -d " " -f $field | cut -d ":" -f 1)
         if [ ! -z $freq ]; then
-            cpufreq_value[$i]=${freq}
+            cpufreq_value[$i]=$freq
         fi
         i=$(expr $i + 1)
     done
@@ -206,9 +206,6 @@ test_case_01()
     #print test info
     echo "TINFO test $TST_COUNT: $TCID "
 
-    #TODO add function test script here
-
-
     count=0
     set_governor_userspace
 
@@ -217,6 +214,12 @@ test_case_01()
         value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
         echo $value
         cpufreq-set -f ${value}
+        if [ $(cpufreq-info -f) != $(cpufreq-info -w) ]; then
+            echo "CPU Freq reading from cpufreq core and HW is different"
+            RC=2
+            return $RC
+        fi
+
         value_ret=$(cpufreq-info -f | grep $value | wc -l)
         if [ $value_ret -eq 1 ] ; then
             echo sleep...
