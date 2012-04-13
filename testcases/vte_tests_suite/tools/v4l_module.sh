@@ -21,11 +21,13 @@ check_platform_camera()
 			apd=_${appends}
 		fi
 		if [ $find -eq 1  ]; then
-			break
+			modprobe -r ${camera}_camera${apd}
+			continue
 		fi
 		if [ ! -z "$CAMERA"  ];then
 			if [ "$CAMERA" = ${camera}${apd} ]; then
 				camera_module=${camera}_camera${apd}
+				modprobe -r ${camera}_camera${apd}
 				find=1
 			else
 				camera_module=
@@ -37,6 +39,8 @@ check_platform_camera()
 		fi
 	done
  done
+
+ modprobe -r mxc_v4l2_capture || return 1
 
  if [ -z $camera_module ]; then
 	return 1
