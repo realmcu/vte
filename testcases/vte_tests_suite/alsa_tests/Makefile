@@ -1,4 +1,4 @@
-#Copyright (C) 2008,2011 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008,2011-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -14,12 +14,12 @@
 #
 ###############################################################################
 #Revision History:
-#                    Modification     Tracking
-#Author                  Date          Number    Description of Changes
-#------------------  ------------    ----------  ----------------------
-# Z.Spring            07/24/2008        N/A         Initial version
-# Z.Spring            11/24/2008        N/A       Add platform identify script
-# Spring              03/21/2011        N/A       Add device detection script
+#Author                  Date      Description of Changes
+#------------------  ------------  ----------------------
+# Spring              07/24/2008   Initial version
+# Spring              11/24/2008   Add platform identify script
+# Spring              03/21/2011   Add device detection script
+# Spring              04/13/2012   Abandon device detection and add default dev
 #
 ###############################################################################
 #Portability: Indicate if this module is portable to other compilers 

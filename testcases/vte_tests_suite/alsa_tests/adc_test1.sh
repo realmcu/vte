@@ -1,5 +1,6 @@
-#!/bin/sh
-#Copyright (C) 2008,2011 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/bash
+################################################################################
+#Copyright (C) 2008,2011-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -7,37 +8,17 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-##############################################################################
+################################################################################
 #
 # Revision History:
-#                          Modification     Tracking
-# Author                       Date          Number    Description of Changes
-#-----------------------   ------------    ----------  ---------------------
-# Spring Zhang               25/07/2008       n/a        Initial ver. 
-# Spring                     21/10/2008       n/a    Add support for auto cases
-# Spring                     28/11/2008       n/a      Modify COPYRIGHT header
-#############################################################################
-# Portability:  ARM sh 
-#
-# File Name:    
-# Total Tests:        1
-# Test Strategy: record & play audio streams to check
-# 
-# Input:	 $1 - "-D"
-#            $2 - device name, e.g. hw:0,0
-#            $3 - "-f"
-#            $4 - sample format, like S16_LE, S24_LE
-#            $5 - "-d"
-#            $6 - record time
-#            $7 - "-c"
-#            $8 - channel number, e.g. 1, 2
-#            $9 - "-r"
-#            ${10} - sample frequency, e.g. 44100
-#
-# Return:       - 
-#
-# Use command "./adc_test1.sh" -D [device name] -f [sample format]
-#      -d [interrupt after #seconds] -c [channel number] -r [sample rate]
+# Author                   Date        Description of Changes
+#--------------------   ------------   ----------------------
+# Spring Zhang           25/07/2008    Initial ver. 
+# Spring                 21/10/2008    Add support for auto cases
+# Spring                 28/11/2008    Modify COPYRIGHT header
+# Spring                 13/04/2012    Abandon sound card detective
+###############################################################################
+# Test Purpose: Audio capture and playback check
 
 # Function:     setup
 #
@@ -65,7 +46,7 @@ setup()
         LTPTMP=/tmp
     fi
 
-    while getopts D:f:d:c:r:A arg
+    while getopts D:f:d:c:r:AM arg
     do 
         case $arg in
         D) DEVICE=$OPTARG;;
@@ -73,25 +54,22 @@ setup()
         d) DURATION=$OPTARG;;
         c) CHANNEL=$OPTARG;;
         r) SAM_FREQ=$OPTARG;;
-        A) AUTO="true";;
-        \?) usage
-        exit 67 
-        ;;
+        A) ;;
+        M) MANUAL="true";;
+        \?) usage ;;
         esac
     done
 
     if [ -z $DURATION ] || [ -z $SAM_FMT ] || [ -z $SAM_FREQ ] || [ -z $CHANNEL ]
     then
         usage
-        exit 67
     fi
 
     trap "cleanup" 0
 
     if [ ! -e /usr/bin/arecord ]
     then
-        tst_resm TBROK "Test #1: ALSA utilities are not ready, \
-        pls check..."
+        echo TBROK "Test #1: ALSA utilities are not ready, pls check..."
         RC=65
         return $RC
     fi
@@ -101,11 +79,13 @@ setup()
         rm -f audio.wav
     fi
 
-    detect_alsa_dev.sh ADC
-    dfl_alsa_dev=$?
-    #parameter of HW playback and plughw record
-    hw="-Dhw:${dfl_alsa_dev},0"
-    plughw="-Dplughw:${dfl_alsa_dev},0"
+    if [ -z "$DEVICE" ]; then
+        dfl_alsa_dev=0
+        plughw="-Dplughw:${dfl_alsa_dev}"
+    else
+        dfl_alsa_dev=$DEVICE
+        plughw="-D${dfl_alsa_dev}"
+    fi
 }
 
 # Function:     cleanup
@@ -118,7 +98,6 @@ cleanup()
 {
     echo "clean up environment..."
     #rm -f audio.wav record.info
-    echo "clean up environment end"
 }
 
 # Function:    adc_record 
@@ -132,7 +111,7 @@ adc_record()
 {
     RC=0    # Return value from setup, and test functions.
 
-    tst_resm TINFO "Test #1: record audio stream with format $SAM_FMT, channel $CHANNEL, \
+    echo TINFO "Test #1: record audio stream with format $SAM_FMT, channel $CHANNEL, \
  sample rate $SAM_FREQ, $DURATION seconds, please speak to the microphone" 
     args=`echo $@|sed 's/-A//g'`
 
@@ -147,7 +126,7 @@ adc_record()
     grep $SAM_FREQ record.info >/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: record audio stream format is not right"
+        echo TFAIL "Test #1: record audio stream format is not right"
         return $RC
     fi
 
@@ -160,7 +139,7 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: record audio stream format is not right"
+        echo TFAIL "Test #1: record audio stream format is not right"
         return $RC
     fi
 
@@ -173,7 +152,7 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: record audio stream format is not right"
+        echo TFAIL "Test #1: record audio stream format is not right"
         return $RC
     fi
 
@@ -186,7 +165,7 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: record audio stream format is not right"
+        echo TFAIL "Test #1: record audio stream format is not right"
         return $RC
     fi
 
@@ -199,12 +178,12 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: record audio stream format is not right"
+        echo TFAIL "Test #1: record audio stream format is not right"
         return $RC
     fi
 
     #play the recorded audio
-    tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
+    echo TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if there is voice."
     aplay $plughw audio.wav 2> play.info|| RC=$?
     if [ $RC -ne 0 ]
@@ -216,7 +195,7 @@ adc_record()
     grep $SAM_FREQ play.info >/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: recorded audio stream sample rate is not same \
+        echo TFAIL "Test #1: recorded audio stream sample rate is not same \
                 with the given one"
         return $RC
     fi
@@ -230,7 +209,7 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: recorded audio stream format is not right"
+        echo TFAIL "Test #1: recorded audio stream format is not right"
         return $RC
     fi
 
@@ -243,7 +222,7 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: recorded audio stream format is not right"
+        echo TFAIL "Test #1: recorded audio stream format is not right"
         return $RC
     fi
 
@@ -256,7 +235,7 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: recorded audio stream format is not right"
+        echo TFAIL "Test #1: recorded audio stream format is not right"
         return $RC
     fi
 
@@ -269,26 +248,27 @@ adc_record()
     fi
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: recorded audio stream format is not right"
+        echo TFAIL "Test #1: recorded audio stream format is not right"
         return $RC
     fi
 
-    #if auto, ignore ask the answer!
-    if [ ! -n "$AUTO" ]
-    then
+    #if manual, ask the answer!
+    if [ -n "$MANUAL" ]; then
         #check if tester hear the voice
-        tst_resm TINFO "Do you hear the music from the headphone?[y/n]"
+        echo TINFO "Do you hear the music from the headphone?[y/n]"
+        #TODO: There's an error here if manual is triggered.
+        #read: read error: 0: Resource temporarily unavailable
         read answer
-        if [ $answer != "y" ] ; then
+        if [ "$answer" != "y" ] ; then
             RC=67
         fi
     fi
 
     if [ $RC -eq 0 ]
     then
-        tst_resm TPASS "Test #1: ALSA ADC test success."
+        echo TPASS "Test #1: ALSA ADC test success."
     else
-        tst_resm TFAIL "Test #1: ALSA ADC play audio fail"
+        echo TFAIL "Test #1: ALSA ADC play audio fail"
         RC=67
     fi
 
@@ -307,9 +287,10 @@ usage()
     Use this command to test ALSA ADC record functions. -A is auto without confirm
     usage: ./${0##*/} -D [device name] -f [sample format] -d [interrupt \
  after #seconds] -c [channel number] -r [sample rate] -A
-    e.g.: ./${0##*/} -D hw:0,0 -f S16_LE -d 5 -c 1 -r 8000
+    e.g.: ./${0##*/} -D hw:0 -f S16_LE -d 5 -c 1 -r 8000
 
 EOF
+    exit 67
 }
 
 
