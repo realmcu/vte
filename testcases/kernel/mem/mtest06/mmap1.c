@@ -153,59 +153,6 @@ int mkfile(int size)
 
 void *map_write_unmap(void *ptr)
 {
-<<<<<<< HEAD
-    int     mwu_ndx = 0;	/* index to number of map/write/unmap         */
-    long    *mwuargs =          /* local pointer to arguments		      */
-		       (long *)args;
-    long exit_val = 0;  /* exit value of the pthread		      */
-
-    tst_resm(TINFO, "pid[%d]: map, change contents, unmap files %d times",
-		getpid(), (int)mwuargs[2]);
-
-		/* The size of the map */
-		map_len = mwuargs[1];
-
-    if (verbose_print)
-        tst_resm(TINFO, "map_write_unmap() arguments are: "
-		    "fd - arg[0]: %d; "
-		    "size of file - arg[1]: %ld; "
-		    "num of map/write/unmap - arg[2]: %d",
-		    (int)mwuargs[0], (long unsigned)mwuargs[1], (int)mwuargs[2]);
-
-    while (mwu_ndx++ < (int)mwuargs[2])
-    {
-		    while(EBUSY ==  pthread_rwlock_trywrlock(&rwlock));
-        if ((map_address = mmap(0, (size_t)mwuargs[1],  PROT_WRITE|PROT_READ,
-				MAP_SHARED, (int)mwuargs[0], 0))
-			 == (caddr_t *) -1)
-        {
-            perror("map_write_unmap(): mmap()");
-            exit_val = MWU_FAIL;
-            pthread_exit((void *)exit_val);
-        }
-
-        if (verbose_print)
-            tst_resm(TINFO, "map address = %p", map_address);
-
-	prtln();
-
-        memset(map_address, 'a', mwuargs[1]);
-			  pthread_rwlock_unlock(&rwlock);
-        if (verbose_print)
-            tst_resm(TINFO, "[%d] times done: of total [%d] iterations, "
-			"map_write_unmap():memset() content of memory = %s",
-			mwu_ndx, (int)mwuargs[2], (char*)map_address);
-	usleep(1);
-        if (munmap(map_address, (size_t)mwuargs[1]) == -1)
-        {
-	    perror("map_write_unmap(): mmap()");
-            exit_val = MWU_FAIL;
-            pthread_exit((void *)exit_val);
-        }
-    }
-    exit_val = M_SUCCESS;
-    pthread_exit((void *)exit_val);
-=======
 	struct sigaction sa;
 	long *args = ptr;
 	long i;
@@ -275,53 +222,10 @@ void *map_write_unmap(void *ptr)
 	}
 
 	pthread_exit((void *)0);
->>>>>>> ltp
 }
 
 void *read_mem(void *ptr)
 {
-<<<<<<< HEAD
-    static int	 rd_index = 0;	/* index to the number of reads performed.    */
-    long 	*rmargs = args;	/* local pointer to the arguments	      */
-    long exit_val = 0;  /* pthread exit value			      */
-
-    tst_resm(TINFO, "pid[%d] - read contents of memory %p %ld times",
-           getpid(), map_address, rmargs[2]);
-    if (verbose_print)
-        tst_resm(TINFO,
-		"read_mem() arguments are: "
-		"number of reads to be performed - arg[2]: %d; "
-                "read from address %p",
-		(int)rmargs[2], (long *)map_address);
-
-    while (rd_index++ < (int)rmargs[2])
-    {
-		   while(EBUSY == pthread_rwlock_trywrlock(&rwlock));
-			 pthread_rwlock_unlock(&rwlock);
-        if (verbose_print)
-	    tst_resm(TINFO,
-	        "read_mem() in while loop  %d times to go %ld times",
-		rd_index, rmargs[2]);
-
-        if (setjmp(jmpbuf) == 1)
-        {
-            if (verbose_print)
-	        tst_resm(TINFO,
-		    "page fault occurred due to a read after an unmap from %p",
-		    map_address);
-        }
-        else
-        {
-	    if (verbose_print)
-	        tst_resm(TINFO,
-		    "read_mem(): content of memory: %s", (char *)map_address);
-            if (strncmp((char *)map_address, "a", 1) != 0)
-            {
-                exit_val = -1;
-								pthread_exit((void *)exit_val);
-            }
-            usleep(1);
-=======
 	long i;
 	long *args = ptr;
 	int j;
@@ -360,7 +264,6 @@ void *read_mem(void *ptr)
 					sched_yield();
 			}
 		}
->>>>>>> ltp
 	}
 
 	pthread_exit((void *)0);
@@ -449,101 +352,6 @@ int main(int argc, char **argv)
 		default:
 			usage(argv[0]);
 		break;
-<<<<<<< HEAD
-        }
-    }
-
-    if (verbose_print)
-        tst_resm(TINFO, "Input parameters are: "
-                    "File size:  %d; "
-                    "Scheduled to run:  %lf hours; "
-                    "Number of mmap/write/read:  %d",
-			file_size, exec_time, num_iter);
-    set_timer(exec_time);
-
-    /* set up signals */
-    /* Do not mask SIGSEGV, as we are interested in handling it. */
-
-    sigptr.sa_handler = (void (*)(int signal))sig_handler;
-    sigfillset(&sigptr.sa_mask);
-    sigdelset(&sigptr.sa_mask, SIGSEGV);
-    sigptr.sa_flags = SA_SIGINFO | SA_NODEFER;
-    for (sig_ndx = 0; sig_info[sig_ndx].signum != -1; sig_ndx++)
-    {
-        if (sigaction(sig_info[sig_ndx].signum, &sigptr,
-                (struct sigaction *)NULL) == -1 )
-        {
-            perror( "man(): sigaction()" );
-            fprintf(stderr, "could not set handler for %s, errno = %d\n",
-                    sig_info[sig_ndx].signame, errno);
-            exit(-1);
-        }
-    }
-
-    do
-    {
-        /* create temporary file */
-        if ((fd = mkfile(file_size)) == -1)
-        {
-	    fprintf(stderr,
-			"main(): mkfile(): Failed to create temporary file\n");
-            exit (-1);
-        }
-        else
-        {
-            if (verbose_print)
-                tst_resm(TINFO, "Tmp file created");
-        }
-
-        /* setup arguments to the function executed by process X */
-        chld_args[0] = fd;
-        chld_args[1] = file_size;
-        chld_args[2] = num_iter;
-
-        /* create process X */
-        if (pthread_create(&thid[0], NULL, map_write_unmap, chld_args))
-        {
-            perror("main(): pthread_create()");
-            exit(-1);
-        }
-        else
-        {
-            tst_resm(TINFO, "created thread[%ld]", thid[0]);
-        }
-        sched_yield();
-        if (pthread_create(&thid[1], NULL, read_mem, chld_args))
-        {
-            perror("main(): pthread_create()");
-            exit(-1);
-        }
-        else
-        {
-            tst_resm(TINFO, "created thread[%ld]", thid[1]);
-        }
-        sched_yield();
-
-        for (thrd_ndx = 0; thrd_ndx < 2; thrd_ndx++)
-        {
-            if (pthread_join(thid[thrd_ndx], (void *)&status[thrd_ndx]))
-            {
-                perror("main(): pthread_join()");
-                exit(-1);
-            }
-            else
-            {
-                if (status[thrd_ndx])
-                {
-                    fprintf(stderr,
-			    "thread [%ld] - process exited with errors %d\n",
-			        thid[thrd_ndx], status[thrd_ndx]);
-	            exit (-1);
-	        }
-            }
-        }
-        close(fd);
-    }while (TRUE);
-    exit (0);
-=======
 		}
 	}
 
@@ -605,5 +413,4 @@ int main(int argc, char **argv)
 	}
 
 	exit(0);
->>>>>>> ltp
 }
