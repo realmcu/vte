@@ -31,6 +31,7 @@ check_platform_camera()
 				find=1
 			else
 				camera_module=
+				modprobe -r ${camera}_camera${apd}
 			fi
 		else
 			modprobe -r ${camera}_camera${apd}
