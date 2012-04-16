@@ -24,6 +24,9 @@
 # Spring Zhang          May.23,2011      Initial ver. 
 # Spring Zhang          May.24,2011    Dynamic determine event handler
 # Spring Zhang          Jun.14,2011    Add suspend/resume test
+# Andy Tian             Apr.16,2012    Remove clean up log operation before 
+#                                      suspend, otherwise the case will failed
+#                                      with err code 69
 ############################################################################
 
 # Function:     setup
@@ -158,7 +161,7 @@ ecompass_test()
     if [ $is_suspend -eq 1 ]; then
         rtc_testapp_6 -m mem -T 15 || RC=$?
         #clean up the data before suspend
-        echo > $TMPDIR/mag3110.output
+        #echo > $TMPDIR/mag3110.output
     fi
     #10 seconds to allow data capturing
     sleep 10
