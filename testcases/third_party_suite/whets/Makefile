@@ -2,7 +2,7 @@ TARGET=whetstone
 SRC=whets.c
 CC=$(CROSS_COMPILE)gcc
 
-CFLAGS += -DUNIX -static
+CFLAGS += -Wall -DUNIX
 
 NEON_CFLAGS = -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp -static -Wall -DUNIX
 

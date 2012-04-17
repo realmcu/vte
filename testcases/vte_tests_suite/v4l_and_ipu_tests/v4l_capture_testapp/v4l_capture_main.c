@@ -140,6 +140,7 @@ extern "C" {
 		printf
 		    ("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");
 		printf("Usage: -M <camera input mode> <0 - 5>\n");
+		printf("Usage: -s <IPU path> CSI_IC_MEM / CSI_MEM\n");
 
 	}
 
