@@ -45,9 +45,13 @@ setup()
     BIN_DIR=`dirname $0`
     export PATH=$PATH:$BIN_DIR
 
-    if [ -z $LTPTMP ]
+    if [ -z "$LTPTMP" ]
     then
-        LTPTMP=/tmp
+        LTPTMP=/tmp/tmpfs
+        mount|grep "$LTPTMP" || {
+            mkdir -p $LTPTMP
+            mount -t tmpfs $LTPTMP $LTPTMP
+        }
     fi
 
     while getopts f:c:d:s:aAMDNh arg

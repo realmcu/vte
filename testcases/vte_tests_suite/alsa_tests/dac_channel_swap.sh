@@ -54,9 +54,12 @@ setup()
     BIN_DIR=`dirname $0`
     export PATH=$PATH:$BIN_DIR
 
-    if [ -z $LTPTMP ]
-    then
-        LTPTMP=/tmp
+    if [ -z "$LTPTMP" ]; then
+        LTPTMP=/tmp/tmpfs
+        mount|grep "$LTPTMP" || {
+            mkdir -p $LTPTMP
+            mount -t tmpfs $LTPTMP $LTPTMP
+        }
     fi
 
     s_stream=$1

@@ -1,4 +1,6 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+##############################################################################
+#Copyright (C) 2008,2009,2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,7 +8,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -16,17 +17,11 @@
 # Spring Zhang          07/08/2008       n/a        Initial ver. 
 # Spring                28/11/2008       n/a        Modify COPYRIGHT header
 # Spring                18/05/2009       n/a        Add BBG2 support
+# Spring                17/04/2012       n/a        Add tmpfs mount
 #############################################################################
-# Portability:  ARM sh bash 
 #
-# File Name:    
-# Total Tests:        1
 # Test Strategy: switch from speaker to headphone
 # 
-# Input:	- $1 - audio stream
-#
-# Return:       - 
-#
 # Use command "./speaker_switch_headset.sh [audio stream]" 
 
 # Function:     setup
@@ -50,9 +45,13 @@ setup()
     BIN_DIR=`dirname $0`
     export PATH=$PATH:$BIN_DIR
 
-    if [ -z $LTPTMP ]
+    if [ -z "$LTPTMP" ]
     then
-        LTPTMP=/tmp
+        LTPTMP=/tmp/tmpfs
+        mount|grep "$LTPTMP" || {
+            mkdir -p $LTPTMP
+            mount -t tmpfs $LTPTMP $LTPTMP
+        }
     fi
 
     if [ $# -lt 1 ]

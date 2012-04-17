@@ -1,4 +1,5 @@
 #!/bin/sh
+##############################################################################
 #Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU General Public
@@ -23,7 +24,6 @@
 # Spring                 24/03/2010       n/a      Add support to mx53
 # Spring                 17/03/2011       n/a      Add default device match
 #############################################################################
-# Portability:   ARM sh 
 # File Name:     dac_vol_adj.sh   
 # Total Tests:   1
 # Test Strategy: play audio streams with volume up and down
@@ -52,9 +52,12 @@ setup()
     BIN_DIR=`dirname $0`
     export PATH=$PATH:$BIN_DIR
 
-    if [ -z $LTPTMP ]
-    then
-        LTPTMP=/tmp
+    if [ -z "$LTPTMP" ]; then
+        LTPTMP=/tmp/tmpfs
+        mount|grep "$LTPTMP" || {
+            mkdir -p $LTPTMP
+            mount -t tmpfs $LTPTMP $LTPTMP
+        }
     fi
 
     if [ $# -lt 2 ]

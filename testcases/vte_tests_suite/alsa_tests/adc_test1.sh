@@ -43,7 +43,11 @@ setup()
 
     if [ -z $LTPTMP ]
     then
-        LTPTMP=/tmp
+        LTPTMP=/tmp/tmpfs
+        mount|grep "$LTPTMP" || {
+            mkdir -p $LTPTMP
+            mount -t tmpfs $LTPTMP $LTPTMP
+        }
     fi
 
     while getopts D:f:d:c:r:AM arg
