@@ -27,7 +27,7 @@
 #N.Filinova/nfili1c    27/09/2005   TLSbo54946   Change after review
 #
 ##############################################################################
-CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include/
+CFLAGS+= -Wall -g -I../../../../include -I$(KLINUX_SRCDIR)/include/
 LOADLIBES+=     -L../../../../lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)

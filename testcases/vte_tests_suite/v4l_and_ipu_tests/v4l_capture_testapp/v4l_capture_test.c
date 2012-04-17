@@ -57,6 +57,8 @@ extern "C" {
 #include "test.h"
 /* Verification Test Environment Include Files */
 #include "v4l_capture_test.h"
+#include "ycbcr.h"
+
 #include <inttypes.h>
 #include <linux/mxc_v4l2.h>
 #include <linux/version.h>
@@ -108,6 +110,7 @@ extern "C" {
 	static int gFdFB = 0, gFdV4L = 0;
 	static unsigned char *gpFB = NULL;
 	static unsigned char *gpFB_buf = NULL;
+	static unsigned char * gpRGBconv_buf = NULL; //Software color space conversion buffer
 	static struct fb_var_screeninfo gScreenInfo;
 	static struct fb_fix_screeninfo fScreenInfo;
 	static struct fb_var_screeninfo var_info;
@@ -282,6 +285,8 @@ extern "C" {
 		}
 		if (gpFB_buf != NULL)
 			free(gpFB_buf);
+        if ( gpRGBconv_buf != NULL )
+                free(gpRGBconv_buf);
 		return retValue;
 	}
 
@@ -589,29 +594,41 @@ extern "C" {
 				 gOrigPixFmtName);
 		}
 		/* Set format */
-		CLEAR(gFormat);
-		gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
-		gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
-		gFormat.fmt.pix.pixelformat = gPixelFormat;
+		if (gV4LTestConfig.inputSrc != eInCSI_MEM)
+		{
+			CLEAR(gFormat);
+			gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+			gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
+			gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
+			gFormat.fmt.pix.pixelformat = gPixelFormat;
 	        
         	if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
 			tst_resm(TWARN, "%s formatting failed",
 				 gV4LTestConfig.mV4LDevice);
 			return TFAIL;
+			}
+			/* Verification pixel format of the device */
+			if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
+				tst_resm(TWARN, "%s formatting failed",
+					 gV4LTestConfig.mV4LDevice);
+				return TFAIL;
+			}
+			if (gFormat.fmt.pix.pixelformat != gPixelFormat) {
+				tst_resm(TWARN,
+					 "Pixel format %s is not supported by device %s",
+					 gPixFmtName, gV4LTestConfig.mV4LDevice);
+				return TFAIL;
+			}
 		}
-		/* Verification pixel format of the device */
-		if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
-			tst_resm(TWARN, "%s formatting failed",
-				 gV4LTestConfig.mV4LDevice);
-			return TFAIL;
-		}
-		if (gFormat.fmt.pix.pixelformat != gPixelFormat) {
-			tst_resm(TWARN,
-				 "Pixel format %s is not supported by device %s",
-				 gPixFmtName, gV4LTestConfig.mV4LDevice);
-			return TFAIL;
-		}
+		
+		if(gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
+        {
+			if ( (gpRGBconv_buf = (unsigned char*) malloc (gFormat.fmt.pix.width * gFormat.fmt.pix.height * gScreenInfo.bits_per_pixel / 8)) == NULL){
+                        tst_resm(TFAIL, "gpRGBconv_buf malloc error!");
+                        return TFAIL;
+                }
+        }
+
 		if ((gpFB_buf =
 		     (unsigned char *)malloc(gFormat.fmt.pix.sizeimage)) ==
 		    NULL) {
@@ -1119,12 +1136,30 @@ extern "C" {
 				}
 				sleep(1);
 				display_to_fb((void *)aStart, aLength);
-			} else {
+			} else if (gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420){
 				tst_resm(TWARN,
 					 "Pixel format %s is not supported by frame buffer",
 					 gPixFmtName);
 				return TFAIL;
+			} else {
+			if (gPixelFormat == V4L2_PIX_FMT_YUYV )
+			{
+					YCbYCrToRGB ( (unsigned char *) aStart, 2 * gFormat.fmt.pix.width, 
+								  (unsigned char *) gpRGBconv_buf, 
+								  gFormat.fmt.pix.width, gFormat.fmt.pix.height, 
+								  RGB_ORIENT_NORMAL, RGB_565 );
+					tst_resm (TINFO, "Color space conversion YUYV->RGB565X success!");
+			}else{
+					YCbCrToRGB((unsigned char *) aStart, gFormat.fmt.pix.width,
+							   (unsigned char *) aStart + gFormat.fmt.pix.width * gFormat.fmt.pix.height, 
+							   (unsigned char *) aStart + 5 * gFormat.fmt.pix.width * gFormat.fmt.pix.height / 4, 
+							   gFormat.fmt.pix.width / 2, (unsigned char *) gpRGBconv_buf, 
+							   gFormat.fmt.pix.width, gFormat.fmt.pix.height,
+							   RGB_ORIENT_NORMAL, RGB_565);
+					tst_resm (TINFO, "Color space conversion YUV420->RGB565X success!");
 			}
+			display_to_fb((void*)gpRGBconv_buf, aLength);
+		}
 			break;
 			/* Overlay mode */
 		case PRP_VF:
