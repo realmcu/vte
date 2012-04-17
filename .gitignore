@@ -60,3 +60,8 @@ patches/
 logfile.*
 
 /utils/benchmark/ebizzy-0.3/ebizzy
+/testcases/realtime/include/realtime_config.h.in
+aclocal.m4
+configure
+/include/config.h.in 
+/m4/Makefile.in
