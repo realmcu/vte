@@ -35,7 +35,7 @@ if [ "$CONTINUE" = 'y' ];then
 #tday=$(date +%m%d%Y)
 mac=$(cat /sys/class/net/eth0/address | sed 's/:/_/g')
 tday=${mac}
-cp ${TEST_PATH}/runtest/$CMDFILE ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
+cat ${TEST_PATH}/runtest/$CMDFILE | sed 's/^#//g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday
 if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 #1 not first run, need change the command file skip the last one
 #find the last execute one 
@@ -43,6 +43,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	cnt=1
 	ll=0
 	step=1
+	total_tc=$(cat ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday | grep "TGE-"| wc -l)
 	while [ $search -eq 1 ];do
 	 lct=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | wc -l)
      id=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" |tail -n $cnt | head -n 1)
@@ -70,10 +71,15 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 					echo 1 > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 				else
 		#4 skip formal fail
+					if [ $total_tc -gt $ll ]; then
 					line=$(expr $ll + 1)
 					echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 					#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 					sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+					else
+						echo "all test failed restart test"
+						echo 0 > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
+					fi
 				fi
 			else
 	#3 there is case run before
@@ -86,10 +92,15 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 						echo 1 > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 					else
 				#5 has former fail case
-						line=$(expr $ll + 1)
-						echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-						#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
-						sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+						if [ $total_tc -gt $ll ]; then
+							line=$(expr $ll + 1)
+							echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
+							#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+							sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+						else
+							echo "all following test failed restart test"
+							echo 0 > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
+						fi
 					fi
 				else
 		#4 search former line
@@ -175,11 +186,12 @@ lastcmd=$(cat ${TEST_PATH}/runtest/$CMDFILE | grep -v "#" |grep "TGE-" | tail -n
 rlastcmd=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | tail -n 1 | awk '{print $1}')
 flastcmd=$(cat ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed | grep "TGE-" | tail -n 1 | awk '{print $1}')
 if [ -z $(echo $lastcmd | grep $rlastcmd)  ];then
-     exit 251
+     echo "case result and case final result does not match will try restest in new kernel"
+else
+	echo $(uname -r) > ${TEST_PATH}/temp_cnt_${CMDFILE}_${tday}
 fi
 /mnt/nfs/util/ntpdate 10.192.225.222
 mv ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y)
 mv ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed ${TEST_PATH}/output//LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y).failed
 mv ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_${tday}_$(date +%m%d%Y).txt
-echo $(uname -r) > ${TEST_PATH}/temp_cnt_${CMDFILE}_${tday}
 echo "FREESCALE LBG TEST END"
