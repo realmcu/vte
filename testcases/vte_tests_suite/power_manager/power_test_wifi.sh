@@ -16,6 +16,7 @@ setup()
     # This function will be called before the test program exits.
     trap "cleanup" 0
    
+    export SERVERIP=10.192.244.7
     modprobe ar6000
 	sleep 5
 	iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001
