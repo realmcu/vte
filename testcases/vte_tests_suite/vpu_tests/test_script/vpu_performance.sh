@@ -146,11 +146,34 @@ time -p $TSTCMD -E "-i /dev/zero -f 2 -w $OWD -h $OHT -o /dev/null -c 10 -b $j -
 return $RC
 }
 
+test_case_03()
+{
+#TODO give TCID
+	TCID="vpu_VDOA_Dec test"
+#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=1
+	tst_resm TINFO "test $TCID"
+	stream_path=/mnt/nfs/test_stream/video
+	FILELIST="sunflower_2B_2ref_WP_40Mbps.264 h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 h264_bp_l31_mp3_720x480_15fps_1940kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 balloons_3d.264"
+	for i in $FILELIST
+   	do
+		cp ${stream_path}/$i /mnt/temp/$i
+		$TSTCMD -D "-f 2 -y 1 -i /mnt/temp/$i"
+		$TSTCMD -D "-f 2 -y 0 -i /mnt/temp/$i"
+		#$TSTCMD -D "-f 2 -y 2 -i /mnt/temp/$i"
+		rm -rf /mnt/temp/$i
+	done
+	echo "VPU VDOA dec test"
+	return $RC
+}
+
 usage()
 {
 echo "usage $0 <1/2/3/4/5/6/7/8>"
 echo "1: Dec performance test"
 echo "2: Enc performance test"
+echo "3: VDOA Dec test"
 }
 
 TSTCMD="/unit_tests/mxc_vpu_test.out"
@@ -170,6 +193,9 @@ case "$1" in
   ;;
 2)
   test_case_02 || exit $RC 
+  ;;
+3)
+  test_case_03 || exit $RC 
   ;;
 *)
 #TODO check parameter
