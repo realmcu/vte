@@ -84,7 +84,8 @@ test_case_01()
     #disable the framebuffer
 
     #now check the clocks
-    esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/usecount | grep -v 0)
+    #esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/usecount | grep -v 0)
+    esai_ct=$(cat ${mount_pt}/clock/anaclk_2/pll4_audio_main_clk/esai_clk/usecount | grep -v 0)
     ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_clk/usecount | grep -v 0)
     spdif_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_454M/spdif0_clk_0/usecount | grep -v 0)
     #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
