@@ -93,7 +93,7 @@ setup()
     aplay -l | grep SGTL5000
     if [ $? -ne 0 ]
     then
-        test_resm TBROK "Test #1: SGTL5000 is not ready, \
+        tst_resm TBROK "Test #1: SGTL5000 is not ready, \
             pls check ..."
         RC=66
         return $RC
@@ -106,7 +106,7 @@ setup()
     aplay -l | grep WM8580
     if [ $? -ne 0 ]
     then
-        test_resm TBROK "Test #1: WM8580 is not ready, \
+        tst_resm TBROK "Test #1: WM8580 is not ready, \
             pls check ..."
         RC=66
         return $RC
