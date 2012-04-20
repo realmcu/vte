@@ -311,7 +311,7 @@ start_date=$(date +%d)
 now_date=$(date +%d)
 while [ $now_date > $start_date ]
 	do
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}"
+/unit_tests/mxc_vpu_test.out -D "-f 2 -y 1 -i ${a_stream_path}"
 now_date=$(date +%d)
 done
 
