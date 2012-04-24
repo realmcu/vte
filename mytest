@@ -72,10 +72,10 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 				else
 		#4 skip formal fail
 					if [ $total_tc -gt $ll ]; then
-					line=$(expr $ll + 1)
+						line=$(expr $ll + 1)
 					echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 					#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
-					sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+					sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${ll}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 					else
 						echo "all test failed restart test"
 						echo 0 > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
@@ -96,7 +96,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 							line=$(expr $ll + 1)
 							echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 							#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
-							sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+							sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${ll}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 						else
 							echo "all following test failed restart test"
 							echo 0 > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
@@ -167,7 +167,8 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 				line=$ll
 			fi
 			echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
-			sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${line}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
+			ll=$(expr $line - 1)
+			sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${ll}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 			#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 			search=0
 	 fi
