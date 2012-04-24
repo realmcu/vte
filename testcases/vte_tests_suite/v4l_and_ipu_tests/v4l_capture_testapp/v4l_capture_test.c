@@ -593,6 +593,19 @@ extern "C" {
 			tst_resm(TINFO, "Original pixel format: %s",
 				 gOrigPixFmtName);
 		}
+		
+		memset(&parm, 0, sizeof(parm));
+		parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		parm.parm.capture.timeperframe.numerator = 1;
+		parm.parm.capture.timeperframe.denominator =
+		    gV4LTestConfig.mFrameRate;
+		parm.parm.capture.capturemode = gV4LTestConfig.mMode;
+		if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0) {
+			tst_resm(TFAIL, "set parm error!");
+			close(gFdV4L);
+			return TFAIL;
+		}
+
 		/* Set format */
 		CLEAR(gFormat);
 		gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -605,6 +618,7 @@ extern "C" {
 			 gV4LTestConfig.mV4LDevice);
 		return TFAIL;
 		}
+
 		/* Verification pixel format of the device */
 		if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
 			tst_resm(TWARN, "%s formatting failed",
@@ -638,18 +652,7 @@ extern "C" {
 			tst_resm(TINFO, "\tCapture : Format image height = %d",
 				 gFormat.fmt.pix.height);
 		}
-		memset(&parm, 0, sizeof(parm));
-		parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		parm.parm.capture.timeperframe.numerator = 1;
-		parm.parm.capture.timeperframe.denominator =
-		    gV4LTestConfig.mFrameRate;
-		parm.parm.capture.capturemode = gV4LTestConfig.mMode;
-		if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0) {
-			tst_resm(TFAIL, "set parm error!");
-			close(gFdV4L);
-			return TFAIL;
-		}
-		/* Set rotation */
+				/* Set rotation */
 		if (gV4LTestConfig.mRotation) {
 			if (config_device_for_rotation
 			    (gV4LTestConfig.mRotationMode))
