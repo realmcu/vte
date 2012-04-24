@@ -353,7 +353,7 @@ TGE-LV-V4L2-1138	export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 3
 TGE-LV-V4L2-1139	export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 4
 TGE-LV-V4L2-1140	export CAMERA=ov5640_mipi; mxc_v4l2_overlay.sh 5
 TGE-LV-V4L2-2010	(v4l_capture_testapp -T 300 -X &) &&  v4l_capture_testapp -C 3 -H 240 -W 320 -K 1
-TGE-LV-V4L2-4010	export CAMERA=ov5640_mipi ; v4l_capture_testapp -T 10
+TGE-LV-V4L2-4010	export CAMERA=ov5640_mipi ; v4l_capture_testapp -C 2 -s CSI_MEM -O YUV420 -T 10
 TGE-LV-IPU_DEV-0010	ipu_test.sh 1
 TGE-LV-IPU_DEV-0020	ipu_test.sh 2
 TGE-LV-IPU_DEV-0030	ipu_test.sh 3
