@@ -594,31 +594,28 @@ extern "C" {
 				 gOrigPixFmtName);
 		}
 		/* Set format */
-		if (gV4LTestConfig.inputSrc != eInCSI_MEM)
-		{
-			CLEAR(gFormat);
-			gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-			gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
-			gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
-			gFormat.fmt.pix.pixelformat = gPixelFormat;
-	        
-        	if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
+		CLEAR(gFormat);
+		gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
+		gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
+		gFormat.fmt.pix.pixelformat = gPixelFormat;
+		
+		if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
+		tst_resm(TWARN, "%s formatting failed",
+			 gV4LTestConfig.mV4LDevice);
+		return TFAIL;
+		}
+		/* Verification pixel format of the device */
+		if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
 			tst_resm(TWARN, "%s formatting failed",
 				 gV4LTestConfig.mV4LDevice);
 			return TFAIL;
-			}
-			/* Verification pixel format of the device */
-			if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
-				tst_resm(TWARN, "%s formatting failed",
-					 gV4LTestConfig.mV4LDevice);
-				return TFAIL;
-			}
-			if (gFormat.fmt.pix.pixelformat != gPixelFormat) {
-				tst_resm(TWARN,
-					 "Pixel format %s is not supported by device %s",
-					 gPixFmtName, gV4LTestConfig.mV4LDevice);
-				return TFAIL;
-			}
+		}
+		if (gFormat.fmt.pix.pixelformat != gPixelFormat) {
+			tst_resm(TWARN,
+				 "Pixel format %s is not supported by device %s",
+				 gPixFmtName, gV4LTestConfig.mV4LDevice);
+			return TFAIL;
 		}
 		
 		if(gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
@@ -1129,16 +1126,16 @@ extern "C" {
 			/* Show on display */
 		case PRP_ENC_ON_D:
 			/* Here conversion of buffer pix foramt to FB pix format */
-			if (gFBPixFormat == gPixelFormat) {
+			if (gFBPixFormat == gPixelFormat && gV4LTestConfig.inputSrc != eInCSI_MEM) {
 				if (gV4LTestConfig.mVerbose) {
 					tst_resm(TINFO,
 						 "process_image() : displaying on framebuffer...");
 				}
 				sleep(1);
 				display_to_fb((void *)aStart, aLength);
-			} else if (gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420){
+			} else if ( gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420){
 				tst_resm(TWARN,
-					 "Pixel format %s is not supported by frame buffer",
+					 "Pixel format %s is not supported by frame buffer or software convertor",
 					 gPixFmtName);
 				return TFAIL;
 			} else {
