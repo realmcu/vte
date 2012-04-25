@@ -147,23 +147,28 @@ do
 				umount $tmp_dir
 				sleep 2
 			fi
-      echo "$k mounted now check free space"
+      		echo "$k mounted now check free space"
 			echo "..."
 			mount /dev/$k $tmp_dir
-      free_size=$(df -m /dev/$k | tail -1 | awk '{print $4}')
+			if [ $? -ne 0 ]; then
+				echo "$k can not mount"
+				echo "skip it!"
+			else
+      			free_size=$(df -m /dev/$k | tail -1 | awk '{print $4}')
 #if free size is enough then add to target list
-			if [ $free_size -gt 100 ];then
-        target_list=$target_list" "$k
-      else
-				 echo "$k free space is not enough for test"
-				 echo "skip it!"
+				if [ $free_size -gt 100 ];then
+        			target_list=$target_list" "$k
+      			else
+				 	echo "$k free space is not enough for test"
+				 	echo "skip it!"
+				fi
 			fi
 			umount $tmp_dir
 		done
-    if [ $(echo $p_list | wc -w) -eq 0 ]; then
+    	if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
-       p_node /dev/$j || break
-			 target_list=$target_list" "${j}p1
+       		p_node /dev/$j || break
+			target_list=$target_list" "${j}p1
 		fi
 	done
 done
@@ -198,30 +203,34 @@ return $RC
 
 run_single_test_list()
 {
-   RC=0
-   need_umount=1
+	RC=0
+	need_umount=1
 	 for i in $target_list
 	 do
     #test if already mout
-    mount | grep $i
+    	mount | grep $i
 		if [ $? -eq 0 ]; then
-     #is mounted
-		 mount_point=$(mount | grep $i |cut -d" " -f 3)
-		 need_umount=0
-    else
-     #not mount
-     mount_point=$(mktemp -d -p /tmp)
-		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
-     need_umount=1
+			#is mounted
+			mount_point=$(mount | grep $i |cut -d" " -f 3)
+		 	need_umount=0
+    	else
+     		#not mount
+     		mount_point=$(mktemp -d -p /tmp)
+			mount /dev/$i $mount_point
+			if [ $? -ne 0 ]; then
+				RC=$(echo $RC m$i)
+				continue
+			fi
+     		need_umount=1
 		fi
 		for j in $mount_point
 		do
 		 free_size=$(df -m $j | tail -1 | awk '{print $4}')
 		 free_size=$(expr $free_size - 50)
 	 	 bonnie\+\+ -d $j -u 0:0 -s $free_size  -r 100 || RC=$(echo $RC b$i)  
-	   dt of=$j/test_file bs=4k limit=$free_size passes=10 || RC=$(echo $RC d$i)
+		 dt of=$j/test_file bs=4k limit=$free_size passes=10 || RC=$(echo $RC d$i)
 		 if [ $need_umount -eq 1  ];then
-      umount $mount_point || RC=$(echo $RC u$i)
+      		umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
 		 fi
 		 break
@@ -249,15 +258,18 @@ run_iozone_test_list()
 	fi
     mount | grep $i
 		if [ $? -eq 0 ]; then
-     #is mounted
-		 mount_point=$(mount | grep $i |cut -d" " -f 3)
-		 need_umount=0
-    else
-	
-     #not mount
-     mount_point=$(mktemp -d -p /tmp)
-		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
-     need_umount=1
+     		#is mounted
+		 	mount_point=$(mount | grep $i |cut -d" " -f 3)
+		 	need_umount=0
+    	else
+     		#not mount
+     		mount_point=$(mktemp -d -p /tmp)
+			mount /dev/$i $mount_point
+     		if [ $? -ne 0 ]; then
+				RC=$(echo $RC m$i)
+				continue
+			fi
+			need_umount=1
 		fi
 		for j in $mount_point
 		do
@@ -265,7 +277,7 @@ run_iozone_test_list()
 		 free_size=$(expr $free_size - 50)
 	 	 iozone -a -n $free_size -g $free_size -i 0 -i 1 -f $j/iozone.tmpfile || RC=$(echo $RC i$i)
 		 if [ $need_umount -eq 1  ];then
-      umount $mount_point || RC=$(echo $RC u$i)
+      		umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
 		 fi
 		 break

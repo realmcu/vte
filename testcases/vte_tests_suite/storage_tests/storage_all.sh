@@ -157,13 +157,18 @@ do
       echo "$k mounted now check free space"
 			echo "..."
 			mount /dev/$k $tmp_dir
-      free_size=$(df -m /dev/$k | tail -1 | awk '{print $4}')
+			if [ $? -ne 0 ]; then
+				 echo "$k can not mount"
+				 echo "skip it!"
+			else
+      		free_size=$(df -m /dev/$k | tail -1 | awk '{print $4}')
 #if free size is enough then add to target list
-			if [ $free_size -gt 100 ];then
-        target_list=$target_list" "$k
-      else
+				if [ $free_size -gt 100 ];then
+        			target_list=$target_list" "$k
+      			else
 				 echo "$k free space is not enough for test"
 				 echo "skip it!"
+				fi
 			fi
 			umount $tmp_dir
 		done
@@ -256,16 +261,17 @@ run_single_test_list()
      #is mounted
 		 mount_point=$(mount | grep $i |cut -d" " -f 3)
 		 need_umount=0
-    else
-     #not mount
-     mount_point=$(mktemp -d -p /tmp)
-		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
-		 sleep 5
-		 if [ ! -z $(echo $RC | grep -i $i)  ];then
+    	else
+     	 #not mount
+     	 mount_point=$(mktemp -d -p /tmp)
+		 mount /dev/$i $mount_point
+		 if [ $? -ne 0 ]; then
+		 	 RC=$(echo $RC m$i)
 			 rm -rf $mount_point
 			 continue
 		 fi
-     need_umount=1
+		 sleep 5
+     	need_umount=1
 		fi
 		for j in $mount_point
 		do
