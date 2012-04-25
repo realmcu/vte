@@ -234,8 +234,14 @@ extern "C" {
 		gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
 		gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;
 		tst_resm(TINFO, "IO blocking is %d\n", gV4LTestConfig.mIsBlock);
-		if( Zflag)            
+		if( Zflag){            
 			gTestPerf = 1;
+		 	if(gV4LTestConfig.mCount < 101 )
+                           {
+                               tst_resm(TBROK, "The framecount must be  > 100");
+                                return TFAIL;
+                           }
+                }
 		if (sflag) {
 			char mstr[255];
 			char *pstr = mstr;
