@@ -1595,10 +1595,14 @@ extern "C" {
 		fd_set fds;
 		struct timeval tv;
                 enum v4l2_buf_type type;
-                long total_time;
-		int frame_rate;
+                long frame_time;
+		int max_time,min_time;
+                int total_frame;
 		struct timeval tv_start, tv_current;
-                if (setup_device() != TPASS) {
+                max_time=0;
+                min_time=0;
+                total_frame=0;
+		if (setup_device() != TPASS) {
 			cleanup_device();
 			return TFAIL;
 		}
@@ -1609,9 +1613,13 @@ extern "C" {
 				return retValue;
 		}
 		tst_resm(TINFO, "Start capturing...");
-	        gettimeofday(&tv_start, 0);
 		while (cnt-- > 0) {
 			int ret = -1;
+			if (gTestPerf)
+                        { 
+				total_frame ++;
+			        gettimeofday(&tv_start, 0);
+			}
 			while (ret < 0) {
 				FD_ZERO(&fds);
 				FD_SET(gFdV4L, &fds);
@@ -1634,24 +1642,35 @@ extern "C" {
 	  		   gSnapshot = 1;
 			if (read_frame() == TFAIL)
 				return retValue;
+		 	if (gTestPerf)
+			{
+				gettimeofday(&tv_current, 0);
+				frame_time = (tv_current.tv_sec - tv_start.tv_sec);
+	                        frame_time = frame_time * 1000000L;
+        	                frame_time += (tv_current.tv_usec - tv_start.tv_usec);
+				if (total_frame == 101)
+                        	{
+                        		max_time = frame_time;
+	                          	min_time = frame_time;
+	                        }
+	                        else if (total_frame > 100)//Ignor the first 100 frames,vary a lot
+	                        {
+	                        	if (max_time < frame_time)
+	                          		max_time = frame_time;
+	                       		if(min_time > frame_time)
+		                        	min_time = frame_time;
+				}
+			}
 		}
 		retValue = TPASS;
 		if (gTestPerf)
 		{
-                	gettimeofday(&tv_current, 0);
-	                total_time = (tv_current.tv_sec - tv_start.tv_sec) ;
-        	        if (total_time <1)
-                        {
-                                total_time = total_time * 1000000L;
-			        total_time += (tv_current.tv_usec - tv_start.tv_usec );
-				frame_rate =(gV4LTestConfig.mCount * 1000000L) /total_time;
-			}	
-                        else
-			{
-				total_time += (tv_current.tv_usec - tv_start.tv_usec )/ 1000000L;
-				frame_rate = gV4LTestConfig.mCount /total_time;
-			}
-                        printf("Now the camera fps is  %u fps\n",frame_rate);
+			printf("The max frame interval is  %u us\n",max_time);
+			printf("The max frame interval is  %u us\n",min_time);
+	                if( max_time > (1000000L / gV4LTestConfig.mFrameRate * 1.2))
+        	              	retValue = TFAIL;
+                        if ( min_time < (1000000L /gV4LTestConfig.mFrameRate * 0.8))
+                       		retValue = TFAIL;
 		}
 		sleep(1);
 		if (cleanup_device() != TPASS)
