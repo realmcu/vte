@@ -240,6 +240,15 @@ determine_platform()
 		fi
     fi
 
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6SoloLite" | grep "Armadillo2" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "60" | wc -l`;
+		if [ $find -eq 1 ]; then
+        	p=IMX6Sololite-ARM2
+		fi
+    fi
+
 
 	find=`cat /proc/cpuinfo | grep "Hardware" | grep "6Quad" | grep "Sabre-Lite" | wc -l`;
     if [ $find -eq 1 ]
@@ -302,6 +311,9 @@ determine_platform()
     elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ] || [ $p = "IMX6DL-Sabre-SD"  ]
     then
         RC=61
+	elif [ $p = "IMX6Sololite-ARM2" ]
+	then
+		RC=60
     else
         #echo  "Platform not recognized!"
         RC=67
