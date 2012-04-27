@@ -94,6 +94,11 @@ cd ${TEST_DIR}/${APP_SUB_DIR}/directfb
 ./fusion_reactor || RC=$(echo $RC fusion_reactor)
 ./fusion_skirmish || RC=$(echo $RC fusion_skirmish)
 
+cd /opt/viv_samples/hal/unit_test
+export LD_LIBRARY_PATH=/opt/viv_samples/hal/unit_test
+./runtest.sh || RC=$(echo $RC unittest)
+
+echo $RC
 if [ "$RC" = "0" ]; then
  RC=0
 else
