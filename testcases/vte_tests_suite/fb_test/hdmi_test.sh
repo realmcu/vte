@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 #Copyright (C) 2012 Freescale Semiconductor, Inc.
 #All Rights Reserved.
 #
@@ -103,6 +103,38 @@ hdmi_playback_modeSwitch()
     return $mode_errorNO
 }
 
+hdmi_audio_playback_modeSwitch()
+{
+		num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`    
+    for i in $(cat /sys/class/graphics/fb0/modes)
+    do
+    echo $i > /sys/class/graphics/fb0/mode
+    real_mode=$(cat /sys/class/graphics/fb0/mode)
+    echo "$real_mode"
+    if [ $real_mode = $i ]; then
+        echo "Already set HDMI mode to $mode, begin Audio playback on HDMI"
+	aplay -Dhw:$num $STREAM_PATH/alsa_stream/audio44k16S.wav
+    else
+        echo "Can not set HDMI mode to $mode"
+    RC=2
+    fi
+		done
+    return $RC
+}
+
+hdmi_audio_playback_multichannel()
+{
+	tst_resm TINFO "test hdmi multi channel"
+	num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
+	stream_path=$STREAM_PATH/esai_stream/
+	FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav  sine-6ch48k16bit.wav  sine-6ch44k16bit.wav sine-6ch32k16bit.wav sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav"    
+    	for i in $FILELIST
+    	do
+		aplay -Dhw:$num ${stream_path}$i || RC=$?
+	done
+    	return $RC
+}
+
 # Function:     main
 #
 # Description:  - Execute all tests, exit with test status.
@@ -112,6 +144,10 @@ RC=0    # Return value for setup, and test functions.
 setup || exit $RC
 if [ $1 == all ]; then
     hdmi_playback_modeSwitch || exit $?
+elif [ $1 == audiomode ]; then
+    hdmi_audio_playback_modeSwitch || exit $?
+elif [ $1 == audiochannel ]; then
+    hdmi_audio_playback_multichannel || exit $?
 else
     hdmi_playback_asInputMode $1 || exit $RC
 fi
