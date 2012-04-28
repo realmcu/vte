@@ -1134,7 +1134,6 @@ extern "C" {
 					tst_resm(TINFO,
 						 "process_image() : displaying on framebuffer...");
 				}
-				sleep(1);
 				display_to_fb((void *)aStart, aLength);
 			} else if ( gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420){
 				tst_resm(TWARN,
