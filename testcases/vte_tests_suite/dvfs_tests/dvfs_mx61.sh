@@ -397,6 +397,7 @@ test_case_06()
 		else
 			RC=$(echo $RC $i)
 		fi
+        i=`expr $i + 1`
 	done
     return $RC
 }
