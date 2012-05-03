@@ -33,7 +33,7 @@ setup()
     i=0
     count=$(cpufreq-info -s | wc -w)
     while [ $i -lt $count ]
-    do  
+    do
         # cut: fields and positions are numbered from 1
         field=$(expr $i + 1)
         freq=$(cpufreq-info -s | cut -d " " -f $field | cut -d ":" -f 1)
@@ -49,7 +49,7 @@ setup()
         echo -n " ${cpufreq_value[$i]}"
     done
     echo
-    
+
     #check for right uart port to test
     cn=$(cat /proc/cmdline | wc -w)
     i=1
@@ -123,23 +123,23 @@ run_manual_test_list()
 
     read -p "is pc run above case ok? y/n" key
     if [ "$key" = 'n' ]; then
-        errcnt=$(expr $errcnt + 1) 
+        errcnt=$(expr $errcnt + 1)
     fi
     modprobe -r g_file_storage
 
 
     read -p "is above case ok? y/n" key
     if [ "$key" = 'n' ]; then
-        errcnt=$(expr $errcnt + 1) 
+        errcnt=$(expr $errcnt + 1)
     fi
 
     echo "SD test"
     echo "please insert SD card"
     read -p "press any key when ready" key
-    mkfs.vfat /dev/mmcblk0p1 
+    mkfs.vfat /dev/mmcblk0p1
     mkdir -p /mnt/mmc
     mount -t vfat /dev/mmcblk0p1 /mnt/mmc
-    bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 
+    bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5
     dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20
 
     RC=0
@@ -194,10 +194,10 @@ set_governor_userspace()
 
 # Function:     test_case_01
 # Description   - Test if <CPU freq> ok
-#  
+#
 test_case_01()
 {
-    #TODO give TCID 
+    #TODO give TCID
     TCID="CPUFreq_STRESS"
     #TODO give TST_COUNT
     TST_COUNT=1
@@ -239,10 +239,10 @@ test_case_01()
 
 # Function:     test_case_02
 # Description   - Test if PMIC DVFS test ok
-#  
+#
 test_case_02()
 {
-    #TODO give TCID 
+    #TODO give TCID
     TCID="PMIC_DVFS_core_test"
     #TODO give TST_COUNT
     TST_COUNT=2
@@ -263,10 +263,10 @@ test_case_02()
 
 # Function:     test_case_03
 # Description   - Test if wait mode ok at different freq
-#  
+#
 test_case_03()
 {
-    #TODO give TCID 
+    #TODO give TCID
     TCID="CPUFREQ_WAIT_MODE"
     #TODO give TST_COUNT
     TST_COUNT=3
@@ -304,10 +304,10 @@ test_case_03()
 
 # Function:     test_case_04
 # Description   - Test if dvfs on the fly change
-#  
+#
 test_case_04()
 {
-    #TODO give TCID 
+    #TODO give TCID
     TCID="CPUFreq_change_on_the_fly"
     #TODO give TST_COUNT
     TST_COUNT=4
@@ -323,7 +323,6 @@ test_case_04()
     sleep 2
     pth_count=1
     while [ $pth_count -gt 0 ]; do
-        count=$(expr $count + 1)
         value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
         echo $value
         cpufreq-set -f ${value}
@@ -349,10 +348,10 @@ test_case_04()
 
 # Function:     test_case_05
 # Description   - CPUFreq change freq on the fly overnight test
-#  
+#
 test_case_05()
 {
-    #TODO give TCID 
+    #TODO give TCID
     TCID="CPUFreq_overnight_change"
     #TODO give TST_COUNT
     TST_COUNT=5
@@ -363,7 +362,7 @@ test_case_05()
 
     i=1
     while [ $i -lt 500 ]; do
-        echo $i 
+        echo $i
         test_case_04 || RC=$(expr $RC + 1)
         i=$(expr $i + 1)
     done
@@ -374,10 +373,10 @@ test_case_05()
 
 # Function:     test_case_06
 # Description   - Test if interrupt latency measurement
-#  
+#
 test_case_06()
 {
-    #TODO give TCID 
+    #TODO give TCID
     TCID="CPUFreq_timer"
     #TODO give TST_COUNT
     TST_COUNT=5
@@ -405,12 +404,13 @@ test_case_06()
 usage()
 {
     echo "$0 [case ID]"
-    echo "1: "
-    echo "2: "
-    echo "3: "
-    echo "4: "
-    echo "5: "
-    echo "6: "
+    echo "1: CPU working points randomly switch"
+    echo "2: run modules test with DVFS core enabled"
+    echo "3: test wait mode on random CPU working points"
+    echo "4: run modules test with CPU working points switching on the fly"
+    echo "5: stress test of 4"
+    echo "6: test interrupt latency on random CPU working points"
+
     exit 1
 }
 
@@ -424,7 +424,7 @@ TOTAL_PT=0
 if [ $# -ne 1 ]
 then
     usage
-    exit 1 
+    exit 1
 fi
 
 # cpufreq_value[] array will be discovered in setup()
@@ -433,7 +433,7 @@ setup || exit $RC
 
 case "$1" in
 1)
-    test_case_01 || exit $RC 
+    test_case_01 || exit $RC
     ;;
 2)
     test_case_02 || exit $RC
