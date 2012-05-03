@@ -48,6 +48,22 @@ trap "cleanup" 0
 
 #TODO add setup scripts
 
+OUTPUTFB="ipu0-1st-ovfb"
+
+FB0NAME=$(cat /sys/class/graphics/fb1/name)
+
+if [ $FB0NAME = "DISP3 FG"  ]; then
+OUTPUTFB="ipu0-1st-ovfb"
+elif [ $FB0NAME = "DISP3 BG - DI1" ]; then
+OUTPUTFB="ipu0-2st-fb"
+elif [ $FB0NAME = "DISP4 FG" ]; then
+OUTPUTFB="ipu1-1st-ovfb"
+elif [ $FB0NAME = "DISP4 BG - DI1" ]; then
+OUTPUTFB="ipu1-2st-fb"
+fi
+
+echo "display to $OUTPUTFB"
+
 if [ "$TARGET" = "31" ]
 then
  MLIST="ipu_prp_enc ipu_prp_vf_sdc_bg ov2640_camera ipu_prp_vf_sdc ipu_still mxc_v4l2_capture"
@@ -333,21 +349,21 @@ mkdir /tmp/ipu_dev/
                  else  
 		echo " no motion"
     ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},0,0 \
-    -O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+    -O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
 		|| RC=$(expr $RC + 1)
 						TOTAL=$(expr $TOTAL + 1)
 		if [ $motion -eq 1 ]; then
 			echo "motion_sel = 0(medium_motion)"
     	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,0 \
-    	-O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+    	-O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB  -s 1 /tmp/ipu_dev/tmp.dat \
 			|| RC=$(expr $RC + 1)
 	  	echo "motion_sel = 1(low_motion)"
     	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,1 \
-    	-O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+    	-O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
 			|| RC=$(expr $RC + 1)
 			echo "motion_sel = 2(high_motion)"
     	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,2 \
-    	-O  ${w},${h},${tf},${r},${CRP} -s 1 /tmp/ipu_dev/tmp.dat \
+    	-O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
 			|| RC=$(expr $RC + 1)
 						TOTAL=$(expr $TOTAL + 3)
 		#motion
@@ -446,7 +462,7 @@ test_case_07()
 						continue;
 					fi
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 -f $OUTPUTFB ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
 		echo "*************************************************************"
@@ -457,7 +473,7 @@ test_case_07()
 	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
 	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
     time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${out_w},${out_h},I420,0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${out_w},${out_h},I420,0,0,0,0,0 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
              done
 
@@ -467,7 +483,7 @@ test_case_07()
           echo "TST_INFO: output format is: ${format}"
           echo "TST_INFO: --------single CSC display---------------"
     time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
 					TOTAL=$(expr $TOTAL + 1)
     			dmesg -c
           echo "TST_INFO: --------- rotate with CRS test --------------------"
@@ -477,18 +493,18 @@ test_case_07()
 						continue;
 					fi
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},${r},0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},${r},0,0,0,0 -f $OUTPUTFB -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
           echo "TST_INFO: ---------CSC crop test------------"
 					echo "CSC crop input"
     time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 ${STREAM_PATH}/video/${infilename}
     			dmesg -c
 					TOTAL=$(expr $TOTAL + 1)
     		 echo "CSC crop output"
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},0,32,32,64,64 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
     			dmesg -c
 					TOTAL=$(expr $TOTAL + 1)
     			#echo "CSC crop input and output"
@@ -503,7 +519,7 @@ test_case_07()
 	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
 	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
     time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${out_w},${out_h},${format},0,0,0,0,0 -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${out_w},${out_h},${format},0,0,0,0,0 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
              done
          done
@@ -518,6 +534,7 @@ test_case_07()
 
 RC=0
 
+OUTPUTFB="ipu0-1st-ovfb"
 IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv"
 # rotation ref:
 # 	IPU_ROTATE_NONE = 0,
