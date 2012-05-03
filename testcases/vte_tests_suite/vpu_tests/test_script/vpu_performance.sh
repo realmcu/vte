@@ -44,6 +44,7 @@ fi
 
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
+echo -e "\033[9;0]" > /dev/tty0
 
 mkdir /mnt/temp
 mount -t tmpfs tmpfs /mnt/temp || RC=1
@@ -96,7 +97,7 @@ do
 	echo "--------------------------------"
 	echo "start decode $filename"
 	cp ${stream_path}/${filedir}/${filename} /mnt/temp/${filename}
-  time -p ${TSTCMD} -D "-i /mnt/temp/${filename} \
+  time -p ${TSTCMD} -D "-a 100 -i /mnt/temp/${filename} \
   -f ${fileformat}"
 	 rm -rf /mnt/temp/${filename}
 	echo "end of decoding $filename"
@@ -154,17 +155,35 @@ test_case_03()
 	TST_COUNT=1
 	RC=1
 	tst_resm TINFO "test $TCID"
-	stream_path=/mnt/nfs/test_stream/video
-	FILELIST="sunflower_2B_2ref_WP_40Mbps.264 h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 h264_bp_l31_mp3_720x480_15fps_1940kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 balloons_3d.264"
-	for i in $FILELIST
-   	do
-		cp ${stream_path}/$i /mnt/temp/$i
-		$TSTCMD -D "-f 2 -y 1 -i /mnt/temp/$i"
-		$TSTCMD -D "-f 2 -y 0 -i /mnt/temp/$i"
-		#$TSTCMD -D "-f 2 -y 2 -i /mnt/temp/$i"
-		rm -rf /mnt/temp/$i
+#	stream_path=/mnt/nfs/test_stream/video
+#	FILELIST="sunflower_2B_2ref_WP_40Mbps.264 h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 h264_bp_l31_mp3_720x480_15fps_1940kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 balloons_3d.264"
+#	for i in $FILELIST
+#   	do
+#		cp ${stream_path}/$i /mnt/temp/$i
+#		$TSTCMD -D "-f 2 -y 1 -i /mnt/temp/$i"
+#		$TSTCMD -D "-f 2 -y 0 -i /mnt/temp/$i"
+#		#$TSTCMD -D "-f 2 -y 2 -i /mnt/temp/$i"
+#		rm -rf /mnt/temp/$i
+#	done
+#	echo "VPU VDOA dec test"
+	stream_path=/mnt/nfs/test_stream/video/mx51_vpu_performance_testvector
+	stream_list=mx51_vpu_performance_test_filelist.txt
+
+	cat ${stream_path}/${stream_list} |
+	while read line
+	do
+  		filename=$(echo $line | cut -d " " -f 1 )
+		fileformat=$(echo $line | cut -d " " -f 2)
+		filedir=$(echo $line | cut -d " " -f 3)
+		echo "--------------------------------"
+		echo "start decode $filename"
+		cp ${stream_path}/${filedir}/${filename} /mnt/temp/${filename}
+	  time -p ${TSTCMD} -D "-a 100 -i /mnt/temp/${filename} \
+	  -f ${fileformat} -y 1"
+		 rm -rf /mnt/temp/${filename}
+		echo "end of decoding $filename"
+		echo "================================"
 	done
-	echo "VPU VDOA dec test"
 	return $RC
 }
 
