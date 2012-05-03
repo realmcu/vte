@@ -129,7 +129,7 @@ overload_test()
             fi
             shift;;
             camera)
-            v4l_capture_testapp -T 1800 &
+            v4l_capture_testapp -C 2 -T 1800 &
             camera_pid=$!
             shift;;
             hdmi)
