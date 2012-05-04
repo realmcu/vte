@@ -225,11 +225,11 @@ dvfs_per_stress()
     while [ $i -lt 500 ]; do
         i=`expr $i + 1`
         RC=4
-        rtc_testapp_6 -m standby -T 15 || return $RC
+        rtc_testapp_6 -m standby -T 10 || return $RC
         tst_resm TINFO "RTC wakeup standby mode test times: $i"
 
         RC=5
-        rtc_testapp_6 -m mem -T 15 || return $RC
+        rtc_testapp_6 -m mem -T 10 || return $RC
         tst_resm TINFO "RTC wakeup mem mode test times: $i"
     done
 
