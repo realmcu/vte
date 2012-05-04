@@ -1,5 +1,7 @@
 #!/bin/sh -x
 
+ADDOPT=
+
 if [ $# -eq 0 ]
 then
 CMDFILE=exec_table_rdp
@@ -9,6 +11,16 @@ then
 CMDFILE=ONSHOT
 else
 CMDFILE=$1
+if [ "$2" = "CPU" ]; then
+ cpus=$(cat /proc/cpuinfo  | grep processor | wc -l)
+ ADDOPT="-c $cpus"
+elif [ "$2" = "IO" ]; then
+ cpus=$(cat /proc/cpuinfo  | grep processor | wc -l)
+ ADDOPT="-i $cpus"
+elif [ "$2" = "MEM"  ]; then
+ cpus=$(cat /proc/cpuinfo  | grep processor | wc -l)
+ ADDOPT="-m $cpus"
+fi
 fi
 
 TEST_TYPE=AUTO
@@ -177,10 +189,10 @@ else
 #1 fisrt run reset counter
 	echo 1 >  ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 fi
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test_${CMDFILE}_$tday -o ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.html ${ADDOPT} -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt -f temp_test_${CMDFILE}_$tday -o ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 else
 rm -f ${LTPROOT}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
-${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
+${TEST_PATH}/runltp -p -g ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.html ${ADDOPT} -l ${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_test.txt -f $CMDFILE -o ${TEST_PATH}/${ARCH_PLATFORM}_${CMDFILE}_log_$tday
 #${TEST_PATH}/runalltests.sh -v -p -l ${ARCH_PLATFORM}_${TEST_TYPE}_test.txt
 fi
 lastcmd=$(cat ${TEST_PATH}/runtest/$CMDFILE | grep -v "#" |grep "TGE-" | tail -n 1| awk '{print $1}')
