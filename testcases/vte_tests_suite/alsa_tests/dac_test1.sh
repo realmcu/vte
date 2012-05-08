@@ -206,7 +206,7 @@ dac_play()
         card_name=`aplay -l | grep -i "$HW_keyword" | awk '{ print $3 }'`
         echo
         echo "TINFO play on: $card_name"
-        aplay ${play_iface} $tmpdir/$basefn || RC=$?
+        aplay -N -M ${play_iface} $tmpdir/$basefn || RC=$?
         if [ $RC -eq 0 ]; then
             echo
             echo "TPASS play on: $card_name"
@@ -254,7 +254,7 @@ dac_play()
         alsa_dev=""
         echo
         echo "TINFO play on: $card_name"
-        aplay ${play_iface} $tmpdir/$basefn ||RC=$?
+        aplay -N -M ${play_iface} $tmpdir/$basefn ||RC=$?
         if [ $RC -eq 0 ]; then
             test_results="$test_results PASS"
             echo
