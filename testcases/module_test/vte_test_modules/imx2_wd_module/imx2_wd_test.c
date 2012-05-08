@@ -144,9 +144,52 @@ static int __exit imx2_wdt_test_remove(struct platform_device *pdev)
 	return -EINVAL;
 }
 
+#ifdef CONFIG_PM
+
+static int
+wdt_suspend(struct device *dev)
+{
+	/*ping the watch when enter so that the sleep time can manager*/
+	if(imx2_wdt.enable == 1)
+   		imx2_wdt_ping();
+	return 0;
+}
+
+static int
+wdt_resume(struct device *dev)
+{
+	/*ping the watch when enter so that the sleep time can manager*/
+	if(imx2_wdt.enable == 1)
+   		imx2_wdt_ping();
+	return 0;
+}
+
+static const struct dev_pm_ops wdt_test_pm_ops = {
+	.suspend	= wdt_suspend,
+	.resume		= wdt_resume,
+	.freeze		= wdt_suspend,
+	.thaw		= wdt_resume,
+	.poweroff	= wdt_suspend,
+	.restore	= wdt_resume,
+};
+#endif
 
 
-static int __init imx2_wdt_test_init(void)
+
+static struct platform_driver wdt_driver = {
+        .remove         = __exit_p(imx2_wdt_test_remove),
+        .driver         = {
+                .name   = "imx2_wdt",
+                .owner  = THIS_MODULE,
+#ifdef CONFIG_PM
+				.pm = &wdt_test_pm_ops,
+#endif
+        },
+};
+
+static struct platform_device * wdt_device;
+
+static int wdt_probe(struct platform_device * pdev)
 {
 	struct timer_list *timer;
 	static struct resource imx2_wdt_resources[] = {
@@ -188,6 +231,24 @@ static int __init imx2_wdt_test_init(void)
 
 	return 0;
 }
+
+static int __init imx2_wdt_test_init(void)
+{
+	int ret;
+		
+	wdt_device = platform_device_register_simple("imx2_wdt", -1, NULL, 0);
+     if (IS_ERR(wdt_device)) {
+                printk(KERN_ERR "wdt_test: platform_device_register failed.\n");
+                ret = PTR_ERR(wdt_device);
+                goto out;
+     }
+
+	return platform_driver_probe(&wdt_driver, wdt_probe);
+out:
+	platform_device_unregister(wdt_device);
+	return ret;
+}
+
 
 static void __exit imx2_wdt_test_exit(void)
 {
