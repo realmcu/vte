@@ -138,6 +138,8 @@ asrc_convert()
         tet_resm TFAIL "Test #1: wrong sampling rate in coverted stream"
     }
 
+    tst_resm TPASS "Playback finished."
+
     return $RC
 }
 
