@@ -153,7 +153,7 @@ test_case_03()
 	TCID="vpu_VDOA_Dec test"
 #TODO give TST_COUNT
 	TST_COUNT=1
-	RC=1
+	RC=0
 	tst_resm TINFO "test $TCID"
 #	stream_path=/mnt/nfs/test_stream/video
 #	FILELIST="sunflower_2B_2ref_WP_40Mbps.264 h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 h264_bp_l31_mp3_720x480_15fps_1940kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264 balloons_3d.264"
@@ -179,7 +179,7 @@ test_case_03()
 		echo "start decode $filename"
 		cp ${stream_path}/${filedir}/${filename} /mnt/temp/${filename}
 	  time -p ${TSTCMD} -D "-a 100 -i /mnt/temp/${filename} \
-	  -f ${fileformat} -y 1"
+	  -f ${fileformat} -y 1" || RC=$?
 		 rm -rf /mnt/temp/${filename}
 		echo "end of decoding $filename"
 		echo "================================"
