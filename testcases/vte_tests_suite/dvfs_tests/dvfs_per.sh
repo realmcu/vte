@@ -43,6 +43,7 @@ usage()
     usage: ./${0##*/} 1  -- DVFS PER basic test
            ./${0##*/} 2  -- DVFS PER stress test
            ./${0##*/} 3  -- Busfreq mode switch test
+           ./${0##*/} 4  -- Suspend and resume stress test in busfreq mode
            e.g.: ./${0##*/} 2
 
 EOF
@@ -191,7 +192,7 @@ dvfs_per_basic()
     sleep 5
     rtc_testapp_6 -m mem -T 15 || return $RC
 
-    echo "Pass DVFS basic test"
+    echo "Pass DVFS-per/busfreq basic test"
     RC=0
     return $RC
 }
@@ -209,7 +210,7 @@ dvfs_per_stress()
         mkfs.vfat /dev/mmcblk0p1
         mount /dev/mmcblk0p1 /mnt/mmcblk0p1
     }
-    while [ $i -lt 30 ]; do
+    while [ $i -lt 50 ]; do
         i=`expr $i + 1`
 
         RC=2
@@ -221,10 +222,19 @@ dvfs_per_stress()
         tst_resm TINFO "Audio catpure test run times: $i"
     done
 
+    RC=0
+    echo "Pass DVFS-per/busfreq stress test"
+    return $RC
+}
+
+# Busfreq stress test on suspend/resume
+suspend_stress()
+{
+    RC=4
+
     i=0
     while [ $i -lt 500 ]; do
         i=`expr $i + 1`
-        RC=4
         rtc_testapp_6 -m standby -T 10 || return $RC
         tst_resm TINFO "RTC wakeup standby mode test times: $i"
 
@@ -234,7 +244,7 @@ dvfs_per_stress()
     done
 
     RC=0
-    echo "Pass DVFS stress test"
+    echo "Pass DVFS-per/busfreq suspend and resume stress test"
     return $RC
 }
 
@@ -288,6 +298,9 @@ case "$1" in
         echo "Can't run on non-supported platforms"
         usage
     fi
+    ;;
+    4)
+    suspend_stress || exit $RC
     ;;
     *)
     usage
