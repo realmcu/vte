@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 		} else {
 			if (ret == -1 && errno == ENOENT)
 				tst_resm(TPASS, "move_pages failed with "
-					 "ENOENT as expected");
+				    "ENOENT as expected");
 			else
 				tst_resm(TFAIL|TERRNO, "move_pages");
 		}
@@ -161,4 +161,4 @@ static void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
-}
+ }
