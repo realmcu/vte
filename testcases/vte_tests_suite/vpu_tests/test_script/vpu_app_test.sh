@@ -1,4 +1,4 @@
-#Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -19,6 +19,8 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #<Hake Huang>/-----             <2009/02/12>     N/A          Initial version
+#Andy Tian                    05/10/2012         N/A      rotation device set to vpu if output size
+#														  larger or equal 720p
 # 
 ###################################################################################################
 
@@ -163,7 +165,7 @@ echo "following is chroma interleave mode $l"
      for k in $UIPU
      do
       echo "-----------------"
-      echo "IPU is used $k"
+      echo "rotation device is $k"
       echo "rotation"
       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -r $i -m $j -u $k -t $l" || return $RC
       if [ $FORMAT == 0 ] || [ $FORMAT == 2 ]; then
@@ -181,6 +183,11 @@ echo "following is chroma interleave mode $l"
        OWD=$(echo $n | sed "s/x/ /g" | awk '{print $1}')
        OHT=$(echo $n | sed "s/x/ /g" | awk '{print $2}')
         echo "output width is $OWD height is $OHT"       
+		#output width or height larger than 1024 , use vpu rotation
+		if [ $OWD -gt 1024 -o $OHT -gt 1024 ];then
+			k=0
+		fi
+      echo "rotation device is $k"
        ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1 -d 1 -r $i -m $j -u $k -t $l -w $OWD -h $OHT" || return $RC
 	sleep 1
       done
