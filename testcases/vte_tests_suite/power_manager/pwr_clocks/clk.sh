@@ -158,7 +158,11 @@ test_case_03()
     #TODO add function test script here
     #disable the framebuffer
     echo 1 > /sys/class/graphics/fb0/blank
+    echo 1 > /sys/class/graphics/fb1/blank
     echo 1 > /sys/class/graphics/fb2/blank
+    #for MX6Q
+    echo 1 > /sys/class/graphics/fb3/blank
+    echo 1 > /sys/class/graphics/fb4/blank
 
     sleep 1
 
@@ -176,7 +180,11 @@ test_case_03()
     done
 
     echo 0 > /sys/class/graphics/fb0/blank
+    echo 0 > /sys/class/graphics/fb1/blank
     echo 0 > /sys/class/graphics/fb2/blank
+    #for MX6Q
+    echo 0 > /sys/class/graphics/fb3/blank
+    echo 0 > /sys/class/graphics/fb4/blank
 
     if [ -n "$ipuct" ] || [ -n "$ldbct" ] || [ $hdmi -gt 0 ]; then
         RC=3
