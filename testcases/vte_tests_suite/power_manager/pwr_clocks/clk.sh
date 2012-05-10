@@ -158,7 +158,11 @@ test_case_03()
     #TODO add function test script here
     #disable the framebuffer
     echo 1 > /sys/class/graphics/fb0/blank
+    echo 1 > /sys/class/graphics/fb1/blank
     echo 1 > /sys/class/graphics/fb2/blank
+    #for MX6Q
+    echo 1 > /sys/class/graphics/fb3/blank
+    echo 1 > /sys/class/graphics/fb4/blank
 
     sleep 1
 
@@ -166,17 +170,26 @@ test_case_03()
     ipuct=$(cat /sys/kernel/debug/clock/osc_clk/pll5_video_main_clk/ipu*/usecount| grep -v 0)
     ldbct=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v 0)
     #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
-    cd /sys/kernel/debug/
-    hdmi_list=$(find . -name hdmi*)
+
     hdmi=0
-    for i in $hdmi_list
-    do
-        temp=$(cat ${i}/usecount)
-        hdmi=$(expr $temp + $hdmi)
-    done
+    # don't count hdmi_isfr_clk if hdmi video is defined in kernel cmdline
+    # it won't be zero in this case
+    if ! cat /proc/cmdline |grep -i hdmi; then
+        cd /sys/kernel/debug/
+        hdmi_list=$(find . -name hdmi*)
+        for i in $hdmi_list
+        do
+            temp=$(cat ${i}/usecount)
+            hdmi=$(expr $temp + $hdmi)
+        done
+    fi
 
     echo 0 > /sys/class/graphics/fb0/blank
+    echo 0 > /sys/class/graphics/fb1/blank
     echo 0 > /sys/class/graphics/fb2/blank
+    #for MX6Q
+    echo 0 > /sys/class/graphics/fb3/blank
+    echo 0 > /sys/class/graphics/fb4/blank
 
     if [ -n "$ipuct" ] || [ -n "$ldbct" ] || [ $hdmi -gt 0 ]; then
         RC=3
