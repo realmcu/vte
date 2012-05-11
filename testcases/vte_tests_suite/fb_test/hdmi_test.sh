@@ -68,6 +68,8 @@ hdmi_playback_asInputMode()
 
     if [ $real_mode = $mode ]; then
         echo "Already set HDMI mode to $mode, begin playback on HDMI"
+        echo 0 > /sys/class/graphics/fb0/blank
+        sleep 1
         /unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_HP51_bwp_1280x720.h264 -f 2"
         /unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_DAKEAI1080.avi -f 2"
         echo "========display normally? Input y or n"
@@ -105,7 +107,7 @@ hdmi_playback_modeSwitch()
 
 hdmi_audio_playback_modeSwitch()
 {
-		num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`    
+    num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`    
     for i in $(cat /sys/class/graphics/fb0/modes)
     do
     echo $i > /sys/class/graphics/fb0/mode
@@ -142,11 +144,11 @@ hdmi_audio_playback_multichannel()
 RC=0    # Return value for setup, and test functions.
 
 setup || exit $RC
-if [ $1 == all ]; then
+if [ "$1" = "all" ]; then
     hdmi_playback_modeSwitch || exit $?
-elif [ $1 == audiomode ]; then
+elif [ "$1" = "audiomode" ]; then
     hdmi_audio_playback_modeSwitch || exit $?
-elif [ $1 == audiochannel ]; then
+elif [ "$1" = "audiochannel" ]; then
     hdmi_audio_playback_multichannel || exit $?
 else
     hdmi_playback_asInputMode $1 || exit $RC
