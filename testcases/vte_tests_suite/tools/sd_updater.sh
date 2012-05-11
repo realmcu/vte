@@ -121,10 +121,10 @@ part_disk()
     cylinders=`fdisk -l $DEVNODE |grep cylinders|grep -v of | awk '{print $5}'`
     #leave 1% space(40MB for 4G) for uboot, its env and partition table
     partition1_start=`expr $cylinders / 100`
-    partition1_end=`expr $cylinders / 4 + $partition1_start`
-    partition2_start=`expr $partition1_end + 1`
+    partition1_size=`expr $cylinders / 4`
+    partition2_start=`expr $partition1_end + partition1_size + 1`
     sfdisk --force $1 << EOF
-${partition1_start},${partition1_end},0c
+${partition1_start},${partition1_size},0c
 ${partition2_start}
 EOF
 
