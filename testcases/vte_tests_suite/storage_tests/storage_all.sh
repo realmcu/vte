@@ -45,7 +45,12 @@ w
 EOF
 
 fdisk -u $1 < $tmpfile
+if [ $? -eq 0 ]; then
+	RC=0
+fi
+
 sleep 5
+return $RC
 }
 
 
