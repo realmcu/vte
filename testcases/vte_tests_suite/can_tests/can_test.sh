@@ -49,27 +49,27 @@ setup()
 
     if [ -e $LTPROOT ]
     then
-    export LTPSET=0
+        export LTPSET=0
     else
-    export LTPSET=1
+        export LTPSET=1
     fi
 
     trap "cleanup" 0
 
     platfm.sh || platfm=$?
     if [ $platfm -ne 53 ] && [ $platfm -ne 61 ] && [ $platfm -ne 63 ]; then
-            modprobe flexcan
+        modprobe flexcan
     fi
 
-    ip link set $CANID up type can bitrate 125000
+    ip2 link set $CANID up type can bitrate 125000
 
     ifconfig $CANID up
 
     if [ $? -ne 0 ]
     then
-    tst_resm TINFO "can init failed!"
-    RC=2
-    return $RC
+        tst_resm TINFO "can init failed!"
+        RC=2
+        return $RC
     fi
 
     return $RC
@@ -87,7 +87,7 @@ cleanup()
     ifconfig $CANID down
     sleep 1
     if [ $platfm -ne 53 ] && [ $platfm -ne 61 ] && [ $platfm -ne 63 ]; then
-            modprobe flexcan -r
+        modprobe flexcan -r
     fi
 
     return $RC
@@ -111,16 +111,16 @@ test_can_01()
 
     if [ "$Rnt" = "n" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
 
     read -p "IS the receiver deamon runs? y/n" Rnt
 
     if [ $Rnt = "n" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
 
     echo Now start test!
@@ -164,7 +164,7 @@ test_can_01()
 
     if [ "$Rnt" = "y" ]
     then
-    return $RC
+        return $RC
     fi
 
     RC=$TST_COUNT
@@ -176,11 +176,11 @@ test_can_01()
 #
 subtest_02()
 {
-  while true;
-  do
-  cansend $CANID 123#1122334455667788
-  sleep 1
-  done
+    while true;
+    do
+        cansend $CANID 123#1122334455667788
+        sleep 1
+    done
 
 }
 
@@ -200,7 +200,7 @@ test_can_02()
 
     while [ "$Rnt" != "q" ]
     do
-    read -p "q to quit the test" Rnt
+        read -p "q to quit the test" Rnt
     done
 
     kill -9 $!
@@ -211,8 +211,8 @@ test_can_02()
 
     if [ "$Rnt" = "y" ]
     then
-    RC=0
-    return $RC
+        RC=0
+        return $RC
     fi
 
     RC=$TST_COUNT
@@ -246,7 +246,7 @@ test_can_03()
 
     if [ "$Rnt" = "y" ]
     then
-    return $RC
+        return $RC
     fi
 
     RC=$TST_COUNT
@@ -271,7 +271,7 @@ test_can_04()
     REGISTERS_RW="br_presdiv br_rjw br_propseg br_pseg1 br_pseg2 xmit_maxmb maxmb"
 
     REGISTERS_RW_BIT="abort bcc boff_rec fifo listen local_priority \
-                    loopback smp srx_dis ext_msg std_msg tsyn wak_src wakeup"
+        loopback smp srx_dis ext_msg std_msg tsyn wak_src wakeup"
 
     #not test for read only register                 
     REGISTER_RO="bitrate state"
@@ -283,38 +283,38 @@ test_can_04()
     Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
     if [ "$Rnt" != "bus" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
     echo "osc" > /sys/devices/platform/FlexCAN$CANBUS/br_clksrc
     Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/br_clksrc)
     if [ "$Rnt" != "osc" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
     echo $bk > /sys/devices/platform/FlexCAN$CANBUS/br_clksrc
 
 
     for i in $REGISTERS_RW_BIT
     do
-    bk=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i)
-    echo 1 >  /sys/devices/platform/FlexCAN$CANBUS/$i
-    Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i) 
+        bk=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i)
+        echo 1 >  /sys/devices/platform/FlexCAN$CANBUS/$i
+        Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i) 
 
-    if [ $Rnt -ne 1 ]
-    then
-    RC=$TST_COUNT
-    return $RC
-    fi
+        if [ $Rnt -ne 1 ]
+        then
+            RC=$TST_COUNT
+            return $RC
+        fi
 
-    echo 0 >  /sys/devices/platform/FlexCAN$CANBUS/$i
-    Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i) 
-    if [ $Rnt -ne 0 ]
-    then
-    RC=$TST_COUNT
-    return $RC
-    fi
+        echo 0 >  /sys/devices/platform/FlexCAN$CANBUS/$i
+        Rnt=$(cat /sys/devices/platform/FlexCAN$CANBUS/$i) 
+        if [ $Rnt -ne 0 ]
+        then
+            RC=$TST_COUNT
+            return $RC
+        fi
     done
 
     return $RC
@@ -343,24 +343,24 @@ test_can_05()
 
     if [ "$Rnt" = "n" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
 
     read -p "Is the can cable ok? y/n" Rnt
 
     if [ "$Rnt" = "n" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
 
     read -p "Is the receiver deamon runs? y/n" Rnt
 
     if [ "$Rnt" = "n" ]
     then
-    RC=$TST_COUNT
-    return $RC
+        RC=$TST_COUNT
+        return $RC
     fi
 
     echo Now start test!
@@ -373,7 +373,7 @@ test_can_05()
 
     if [ "$Rnt" = "y" ]
     then
-    return $RC
+        return $RC
     fi
 
     RC=$TST_COUNT
@@ -392,15 +392,15 @@ test_can_06()
     TST_COUNT=6
 
     return $RC
-    }
+}
 
-    #
-    # Function: test_can_07
-    # Description: basic module available test
-    # catalog: auto test
-    #
-    test_can_07()
-    {
+#
+# Function: test_can_07
+# Description: basic module available test
+# catalog: auto test
+#
+test_can_07()
+{
     RC=0
     TCID="test_can_bitrate"
     TST_COUNT=7
@@ -412,28 +412,28 @@ test_can_06()
 
     for i in $STAND_BIT_RATES
     do
-    ifconfig can0 down
-    ifconfig can1 down
-    sleep 2
-    echo $i > /sys/devices/platform/FlexCAN.0/bitrate
-    cat /sys/devices/platform/FlexCAN.0/bitrate | grep $i || RC=1
+        ifconfig can0 down
+        ifconfig can1 down
+        sleep 2
+        echo $i > /sys/devices/platform/FlexCAN.0/bitrate
+        cat /sys/devices/platform/FlexCAN.0/bitrate | grep $i || RC=1
 
-    echo $i > /sys/devices/platform/FlexCAN.1/bitrate
-    cat /sys/devices/platform/FlexCAN.1/bitrate | grep $i || RC=1
+        echo $i > /sys/devices/platform/FlexCAN.1/bitrate
+        cat /sys/devices/platform/FlexCAN.1/bitrate | grep $i || RC=1
 
-    ifconfig can0 up
-    ifconfig can1 up
+        ifconfig can0 up
+        ifconfig can1 up
 
-    canecho can1 -v &
-    bgpid=$!
+        canecho can1 -v &
+        bgpid=$!
 
-    cansend can0 123#1122334455667788 || RC=2
+        cansend can0 123#1122334455667788 || RC=2
 
-    if [ $RC -ne 0 ]; then
-    RC="$RC $i"
-    fi
+        if [ $RC -ne 0 ]; then
+            RC="$RC $i"
+        fi
 
-    kill -9 $bgpid >/dev/null 2>&1
+        kill -9 $bgpid >/dev/null 2>&1
 
     done
     return $RC
@@ -463,16 +463,18 @@ test_can_08()
         alias can-proto-4 can-tp20
         alias can-proto-5 can-mcnet
         alias can-proto-6 can-isotp
-EOF
+        EOF
     fi
 
-    ${LTPROOT}/testcases/bin/ip link add dev vcan0 type vcan
+    ip2 link add dev vcan0 type vcan
     ifconfig vcan0 up
     tst-filter-server > output_ltp-can.txt &
     sleep 1
     tst-filter-master | tee output_ltp-can-verify.txt
     diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
-    ${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
+    #${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
+    #ip renamed to ip2 in testcases/bin
+    ip2 link del dev vcan0 type vcan
     return $RC
 }
 
@@ -489,6 +491,7 @@ usage()
     echo "6: module available test"
     echo "7: bit rate test"
     echo "8: vcan filter test"
+    exit 1
 }
 
 # main function
@@ -499,7 +502,6 @@ RC=0
 if [ $# -ne 2 ]
 then
     usage
-    exit 1 
 fi
 
 CANID=$1
@@ -507,34 +509,33 @@ CANID=$1
 setup || exit $RC
 
 case "$2" in
-1)
-    test_can_01 || exit $RC 
-    ;;
-2)
-    test_can_02 || exit $RC
-    ;;
-3)
-    test_can_03 || exit $RC
-    ;;
-4)
-    test_can_04 || exit $RC
-    ;;
-5)
-    test_can_05 || exit $RC
-    ;;
-6)
-    test_can_06 || exit $RC
-    ;;
-7)
-    test_can_07 || exit $RC
-    ;;
-8)
-    test_can_08 || exit $RC
-    ;;
-*)
-    usage
-    ;;
+    1)
+        test_can_01 || exit $RC 
+        ;;
+    2)
+        test_can_02 || exit $RC
+        ;;
+    3)
+        test_can_03 || exit $RC
+        ;;
+    4)
+        test_can_04 || exit $RC
+        ;;
+    5)
+        test_can_05 || exit $RC
+        ;;
+    6)
+        test_can_06 || exit $RC
+        ;;
+    7)
+        test_can_07 || exit $RC
+        ;;
+    8)
+        test_can_08 || exit $RC
+        ;;
+    *)
+        usage
+        ;;
 esac
 
 tst_resm TPASS "test PASS"
-
