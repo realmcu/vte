@@ -245,7 +245,6 @@ TGE-LV-KERNEL-10005 cat /proc/meminfo | grep HighTotal
 TGE-LV-GPU-FB-CL11-0002 cl_gc2000.sh 2
 TGE-LV-GPU-FB-CL11-0001 cl_gc2000.sh 1
 TGE-LV-KERNEL_BOOT-0001 dmesg -c
-TGE-LV-DVFS-0141 dvfs_mx61.sh 2
 TGE-LV-V4L2-0070 v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-FEC-0011 if ifconfig |grep 10.200; then fec_testapp -T 1 -H 10.200.1.1; else fec_testapp -T 1 -H 10.192.225.219; fi
 TGE-LV-DISPLAY-0002 dd if=/dev/urandom of=/dev/fb2 bs=1024 count=100
