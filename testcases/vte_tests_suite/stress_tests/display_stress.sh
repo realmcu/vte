@@ -147,13 +147,20 @@ RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
+echo 0 > /sys/class/graphics/fb0/blank
+echo 0 > /sys/class/graphics/fb2/blank
+
 export FB_FRAMEBUFFER_0=/dev/fb2
+a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 gles_viv.sh 1 &
 run_auto_test_list &
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
 loops=100
 while [ $loops -gt 0 ]
 	do
 lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 1
+echo 0 > /sys/class/graphics/fb0/blank
+echo 0 > /sys/class/graphics/fb2/blank
   loops=$(expr $loops - 1)
   done
 #TODO add function test scripte here
