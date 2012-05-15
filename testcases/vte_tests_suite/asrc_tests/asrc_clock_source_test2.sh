@@ -116,9 +116,10 @@ setup()
         fi
     done
 
+    # looking for spdif card
     modprobe snd_spdif
     sleep 3
-    aplay -l | grep MXC_SPDIF 
+    aplay -l | grep -i spdif
     if [ $? -ne 0 ]
     then
         tst_resm TBROK "Test #1: spdif audio card is not ready, \
@@ -126,35 +127,46 @@ setup()
         RC=66
         return $RC
     else
-        SPDIF_CARD_NO=$(aplay -l | grep MXC_SPDIF | awk '{print $2}' | sed 's/://')
+        SPDIF_CARD_NO=$(aplay -l | grep -i spdif | awk '{print $2}' | sed 's/://')
         echo "spdif device number: ${SPDIF_CARD_NO}"
     fi 
    
-    aplay -l | grep SGTL5000
-    if [ $? -ne 0 ]
-    then
-        tst_resm TBROK "Test #1: SGTL5000 is not ready, \
-            pls check ..."
-        RC=66
-        return $RC
+    # looking for audio card
+    platfm=`platfm.sh`
+    eval def_cfg_name="audio_dac_${platfm}.cfg"
+    if [ -e /etc/asound/$def_cfg_name ]; then
+        CFG_FILE=/etc/asound/$def_cfg_name
+    elif [ -e $LTPROOT/testcases/bin/$def_cfg_name ]; then
+        CFG_FILE=$LTPROOT/testcases/bin/$def_cfg_name
     else
-        STEREO_CARD_NO=$(aplay -l | grep SGTL5000 | awk '{print $2}' | sed 's/://')
-        echo "stereo device number: ${STEREO_CARD_NO}"
+        tst_resm TWARN "Default config file can't find, will use card 0 as sound card"
     fi
 
+    if [ -e "$CFG_FILE" ]; then
+        HW_keyword=`head -n 1 $CFG_FILE`
+        STEREO_CARD_NO=`aplay -l |grep card| grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
+    fi
+
+    [ -z "$STEREO_CARD_NO" ] && STEREO_CARD_NO=0
+    echo "stereo device number: ${STEREO_CARD_NO}"
     
-    aplay -l | grep WM8580
-    if [ $? -ne 0 ]
-    then
-        tst_resm TBROK "Test #1: WM8580 is not ready, \
-            pls check ..."
+    # cs42888 is for MX6 ARD board
+    easi_devices="WM8580 cs42888"
+    for dev in $easi_devices; do
+        if [ -z "$ESAI_CARD_NO" ]; then
+            aplay -l | grep $dev
+            if [ $? -eq 0 ]
+                ESAI_CARD_NO=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                echo "ESAI card device number: ${ESAI_CARD_NO}"
+            fi
+        fi
+    done
+
+    if [ -z "$ESAI_CARD_NO" ]; then
+        echo "No ESAI device, pls check ..."
         RC=66
         return $RC
-    else
-        ESAI_CARD_NO=$(aplay -l | grep WM8580 | awk '{print $2}' | sed 's/://')
-        echo "ESAI card device number: ${ESAI_CARD_NO}"
     fi
-
 }
 
 # Function:     cleanup

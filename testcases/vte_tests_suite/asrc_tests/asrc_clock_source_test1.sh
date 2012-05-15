@@ -62,59 +62,66 @@ setup()
 
     if [ ! -e /unit_tests/mxc_asrc_test.out ]
     then
-        tst_resm TBROK "Test #1: ASRC utilities are not ready, \
-        pls check..."
+        tst_resm TBROK "ASRC utilities are not ready, pls check..."
         RC=65
         return $RC
     fi
 
     [ ! -z $STREAM_PATH ] || {
-        tst_resm TBROK "Test #1: STREAM_PATH not set, pls check!" 
+        tst_resm TBROK "STREAM_PATH not set, pls check!" 
         RC=66
         return $RC
     } 
     
     if [ ! -e $STREAM_PATH/alsa_stream/audio44k24S-S24_LE_long.wav ]
     then
-        tst_resm TBROK "Test #1: source audio stream is not ready, \
-             pls check..."
+        tst_resm TBROK "source audio stream is not ready, pls check..."
         RC=66
         return $RC
     fi
 
     if [ ! -e $STREAM_PATH/alsa_stream/audio32k16S.wav ]
     then
-        tst_resm TBROK "Test #1: source audio stream is not ready, \
-             pls check..."
+        tst_resm TBROK "source audio stream is not ready, pls check..."
         RC=66
         return $RC
-    fi
-    
-    aplay -l | grep SGTL5000
-    if [ $? -ne 0 ]
-    then
-        tst_resm TBROK "Test #1: SGTL5000 is not ready, \
-            pls check ..."
-        RC=66
-        return $RC
-    else
-        STEREO_CARD_NO=$(aplay -l | grep SGTL5000 | awk '{print $2}' | sed 's/://')
-        echo "stereo device number: ${STEREO_CARD_NO}"
     fi
 
-    
-    aplay -l | grep WM8580
-    if [ $? -ne 0 ]
-    then
-        tst_resm TBROK "Test #1: WM8580 is not ready, \
-            pls check ..."
-        RC=66
-        return $RC
+    platfm=`platfm.sh`
+    eval def_cfg_name="audio_dac_${platfm}.cfg"
+    if [ -e /etc/asound/$def_cfg_name ]; then
+        CFG_FILE=/etc/asound/$def_cfg_name
+    elif [ -e $LTPROOT/testcases/bin/$def_cfg_name ]; then
+        CFG_FILE=$LTPROOT/testcases/bin/$def_cfg_name
     else
-        ESAI_CARD_NO=$(aplay -l | grep WM8580 | awk '{print $2}' | sed 's/://')
-        echo "ESAI card device number: ${ESAI_CARD_NO}"
+        tst_resm TWARN "Default config file can't find, will use card 0 as sound card"
     fi
 
+    if [ -e "$CFG_FILE" ]; then
+        HW_keyword=`head -n 1 $CFG_FILE`
+        STEREO_CARD_NO=`aplay -l |grep card| grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
+    fi
+
+    [ -z "$STEREO_CARD_NO" ] && STEREO_CARD_NO=0
+    echo "stereo device number: ${STEREO_CARD_NO}"
+
+    # cs42888 is for MX6 ARD board
+    easi_devices="WM8580 cs42888"
+    for dev in $easi_devices; do
+        if [ -z "$ESAI_CARD_NO" ]; then
+            aplay -l | grep $dev
+            if [ $? -eq 0 ]
+                ESAI_CARD_NO=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                echo "ESAI card device number: ${ESAI_CARD_NO}"
+            fi
+        fi
+    done
+
+    if [ -z "$ESAI_CARD_NO" ]; then
+        echo "No ESAI device, pls check ..."
+        RC=66
+        return $RC
+    fi
 }
 
 # Function:     cleanup
