@@ -30,7 +30,7 @@ install:
 	-ln -f mii-tool-1.9.1.1/mii-tool ../../bin/
 	-ln -f ppp-2.4.3/pppd/pppd ../../bin/
 	-ln -f tcpdump-3.9.8/tcpdump ../../bin/
-	-ln -f iproute-20110315/ip/ip ../../bin/ip2
+	-ln -f iproute-20110315/ip/ip ../../bin/ip
 
 clean: $(clean_SUBDIR-y)
 

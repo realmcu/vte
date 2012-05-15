@@ -61,7 +61,7 @@ setup()
         modprobe flexcan
     fi
 
-    ip2 link set $CANID up type can bitrate 125000
+    ${LTPROOT}/testcases/bin/ip link set $CANID up type can bitrate 125000
 
     ifconfig $CANID up
 
@@ -472,9 +472,8 @@ test_can_08()
     sleep 1
     tst-filter-master | tee output_ltp-can-verify.txt
     diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
-    #${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
-    #ip renamed to ip2 in testcases/bin
-    ip2 link del dev vcan0 type vcan
+    ${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
+
     return $RC
 }
 
