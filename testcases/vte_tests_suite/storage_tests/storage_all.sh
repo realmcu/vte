@@ -50,6 +50,7 @@ if [ $? -eq 0 ]; then
 fi
 
 sleep 5
+rm -f $tmpfile
 return $RC
 }
 

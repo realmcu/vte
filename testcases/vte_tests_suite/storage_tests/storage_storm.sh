@@ -49,6 +49,7 @@ if [ $? -eq 0 ]; then
 	RC=0
 fi
 sleep 5
+rm -f $tmpfile
 return $RC
 }
 
