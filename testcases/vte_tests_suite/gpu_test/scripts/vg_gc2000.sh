@@ -28,6 +28,8 @@
 #Author                          Date          Number    Description of Changes
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
+#Andy Tian                    05/15/2012       N/A      add wait for background
+#                                                       process
 # 
 ################################################################################
 
@@ -131,6 +133,7 @@ echo "==========================="
 echo tiger
 echo "==========================="
 ./tiger -frameCount 1000 &
+pid_tiger=$!
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
@@ -138,8 +141,11 @@ echo vgMark
 echo "==========================="
 cd VGMark
 ./fm_oes_vg_player &
+pid_vgMark=$i
 
-
+wait $pid_tiger && wait $pid_vgMark
+RC=$?
+wait
 
 echo $RC
 
@@ -217,10 +223,13 @@ sleep 1
 rtc_testapp_6 -T 5
 sleep 1
 
-kill -9 $td
-
-echo "test PASS"
-
+wait $td
+RC=$?
+if [ $RC = 0 ];then
+    echo "TEST PASS"
+else
+	echo "TEST FAIL"
+fi
 return $RC
 }
 usage()

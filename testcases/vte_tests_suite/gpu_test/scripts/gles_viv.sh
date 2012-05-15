@@ -28,6 +28,8 @@
 #Author                          Date          Number    Description of Changes
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
+#Andy Tian                    05/15/2012       N/A      add wait for background
+#                                                       process
 # 
 ################################################################################
 
@@ -152,26 +154,32 @@ echo "==========================="
 echo egl_test
 echo "==========================="
 ./egl_test &
+pid_egl=$!
 
 echo fps triangle
 echo "==========================="
 ./fps_triangle 10000 &
+pid_tri=$!
 
 echo "==========================="
 echo simple draw
 echo "==========================="
 ./simple_draw 1000 &
+pid_s1=$!
 ./simple_draw 1000 -s &
+pid_s2=$!
 
 echo "==========================="
 echo simple triangle
 echo "==========================="
 ./simple_triangle &
+pid_sTri=$!
 
 echo "==========================="
 echo torusknot
 echo "==========================="
 ./torusknot &
+pid_tor=$!
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
@@ -181,14 +189,15 @@ if [ -e 3DMarkMobile/fsl_imx_linux ]; then
   cd 3DMarkMobile/fsl_imx_linux/
     ./fm_oes_player
 fi
-
+wait $pid_egl && wait $pid_tri && wait $pid_s1 && wait $pid_s2 && wait $pid_sTri && wait $pid_tor
+RC=$?
 wait
 
-if [ $? -eq 0 ]; then
-echo "TEST PASS"
+if [ $RC -eq 0 ]; then
+    echo "TEST PASS"
 else
 RC=1
-echo "TEST FAIL"
+    echo "TEST FAIL"
 fi
 return $RC
 }
@@ -259,6 +268,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 ./simple_draw 10000 &
+pid=$!
 
 rtc_testapp_6 -T 10
 sleep 1
@@ -271,9 +281,14 @@ sleep 1
 rtc_testapp_6 -T 10
 sleep 1
 
-RC=wait
+wait $pid
+RC=$?
 
-echo "TEST PASS"
+if [ $RC = 0 ];then
+    echo "TEST PASS"
+else
+	echo "TEST FAIL"
+fi
 return $RC
 }
 
