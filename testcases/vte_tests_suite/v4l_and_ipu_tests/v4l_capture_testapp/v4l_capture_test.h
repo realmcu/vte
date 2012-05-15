@@ -112,7 +112,18 @@ extern "C" {
 		int mMode;
 	} sV4LTestConfig;
 /*======================== GLOBAL VARIABLE DECLARATIONS =====================*/
-
+        typedef struct
+        {
+             int mHeight;
+             int mWidth;
+             int mMode;
+        }sResolu;
+        typedef struct
+        {
+             int mCount;
+             sResolu mResolu[20];
+        } sResoluConfig;
+/*======================== FUNCTION PROTOTYPES ==============================*/
 	extern sV4LTestConfig gV4LTestConfig;
 
 /*======================== FUNCTION PROTOTYPES ==============================*/

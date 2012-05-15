@@ -130,12 +130,14 @@ extern "C" {
 	static int gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	static int gSnapshot = 0;
         static int gStartStream = 0;
+        static FILE *pResoluFile = NULL;
         struct v4l2_rect gOrigCropRect;
 	struct v4l2_rect gOrigFormatRect;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	unsigned long gOrigPixFormat = V4L2_PIX_FMT_RGB565;
 	static int inSrc = -1;
+        static int gResoluCount = 0;
 /*======================== GLOBAL CONSTANTS =================================*/
 
 /*======================== GLOBAL VARIABLES =================================*/
@@ -143,6 +145,9 @@ extern "C" {
 /*======================== LOCAL FUNCTION PROTOTYPES ========================*/
 
 	extern int gTestPerf;
+	extern int gChangResolu;
+        extern sResoluConfig gResoluConfig;
+        extern int gChangeResoluTimes;
 	int parse_options(void);
 	int open_device(void);
 	int close_device(void);
@@ -564,6 +569,7 @@ extern "C" {
 	int init_capture(void) {
 		struct v4l2_streamparm parm;
 		int i = 0;
+                int j = 0;
 		/* Open Frame Buffer Device */
 		if (gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
 			if (open_out_device() == TFAIL)
@@ -599,7 +605,12 @@ extern "C" {
 		parm.parm.capture.timeperframe.numerator = 1;
 		parm.parm.capture.timeperframe.denominator =
 		    gV4LTestConfig.mFrameRate;
-		parm.parm.capture.capturemode = gV4LTestConfig.mMode;
+                if( gChangResolu )
+                {
+                        parm.parm.capture.capturemode = gResoluConfig.mResolu[gResoluCount].mMode;
+                }
+                else
+              		parm.parm.capture.capturemode = gV4LTestConfig.mMode;
 		if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0) {
 			tst_resm(TFAIL, "set parm error!");
 			close(gFdV4L);
@@ -609,8 +620,16 @@ extern "C" {
 		/* Set format */
 		CLEAR(gFormat);
 		gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
-		gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
+		if( gChangResolu )
+                {
+                        gFormat.fmt.pix.width = gResoluConfig.mResolu[gResoluCount].mWidth;
+                        gFormat.fmt.pix.height = gResoluConfig.mResolu[gResoluCount].mHeight;
+                }
+	        else
+		{
+			gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
+			gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
+                }
 		gFormat.fmt.pix.pixelformat = gPixelFormat;
 		
 		if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
@@ -747,8 +766,7 @@ extern "C" {
 				tst_resm(TBROK,
 					 "VIDIOC_STREAMON failed. ERROR : %s",
 					 strerror(errno));
-				return TFAIL;
-			}
+				return TFAIL;}
 			break;
 		case V4L2_BUF_TYPE_VIDEO_OVERLAY:
 			{
@@ -1576,6 +1594,10 @@ extern "C" {
 			fclose(pDumpFile);
 			pDumpFile = NULL;
 		}
+                if(pResoluFile) {
+                       fclose (pResoluFile);
+                       pResoluFile = NULL;
+               }
 		return TPASS;
 	}
 
@@ -1597,29 +1619,32 @@ extern "C" {
                 long frame_time;
 		int max_time,min_time;
                 int total_frame;
+                int times = 0;
 		struct timeval tv_start, tv_current;
                 max_time=0;
                 min_time=0;
                 total_frame=0;
-		if (setup_device() != TPASS) {
-			cleanup_device();
-			return TFAIL;
-		}
-		/* V4l test */
+                		/* V4l test */
 		if (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F) {
 
 			if (write_file_header() == TFAIL)
 				return retValue;
 		}
 		tst_resm(TINFO, "Start capturing...");
-		while (cnt-- > 0) {
-			int ret = -1;
-			if (gTestPerf)
-                        { 
+		while ( times++ < gChangeResoluTimes){
+                     do {
+                            if (setup_device() != TPASS) {
+                            cleanup_device();
+                            return TFAIL; }
+               		    tst_resm(TINFO, "Start capturing...");
+                            while (cnt-- > 0) {
+		            int ret = -1;
+		            if (gTestPerf)
+                            { 
 				total_frame ++;
 			        gettimeofday(&tv_start, 0);
-			}
-			while (ret < 0) {
+		            }
+		            while (ret < 0) {
 				FD_ZERO(&fds);
 				FD_SET(gFdV4L, &fds);
 				tv.tv_sec = 2;
@@ -1633,16 +1658,16 @@ extern "C" {
 					tst_resm(TWARN, "Select timeout");
 					return retValue;
 				}
-			}
-			gSnapshot = 0;
-			if ((cnt == (int)(gV4LTestConfig.mCount / 2 + 1))
+		           }
+		           gSnapshot = 0;
+		           if ((cnt == (int)(gV4LTestConfig.mCount / 2 + 1))
 			    && (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F)
                             && gTestPerf == 0)
 	  		   gSnapshot = 1;
-			if (read_frame() == TFAIL)
+                           if (read_frame() == TFAIL)
 				return retValue;
-		 	if (gTestPerf)
-			{
+                           if (gTestPerf)
+			   {
 				gettimeofday(&tv_current, 0);
 				frame_time = (tv_current.tv_sec - tv_start.tv_sec);
 	                        frame_time = frame_time * 1000000L;
@@ -1659,22 +1684,33 @@ extern "C" {
 	                       		if(min_time > frame_time)
 		                        	min_time = frame_time;
 				}
-			}
-		}
-		retValue = TPASS;
-		if (gTestPerf)
-		{
-			printf("The max frame interval is  %u us\n",max_time);
-			printf("The max frame interval is  %u us\n",min_time);
-	                if( max_time > (1000000L / gV4LTestConfig.mFrameRate * 1.2))
+		          } 
+		      } //end of while cnt
+                      if(gChangResolu)
+                      {
+ 			  tst_resm(TINFO, " current  resolution is %d x %d",
+                                       gResoluConfig.mResolu[gResoluCount].mWidth,
+                                       gResoluConfig.mResolu[gResoluCount].mHeight);
+                      }
+	              retValue = TPASS;
+	              if (gTestPerf)
+	              {
+		          printf("The actual fps is between %ufps-%u fps \n",1000000L/max_time,1000000L/min_time);
+	                  if( max_time > (1000000L / gV4LTestConfig.mFrameRate * 1.2))
         	              	retValue = TFAIL;
-                        if ( min_time < (1000000L /gV4LTestConfig.mFrameRate * 0.8))
+                          if ( min_time < (1000000L /gV4LTestConfig.mFrameRate * 0.8))
                        		retValue = TFAIL;
-		}
-		sleep(1);
-		if (cleanup_device() != TPASS)
+	
+ 	              }
+	              sleep(1);
+	              if (cleanup_device() != TPASS)
 			return TFAIL;
-		return retValue;
+                      gResoluCount++;
+                      cnt = gV4LTestConfig.mCount;
+                  } while( gResoluCount < gResoluConfig.mCount);
+                   gResoluCount = 0;
+                }
+            return retValue;
 	}
 
 /*===== do_cropping =====*/
