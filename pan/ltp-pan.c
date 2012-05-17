@@ -96,7 +96,8 @@ struct orphan_pgrp {
 };
 
 static pid_t run_child(struct coll_entry *colle, struct tag_pgrp *active,
-		       int quiet_mode);
+		       int quiet_mode, int *failcnt, int fmt_print,
+		       FILE * logfile);
 static char *slurp(char *file);
 static struct collection *get_collection(char *file, int optind, int argc,
 					 char **argv);
@@ -503,46 +504,46 @@ int main(int argc, char **argv)
 			if (!sequential)
 				c = lrand48() % coll->cnt;
 
-			/* find a slot for the child */
-			for (i = 0; i < keep_active; ++i) {
-				if (running[i].pgrp == 0)
-					break;
-			}
-			if (i == keep_active) {
-				fprintf(stderr,
-					"pan(%s): Aborting: i == keep_active = %d\n",
-					panname, i);
-				wait_handler(SIGINT);
-				exit_stat++;
-				break;
-			}
-			cpid = run_child(coll->ary[c], running + i, quiet_mode);
-			if (cpid != -1) {
-				++num_active;
-			}
-			if ((cpid != -1 || sequential) && starts > 0)
-				--starts;
+	    /* find a slot for the child */
+	    for (i = 0; i < keep_active; ++i) {
+		if (running[i].pgrp == 0)
+		    break;
+	    }
+	    if (i == keep_active) {
+		fprintf(stderr, "pan(%s): Aborting: i == keep_active = %d\n",
+			panname, i);
+		wait_handler(SIGINT);
+		exit_stat++;
+		break;
+	    }
 
-			if (sequential)
-				if (++c >= coll->cnt)
-					c = 0;
+	    cpid = run_child(coll->ary[c], running + i, quiet_mode, &failcnt,
+			     fmt_print, logfile);
+	    if (cpid != -1)
+		++num_active;
+	    if ((cpid != -1 || sequential) && starts > 0)
+		--starts;
 
-		}		/* while ((num_active < keep_active) && (starts != 0)) */
+	    if (sequential)
+		if (++c >= coll->cnt)
+		    c = 0;
 
-		if (starts == 0) {
-			if (!quiet_mode)
-				printf("incrementing stop\n");
-			++stop;
-		} else if (starts == -1)	//wjh
-		{
-			FILE *f = (FILE *) - 1;
-			if ((f = fopen(PAN_STOP_FILE, "r")) != 0) {
-				printf("Got %s Stopping!\n", PAN_STOP_FILE);
-				fclose(f);
-				unlink(PAN_STOP_FILE);
-				stop++;
-			}
-		}
+	} /* while ((num_active < keep_active) && (starts != 0)) */
+
+	if (starts == 0)
+	{
+		if (!quiet_mode)
+			printf("incrementing stop\n");
+		++stop;
+	}
+	else if (starts == -1) //wjh
+	{
+	   FILE *f = (FILE*)-1;
+	   if ((f = fopen(PAN_STOP_FILE, "r")) != 0)
+	   {  printf("Got %s Stopping!\n", PAN_STOP_FILE);
+		  fclose(f); unlink(PAN_STOP_FILE); stop++;
+	   }
+	}
 
 		if (rec_signal) {
 			/* propagate everything except sigusr2 */
@@ -965,7 +966,8 @@ STEP2:
 }
 
 static pid_t
-run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
+run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode,
+	  int *failcnt, int fmt_print, FILE * logfile)
 {
 	ssize_t errlen;
 	int cpid;
@@ -1157,22 +1159,34 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 			termtype = "unknown";
 		}
 		time(&end_time);
-		if (!quiet_mode) {
-			//write_test_start(active, errbuf);
-			write_test_end(active, errbuf, end_time, termtype,
-				       status, termid, &notime, &notime);
+        if (logfile != NULL) {
+            if (!fmt_print) {
+                fprintf(logfile,
+                    "tag=%s stime=%d dur=%d exit=%s "
+                    "stat=%d core=%s cu=%d cs=%d\n",
+                    colle->name, (int)(active->mystime),
+                    (int) (end_time - active->mystime), termtype,
+                    termid, (status & 0200) ? "yes" : "no",
+                    0, 0);
+            } else {
+                if (termid != 0)
+                    ++*failcnt;
+
+                fprintf(logfile, "%-30.30s %-10.10s %-5d\n",
+                    colle->name, ((termid != 0) ? "FAIL" : "PASS"),
+                    termid);
+            }
+            fflush(logfile);
 		}
-		if (capturing) {
-			close(c_stdout);
-			unlink(active->output);
-		}
+
+        if (!quiet_mode)
+        {
+            //write_test_start(active, errbuf);
+            write_test_end(active, errbuf, end_time, termtype, status,
+                termid, &notime, &notime);
+        }
 		return -1;
 	}
-
-	close(errpipe[0]);
-	if (capturing)
-		close(c_stdout);
-
 	active->pgrp = cpid;
 	active->stopping = 0;
 
@@ -1184,16 +1198,16 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode)
 	if (Debug & Dstartup)
 		fprintf(stderr, "started %s cpid=%d at %s",
 			colle->name, cpid, ctime(&active->mystime));
-
 	if (Debug & Dstart) {
 		fprintf(stderr, "Executing test = %s as %s", colle->name,
 			colle->cmdline);
-		if (capturing)
-			fprintf(stderr, "with output file = %s\n",
-				active->output);
-		else
-			fprintf(stderr, "\n");
+        if (capturing)
+            fprintf(stderr, "with output file = %s\n",
+                active->output);
+        else
+            fprintf(stderr, "\n");
 	}
+
 
 	return cpid;
 }
