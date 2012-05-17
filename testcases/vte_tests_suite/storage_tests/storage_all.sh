@@ -126,7 +126,7 @@ do
 		done
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
-       p_node /dev/$j || break
+       p_node /dev/$j || continue
 			 target_list=$target_list" "${j}1
 		fi
 	done
@@ -180,7 +180,7 @@ do
 		done
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
-       p_node /dev/$j || break
+       p_node /dev/$j || continue
 			 target_list=$target_list" "${j}p1
 		fi
 	done
