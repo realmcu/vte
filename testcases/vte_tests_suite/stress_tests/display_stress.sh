@@ -71,6 +71,73 @@ RC=0
 return $RC
 }
 
+run_test()
+{
+	RC=0
+	pCPU=0
+	pGPU=0
+	pVPU=0
+	pIPU=0
+	pIO=0
+	while [ ! -z "$1" ]; do
+		case "$1" in
+			'CPU' )
+			echo CPU
+			core_stress.sh 4 &
+			pCPU=$!
+			;;
+			'GPU' )
+			echo GPU
+			export FB_FRAMEBUFFER_0=/dev/fb2
+			gles_viv.sh 1 &
+			pGPU=$1
+			;;
+			'VPU' )
+			echo VPU
+			test_case_04 &
+			pVPU=$1
+			;;
+			'IPU' )
+			echo IPU
+			ipu_test.sh 1 &
+			pIPU=$1
+			;;
+			'IO' )
+			echo IO
+			storage_all.sh 1 &
+			pIO=$1
+			;;
+			'*' )
+			echo "skip"
+			;;
+		esac
+		shift
+	done
+	if [  $pCPU -ne 0  ]; then
+    ret=$(wait $pCPU)
+	RC=$(expr $ret + $RC)
+	fi
+	if [ $pGPU -ne 0  ]; then
+    ret=$(wait $pGPU)
+	RC=$(expr $ret + $RC)
+	fi
+	if [ $pVPU  -ne 0 ]; then
+    ret=$(wait $pVPU)
+	RC=$(expr $ret + $RC)
+	fi
+	if [ $pIPU -ne 0 ]; then
+    ret=$(wait $pIPU)
+	RC=$(expr $ret + $RC)
+	fi
+	if [ $pIO -ne 0 ]; then
+    ret=$(wait $pIO)
+	RC=$(expr $ret + $RC)
+	fi
+	wait
+	return $RC
+}
+
+
 run_auto_test_list()
 {
    RC=0
@@ -110,26 +177,13 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 
 echo 0 > /sys/class/graphics/fb0/blank
-echo 1 > /sys/class/graphics/fb0/blank
-echo 2 > /sys/class/graphics/fb0/blank
+echo 0 > /sys/class/graphics/fb1/blank
+echo 0 > /sys/class/graphics/fb2/blank
 
 echo -e "\033[9;0]" > /dev/tty0
 
 #test list
-stream_benchmark &
-dry2 &
-
-#set the fb used by GPU program and this env variable need 
-#chang according to vivante's GPU code
-export FB_FRAMEBUFFER_0=/dev/fb2
-gles_viv.sh 1 &
-loops=100
-while [ $loops -gt 0 ]
-	do
-lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 1
-  loops=$(expr $loops - 1)
-  done
-wait
+run_test GPU VPU IO CPU
 RC=$?
 return $RC
 }
@@ -149,23 +203,12 @@ RC=1
 tst_resm TINFO "test $TST_COUNT: $TCID "
 echo 0 > /sys/class/graphics/fb0/blank
 echo 0 > /sys/class/graphics/fb2/blank
+echo -e "\033[9;0]" > /dev/tty0
 
-export FB_FRAMEBUFFER_0=/dev/fb2
-a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-gles_viv.sh 1 &
-run_auto_test_list &
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
-loops=100
-while [ $loops -gt 0 ]
-	do
-lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 1
-echo 0 > /sys/class/graphics/fb0/blank
-echo 0 > /sys/class/graphics/fb2/blank
-  loops=$(expr $loops - 1)
-  done
-#TODO add function test scripte here
-wait
+
+run_test GPU VPU IO
 RC=$?
+
 return $RC
 }
 
@@ -235,8 +278,13 @@ b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_A
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
 pid1=$!
 
-/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 19 " &
-pid2=$!
+if [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video19 ]; then
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 19 " &
+	pid2=$!
+elif [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video18 ]; then
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 18 " &
+	pid2=$!
+fi
 
 #pass pid to wait otherwise wait will return 0 always
 wait $pid2 $pid1
@@ -337,6 +385,7 @@ echo "4: "
 echo "5: "
 echo "6: "
 echo "7: "
+echo "8: [GPU] [VPU] [IO] [CPU] [IPU]"
 }
 
 # main function
@@ -344,7 +393,7 @@ echo "7: "
 RC=0
 
 #TODO check parameter
-if [ $# -ne 1 ]
+if [ $# -lt 1 ]
 then
 usage
 exit 1 
@@ -374,9 +423,12 @@ case "$1" in
 7)
   test_case_07 || exit $RC
   ;;
+8)
+  run_test $@ || exit $RC
+  ;;
 *)
   usage
   ;;
 esac
 
-tst_resm TINFO "Test PASS"
+ echo "Test PASS"
