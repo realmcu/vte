@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Copyright (C) 2008,2010-2012 Freescale Semiconductor, Inc.
 #All Rights Reserved.
 #
@@ -22,6 +22,7 @@
 # Spring                17/03/2011    Match right ALSA device
 # Spring                30/03/2012    Remove dependency of alsa dev detect
 # Spring                06/04/2012    Use config file to get default device
+# Andy Tian             05/17/2012    Add globbing support for -f argument
 #############################################################################
 
 # Function:     setup
@@ -53,23 +54,34 @@ setup()
             mount -t tmpfs $LTPTMP $LTPTMP
         }
     fi
+	while [ $# -ne 0 ];do	
+		OPTIND=0
+		while getopts f:c:d:s:aAMDNh arg
+		do
+			case $arg in
+			f) FILE=$OPTARG;;
+			c) CFG_FILE=$OPTARG;;
+			d) CARD=$OPTARG;;
+			s) SEARCH_STR=$OPTARG;;
+			a) RUN_ALL="true";;
+			# A is abandoned, used for auto, now it's default behavior
+			A) ;;
+			M) MANUAL="true";;
+			D) HW="true";;
+			N) ;;
+			\?|h) usage;;
+			esac
+		done
 
-    while getopts f:c:d:s:aAMDNh arg
-    do
-        case $arg in
-        f) FILE=$OPTARG;;
-        c) CFG_FILE=$OPTARG;;
-        d) CARD=$OPTARG;;
-        s) SEARCH_STR=$OPTARG;;
-        a) RUN_ALL="true";;
-        # A is abandoned, used for auto, now it's default behavior
-        A) ;;
-        M) MANUAL="true";;
-        D) HW="true";;
-        N) ;;
-        \?|h) usage;;
-        esac
-    done
+		if [ $OPTIND -ne $(($#+1)) ]
+		then
+			shift $(($OPTIND-1))
+			FILE="$FILE $1"
+			shift
+		else
+			break
+		fi
+	done
 
     trap "cleanup" 0
 
@@ -145,19 +157,11 @@ dac_play()
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if there is voice."
-    basefn=$(basename $FILE)
-    tmpdir=`mktemp -d -p $LTPTMP`
-    if [ -e $tmpdir ]; then
-        cp -f $FILE $tmpdir || RC=$?
-        if [ $RC -ne 0 ]; then
-            tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in $LTPTMP"
-            return $RC
-        fi
-    else
-        RC=2
-        return $RC
-    fi
-
+    tmpdir=`mktemp -d -p $LTPTMP` || RC=$?
+	if [ $RC -ne 0 ]; then
+		tst_resm TFAIL "Test #1: Can not create $LTPTMP"
+		return $RC
+	fi
     if [ -z "$CARD" ]; then
         if [ -z "$SEARCH_STR" ]; then
             # get keyword from config file
@@ -206,7 +210,20 @@ dac_play()
         card_name=`aplay -l | grep -i "$HW_keyword" | awk '{ print $3 }'`
         echo
         echo "TINFO play on: $card_name"
-        aplay -N -M ${play_iface} $tmpdir/$basefn || RC=$?
+		for i in $FILE;do
+			basefn=$(basename $i)
+			cp -f $i $tmpdir || RC=$?
+			if [ $RC -ne 0 ]; then
+				tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in $LTPTMP"
+				return $RC
+			fi
+			aplay -N -M ${play_iface} $tmpdir/$basefn || RC=$?
+			if [ $RC -ne 0 ]; then
+				tst_resm TFAIL "Test #1: Playing back $LTPTMP Failed"
+				return $RC
+			fi
+			rm -f $tmpdir/$basefn
+		done
         if [ $RC -eq 0 ]; then
             echo
             echo "TPASS play on: $card_name"
@@ -254,7 +271,20 @@ dac_play()
         alsa_dev=""
         echo
         echo "TINFO play on: $card_name"
-        aplay -N -M ${play_iface} $tmpdir/$basefn ||RC=$?
+		for i in $FILE;do
+			basefn=$(basename $i)
+			cp -f $i $tmpdir || RC=$?
+			if [ $RC -ne 0 ]; then
+				tst_resm TFAIL "Test #1: copy from NFS to tmp error, no space left in $LTPTMP"
+				return $RC
+			fi
+			aplay -N -M ${play_iface} $tmpdir/$basefn || RC=$?
+			if [ $RC -ne 0 ]; then
+				tst_resm TFAIL "Test #1: Playing back $LTPTMP Failed"
+				return $RC
+			fi
+			rm -f $tmpdir/$basefn
+		done
         if [ $RC -eq 0 ]; then
             test_results="$test_results PASS"
             echo
