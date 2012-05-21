@@ -62,11 +62,15 @@ extern "C" {
 
 /*======================== GLOBAL VARIABLES =================================*/
 /* Extern Global Variables */
+        sResoluConfig gResoluConfig;
+        int gChangeResoluTimes = 1;
 	extern int Tst_count;	/* counter for tst_xxx routines.         */
 	extern char *TESTDIR;	/* temporary dir created by tst_tmpdir */
      
         int gTestPerf = 0;
+        int gChangResolu = 0;
 	int gExitCleanup = 1;
+       
 /* Global Variables */
 	char *TCID = "v4l_capture_testapp";	/* test program identifier.          */
 	int TST_TOTAL = 1;	/* total number of tests in this file.   */
@@ -168,7 +172,7 @@ extern "C" {
 		/* parse options. */
 		char *msg;
 		int Dflag = 0, Hflag = 0, Wflag = 0, Rflag = 0, Sflag = 0, Bflag = 0, Tflag = 0, oflag = 0, Oflag = 0, Cflag = 0, uflag = 0, Eflag = 0, Mflag = 0, Xflag = 0, Nflag = 0, Yflag = 0, vflag = 0, rflag = 0, Kflag = 0,	/*block io */
-		    sflag = 0,Zflag = 0;	/*capture input select */
+		    sflag = 0,Zflag = 0,dflag = 0,nflag = 0;	/*capture input select */
 
 		char *Dopt,
 		    *Hopt,
@@ -178,7 +182,7 @@ extern "C" {
 		    *oopt,
 		    *Oopt,
 		    *Copt,
-		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt;
+		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt, *dopt, *nopt;
 		option_t options[] = {
 			{"D:", &Dflag, &Dopt},	/* Video capturing device               */
 			{"H:", &Hflag, &Hopt},	/* Capturing height                     */
@@ -201,6 +205,8 @@ extern "C" {
 			{"s:", &sflag, &sopt},
 			{"M:", &Mflag, &Mopt},
   		        {"Z", &Zflag, NULL},    /* frame rate performance test          */
+                        {"d:", &dflag, &dopt},    /* dynamic change resolution configure file*/
+                        {"n:", &nflag, &nopt},    /* change resolution times*/
 			{NULL, NULL, NULL}	/* NULL required to end array           */
 		};
 		if ((msg = parse_opts(argc, argv, options, help)) != NULL) {
@@ -234,6 +240,50 @@ extern "C" {
 		gV4LTestConfig.mFrameRate = rflag ? atoi(ropt) : 30;
 		gV4LTestConfig.mIsBlock = Kflag ? atoi(Kopt) : 0;
 		tst_resm(TINFO, "IO blocking is %d\n", gV4LTestConfig.mIsBlock);
+                if( dflag)
+                {
+			gChangResolu = 1;
+                        char ResoluFileName[40];
+                        char * pResoluFile = NULL;
+                        int num=0;
+                        char line[20];
+                        int width;
+	                int height;
+                        int mode;
+                        sscanf(dopt, "%s",ResoluFileName);
+                        if (!(pResoluFile = fopen(ResoluFileName, "r"))) {
+                                 tst_resm(TWARN,
+                                         "Error read resolution file() : Unable to open file %s : %s",
+                                         ResoluFileName, strerror(errno));
+                                 return TFAIL;}
+                        fgets(line,20,pResoluFile);
+                        while (!feof (pResoluFile))
+                        {
+                                 sscanf(line,"%d%d%d",&width,&height,&mode);
+                                 gResoluConfig.mResolu[num].mWidth = width;
+                                 gResoluConfig.mResolu[num].mHeight = height;
+                                 gResoluConfig.mResolu[num].mMode = mode;
+                                 num ++; 
+                                 tst_resm(TINFO,
+                                         "The width is  %d : the height is %d : the mode is %d",
+                                        width,height,mode);
+                                 fgets(line,20,pResoluFile);
+
+                        } 
+                        gResoluConfig.mCount = num;
+			fclose(pResoluFile);
+                        pResoluFile = NULL;
+                }        
+                if( nflag)
+                {
+                        sscanf(nopt, "%d",&gChangeResoluTimes);
+                        if (gChangeResoluTimes < 0)
+                        {
+                             tst_resm(TBROK, "The Change resolution times should be greater than zero");
+                             return TFAIL;
+                        }
+               
+		}
 		if( Zflag){            
 			gTestPerf = 1;
 		 	if(gV4LTestConfig.mCount < 101 )

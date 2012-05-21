@@ -32,6 +32,7 @@ LOADLIBES+=     -L../../../../lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
+CONFIG=ResolutionCfg
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME
 TARGET=v4l_capture_testapp
@@ -47,6 +48,7 @@ install:
 	@echo "** INSTALL : v4l_capture_testapp                  **"
 	@echo "****************************************************"
 	ln -f $(TARGET) ../../../bin/
+	ln -f $(CONFIG) ../../../bin/
 	@echo
 
 clean:
