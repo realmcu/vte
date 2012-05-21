@@ -4,6 +4,18 @@
 
 camera_module=
 
+NO_REMOVE=
+
+rmodule()
+{
+ if [ "$NO_REMOVE" = "Y" ]; then
+ 	echo "not remove $1"
+ else
+	rmmod $1 || return $?
+ fi
+	return 0
+}
+
 check_platform_camera()
 {
  #only check i2c camera
@@ -21,27 +33,27 @@ check_platform_camera()
 			apd=_${appends}
 		fi
 		if [ $find -eq 1  ]; then
-			modprobe -r ${camera}_camera${apd}
+			rmodule  ${camera}_camera${apd}
 			continue
 		fi
 		if [ ! -z "$CAMERA"  ];then
 			if [ "$CAMERA" = ${camera}${apd} ]; then
 				camera_module=${camera}_camera${apd}
-				modprobe -r ${camera}_camera${apd}
+				rmodule  ${camera}_camera${apd}
 				find=1
 			else
 				camera_module=
-				modprobe -r ${camera}_camera${apd}
+				rmodule  ${camera}_camera${apd}
 			fi
 		else
-			modprobe -r ${camera}_camera${apd}
+			rmodule  ${camera}_camera${apd}
 			sleep 1
 			camera_module=$(echo $camera_module  ${camera}_camera${apd})
 		fi
 	done
  done
 
- modprobe -r mxc_v4l2_capture || return 1
+ rmodule  mxc_v4l2_capture || return 1
 
  if [ -z $camera_module ]; then
 	return 1
@@ -96,10 +108,10 @@ v4l_cleanup()
   		exit 1
 	fi
    for cm in $camera_module; do
-   modprobe -r $cm
+   rmodule  $cm
    done
    sleep 2
-   modprobe -r mxc_v4l2_capture || return 1
+   rmodule  mxc_v4l2_capture || return 1
 }
 
 
