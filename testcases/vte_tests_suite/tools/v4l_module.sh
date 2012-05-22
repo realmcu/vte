@@ -4,8 +4,6 @@
 
 camera_module=
 
-NO_REMOVE=
-
 rmodule()
 {
  if [ "$NO_REMOVE" = "Y" ]; then
