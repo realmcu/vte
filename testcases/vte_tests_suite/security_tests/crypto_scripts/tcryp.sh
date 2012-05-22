@@ -165,13 +165,26 @@ return $RC
 test_case_04()
 {
 #TODO give TCID
-TCID="_test"
+TCID="mx6q-CAAM_test"
 #TODO give TST_COUNT
 TST_COUNT=4
 RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
+MODE_LIST="3 4 10 200 201 202 203 204 205"
+
+for i in $MODE_LIST
+do
+insmod ${LTPROOT}/testcases/bin/tcrypt.ko mode=$i sec=3
+Ret=$?
+if [ $Ret -ne 0 ]; then
+RC=$(expr $RC + 1)
+fi
+rmmod tcrypt
+sleep 2
+done
+
 
 #TODO add function test scripte here
 return $RC
