@@ -52,13 +52,13 @@ OUTPUTFB="ipu0-1st-ovfb"
 
 FB0NAME=$(cat /sys/class/graphics/fb1/name)
 
-if [ $FB0NAME = "DISP3 FG"  ]; then
+if [ "$FB0NAME" = "DISP3 FG"  ]; then
 OUTPUTFB="ipu0-1st-ovfb"
-elif [ $FB0NAME = "DISP3 BG - DI1" ]; then
+elif [ "$FB0NAME" = "DISP3 BG - DI1" ]; then
 OUTPUTFB="ipu0-2st-fb"
-elif [ $FB0NAME = "DISP4 FG" ]; then
+elif [ "$FB0NAME" = "DISP4 FG" ]; then
 OUTPUTFB="ipu1-1st-ovfb"
-elif [ $FB0NAME = "DISP4 BG - DI1" ]; then
+elif [ "$FB0NAME" = "DISP4 BG - DI1" ]; then
 OUTPUTFB="ipu1-2st-fb"
 fi
 
