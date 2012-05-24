@@ -9,9 +9,11 @@ rmodule()
  if [ "$NO_REMOVE" = "Y" ]; then
  	echo "not remove $1"
  else
-	rmmod $1 || return $?
+	modprobe -r $1 || return $?
+    sleep 1
  fi
-	return 0
+
+ return 0
 }
 
 check_platform_camera()
