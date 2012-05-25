@@ -113,10 +113,6 @@ run_test()
 		esac
 		shift
 	done
-	if [  $pCPU -ne 0  ]; then
-    ret=$(wait $pCPU)
-	RC=$(expr $ret + $RC)
-	fi
 	if [ $pGPU -ne 0  ]; then
     ret=$(wait $pGPU)
 	RC=$(expr $ret + $RC)
@@ -132,6 +128,9 @@ run_test()
 	if [ $pIO -ne 0 ]; then
     ret=$(wait $pIO)
 	RC=$(expr $ret + $RC)
+	fi
+	if [  $pCPU -ne 0  ]; then
+    kill -9 $pCPU
 	fi
 	wait
 	return $RC
