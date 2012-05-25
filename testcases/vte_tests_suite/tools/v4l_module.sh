@@ -3,6 +3,7 @@
 # possbile CAMERA are ov3640, ov5640, ov5642
 
 camera_module=
+NO_REMOVE='Y'
 
 rmodule()
 {
