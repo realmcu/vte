@@ -127,7 +127,8 @@ do
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
        p_node /dev/$j || continue
-			 target_list=$target_list" "${j}1
+ 	   mkfs.ext3 /dev/${j}1 || continue
+	   target_list=$target_list" "${j}1
 		fi
 	done
 done
@@ -181,6 +182,7 @@ do
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
 #no partition then partition it to 1 partition 
        p_node /dev/$j || continue
+ 	   mkfs.ext3 /dev/${j}p1 || continue
 			 target_list=$target_list" "${j}p1
 		fi
 	done
