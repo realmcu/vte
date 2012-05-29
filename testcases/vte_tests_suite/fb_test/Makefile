@@ -15,7 +15,7 @@
 ##############################################################################
 
 SUBDIRS = mxcfb_test
-SCRIPTS = hdmi_test.sh
+SCRIPTS = hdmi_test.sh hdmi_stress.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILE)gcc; done
