@@ -1,5 +1,5 @@
 #!/bin/sh -x
-#Copyright 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2010, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -21,6 +21,7 @@
 #Hake Huang/-----             <20081209>     N/A          Initial version
 #Justin Qiu                   <20091201>     N/A          add ipu performance test
 #Spring Zhang                 <20100816>     N/A          copy stream to mem
+#Andy Tian                    <20120530>     N/A          copy stream to SATA for case_07
 # 
 ###################################################################################################
 
@@ -113,6 +114,7 @@ RC=0
 
 #ipu mem is write back need sync
 sync
+umount /mnt/msc
 
 #TODO add cleanup code here
 
@@ -355,7 +357,7 @@ mkdir /tmp/ipu_dev/
 		if [ $motion -eq 1 ]; then
 			echo "motion_sel = 0(medium_motion)"
     	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,0 \
-    	-O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB  -s 1 /tmp/ipu_dev/tmp.dat \
+    	-O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
 			|| RC=$(expr $RC + 1)
 	  	echo "motion_sel = 1(low_motion)"
     	${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,1 \
@@ -437,6 +439,11 @@ test_case_07()
     TST_COUNT=7
     RC=1
 
+	#mount sata
+	mkdir -p /mnt/msc
+	mount -t ext3 /dev/sda1 /mnt/msc
+
+
     #print test info
     tst_resm TINFO "test $TST_Count: $TCID "
 
@@ -455,6 +462,9 @@ test_case_07()
         WD=$(echo $infile | sed "s/+/ /g" | awk '{print $1}' )
         HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
         infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
+        if [ ! -e /mnt/msc/$infilename ]; then
+		cp ${STREAM_PATH}/video/${infilename} /mnt/msc || return $?
+	fi
           echo "TST_INFO: --------- rotate only test --------------------"
 					for r in $ROTATION
 						do
@@ -462,7 +472,7 @@ test_case_07()
 						continue;
 					fi
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},I420,${r},0,0,0,0 -s 1 -f $OUTPUTFB ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},I420,${r},0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
 		echo "*************************************************************"
@@ -473,7 +483,7 @@ test_case_07()
 	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
 	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
     time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${out_w},${out_h},I420,0,0,0,0,0 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${out_w},${out_h},I420,0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
              done
 
@@ -481,9 +491,9 @@ test_case_07()
         for format in ${FMLIST}
         do
           echo "TST_INFO: output format is: ${format}"
-          echo "TST_INFO: --------single CSC display---------------"
+          echo "TST_INFO: --------f $OUTPUTFB -single CSC display---------------"
     time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
 					TOTAL=$(expr $TOTAL + 1)
     			dmesg -c
           echo "TST_INFO: --------- rotate with CRS test --------------------"
@@ -493,23 +503,23 @@ test_case_07()
 						continue;
 					fi
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},${r},0,0,0,0 -f $OUTPUTFB -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},${r},0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
 		        done
           echo "TST_INFO: ---------CSC crop test------------"
 					echo "CSC crop input"
     time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
-    -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
     			dmesg -c
 					TOTAL=$(expr $TOTAL + 1)
     		 echo "CSC crop output"
 		time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${WD},${HT},${format},0,32,32,64,64 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${WD},${HT},${format},0,32,32,64,64 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
     			dmesg -c
 					TOTAL=$(expr $TOTAL + 1)
     			#echo "CSC crop input and output"
 		#time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
-    #-O  ${WD},${HT},${format},0,32,32,64,64 -s 1 ${STREAM_PATH}/video/${infilename}
+    #-O  ${WD},${HT},${format},0,32,32,64,64 -f $OUTPUTFB -s 1 ${STREAM_PATH}/video/${infilename}
     #			dmesg -c
 		#				TOTAL=$(expr $TOTAL + 3)
           echo "TST_INFO: --------- CSC resize test --------------------"
@@ -519,7 +529,7 @@ test_case_07()
 	         out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
 	         out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
     time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-    -O  ${out_w},${out_h},${format},0,0,0,0,0 -f $OUTPUTFB  -s 1 ${STREAM_PATH}/video/${infilename}
+    -O  ${out_w},${out_h},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
 						TOTAL=$(expr $TOTAL + 1)
              done
          done
