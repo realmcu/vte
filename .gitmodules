@@ -4,3 +4,6 @@
 [submodule "testcases/vte_tests_suite/epdc_tests/apps-epd"]
 	path = testcases/vte_tests_suite/epdc_tests/apps-epd
 	url = git://sw-git.freescale.net/apps-epd.git
+[submodule "testcases/kernel/mce-test"]
+	path = testcases/kernel/mce-test
+	url = git://git.kernel.org/pub/scm/linux/kernel/git/gong.chen/mce-test.git
