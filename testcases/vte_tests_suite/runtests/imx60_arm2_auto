@@ -107,13 +107,9 @@ TGE-LV-ALSA-0245	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
 TGE-LV-ALSA-0246	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
 TGE-LV-ALSA-0302	aplay /mnt/nfs/test_stream/alsa_stream_music/*.wav && echo "PASS"
 TGE-LV-ALSA-3002	arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
-TGE-LV-ESAI-0100	aplay -l | grep -i cs42888
-TGE-LV-ESAI-0200	aplay -D hw:0,0 $STREAM_PATH/alsa_stream/audio44k16M.wav
-TGE-LV-ESAI-0313	aplay -D hw:0,0  $STREAM_PATH/esai_stream/192k24bit-six-S24_LE.wav
-TGE-LV-ESAI-1002	esai_test.sh 2
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
-TGE-LV-BENCH-10003	c-ray.sh
+TGE-LV-BENCH-10003_HH	c-ray.sh
 TGE-LV-PerfMon-10000	modprobe mxs-perfmon && cd /sys/devices/platform/mxs-perfmon.0 && echo read > Monitor && echo start > Monitor && cat Monitor | grep "Run mode" && echo stop > Monitor && cat Monitor | grep "Stop mode" && rmmod mxs-perfmon
 TGE-LV-APP-0001	gst-inspect
 TGE-LV-I2C-0001	i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
@@ -126,8 +122,8 @@ TGE-LV-WIFI-0043	modprobe ar6000; sleep 5; iwconfig wlan0 mode managed && iwlist
 TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ar6000; sleep 10; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && RT=0 ; modprobe -r ar6000; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
 TGE-LV-ETHERNET-1003	ethtool eth0
-TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.244.7 CPU
-TGE-LV-ETHERNET-1005	udp_stream_script 10.192.244.7 CPU
+TGE-LV-ETHERNET-1004_H	tcp_stream_script 10.192.244.7 CPU
+TGE-LV-ETHERNET-1005_H	udp_stream_script 10.192.244.7 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-ETHERNET-1009	ifconfig eth0 | grep "dropped:0"
 TGE-LV-ETHERNET-1011	ifconfig eth0 | grep "overruns:0"
@@ -149,7 +145,7 @@ TGE-LV-FB-EPDC-0008	epdc_test -T 0 -g 2 && epdc_test -T 2
 TGE-LV-FB-EPDC-0009	epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2
 TGE-LV-FB-EPDC-0010	epdc_test -T 1
 TGE-LV-FB-EPDC-0012	epdc_test -T 2; epdc_test -T 7
-TGE-LV-FB-EPDC-0013	epdc_full.sh 1
+TGE-LV-FB-EPDC-0013_HH	epdc_full.sh 1
 TGE-LV-FB-EPDC-0016	epdc_test -T 8 -y 10
 TGE-LV-FB-EPDC-0017	epdc_test -T 0 -S 0 && epdc_test -T 0 -S 1 && epdc_test -T 0 -S 2
 TGE-LV-GPT-0010	gpt_testapp
@@ -161,9 +157,9 @@ TGE-LV-KERNEL_BOOT-0001	dmesg -c
 TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
-TGE-LV-DVFS-0140	dvfs_mx60.sh 1
+TGE-LV-DVFS-0140_H	dvfs_mx60.sh 1
 TGE-LV-DVFS-0144	dvfs_mx60.sh 4
-TGE-LV-DVFS-0145	dvfs_mx60.sh 5
+TGE-LV-DVFS-0145_H	dvfs_mx60.sh 5
 TGE-LV-DVFS-0160	dvfs_mx60.sh 6
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-DVFS-0304	dvfs_mx60.sh 3
@@ -183,13 +179,6 @@ TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 
 TGE-LV-STORAGE-0001	power_test_storage.sh 1
 TGE-LV-STORAGE-0003	power_test_storage.sh 3
 TGE-LV-USB-HOST-DVFS-0001	mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/imx_dvfscore.0/enable  && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt  && umount /mnt/msc && cat /sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state ; echo 0 > /sys/devices/platform/imx_dvfscore.0/enable
-TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 15 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
-TGE-LV-V4L2-2030	power_test_v4l.sh 1
-TGE-LV-V4L2-2032	power_test_v4l.sh 3
-TGE-LV-VPU-1020	vpu_pm_test.sh 1
-TGE-LV-VPU-1030	vpu_pm_test.sh 2
-TGE-LV-VPU-2020	power_test_vpu.sh 1
-TGE-LV-VPU-2022	power_test_vpu.sh 3
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
 TGE-LV-RTC-0013	rtc_testapp_5 -T POLL
@@ -207,10 +196,7 @@ TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
 TGE-LV-THERMO-0001	ls /sys/devices/virtual/thermal/thermal_zone0/*temp | xargs cat
 TGE-LV-THERMO-0002	ls /sys/devices/virtual/thermal/thermal_zone0/*type | xargs cat
-TGE-LV-THERMO-0004	thermal_freq.sh
-TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc2 && stty -a -F /dev/ttymxc2  | grep cs8 &&  stty -a -F /dev/ttymxc2  | grep cstopb && stty -a -F /dev/ttymxc2  | grep crtscts && stty -a  -F /dev/ttymxc2 | grep ignbrk
 TGE-LV-UART-0020	clk.sh uart
-TGE-LV-UART-0510	RT=0; for i in 9600 115200; do echo "======== Test Baud rate $i ======" && uart_testapp_11 /dev/ttymxc2 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-USB-CLK-0001	clk.sh usb
 TGE-LV-USB-HOST-0010	cat /proc/partitions | grep sd
 TGE-LV-USB-HOST-0030	umount /dev/sda1; mkfs.ext3 /dev/sda1
