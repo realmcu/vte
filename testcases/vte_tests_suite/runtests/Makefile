@@ -1,6 +1,6 @@
 
 AUTO_TARGETS-$(CONFIG_VTE_IMX6) += imx6q_AI_auto imx6q_lite imx6_stress \
-	imx6q_camera imx6q_arm2 imx6q_SABRE_SD imx61_AI_auto imx61_AI_long imx61_AI_stress imx61_SMD_auto imx60_arm2_auto imx6dl_smd_auto_nosususpend \
+	imx6q_camera imx6q_arm2 imx6q_SABRE_SD imx61_AI_auto imx61_AI_long imx61_AI_stress imx61_SMD_auto imx60_arm2_auto imx6dl_smd_auto_nosususpend imx6q_AI_long imx6q_AI_stress \
 	imx6q_SMD_auto
 AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx51_auto imx51_BABBAGE_auto
 AUTO_TARGETS-$(CONFIG_VTE_IMX5) += imx53_auto imx53_ALSA_auto
