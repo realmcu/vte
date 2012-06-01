@@ -2,6 +2,7 @@
 
 setup()
 {
+    RC=0
     # Total number of test cases in this file. 
     export TST_TOTAL=2
 
@@ -15,13 +16,30 @@ setup()
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-    
-	return $RC
+    if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
+    echo "Already enable HDMI in boot cmdline"
+    if [ $(cat /sys/devices/platform/mxc_hdmi/cable_state) = "plugout" ]; then
+          echo "Not plug in HDMI cable in board"
+          RC=1
+          return $RC
+    fi
+    else
+          echo "Not enable HDMI in boot cmdline"
+          RC=1
+          return $RC
+    fi
+    num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
+    mkdir /mnt/temp
+    mount -t tmpfs tmpfs /mnt/temp || RC=1
+    cp /mnt/nfs/test_stream/alsa_stream/audio48k16S.wav /mnt/temp || RC=1      
+    return $RC
 }
 
 cleanup()
 {
     echo "CLEANUP "
+    umount /mnt/temp
+    RC=0
 }
 
 usage()
@@ -46,21 +64,27 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 echo 0 > /sys/class/graphics/fb0/blank
-num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
-( aplay -Dhw:$num,0 ${STREAM_PATH}/alsa_stream_music/0qinghuachi44k2ch16bit.wav & )
-sleep 5
-echo "core test"
-i=0
-loops=10
-echo core > /sys/power/pm_test
-while [ $i -lt $loops ]
-do
-   i=$(expr $i + 1)
-   echo mem > /sys/power/state
-   echo standby > /sys/power/state
+echo -e "\033[9;0]" > /dev/tty0
+tloops=20000
+count=0
+while [ $count -lt $tloops ]
+do 
+   ( aplay -Dplughw:$num -M /mnt/temp/audio48k16S.wav & )
+   sleep 5
+   echo "core test"
+   i=0
+   loops=10
+   echo core > /sys/power/pm_test
+   while [ $i -lt $loops ]
+   do
+      i=$(expr $i + 1)
+      echo mem > /sys/power/state
+      echo standby > /sys/power/state
+   done
+   echo none > /sys/power/pm_test
+   wait
+   count=$(expr $count + 1)
 done
-echo none > /sys/power/pm_test
-wait
 RC=0
 return $RC
 }
@@ -73,19 +97,20 @@ test_case_02()
 #TODO give TCID 
 TCID="HDMI_PM_BOOTCORE"
 #TODO give TST_COUNT
-TST_COUNT=1
+TST_COUNT=2
 RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-tloops=1000
+echo 0 > /sys/class/graphics/fb0/blank
+echo -e "\033[9;0]" > /dev/tty0
+tloops=20000
 count=0
 #TODO add function test scripte here
 while [ $count -lt $tloops ]
 do
-   echo 0 > /sys/class/graphics/fb0/blank
-   num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
-   ( aplay -Dhw:$num,0 ${STREAM_PATH}/alsa_stream_music/0qinghuachi44k2ch16bit.wav & )
+   ( aplay -Dplughw:$num -M /mnt/temp/audio48k16S.wav & )
+   sleep 5
    i=0
    loops=10
    while [ $i -lt $loops ]
@@ -109,7 +134,7 @@ test_case_03()
 #TODO give TCID 
 TCID="HDMI_PM_WAITMODE"
 #TODO give TST_COUNT
-TST_COUNT=1
+TST_COUNT=3
 RC=1
 
 #print test info
@@ -117,8 +142,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 echo 0 > /sys/class/graphics/fb0/blank
-num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
-( aplay -Dhw:$num,0 ${STREAM_PATH}/alsa_stream_music/0qinghuachi44k2ch16bit.wav & )
+( aplay -Dplughw:$num -M /mnt/temp/audio48k16S.wav & )
 sleep 5
 echo "core test"
 i=0
@@ -146,7 +170,7 @@ case "$1" in
   test_case_02 || exit 3
   ;;
 3)
-  test_case_03 || exit 3
+  test_case_03 || exit 4
   ;;
 *)
   usage
