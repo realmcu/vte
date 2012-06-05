@@ -143,7 +143,7 @@ do
   if [ $jiffes_o -eq 0  ];then
 	  jiffes_o=$i
   else
-	  if [ $jiffes_o != $i  ]; then
+	  if [ $jiffes_o -gt $i  ]; then
 	  	RC=$(expr $RC + 1)
 	  fi
 	jiffes_o=$i
