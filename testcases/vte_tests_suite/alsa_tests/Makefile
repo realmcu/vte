@@ -34,6 +34,7 @@ TARGETS+=speaker_test1.sh speaker_switch_headset.sh
 TARGETS+=audio_dac_IMX6DL-Sabre-SD.cfg audio_dac_IMX6Solo-SABREAUTO.cfg
 TARGETS+= audio_dac_IMX6Q-Sabre-SD.cfg audio_dac_IMX6-SABREAUTO.cfg
 TARGETS+= audio_dac_IMX6-SABRELITE.cfg audio_dac_IMX6Sololite-ARM2.cfg
+TARGETS+= audio_dac_IMX6ARM2.cfg audio_dac_IMX6DL-ARM2.cfg 
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
