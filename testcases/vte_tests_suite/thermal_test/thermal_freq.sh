@@ -157,16 +157,29 @@ test_case_01()
     return $RC
 }
 
-# main function
+test_case_02()
+{
+    echo "System will auto power off, pay attention"
+    
+    # make system critical temp to system current temp, so system will power off
+    echo $normal_temp > ${THERMO_PATH}/trip_point_0_temp
 
-if [ $# -ne 0 ]
-then
-    usage
-    exit 1
-fi
+    return 0
+}
+
+
+# main function
 
 setup || exit $RC
 
-test_case_01 || exit $RC
+if [ $# -eq 0 ]
+then
+    test_case_01 || exit $RC
+elif [ $1 = "poweroff" ]
+then
+    test_case_02
+else
+    usage
+fi
 
 tst_resm TINFO "Test PASS"
