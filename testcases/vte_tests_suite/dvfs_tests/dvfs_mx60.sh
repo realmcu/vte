@@ -306,7 +306,7 @@ test_case_04()
     cpid=$!
 
     sleep 2
-    pth_count=1
+    pth_count=10
     while [ $pth_count -gt 0 ]; do
         value=${cpufreq_value[$RANDOM%${TOTAL_PT}]}
         echo $value
