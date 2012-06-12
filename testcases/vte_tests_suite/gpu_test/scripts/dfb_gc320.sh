@@ -48,7 +48,9 @@ export TST_TOTAL=4
 export TCID="setup"
 export TST_COUNT=0
 RC=0
-
+echo 0 > /sys/class/graphics/fb0/blank
+sleep 1
+echo -e "\033[9;0]" > /dev/tty0
 trap "cleanup" 0
 modprobe galcore
 return $RC
