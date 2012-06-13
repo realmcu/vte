@@ -18,3 +18,14 @@ TGE-LV-DVFS-0144 dvfs_mx61.sh 4
 TGE-LV-DVFS-0145 dvfs_mx61.sh 5
 TGE-LV-DVFS-0160 dvfs_mx61.sh 6
 TGE-LV-IPU_DEV-0070 ipu_test.sh 7
+TGE-LV-RTC-0201	rtc_test.sh 4
+TGE-LV-VPU-20001 vpu_app_test.sh 1
+TGE-LV-VPU-20002 vpu_app_test.sh 2
+TGE-LV-VPU-20003 vpu_app_test.sh 3
+TGE-LV-VPU-20004 vpu_app_test.sh 4
+TGE-LV-VPU-20005 vpu_app_test.sh 5
+TGE-LV-VPU-20006 vpu_app_test.sh 6
+TGE-LV-VPU-20007 vpu_app_test.sh 7
+TGE-LV-VPU-20008 vpu_app_test.sh 8
+TGE-LV-VPU-PERF-0001 vpu_performance.sh 1
+TGE-LV-VPU-PERF-0002 vpu_performance.sh 2
