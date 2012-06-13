@@ -129,15 +129,17 @@ extern "C" {
 	static char gFBPixFmtName[40] = "RGB565";
 	static int gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	static int gSnapshot = 0;
-        static int gStartStream = 0;
-        static FILE *pResoluFile = NULL;
-        struct v4l2_rect gOrigCropRect;
+    static int gStartStream = 0;
+    static FILE *pResoluFile = NULL;
+    struct v4l2_rect gOrigCropRect;
 	struct v4l2_rect gOrigFormatRect;
 	struct v4l2_cropcap cropcap;
 	struct v4l2_crop crop;
 	unsigned long gOrigPixFormat = V4L2_PIX_FMT_RGB565;
 	static int inSrc = -1;
-        static int gResoluCount = 0;
+    static int gResoluCount = 0;
+	static int gFirstFrame = 0;
+	static int gTryTimes = 0;
 /*======================== GLOBAL CONSTANTS =================================*/
 
 /*======================== GLOBAL VARIABLES =================================*/
@@ -146,8 +148,8 @@ extern "C" {
 
 	extern int gTestPerf;
 	extern int gChangResolu;
-        extern sResoluConfig gResoluConfig;
-        extern int gChangeResoluTimes;
+    extern sResoluConfig gResoluConfig;
+     extern int gChangeResoluTimes;
 	int parse_options(void);
 	int open_device(void);
 	int close_device(void);
@@ -1216,6 +1218,8 @@ extern "C" {
 				}
 				switch (errno) {
 				case EAGAIN:
+					if (gFirstFrame)
+					    gTryTimes++;
 					usleep(200);
 					goto AGAIN;
 				case EIO:
@@ -1615,16 +1619,18 @@ extern "C" {
 		unsigned int cnt = gV4LTestConfig.mCount;
 		fd_set fds;
 		struct timeval tv;
-                enum v4l2_buf_type type;
-                long frame_time;
+        enum v4l2_buf_type type;
+        long frame_time;
 		int max_time,min_time;
-                int total_frame;
-                int times = 0;
+        int total_frame;
+        int times = 0;
+		int maxInterval  = 0; /* the interval time  between two resolution change */
 		struct timeval tv_start, tv_current;
-                max_time=0;
-                min_time=0;
-                total_frame=0;
-                		/* V4l test */
+		float maxIntervalTime = 0;
+        max_time=0;
+        min_time=0;
+        total_frame=0;
+       	/* V4l test */
 		if (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F) {
 
 			if (write_file_header() == TFAIL)
@@ -1636,80 +1642,94 @@ extern "C" {
                             if (setup_device() != TPASS) {
                             cleanup_device();
                             return TFAIL; }
-               		    tst_resm(TINFO, "Start capturing...");
+               		        tst_resm(TINFO, "Start capturing...");
                             while (cnt-- > 0) {
-		            int ret = -1;
-		            if (gTestPerf)
+		                    int ret = -1;
+		                    if (gTestPerf)
                             { 
-				total_frame ++;
-			        gettimeofday(&tv_start, 0);
-		            }
-		            while (ret < 0) {
-				FD_ZERO(&fds);
-				FD_SET(gFdV4L, &fds);
-				tv.tv_sec = 2;
-				tv.tv_usec = 0;
-				ret = select(gFdV4L + 1, &fds, NULL, NULL, &tv);
-				if ((ret < 0) && (errno != EINTR)) {
-					tst_resm(TWARN, "Select fault");
-					return retValue;
-				}
-				if (ret == 0) {
-					tst_resm(TWARN, "Select timeout");
-					return retValue;
-				}
-		           }
-		           gSnapshot = 0;
-		           if ((cnt == (int)(gV4LTestConfig.mCount / 2 + 1))
-			    && (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F)
-                            && gTestPerf == 0)
-	  		   gSnapshot = 1;
-                           if (read_frame() == TFAIL)
-				return retValue;
-                           if (gTestPerf)
-			   {
-				gettimeofday(&tv_current, 0);
-				frame_time = (tv_current.tv_sec - tv_start.tv_sec);
-	                        frame_time = frame_time * 1000000L;
-        	                frame_time += (tv_current.tv_usec - tv_start.tv_usec);
-				if (total_frame == 101)
-                        	{
-                        		max_time = frame_time;
-	                          	min_time = frame_time;
-	                        }
-	                        else if (total_frame > 100)//Ignor the first 100 frames,vary a lot
-	                        {
-	                        	if (max_time < frame_time)
-	                          		max_time = frame_time;
-	                       		if(min_time > frame_time)
-		                        	min_time = frame_time;
-				}
-		          } 
-		      } //end of while cnt
-                      if(gChangResolu)
-                      {
- 			  tst_resm(TINFO, " current  resolution is %d x %d",
+			                    total_frame ++;
+			                    gettimeofday(&tv_start, 0);
+		                    }
+		                    while (ret < 0)
+						   	{
+				                FD_ZERO(&fds);
+				                FD_SET(gFdV4L, &fds);
+				                tv.tv_sec = 2;
+				                tv.tv_usec = 0;
+				                ret = select(gFdV4L + 1, &fds, NULL, NULL, &tv);
+				                if ((ret < 0) && (errno != EINTR)) 
+							    {
+					                 tst_resm(TWARN, "Select fault");
+					                 return retValue;
+				                }
+				                if (ret == 0)
+						   	    {
+					                tst_resm(TWARN, "Select timeout");
+					                return retValue;
+			            	    }       
+		                    }
+		                    gSnapshot = 0;
+		                    if ((cnt == (int)(gV4LTestConfig.mCount / 2 + 1))
+			                   && (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F)
+                               && gTestPerf == 0)
+	  		                     gSnapshot = 1;
+							gFirstFrame = 0;
+							if ( cnt == gV4LTestConfig.mCount-1)
+								gFirstFrame = 1;
+                            if (read_frame() == TFAIL)
+				                 return retValue;
+                            if (gTestPerf)
+			                {
+				                 gettimeofday(&tv_current, 0);
+				                 frame_time = (tv_current.tv_sec - tv_start.tv_sec);
+	                             frame_time = frame_time * 1000000L;
+        	                     frame_time += (tv_current.tv_usec - tv_start.tv_usec);
+				                 if (total_frame == 101)
+                        	     {
+                        		     max_time = frame_time;
+	                          	     min_time = frame_time;
+	                             }  
+	                             else if (total_frame > 100)//Ignor the first 100 frames,vary a lot
+	                             {
+	                        	     if (max_time < frame_time)
+	                          		      max_time = frame_time;
+	                       		     if(min_time > frame_time)
+		                        	      min_time = frame_time;
+				                 }
+		                    }      
+		                 } //end of while cnt
+                        if(gChangResolu)
+                        {
+ 			                tst_resm(TINFO, " current  resolution is %d x %d",
                                        gResoluConfig.mResolu[gResoluCount].mWidth,
                                        gResoluConfig.mResolu[gResoluCount].mHeight);
-                      }
-	              retValue = TPASS;
-	              if (gTestPerf)
-	              {
-		          printf("The actual fps is between %ufps-%u fps \n",1000000L/max_time,1000000L/min_time);
-	                  if( max_time > (1000000L / gV4LTestConfig.mFrameRate * 1.2))
-        	              	retValue = TFAIL;
-                          if ( min_time < (1000000L /gV4LTestConfig.mFrameRate * 0.8))
-                       		retValue = TFAIL;
-	
- 	              }
-	              sleep(1);
-	              if (cleanup_device() != TPASS)
-			return TFAIL;
-                      gResoluCount++;
-                      cnt = gV4LTestConfig.mCount;
+                        }
+	                    retValue = TPASS;
+	                    if (gTestPerf)
+	                    {
+		                    printf("The actual fps is between %ufps-%u fps \n",1000000L/max_time,1000000L/min_time);
+	                        if( max_time > (1000000L / gV4LTestConfig.mFrameRate * 1.2))
+        	              	    retValue = TFAIL;
+                            if ( min_time < (1000000L /gV4LTestConfig.mFrameRate * 0.8))
+                       		    retValue = TFAIL;
+	  	                }
+	                    sleep(1);
+	                    if (cleanup_device() != TPASS)
+		                       return TFAIL;
+						if (maxInterval < gTryTimes)
+							maxInterval = gTryTimes;
+						gTryTimes = 0;
+                        gResoluCount++;
+                        cnt = gV4LTestConfig.mCount;
                   } while( gResoluCount < gResoluConfig.mCount);
                    gResoluCount = 0;
                 }
+			 maxIntervalTime = maxInterval*200.0/1000000;
+		     if (maxIntervalTime > 3) /* Should be less than 3s to get the first frame after resolution change */
+			 {
+		         tst_resm(TINFO, " Max Interval between two resolution change is %f s",maxIntervalTime);
+				 retValue = TFAIL;
+			 }
             return retValue;
 	}
 
