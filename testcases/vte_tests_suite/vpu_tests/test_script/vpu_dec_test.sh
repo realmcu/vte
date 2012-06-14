@@ -539,9 +539,32 @@ RC=0
 return $RC
 }
 
+# Function:     test_case_16
+# Description   - Test AVS video  ok
+test_case_16()
+{
+#TODO give TCID
+TCID="vpu_AVS_test"
+#TODO give TST_COUNT
+TST_COUNT=16
+RC=1
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+echo "TST_INFO: AVS playback"
+stream=12_zju_0_0_6.0_foreman_cif.avs
+${TSTCMD} -D "-i ${STREAM_PATH}/video/${stream} -f 8" || return $RC
+
+RC=0
+return $RC
+}
+
 usage()
 {
-echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11>"
+echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16>"
 echo "1: MPEG2 decoder test"
 echo "2: VC-1 decoder test"
 echo "3: Divx decoder test"
@@ -557,12 +580,13 @@ echo "12: H264 vdi test"
 echo "13: VC1 vdi test"
 echo "14: RV test"
 echo "15: VP8 test"
+echo "16: AVS test"
 }
 
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11/12/13/14/15>"
+echo "usage $0 <1/2/3/4/5/6/7/8/9/10/11/12/13/14/15/16>"
 usage
 exit 1 
 fi
@@ -627,6 +651,9 @@ case "$1" in
   ;;
 15)
   test_case_15 || exit $RC
+  ;;
+16)
+  test_case_16 || exit $RC
   ;;
 *)
 #TODO check parameter
