@@ -32,7 +32,7 @@ LIBRARY =
 #OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 #TARGET = mxc_v4l2_overlay mxc_v4l2_capture mxc_v4l2_output mxc_v4l2_still
-TARGET = mxc_v4l2_output.sh mxc_v4l2_overlay.sh v4l2_basic_test.sh v4l2_still_test.sh 
+TARGET = mxc_v4l2_output.sh mxc_v4l2_overlay.sh v4l2_basic_test.sh v4l2_still_test.sh v4l2_dual_test.sh 
 
 all: $(TARGET)
 	@echo "***********************************************"
