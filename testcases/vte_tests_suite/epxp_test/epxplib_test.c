@@ -254,6 +254,7 @@ int run_test(void * p_opts)
 	proc_data->bgcolor = im_opts.bk;
 	proc_data->overlay_state = im_opts.altresize.w == 0?0: 1;
 	proc_data->lut_transform = im_opts.l == 0 ? PXP_LUT_NONE:PXP_LUT_INVERT;
+	
 	/*
 	 * Initialize S0 parameters
 	 */
@@ -288,11 +289,18 @@ int run_test(void * p_opts)
 	pxp_conf->out_param.width = width;
 	pxp_conf->out_param.height = height;
 	pxp_conf->out_param.pixel_fmt = PXP_PIX_FMT_GREY;
+
 	if (ioctl(fd_fb, FBIOGET_FSCREENINFO, &fix) < 0) {
 		printf("FBIOGET_FSCREENINFO error!\n");
 		close(fd_fb);
 		goto err2;
 	}
+
+	if (im_opts.rot % 180)
+		pxp_conf->out_param.stride = height > var.yres? var.yres:height;
+	else
+		pxp_conf->out_param.stride = width > var.yres?var.yres:width;
+
 	pxp_conf->out_param.paddr = mem_o.phys_addr;
 	printf("out addr (smem_start): 0x%08x\n", pxp_conf->out_param.paddr);
 
@@ -340,6 +348,7 @@ int run_test(void * p_opts)
 		width = height;
 		height = tmp;
 	}
+
 	while(im_opts.c--)
 	{
 	copy_image_to_fb(proc_data->srect.left, proc_data->srect.top,
