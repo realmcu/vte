@@ -474,6 +474,7 @@ insmod_V4L()
 	 	echo "v4l: insmod modules success!"
 	else 
 		echo "v4l: insmod modules fail!"
+        return 1
 	fi
 }
 
@@ -745,7 +746,7 @@ prepare_sd()
 		rm format_command_sd;
         fi
 
-        device_total=`ls /dev/ | grep "mmcblk" | wc -l`;
+    device_total=`ls /dev/ | grep "mmcblk" | wc -l`;
 	if [ $device_total -gt 0 ]; then
 		# umount devices
 		cat /proc/mounts | grep "mmcblk.p*" | awk '{print $1}'| while read line
@@ -763,7 +764,7 @@ prepare_sd()
 		# get the number of cyclinders
 		number_cyclinders=0;
 		third_cyclinders=0;
-                middle_cyclinders=0;
+        middle_cyclinders=0;
 
 		number_cyclinders=`fdisk -l /dev/mmcblk0 | grep "head" | awk -F , '{print $3}' | awk '{print $1}'`;
 		echo "number_cyclinders=$number_cyclinders";
@@ -807,18 +808,17 @@ prepare_sd()
 		sleep 1;
 
 		# using fdisk to re_partition sd/mmc
-		fdisk /dev/mmcblk0 < ./format_command_sd;
-		sleep 1;
+		fdisk /dev/mmcblk0 < ./format_command_sd
 
 		if [  $? -eq 0 ]; then
-			sleep 3;
-			echo "partition sd succeed! then format";
+			sleep 3
+			echo "partition sd succeed! then format"
    			
 			# ensure umount sd/mmc device
 			cat /proc/mounts | grep "mmcblk.p*" | awk '{print $1}'| while read line
 			do
-  				echo $line;
-  				umount $line;
+  				echo $line
+  				umount $line
 				if [ $? -eq 0 ]; then
 					echo "umount $line succeed!"
 				else
@@ -826,33 +826,32 @@ prepare_sd()
 				fi
 			done
 			
-			/sbin/mkdosfs /dev/mmcblk0p1;
+			/sbin/mkdosfs /dev/mmcblk0p1
 			if [ $? -eq 0 ]; then
 				echo "format partition 1 succeed!"
 			else
-				echo "format partition 1 fail!";
+				echo "format partition 1 fail!"
+                return 1
 			fi
-			sleep 1;
-  			/sbin/mkdosfs /dev/mmcblk0p2;
-                        if [ $? -eq 0 ]; then
-				echo "format partition 2 succeed!";
+			sleep 1
+  			/sbin/mkdosfs /dev/mmcblk0p2
+            if [ $? -eq 0 ]; then
+				echo "format partition 2 succeed!"
 			else
 				echo "format partition 2 fail!"
+                return 1
 			fi
-			sleep 1;
+			sleep 1
 		else
-			echo "partition sd fail!";
+			echo "partition sd fail!"
+            return 1
 		fi
 
 		# mount
-		if [ ! -d /mnt/mmcblk0p1 ]; then
-			mkdir /mnt/mmcblk0p1;
-		fi
-		if [ ! -d /mnt/mmcblk0p2 ]; then
-			mkdir /mnt/mmcblk0p2;
-		fi
+        mkdir -p /mnt/mmcblk0p1
+        mkdir -p /mnt/mmcblk0p2
 
-		mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1;
+		mount -t vfat /dev/mmcblk0p1 /mnt/mmcblk0p1
 		if [ $? -eq 0 ]; then
 			echo "mount partition 1 succeed!";
 		else
@@ -1356,7 +1355,7 @@ case $# in
 					;;
 				"ata" | "ATA") insmod_ATA;
 					;;
-				"v4l" | "V4L") insmod_V4L;
+				"v4l" | "V4L") insmod_V4L || exit $?
 					;;
 				"bt" | "BT") insmod_BT;
 					;;
@@ -1414,14 +1413,14 @@ case $# in
 					;;
 				"nor" | "NOR") prepare_nor;
 					;;
-				"sd" | "SD" | "mmc" | "MMC") prepare_sd;
+				"sd" | "SD" | "mmc" | "MMC") prepare_sd || exit $?
 					;;
 				"ata" | "ATA") prepare_ata;
 					;;
-				"usbh" | "USBH") prepare_usbh;
+				"usbh" | "USBH") prepare_usbh || exit $?
 					;;
                 #only for MX37&51
-				"VPU" | "vpu") prepare_vpu;
+				"VPU" | "vpu") prepare_vpu
 					;;
 				"all" | "ALL") prepare_nand;
 				 	       prepare_nor;
