@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (C) 2010 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2010, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -14,6 +14,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+
+#Revision History:
+#                            Modification     Tracking
+#Author                          Date          Number    Description of Changes
+#-----------------           ------------    ----------  -------------------------------
+#Andy Tian                   2012/06/19        NA        Add port skip for auto suspend
+#-----------------           ------------    ----------  -------------------------------
+# 
+
 #control interface for usb host controler
 FSL_EHCI_INTERFACE="fsl-ehci*"
 #control interface for hosts controller
@@ -21,7 +30,7 @@ FSL_USB2_UDC="fsl-usb2-udc"
 #control interface for OTG controller
 FSL_USB2_OTG="fsl-usb2-otg"
 
-SKIP_USBPORT=
+SKIP_USBPORT=$1
 
 SYS_USB_DEV="/sys/bus/usb/devices/*"
 
@@ -62,7 +71,7 @@ auto_usb_dev()
  is_skip=""
  for i in $prd_list
  do
-			if [ ! -z "$SKIP_USB_PORT" ]; then
+			if [ ! -z "$SKIP_USBPORT" ]; then
 				is_skip=$(echo $i | grep $SKIP_USBPORT)
 			fi
       if [ -z "$is_skip" ]; then
