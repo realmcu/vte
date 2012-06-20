@@ -49,9 +49,14 @@ setup()
     export TST_COUNT=0
     RC=0
 
-    trap "cleanup" 0
-    modprobe  galcore
-    return $RC
+trap "cleanup" 0
+chip=$(platfm.sh)
+if [ $chip = "IMX6Sololite-ARM2" ];then
+modprobe  galcore baseAddress=0x80000000 
+else
+modprobe  galcore 
+fi
+return $RC
 }
 
 # Function:     cleanup
@@ -252,31 +257,34 @@ if [ $rt = "Ubuntu" ];then
     APP_SUB_DIR="ubuntu_10.10/test"
     export DISPLAY=:0.0
 else
-    #judge the rootfs
-    platfm.sh
-    case "$?" in
-    50)
-        APP_SUB_DIR="imx50_rootfs/test"
-        ;;
-    41)
-        APP_SUB_DIR="imx51_rootfs/test"
-        ;;
-    51)
-        APP_SUB_DIR="imx51_rootfs/test"
-        ;;
-    53)
-        APP_SUB_DIR="imx53_rootfs/test"
-        ;;
-    61)
-        APP_SUB_DIR="imx61_rootfs/test"
-        ;;
-    63)
-        APP_SUB_DIR="imx61_rootfs/test"
-        ;;
-    *)
-        exit 0
-        ;;
-    esac
+#judge the rootfs
+platfm.sh
+case "$?" in
+50)
+  APP_SUB_DIR="imx50_rootfs/test"
+	;;
+41)
+  APP_SUB_DIR="imx51_rootfs/test"
+  ;;
+51)
+  APP_SUB_DIR="imx51_rootfs/test"
+ ;;
+53)
+  APP_SUB_DIR="imx53_rootfs/test"
+ ;;
+61)
+  APP_SUB_DIR="imx61_rootfs/test"
+ ;;
+63)
+  APP_SUB_DIR="imx61_rootfs/test"
+ ;;
+60)
+  APP_SUB_DIR="imx61_rootfs/test"
+ ;;
+*)
+  exit 0
+  ;;
+esac
 fi
 
 
