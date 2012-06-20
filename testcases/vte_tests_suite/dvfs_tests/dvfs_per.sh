@@ -204,12 +204,16 @@ dvfs_per_stress()
 
     echo "Start SD/MMC bonnie++ stress test"
     i=0
-    umount /dev/mmcblk0p1
-    mkdir -p /mnt/mmcblk0p1
-    mount /dev/mmcblk0p1 /mnt/mmcblk0p1 || {
-        mkfs.vfat /dev/mmcblk0p1
-        mount /dev/mmcblk0p1 /mnt/mmcblk0p1
-    }
+    if ! mount |grep mmcblk0p1; then
+        umount /dev/mmcblk0p1
+        mkdir -p /mnt/mmcblk0p1
+        mount /dev/mmcblk0p1 /mnt/mmcblk0p1 || {
+            RC=$?
+            echo "TFAIL: /dev/mmcblk0p1 can't mount"
+            return $RC
+        }
+    fi
+
     while [ $i -lt 50 ]; do
         i=`expr $i + 1`
 
