@@ -871,6 +871,12 @@ extern "C" {
 			return TFAIL;
 		}
 #if 1
+		if (gV4LTestConfig.mWidth > 1024 || gV4LTestConfig.mHeight > 1024)
+		{
+			gV4LTestConfig.inputSrc = eInCSI_MEM;
+			tst_resm(TWARN,"H/W resolution is too big > 1024\n");
+			tst_resm(TWARN,"only CSI_MEM can do it\n");
+		}
 		if (gV4LTestConfig.inputSrc == eInCSI_IC_MEM) {
 			int index = eInCSI_IC_MEM;
 			ioctl(gFdV4L, VIDIOC_G_INPUT, &inSrc);
