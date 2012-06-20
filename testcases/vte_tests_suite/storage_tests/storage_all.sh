@@ -412,11 +412,11 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 run_single_test_list || RC=1
 
 if [ $RC = 0 ]; then
-rtc_testapp_6 -T 20
+rtc_testapp_6 -T 50
 sleep 5
-rtc_testapp_6 -T 20
+rtc_testapp_6 -T 50
 sleep 5
-rtc_testapp_6 -T 20
+rtc_testapp_6 -T 50
 
 run_single_test_list || RC=1
 fi

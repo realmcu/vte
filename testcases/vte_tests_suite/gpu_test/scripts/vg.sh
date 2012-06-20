@@ -42,17 +42,17 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=4
+    #TODO Total test case
+    export TST_TOTAL=4
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
+    trap "cleanup" 0
 
-modprobe gpu
-return $RC
+    modprobe gpu
+    return $RC
 }
 
 # Function:     cleanup
@@ -63,10 +63,10 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
-return $RC
+    #TODO add cleanup code here
+    return $RC
 }
 
 
@@ -75,45 +75,45 @@ return $RC
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="vg_test"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=0
+    #TODO give TCID 
+    TCID="vg_test"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-echo "==========================="
-echo tiger
-echo "==========================="
-tmpdir=$(mktemp -d)
-mkdir $tmpdir
-mkfifo $tmpdir/tiger_fifo
-sh -c "cat $tmpdir/tiger_fifo | tiger" &
-sleep 100
-echo y > $tmpdir/tiger_fifo
-rm -rf $tmpdir
+    #TODO add function test scripte here
+    echo "==========================="
+    echo tiger
+    echo "==========================="
+    tmpdir=$(mktemp -d)
+    mkdir $tmpdir
+    mkfifo $tmpdir/tiger_fifo
+    sh -c "cat $tmpdir/tiger_fifo | tiger" &
+    sleep 100
+    echo y > $tmpdir/tiger_fifo
+    rm -rf $tmpdir
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-echo "==========================="
-echo vgMark
-echo "==========================="
-if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
-cd openVG/VGMark_10_src/run/vgmark
-./run || RC="vgmark"
-fi
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo vgMark
+    echo "==========================="
+    if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
+        cd openVG/VGMark_10_src/run/vgmark
+        ./run || RC="vgmark"
+    fi
 
-echo $RC
+    echo $RC
 
-if [ "$RC" = "0" ]; then
- RC=0
-else
-  RC=1
-fi
+    if [ "$RC" = "0" ]; then
+        RC=0
+    else
+        RC=1
+    fi
 
-return $RC
+    return $RC
 
 }
 
@@ -122,36 +122,36 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="vg_multi_test"
-#TODO give TST_COUNT
-TST_COUNT=2
-RC=0
+    #TODO give TCID 
+    TCID="vg_multi_test"
+    #TODO give TST_COUNT
+    TST_COUNT=2
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-tiger &
-td=$!
+    #TODO add function test scripte here
+    tiger &
+    td=$!
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
-cd openVG/VGMark_10_src/run/vgmark
-./run || RC="vgmark"
-fi
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    if [ -e openVG/VGMark_10_src/run/vgmark/run  ];then
+        cd openVG/VGMark_10_src/run/vgmark
+        ./run || RC="vgmark"
+    fi
 
-kill -9 $td
+    kill -9 $td
 
-echo $RC
+    echo $RC
 
-if [ "$RC" = "0" ]; then
- RC=0
-else
-  RC=1
-fi
+    if [ "$RC" = "0" ]; then
+        RC=0
+    else
+        RC=1
+    fi
 
-return $RC
+    return $RC
 }
 
 # Function:     test_case_03
@@ -159,83 +159,81 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="vg_conform_test"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=0
+    #TODO give TCID 
+    TCID="vg_conform_test"
+    #TODO give TST_COUNT
+    TST_COUNT=3
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-cd ${TEST_DIR}/${APP_SUB_DIR}
-echo "==========================="
-echo vg1.1 conformance
-echo "==========================="
-if [ -e openVG/cts_1.1/generation/make/linux/bin/generator ]; then
-	cd openVG/cts_1.1/generation/make/linux/bin/
-	./generator || RC="cts_1.1"
-fi
+    #TODO add function test scripte here
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo vg1.1 conformance
+    echo "==========================="
+    if [ -e openVG/cts_1.1/generation/make/linux/bin/generator ]; then
+        cd openVG/cts_1.1/generation/make/linux/bin/
+        ./generator || RC="cts_1.1"
+    fi
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
-echo "==========================="
-echo vg1.0.1 conformance
-echo "==========================="
-if [ -e openVG/cts_1.0.1/generation/make/linux/bin/generator ]; then
-	cd openVG/cts_1.0.1/generation/make/linux/bin
-	./generator || RC=$(echo $RC cts_1.0.1)
-fi
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo vg1.0.1 conformance
+    echo "==========================="
+    if [ -e openVG/cts_1.0.1/generation/make/linux/bin/generator ]; then
+        cd openVG/cts_1.0.1/generation/make/linux/bin
+        ./generator || RC=$(echo $RC cts_1.0.1)
+    fi
 
-echo $RC
+    echo $RC
 
-if [ $RC = "0" ]; then
- RC=0
-else
-  RC=1
-fi
+    if [ $RC = "0" ]; then
+        RC=0
+    else
+        RC=1
+    fi
 
-return $RC
+    return $RC
 }
 
 test_case_04()
 {
-#TODO give TCID 
-TCID="gles_pm_test"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=0
+    TCID="gles_pm_test"
+    TST_COUNT=3
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-tiger &
-td=$!
+    tiger &
+    td=$!
 
-rtc_testapp_6 -T 5
-sleep 1
-rtc_testapp_6 -T 5
-sleep 1
-rtc_testapp_6 -T 5
-sleep 1
-rtc_testapp_6 -T 5
-sleep 1
-rtc_testapp_6 -T 5
-sleep 1
+    rtc_testapp_6 -T 50
+    sleep 1
+    rtc_testapp_6 -T 50
+    sleep 1
+    rtc_testapp_6 -T 50
+    sleep 1
+    rtc_testapp_6 -T 50
+    sleep 1
+    rtc_testapp_6 -T 50
+    sleep 1
 
-kill -9 $td
+    kill -9 $td
 
-echo "test PASS"
+    echo "test PASS"
 
-return $RC
+    return $RC
 }
 usage()
 {
-echo "$0 [case ID]"
-echo "1: sequence test"
-echo "2: concurrent test"
-echo "3: conformance test"
-echo "4: pm test"
+    echo "$0 [case ID]"
+    echo "1: sequence test"
+    echo "2: concurrent test"
+    echo "3: conformance test"
+    echo "4: pm test"
 }
 
 # main function
@@ -245,8 +243,8 @@ RC=0
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1 
+    usage
+    exit 1 
 fi
 
 TEST_DIR=/mnt/nfs/util/Graphics/
@@ -259,47 +257,47 @@ rt="Ubuntu"
 cat /etc/issue | grep Ubuntu || rt="others"
 
 if [ $rt = "Ubuntu" ];then
-APP_SUB_DIR="ubuntu_10.10/test"
-export DISPLAY=:0.0
+    APP_SUB_DIR="ubuntu_10.10/test"
+    export DISPLAY=:0.0
 else
-#judge the rootfs
-platfm.sh
-case "$?" in
-50)
-  APP_SUB_DIR="imx50_rootfs/test"
-	;;
-41)
-  APP_SUB_DIR="imx51_rootfs/test"
-  ;;
-51)
-  APP_SUB_DIR="imx51_rootfs/test"
- ;;
-53)
-  APP_SUB_DIR="imx53_rootfs/test"
- ;;
-*)
-  exit 0
-  ;;
-esac
+    #judge the rootfs
+    platfm.sh
+    case "$?" in
+    50)
+        APP_SUB_DIR="imx50_rootfs/test"
+        ;;
+    41)
+        APP_SUB_DIR="imx51_rootfs/test"
+        ;;
+    51)
+        APP_SUB_DIR="imx51_rootfs/test"
+        ;;
+    53)
+        APP_SUB_DIR="imx53_rootfs/test"
+        ;;
+    *)
+        exit 0
+        ;;
+    esac
 fi
 
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
-  ;;
+    test_case_01 || exit $RC 
+    ;;
 2)
-  test_case_02 || exit $RC
-  ;;
+    test_case_02 || exit $RC
+    ;;
 3)
-  test_case_03 || exit $RC
-  ;;
+    test_case_03 || exit $RC
+    ;;
 4)
-  test_case_04 || exit $RC
-  ;;
+    test_case_04 || exit $RC
+    ;;
 *)
-  usage
-  ;;
+    usage
+    ;;
 esac
 
 tst_resm TINFO "Test Finish"

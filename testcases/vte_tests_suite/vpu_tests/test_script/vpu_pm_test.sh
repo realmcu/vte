@@ -35,21 +35,21 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=4
+    #TODO Total test case
+    export TST_TOTAL=4
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
+    trap "cleanup" 0
 
-#TODO add setup scripts
-if [ -e /dev/mxc_vpu ]
-then
-RC=0
-fi
-return $RC
+    #TODO add setup scripts
+    if [ -e /dev/mxc_vpu ]
+    then
+        RC=0
+    fi
+    return $RC
 }
 
 # Function:     cleanup
@@ -60,11 +60,11 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
+    #TODO add cleanup code here
 
-return $RC
+    return $RC
 }
 
 
@@ -73,29 +73,29 @@ return $RC
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="vpu_dec_pm_test"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="vpu_dec_pm_test"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-tmpfile=$(mktemp)
-$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263 -o $tmpfile" &
-rtc_testapp_6 -T 15
-sleep 10
-SIZE=$(ls -l $tmpfile | awk '{print $5}')
-if [ $SIZE = "152064" ]
-then 
-RC=0
-fi
-rm -f $tmpfile
+    tmpfile=$(mktemp)
+    $TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/stream.263 -o $tmpfile" &
+    rtc_testapp_6 -T 50
+    sleep 10
+    SIZE=$(ls -l $tmpfile | awk '{print $5}')
+    if [ $SIZE = "152064" ]
+    then 
+        RC=0
+    fi
+    rm -f $tmpfile
 
-return $RC
+    return $RC
 }
 
 # Function:     test_case_02
@@ -103,52 +103,52 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="vpu_enc_pm_test"
-#TODO give TST_COUNT
-TST_COUNT=2
-RC=1
+    #TODO give TCID 
+    TCID="vpu_enc_pm_test"
+    #TODO give TST_COUNT
+    TST_COUNT=2
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-mkdir /tmp/enc
-cd /tmp/enc
+    #TODO add function test scripte here
+    mkdir /tmp/enc
+    cd /tmp/enc
 
-if [ $TARGET = "51" ] || [ $TARGET = "53"  ]
-then
-echo 1 > /proc/sys/vm/lowmem_reserve_ratio
-fi
-#echo "copy the test image"
-#cp -f ${LTPROOT}/testcases/bin/config_enc_h263_P3 .
-#cp -f ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv .
-echo "run encoder  first"
-#$TSTCMD -C config_enc_h263_P3 || return $TST_COUNT
+    if [ $TARGET = "51" ] || [ $TARGET = "53"  ]
+    then
+        echo 1 > /proc/sys/vm/lowmem_reserve_ratio
+    fi
+    #echo "copy the test image"
+    #cp -f ${LTPROOT}/testcases/bin/config_enc_h263_P3 .
+    #cp -f ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv .
+    echo "run encoder  first"
+    #$TSTCMD -C config_enc_h263_P3 || return $TST_COUNT
 
-$TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" 
+    $TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" 
 
 
-SIZE1=$(ls -s /tmp/enc/test.263| awk '{print $1}')
-echo "rm temp result"
-rm -f /tmp/enc/test.263
-echo "start a process to test enc"
-#$TSTCMD -C config_enc_h263_P3 &
-$TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" & 
-rtc_testapp_6 -T 15
-sleep 10
+    SIZE1=$(ls -s /tmp/enc/test.263| awk '{print $1}')
+    echo "rm temp result"
+    rm -f /tmp/enc/test.263
+    echo "start a process to test enc"
+    #$TSTCMD -C config_enc_h263_P3 &
+    $TSTCMD -E "-f 1 -w 352 -h 288 -i ${STREAM_PATH}/video/COASTGUARD_CIF_IJT.yuv -o /tmp/enc/test.263" & 
+    rtc_testapp_6 -T 50
+    sleep 10
 
-SIZE2=$(ls -s /tmp/enc/test.263 | awk '{print $1}')
+    SIZE2=$(ls -s /tmp/enc/test.263 | awk '{print $1}')
 
-if [ $SIZE1 = $SIZE2 ]
-then
-RC=0
-fi
-rm -f /tmp/enc/test.263
+    if [ $SIZE1 = $SIZE2 ]
+    then
+        RC=0
+    fi
+    rm -f /tmp/enc/test.263
 
-cd -
+    cd -
 
-return $RC
+    return $RC
 }
 
 # Function:     test_case_03
@@ -156,24 +156,24 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="test_playback_PM"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=1
+    #TODO give TCID 
+    TCID="test_playback_PM"
+    #TODO give TST_COUNT
+    TST_COUNT=3
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-cd /tmp
+    cd /tmp
 
-$TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/test.263" &
+    $TSTCMD -D "-f 1 -i ${STREAM_PATH}/video/test.263" &
 
-rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 50
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 
 }
 
@@ -182,18 +182,18 @@ return $RC
 #  
 test_case_04()
 {
-#TODO give TCID 
-TCID="test_demo4_test"
-#TODO give TST_COUNT
-TST_COUNT=4
-RC=0
+    #TODO give TCID 
+    TCID="test_demo4_test"
+    #TODO give TST_COUNT
+    TST_COUNT=4
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-return $RC
+    return $RC
 
 }
 
@@ -202,50 +202,50 @@ return $RC
 #  
 test_case_05()
 {
-#TODO give TCID 
-TCID="test_demo5_test"
-#TODO give TST_COUNT
-TST_COUNT=5
-RC=0
+    #TODO give TCID 
+    TCID="test_demo5_test"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-return $RC
+    return $RC
 
 }
 
 check_platform()
 {
-LOCAL=0
-if [ $LOCAL -eq 1 ]; then
-PLATFORM="31 35 37 51"
-#  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
-  CPU_REV=$(platfm.sh)
-  for i in $PLATFORM
-  do
-    find=$(echo $CPU_REV | grep $i | wc -l )
-    if [ $find -ne 0 ]
-    then
-      TARGET=$i
+    LOCAL=0
+    if [ $LOCAL -eq 1 ]; then
+        PLATFORM="31 35 37 51"
+        #  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
+        CPU_REV=$(platfm.sh)
+        for i in $PLATFORM
+        do
+            find=$(echo $CPU_REV | grep $i | wc -l )
+            if [ $find -ne 0 ]
+            then
+                TARGET=$i
+            fi
+        done
+    else
+        platfm.sh
+        TARGET=$?
     fi
-  done
-else
-  platfm.sh
-  TARGET=$?
-fi
 }
 
 usage()
 {
-echo "$0 [case ID]"
-echo "1: dec with power manager"
-echo "2: enc with power manager"
-#echo "3: "
-#echo "4: "
-#echo "5: "
+    echo "$0 [case ID]"
+    echo "1: dec with power manager"
+    echo "2: enc with power manager"
+    #echo "3: "
+    #echo "4: "
+    #echo "5: "
 }
 
 # main function
@@ -258,8 +258,8 @@ TSTCMD="/unit_tests/mxc_vpu_test.out"
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1 
+    usage
+    exit 1 
 fi
 
 
@@ -269,30 +269,24 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
-  ;;
+    test_case_01 || exit $RC 
+    ;;
 2)
-  test_case_02 || exit $RC
-  ;;
+    test_case_02 || exit $RC
+    ;;
 3)
-  test_case_03 || exit $RC
-  ;;
+    test_case_03 || exit $RC
+    ;;
 4)
-  test_case_04 || exit $RC
-  ;;
+    test_case_04 || exit $RC
+    ;;
 5)
-  test_case_05 || exit $RC
-  ;;
+    test_case_05 || exit $RC
+    ;;
 *)
-  usage
-  ;;
+    usage
+    ;;
 esac
 
 tst_resm TINFO "Test PASS"
-
-
-
-
-
-
 

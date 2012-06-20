@@ -59,7 +59,7 @@ env_test()
 
     # get cpu info
     DIR=/sys/power/state
-    
+
 
     if [ ! -e $DIR ]
     then
@@ -75,7 +75,7 @@ wakeup_test()
 {
     RC=0
 
-    rtc_testapp_6 -m standby -T 10
+    rtc_testapp_6 -m standby -T 50
     if [ $? -eq 0 ]
     then
         tst_resm TPASS " RTC wakeup from STOP mode"
@@ -86,7 +86,7 @@ wakeup_test()
     fi
 
     #Test WAIT mode
-    rtc_testapp_6 -m mem -T 10
+    rtc_testapp_6 -m mem -T 50
     if [ $? -eq 0 ]
     then
         tst_resm TPASS " RTC wakeup from WAIT mode"

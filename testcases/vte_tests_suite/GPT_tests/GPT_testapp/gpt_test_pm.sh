@@ -90,7 +90,7 @@ test_case_01()
 
     #sleep 7 secs to make sure do suspend when gpt_testapp executing sleep() statement
     sleep 7
-    rtc_testapp_6 -T 3 || exit $RC
+    rtc_testapp_6 -T 50 || exit $RC
 
     #wait for gpt_testapp returns
     wait $pid1 
@@ -125,11 +125,11 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC
-  ;;
+    test_case_01 || exit $RC
+    ;;
 *)
-  usage $0
-  ;;
+    usage $0
+    ;;
 esac
 
 tst_resm TINFO "Test PASS"

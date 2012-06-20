@@ -316,7 +316,7 @@ test_case_04()
                 #TODO add function test scripte here
                 #test 1hr and check rtc accuracy
                 while [ $loop -gt 0 ]; do
-                    rtc_testapp_6 -m $mode -T 15 -d $rtc || RC=$?
+                    rtc_testapp_6 -m $mode -T 50 -d $rtc || RC=$?
                     loop=$(expr $loop - 1)
                 done
             done

@@ -80,14 +80,14 @@ wakeup_test()
 
     i=0
     while [ $i -lt 1000 ]; do
-        rtc_testapp_6 -m standby -T 15
+        rtc_testapp_6 -m standby -T 50
         echo -e "\033[;31m PM_SUSPEND_STRESS: Test STOP mode times: $i \033[0m"
         i=`expr $i + 1`
     done
 
     i=0
     while [ $i -lt 1000 ]; do
-        rtc_testapp_6 -m mem -T 15
+        rtc_testapp_6 -m mem -T 50
         echo -e "\033[;31m PM_SUSPEND_STRESS: Test WAIT mode times: $i \033[0m"
         i=`expr $i + 1`
     done

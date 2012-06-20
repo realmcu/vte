@@ -122,8 +122,8 @@ test_case_02()
         while [ $i -lt $loops ]
         do
             i=$(expr $i + 1)
-            rtc_testapp_6 -T 10 -M mem
-            rtc_testapp_6 -T 10 -M standby
+            rtc_testapp_6 -T 50 -m mem
+            rtc_testapp_6 -T 50 -m standby
         done
 
         wait $bpid

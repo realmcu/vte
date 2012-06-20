@@ -63,7 +63,7 @@ env_test()
 
     # get cpu info
     DIR=/sys/power/state
-    
+
 
     if [ ! -e $DIR ]
     then
@@ -79,10 +79,10 @@ wakeup_test()
 {
     RC=0
 
-    rtc_testapp_6 -T 5 &
+    rtc_testapp_6 -T 50 &
     sleep 3    
     echo standby > /sys/power/state
-    
+
     echo hello
     if [ $? -eq 0 ]
     then

@@ -15,8 +15,8 @@ setup()
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-    
-	return $RC
+
+    return $RC
 }
 
 cleanup()
@@ -26,8 +26,8 @@ cleanup()
 
 usage()
 {
-   echo "1: for device suspend resume case for no boot cores "	
-   echo "2: for device suspend resume case for all cores "	
+    echo "1: for device suspend resume case for no boot cores "	
+    echo "2: for device suspend resume case for all cores "	
 }
 
 # Function:     test_case_01
@@ -35,37 +35,37 @@ usage()
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="ALSA_PM_NOBOOTCORE"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="ALSA_PM_NOBOOTCORE"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+    #TODO add function test scripte here
+    arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
 
-sleep 5
-echo "core test"
-i=0
-loops=10
-echo core > /sys/power/pm_test
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
-  echo mem > /sys/power/state
- echo standby > /sys/power/state
-done
+    sleep 5
+    echo "core test"
+    i=0
+    loops=10
+    echo core > /sys/power/pm_test
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo mem > /sys/power/state
+        echo standby > /sys/power/state
+    done
 
-echo none > /sys/power/pm_test
+    echo none > /sys/power/pm_test
 
-wait
+    wait
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 
 }
 
@@ -74,40 +74,40 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="ALSA_PM_BOOTCORE"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="ALSA_PM_BOOTCORE"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
-tloops=1000
-count=0
-#TODO add function test scripte here
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+    tloops=1000
+    count=0
+    #TODO add function test scripte here
 
-while [ $count -lt $tloops ]
-do
-  arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+    while [ $count -lt $tloops ]
+    do
+        arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
 
-  sleep 5
-  i=0
-  loops=10
-  while [ $i -lt $loops ]
-  do
-    i=$(expr $i + 1)
-	rtc_testapp_6 -T 10
-	rtc_testapp_6 -T 10 -M standby
-  done
+        sleep 5
+        i=0
+        loops=10
+        while [ $i -lt $loops ]
+        do
+            i=$(expr $i + 1)
+            rtc_testapp_6 -T 50 -m mem
+            rtc_testapp_6 -T 50 -m standby
+        done
 
-  wait
+        wait
 
-  count=$(expr $count + 1)
-done
+        count=$(expr $count + 1)
+    done
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 
 }
 
@@ -116,36 +116,36 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="ALSA_PM_WAITMODE"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="ALSA_PM_WAITMODE"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
+    #TODO add function test scripte here
+    arecord -D plughw:0 -d 100 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw &
 
-sleep 5
-echo "core test"
-i=0
-loops=10
-echo core > /sys/power/pm_test
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
- echo standby > /sys/power/state
-done
+    sleep 5
+    echo "core test"
+    i=0
+    loops=10
+    echo core > /sys/power/pm_test
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo standby > /sys/power/state
+    done
 
-echo none > /sys/power/pm_test
+    echo none > /sys/power/pm_test
 
-wait
+    wait
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 }
 
 
@@ -153,17 +153,17 @@ setup || exit 1
 
 case "$1" in
 1)
-  test_case_01 || exit 2 
-  ;;
+    test_case_01 || exit 2 
+    ;;
 2)
-  test_case_02 || exit 3
-  ;;
+    test_case_02 || exit 3
+    ;;
 3)
-  test_case_03 || exit 3
-  ;;
+    test_case_03 || exit 3
+    ;;
 *)
-  usage
-  ;;
+    usage
+    ;;
 esac
 
 tst_resm TINFO "Test Finish"

@@ -15,8 +15,8 @@ setup()
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-    
-	return $RC
+
+    return $RC
 }
 
 cleanup()
@@ -26,9 +26,9 @@ cleanup()
 
 usage()
 {
-   echo "1: for device suspend resume case for no boot cores "	
-   echo "2: for device suspend resume case for all cores "	
-   echo "3: for wait mode test "	
+    echo "1: for device suspend resume case for no boot cores "	
+    echo "2: for device suspend resume case for all cores "	
+    echo "3: for wait mode test "	
 }
 
 # Function:     test_case_01
@@ -36,67 +36,67 @@ usage()
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="vpu_PM_NOBOOTCORE"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="vpu_PM_NOBOOTCORE"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-gles_viv.sh 1 &
+    #TODO add function test scripte here
+    gles_viv.sh 1 &
 
-sleep 5
-echo "core test"
-i=0
-loops=10
-echo core > /sys/power/pm_test
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
-  echo mem > /sys/power/state
- echo standby > /sys/power/state
-done
+    sleep 5
+    echo "core test"
+    i=0
+    loops=10
+    echo core > /sys/power/pm_test
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo mem > /sys/power/state
+        echo standby > /sys/power/state
+    done
 
-wait
+    wait
 
-echo "now test vg core"
-vg_gc35x.sh 1 &
+    echo "now test vg core"
+    vg_gc35x.sh 1 &
 
-sleep 5
-i=0
-loops=10
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
-  echo mem > /sys/power/state
- echo standby > /sys/power/state
-done
+    sleep 5
+    i=0
+    loops=10
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo mem > /sys/power/state
+        echo standby > /sys/power/state
+    done
 
-wait
+    wait
 
-echo "now test gc320 core"
-dfb_gc320.sh 1 &
-i=0
-loops=10
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
-  echo mem > /sys/power/state
- echo standby > /sys/power/state
-done
+    echo "now test gc320 core"
+    dfb_gc320.sh 1 &
+    i=0
+    loops=10
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo mem > /sys/power/state
+        echo standby > /sys/power/state
+    done
 
-wait
+    wait
 
-echo none > /sys/power/pm_test
+    echo none > /sys/power/pm_test
 
-wait
+    wait
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 
 }
 
@@ -105,88 +105,88 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="vpu_PM_BOOTCORE"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="vpu_PM_BOOTCORE"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
-tloops=100
-count=0
-#TODO add function test scripte here
-while [ $count -lt $tloops ]
-do
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+    tloops=100
+    count=0
+    #TODO add function test scripte here
+    while [ $count -lt $tloops ]
+    do
 
-  gles_viv.sh 1 &
+        gles_viv.sh 1 &
 
-  sleep 5
-  i=0
-  loops=100
-  while [ $i -lt $loops ]
-  do
-    i=$(expr $i + 1)
-	rtc_testapp_6 -T 10
-	rtc_testapp_6 -T 10 -M standby
-  done
+        sleep 5
+        i=0
+        loops=100
+        while [ $i -lt $loops ]
+        do
+            i=$(expr $i + 1)
+            rtc_testapp_6 -T 50 -m mem
+            rtc_testapp_6 -T 50 -m standby
+        done
 
-  wait
- 
-  count=$(expr $count + 1)
-done
+        wait
 
-tloops=100
-count=0
-#TODO add function test scripte here
-while [ $count -lt $tloops ]
-do
+        count=$(expr $count + 1)
+    done
 
-echo "now test vg core"
-vg_gc35x.sh 1 &
+    tloops=100
+    count=0
+    #TODO add function test scripte here
+    while [ $count -lt $tloops ]
+    do
 
-  sleep 5
-  i=0
-  loops=100
-  while [ $i -lt $loops ]
-  do
-    i=$(expr $i + 1)
-	rtc_testapp_6 -T 10
-	rtc_testapp_6 -T 10 -M standby
-  done
+        echo "now test vg core"
+        vg_gc35x.sh 1 &
 
-  wait
- 
-  count=$(expr $count + 1)
-done
+        sleep 5
+        i=0
+        loops=100
+        while [ $i -lt $loops ]
+        do
+            i=$(expr $i + 1)
+            rtc_testapp_6 -T 50 -m mem
+            rtc_testapp_6 -T 50 -m standby
+        done
 
-tloops=100
-count=0
-#TODO add function test scripte here
-while [ $count -lt $tloops ]
-do
+        wait
 
-echo "now test gc320 core"
-dfb_gc320.sh 1 &
+        count=$(expr $count + 1)
+    done
 
-  i=0
-  loops=100
-  while [ $i -lt $loops ]
-  do
-    i=$(expr $i + 1)
-	rtc_testapp_6 -T 10
-	rtc_testapp_6 -T 10 -M standby
-  done
+    tloops=100
+    count=0
+    #TODO add function test scripte here
+    while [ $count -lt $tloops ]
+    do
 
-  wait
- 
-  count=$(expr $count + 1)
-done
+        echo "now test gc320 core"
+        dfb_gc320.sh 1 &
+
+        i=0
+        loops=100
+        while [ $i -lt $loops ]
+        do
+            i=$(expr $i + 1)
+            rtc_testapp_6 -T 50 -m mem
+            rtc_testapp_6 -T 50 -m standby
+        done
+
+        wait
+
+        count=$(expr $count + 1)
+    done
 
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 
 }
 
@@ -195,64 +195,64 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="vpu_PM_WAITMODE"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="vpu_PM_WAITMODE"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
-gles_viv.sh 1 &
+    #TODO add function test scripte here
+    gles_viv.sh 1 &
 
-sleep 5
-echo "core test"
-i=0
-loops=10
-echo core > /sys/power/pm_test
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
- echo standby > /sys/power/state
-done
+    sleep 5
+    echo "core test"
+    i=0
+    loops=10
+    echo core > /sys/power/pm_test
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo standby > /sys/power/state
+    done
 
-wait
+    wait
 
-echo "now test vg core"
-vg_gc35x.sh 1 &
+    echo "now test vg core"
+    vg_gc35x.sh 1 &
 
-sleep 5
-i=0
-loops=10
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
- echo standby > /sys/power/state
-done
+    sleep 5
+    i=0
+    loops=10
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo standby > /sys/power/state
+    done
 
-wait
+    wait
 
-echo "now test gc320 core"
-dfb_gc320.sh 1 &
-i=0
-loops=10
-while [ $i -lt $loops ]
-do
-  i=$(expr $i + 1)
- echo standby > /sys/power/state
-done
+    echo "now test gc320 core"
+    dfb_gc320.sh 1 &
+    i=0
+    loops=10
+    while [ $i -lt $loops ]
+    do
+        i=$(expr $i + 1)
+        echo standby > /sys/power/state
+    done
 
-wait
+    wait
 
-echo none > /sys/power/pm_test
+    echo none > /sys/power/pm_test
 
-wait
+    wait
 
-RC=0
+    RC=0
 
-return $RC
+    return $RC
 
 }
 
@@ -260,17 +260,17 @@ setup || exit 1
 
 case "$1" in
 1)
-  test_case_01 || exit 2 
-  ;;
+    test_case_01 || exit 2 
+    ;;
 2)
-  test_case_02 || exit 3
-  ;;
+    test_case_02 || exit 3
+    ;;
 3)
-  test_case_03 || exit 3
-  ;;
+    test_case_03 || exit 3
+    ;;
 *)
-  usage
-  ;;
+    usage
+    ;;
 esac
 
 tst_resm TINFO "Test Finish"

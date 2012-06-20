@@ -198,7 +198,7 @@ test_case_05()
     es11ex &
     td2=$!
 
-    rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 50
 
     kill -9 $td1
     kill -9 $td2
@@ -209,13 +209,13 @@ test_case_05()
     es11ex &
     td2=$!
 
-    rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 50
     sleep 1
-    rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 50
     sleep 1
-    rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 50
     sleep 1
-    rtc_testapp_6 -T 15
+    rtc_testapp_6 -T 50
 
     kill -9 $td1
     kill -9 $td2

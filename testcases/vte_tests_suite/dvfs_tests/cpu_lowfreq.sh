@@ -127,17 +127,17 @@ lowfreq_suspend()
 
     sleep 3 
     if [ -e /dev/rtc ]; then
-       rtc_testapp_6 -m standby -T 15
+       rtc_testapp_6 -m standby -T 50 
     else
-       rtc_testapp_6 -m standby -T 15 -d rtc0 
+       rtc_testapp_6 -m standby -T 50 -d rtc0 
     fi
     tst_resm TPASS "Resume from suspend..."
 
     sleep 5 
     if [ -e /dev/rtc ]; then
-        rtc_testapp_6 -m mem -T 15
+        rtc_testapp_6 -m mem -T 50 
     else
-        rtc_testapp_6 -m mem -T 15 -d rtc0 
+        rtc_testapp_6 -m mem -T 50 -d rtc0 
     fi
     tst_resm TPASS "Resume from mem..."
 }

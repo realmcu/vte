@@ -22,7 +22,7 @@
 #Ziye Yang/b21182             17/12/2008      N/A          N/A 
 #Hake Huang/b20222            01/10/2011      N/A          update for MMA845x
 ################################################################################
- 
+
 declare -a MMA_REGS;
 # Function:     get_regid 
 # 
@@ -30,18 +30,18 @@ declare -a MMA_REGS;
 # Return        - zero on success 
 get_regid()
 {
-name=$1
-ri=0
-ID=-1
-while [ $ri -lt $REG_CNT ]
-do
- if [ $name = ${MMA_REGS[$ri]} ]; then
-    ID=$ri
-    break;
- fi
- ri=$(expr $ri + 1)
-done
-return $ID
+    name=$1
+    ri=0
+    ID=-1
+    while [ $ri -lt $REG_CNT ]
+    do
+        if [ $name = ${MMA_REGS[$ri]} ]; then
+            ID=$ri
+            break;
+        fi
+        ri=$(expr $ri + 1)
+    done
+    return $ID
 }
 
 # Function:     write_reg 
@@ -50,18 +50,18 @@ return $ID
 # Return        - zero on success 
 write_reg()
 {
- BUSID=$1
- DEVICEID=$2
- REG=$3
- value=$4
- get_regid $REG 
- if [ $ID -ne -1 ];then
- echo Y | i2cset -f $BUSID $DEVICEID $ID $value
-  return $?
- else
-  echo "invald register name"
-  return -1
- fi
+    BUSID=$1
+    DEVICEID=$2
+    REG=$3
+    value=$4
+    get_regid $REG 
+    if [ $ID -ne -1 ];then
+        echo Y | i2cset -f $BUSID $DEVICEID $ID $value
+        return $?
+    else
+        echo "invald register name"
+        return -1
+    fi
 }
 
 # Function:     read_reg 
@@ -70,21 +70,21 @@ write_reg()
 # Return        - zero on success 
 read_reg()
 {
- BUSID=$1
- DEVICEID=$2
- REG=$3
- get_regid $REG
- if [ $ID -ne -1 ];then
- value=$(i2cget -f $BUSID $DEVICEID $ID)
- echo $value
- return $value
- else
-  echo "invald register name"
- 	return-1
- fi
+    BUSID=$1
+    DEVICEID=$2
+    REG=$3
+    get_regid $REG
+    if [ $ID -ne -1 ];then
+        value=$(i2cget -f $BUSID $DEVICEID $ID)
+        echo $value
+        return $value
+    else
+        echo "invald register name"
+        return-1
+    fi
 }
 
- 
+
 # Function:     setup 
 # 
 # Description:  - Check if required commands exits 
@@ -96,59 +96,59 @@ read_reg()
 #               - non zero on failure. return value from commands ($RC) 
 setup() 
 { 
-#TODO Total test case 
-RC=0 
-trap "cleanup" 0 
- 
-#TODO add setup scripts
-IBUSID=0
+    #TODO Total test case 
+    RC=0 
+    trap "cleanup" 0 
 
-CTRL_INTERFACE=/dev/null
- case "$mode" in
-   MODE_STANDBY)
-	 	cmd=0
-	 ;;
-	 MODE_2G)
-	 	cmd=1
-		;;
-	 MODE_4G)
-	 cmd=2
-	 ;;
-	 *)
-	 cmd=3
-	 ;;
-	esac
+    #TODO add setup scripts
+    IBUSID=0
 
-buses=3
-i=0
-while [ $i -lt $buses ]; do
-	i2cdetect -y $i 0x1c 0x1c | grep UU && IBUSID=$i
-	i=$(expr $i + 1)
-done
+    CTRL_INTERFACE=/dev/null
+    case "$mode" in
+    MODE_STANDBY)
+        cmd=0
+        ;;
+    MODE_2G)
+        cmd=1
+        ;;
+    MODE_4G)
+        cmd=2
+        ;;
+    *)
+        cmd=3
+        ;;
+    esac
 
-#echo $cmd > $CTRL_INTERFACE
-write_reg $IBUSID 0x1c MMA8450_CTRL_REG1 $cmd
-RC=$?
+    buses=3
+    i=0
+    while [ $i -lt $buses ]; do
+        i2cdetect -y $i 0x1c 0x1c | grep UU && IBUSID=$i
+        i=$(expr $i + 1)
+    done
 
-list=$(find /sys/class/input/ -name event*)
-for i in $list
-do
-cat $i/device/name | grep mma
-if [ $? -eq 0 ];then
-device=/dev/input/$(basename $i)
-break
-fi
-done
+    #echo $cmd > $CTRL_INTERFACE
+    write_reg $IBUSID 0x1c MMA8450_CTRL_REG1 $cmd
+    RC=$?
 
-#enable it before using
-enable_list=$(find /sys/devices/virtual/input -name enable)
-for i in $enable_list
-do
-echo $i
-echo 1 > $i
-done
+    list=$(find /sys/class/input/ -name event*)
+    for i in $list
+    do
+        cat $i/device/name | grep mma
+        if [ $? -eq 0 ];then
+            device=/dev/input/$(basename $i)
+            break
+        fi
+    done
 
-return $RC 
+    #enable it before using
+    enable_list=$(find /sys/devices/virtual/input -name enable)
+    for i in $enable_list
+    do
+        echo $i
+        echo 1 > $i
+    done
+
+    return $RC 
 }
 # Function:     cleanup 
 # 
@@ -158,12 +158,12 @@ return $RC
 #               - non zero on failure. return value from commands ($RC) 
 cleanup() 
 { 
-RC=0 
-#TODO add cleanup code here 
-return $RC 
+    RC=0 
+    #TODO add cleanup code here 
+    return $RC 
 } 
- 
- 
+
+
 # Function:     acc_test 
 # Description   - test scenario 
 #Record 8g Data:
@@ -180,129 +180,132 @@ return $RC
 ################################################################################  
 acc_test() 
 {
- RC=1
- #TODO add function test scripte here
+    RC=1
+    #TODO add function test scripte here
 
- if [ -e $device ]; then 
-  echo "test start"
-	acctmp=$(mktemp)
-  evtest $device > $acctmp &
-  pth=$!
-	echo "now shake the board!! for 30seconds"
-	if [ $mode = "SUSPEND"  ]; then
-		rtc_testapp_6 -T 20
-	fi
-	sleep 30
-	ret=$(cat $acctmp | wc -l)
-	echo "test done $ret"
-  if [ ! -z $ret ]; then
-    RC=0
-  fi
-	kill -9 $pth
-	wait
-	rm -f $acctmp
- fi
- return $RC
+    if [ -e $device ]; then 
+        echo "test start"
+        acctmp=$(mktemp)
+        evtest $device > $acctmp &
+        pth=$!
+        echo "now shake the board!! for 30seconds"
+        if [ $mode = "SUSPEND"  ]; then
+            rtc_testapp_6 -T 50
+        fi
+        sleep 30
+        ret=$(cat $acctmp | wc -l)
+        echo "test done $ret"
+        if [ ! -z $ret ]; then
+            RC=0
+        fi
+        kill -9 $pth
+        wait
+        rm -f $acctmp
+    fi
+    return $RC
 } 
 usage()
 {
- echo "-d /dev/input/event1 -m <mode>"
- echo "mode: MODE_STANDBY/MODE_2G/MODE_4G/MODE_8G"
+    echo "-d /dev/input/event1 -m <mode>"
+    echo "mode: MODE_STANDBY/MODE_2G/MODE_4G/MODE_8G"
 } 
- 
+
 # main function 
- 
+
 RC=0  
 device=/dev/input/event1
 mode=MODE_2G
 REG_CNT=64
 ID=-1
 MMA_REGS=(
-"MMA8450_STATUS1" \
-"MMA8450_OUT_X8" \
-"MMA8450_OUT_Y8" \
-"MMA8450_OUT_Z8" \
-"MMA8450_STATUS2" \
-"MMA8450_OUT_X_LSB" \
-"MMA8450_OUT_X_MSB" \
-"MMA8450_OUT_Y_LSB" \
-"MMA8450_OUT_Y_MSB" \
-"MMA8450_OUT_Z_LSB" \
-"MMA8450_OUT_Z_MSB" \
-"MMA8450_STATUS3" \
-"MMA8450_OUT_X_DELTA" \
-"MMA8450_OUT_Y_DELTA" \
-"MMA8450_OUT_Z_DELTA" \
-"MMA8450_WHO_AM_I" \
-"MMA8450_F_STATUS" \
-"MMA8450_F_8DATA" \
-"MMA8450_F_12DATA" \
-"MMA8450_F_SETUP" \
-"MMA8450_SYSMOD" \
-"MMA8450_INT_SOURCE" \
-"MMA8450_XYZ_DATA_CFG" \
-"MMA8450_HP_FILTER_CUTOFF" \
-"MMA8450_PL_STATUS" \
-"MMA8450_PL_PRE_STATUS" \
-"MMA8450_PL_CFG" \
-"MMA8450_PL_COUNT" \
-"MMA8450_PL_BF_ZCOMP" \
-"MMA8450_PL_P_L_THS_REG1" \
-"MMA8450_PL_P_L_THS_REG2" \
-"MMA8450_PL_P_L_THS_REG3" \
-"MMA8450_PL_L_P_THS_REG1" \
-"MMA8450_PL_L_P_THS_REG2" \
-"MMA8450_PL_L_P_THS_REG3" \
-"MMA8450_FF_MT_CFG_1" \
-"MMA8450_FF_MT_SRC_1" \
-"MMA8450_FF_MT_THS_1" \
-"MMA8450_FF_MT_COUNT_1" \
-"MMA8450_FF_MT_CFG_2" \
-"MMA8450_FF_MT_SRC_2" \
-"MMA8450_FF_MT_THS_2" \
-"MMA8450_FF_MT_COUNT_2" \
-"MMA8450_TRANSIENT_CFG" \
-"MMA8450_TRANSIENT_SRC" \
-"MMA8450_TRANSIENT_THS" \
-"MMA8450_TRANSIENT_COUNT" \
-"MMA8450_PULSE_CFG" \
-"MMA8450_PULSE_SRC" \
-"MMA8450_PULSE_THSX" \
-"MMA8450_PULSE_THSY" \
-"MMA8450_PULSE_THSZ" \
-"MMA8450_PULSE_TMLT" \
-"MMA8450_PULSE_LTCY" \
-"MMA8450_PULSE_WIND" \
-"MMA8450_ASLP_COUNT" \
-"MMA8450_CTRL_REG1" \
-"MMA8450_CTRL_REG2" \
-"MMA8450_CTRL_REG3" \
-"MMA8450_CTRL_REG4" \
-"MMA8450_CTRL_REG5" \
-"MMA8450_OFF_X" \
-"MMA8450_OFF_Y" \
-"MMA8450_OFF_Z"
+    "MMA8450_STATUS1" \
+        "MMA8450_OUT_X8" \
+        "MMA8450_OUT_Y8" \
+        "MMA8450_OUT_Z8" \
+        "MMA8450_STATUS2" \
+        "MMA8450_OUT_X_LSB" \
+        "MMA8450_OUT_X_MSB" \
+        "MMA8450_OUT_Y_LSB" \
+        "MMA8450_OUT_Y_MSB" \
+        "MMA8450_OUT_Z_LSB" \
+        "MMA8450_OUT_Z_MSB" \
+        "MMA8450_STATUS3" \
+        "MMA8450_OUT_X_DELTA" \
+        "MMA8450_OUT_Y_DELTA" \
+        "MMA8450_OUT_Z_DELTA" \
+        "MMA8450_WHO_AM_I" \
+        "MMA8450_F_STATUS" \
+        "MMA8450_F_8DATA" \
+        "MMA8450_F_12DATA" \
+        "MMA8450_F_SETUP" \
+        "MMA8450_SYSMOD" \
+        "MMA8450_INT_SOURCE" \
+        "MMA8450_XYZ_DATA_CFG" \
+        "MMA8450_HP_FILTER_CUTOFF" \
+        "MMA8450_PL_STATUS" \
+        "MMA8450_PL_PRE_STATUS" \
+        "MMA8450_PL_CFG" \
+        "MMA8450_PL_COUNT" \
+        "MMA8450_PL_BF_ZCOMP" \
+        "MMA8450_PL_P_L_THS_REG1" \
+        "MMA8450_PL_P_L_THS_REG2" \
+        "MMA8450_PL_P_L_THS_REG3" \
+        "MMA8450_PL_L_P_THS_REG1" \
+        "MMA8450_PL_L_P_THS_REG2" \
+        "MMA8450_PL_L_P_THS_REG3" \
+        "MMA8450_FF_MT_CFG_1" \
+        "MMA8450_FF_MT_SRC_1" \
+        "MMA8450_FF_MT_THS_1" \
+        "MMA8450_FF_MT_COUNT_1" \
+        "MMA8450_FF_MT_CFG_2" \
+        "MMA8450_FF_MT_SRC_2" \
+        "MMA8450_FF_MT_THS_2" \
+        "MMA8450_FF_MT_COUNT_2" \
+        "MMA8450_TRANSIENT_CFG" \
+        "MMA8450_TRANSIENT_SRC" \
+        "MMA8450_TRANSIENT_THS" \
+        "MMA8450_TRANSIENT_COUNT" \
+        "MMA8450_PULSE_CFG" \
+        "MMA8450_PULSE_SRC" \
+        "MMA8450_PULSE_THSX" \
+        "MMA8450_PULSE_THSY" \
+        "MMA8450_PULSE_THSZ" \
+        "MMA8450_PULSE_TMLT" \
+        "MMA8450_PULSE_LTCY" \
+        "MMA8450_PULSE_WIND" \
+        "MMA8450_ASLP_COUNT" \
+        "MMA8450_CTRL_REG1" \
+        "MMA8450_CTRL_REG2" \
+        "MMA8450_CTRL_REG3" \
+        "MMA8450_CTRL_REG4" \
+        "MMA8450_CTRL_REG5" \
+        "MMA8450_OFF_X" \
+        "MMA8450_OFF_Y" \
+        "MMA8450_OFF_Z"
 );
 
 while getopts d:m: OPTION
-	do
-		case $OPTION 
-		in
-		  m)
-      mode=$OPTARG
-			;;
-			d)
-			device=$OPTARG
-			;;
-			\?)
-			echo "use dwfault option"
-			echo "-d $device -m $mode"
-			;;
+do
+    case $OPTION 
+    in
+    m)
+        mode=$OPTARG
+        ;;
+    d)
+        device=$OPTARG
+        ;;
+    \?)
+        echo "use dwfault option"
+        echo "-d $device -m $mode"
+        ;;
     esac
 done
+
 setup || exit $RC
-if [ ! $mode = "MODE_STANDBY" ];then
-acc_test || exit $RC
+
+if [ ! "$mode" = "MODE_STANDBY" ];then
+    acc_test || exit $RC
 fi
+
 echo "TEST PASS"
 

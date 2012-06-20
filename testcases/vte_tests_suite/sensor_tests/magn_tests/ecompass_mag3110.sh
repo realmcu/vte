@@ -159,7 +159,7 @@ ecompass_test()
     sh -c "$EV_TEST_APP $event_entry 2>&1 | tee $TMPDIR/mag3110.output" &
 
     if [ $is_suspend -eq 1 ]; then
-        rtc_testapp_6 -m mem -T 15 || RC=$?
+        rtc_testapp_6 -m mem -T 50 || RC=$?
         #clean up the data before suspend
         #echo > $TMPDIR/mag3110.output
     fi
