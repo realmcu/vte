@@ -52,7 +52,13 @@ echo 0 > /sys/class/graphics/fb0/blank
 sleep 1
 echo -e "\033[9;0]" > /dev/tty0
 trap "cleanup" 0
-modprobe galcore
+
+chip=$(platfm.sh)
+if [ $chip = "IMX6Sololite-ARM2" ];then
+modprobe  galcore baseAddress=0x80000000 
+else
+modprobe  galcore 
+fi
 return $RC
 }
 
@@ -149,6 +155,9 @@ case "$?" in
 	APP_SUB_DIR="imx61_rootfs/test"
 	;;
 63)
+	APP_SUB_DIR="imx61_rootfs/test"
+	;;
+60)
 	APP_SUB_DIR="imx61_rootfs/test"
 	;;
 *)
