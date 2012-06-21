@@ -204,10 +204,6 @@ TGE-LV-USB-HOST-DVFS-0001	mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 
 TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 50 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-V4L2-2030	power_test_v4l.sh 1
 TGE-LV-V4L2-2032	power_test_v4l.sh 3
-TGE-LV-VPU-1020	vpu_pm_test.sh 1
-TGE-LV-VPU-1030	vpu_pm_test.sh 2
-TGE-LV-VPU-2020	power_test_vpu.sh 1
-TGE-LV-VPU-2022	power_test_vpu.sh 3
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
 TGE-LV-RTC-0013	rtc_testapp_5 -T POLL
