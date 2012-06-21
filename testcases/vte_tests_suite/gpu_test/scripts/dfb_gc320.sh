@@ -105,6 +105,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}/directfb
 cd /opt/viv_samples/hal/unit_test
 export LD_LIBRARY_PATH=/opt/viv_samples/hal/unit_test
 ./runtest.sh || RC=$(echo $RC unittest)
+rm -rf result/*
 
 echo $RC
 if [ "$RC" = "0" ]; then
