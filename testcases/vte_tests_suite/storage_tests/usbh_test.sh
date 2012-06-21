@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/bash
+#Copyright (C) 2008,2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,22 +7,17 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/bash
-#====================================================================================================
+#==============================================================================
 #Revision History:
-#                            Modification     Tracking
-#Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
-#Ziye Yang                   19/08/2008       n/a        initialization of usb host storage remove test application
-#====================================================================================================
+#Author                          Date       Description of Changes
+#-------------------------   ------------ --------------------------------
+#Ziye Yang                   19/08/2008   initialization of usb host storage remove test application
+#==============================================================================
 #Portability:  ARM GCC  gnu compiler
-#==================================================================================================*/
-#
-#/*==================================================================================================
+#==============================================================================
 #Total Tests:           1
 #Test Executable Name:  usbh_test.sh
 #Test Strategy:         
-#=================================================================================================*/
 
 
 # STR1: storage name;
@@ -37,7 +33,7 @@ anal_res()
 	if [ $TMP_RC -eq 0 ]; then
 		echo " -----------------------------------------------------------------"
 		echo " USBH $ACTION storage pass!!!"
-    		echo " -----------------------------------------------------------------"
+    	echo " -----------------------------------------------------------------"
 	else
 		rc=1
 		echo " -----------------------------------------------------------------"
@@ -52,15 +48,11 @@ probe_test()
 	line_num2=0;
 
 	lsmod | grep "ehci*"
-        if [ $? -eq 0 ]; then
-                mount | grep "msc"
-                if [ $? -eq 0 ]; then
-                        umount /mnt/msc
-                        sleep 1
-                fi
-                modprobe -r ehci-hcd
-                sleep 3
-        fi
+    if [ $? -eq 0 ]; then
+        mount | grep "msc" || umount /mnt/msc
+        modprobe -r ehci-hcd
+        sleep 3
+    fi
 
 	line_num1=`cat /proc/partitions | wc -l`;
 
@@ -139,15 +131,17 @@ case $1 in
 		;;
 esac
 
-echo""
+echo
 echo " final script      		RESULT   "
 echo " -------------------------------------------"
+
 if [ $rc -eq 0 ]; then
 	echo " usbh_test.sh: $ACTION           TPASS    " 
 else
 	echo " usbh_test.sh: $ACTION           TFAIL    "
 fi
-echo""
+echo
+
 exit $rc
 
 

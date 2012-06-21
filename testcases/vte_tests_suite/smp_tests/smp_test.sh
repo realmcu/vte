@@ -118,8 +118,8 @@ times=$(expr $times - 1)
 echo $times
 done
 
-wait
-umount /mnt/mmcblk0p1
+#comment to make WuKong work
+#umount /mnt/mmcblk0p1
 
 return $RC
 }

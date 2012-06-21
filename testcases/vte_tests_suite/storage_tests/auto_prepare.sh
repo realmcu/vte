@@ -47,7 +47,7 @@ prepare_platform()
 	# add a blank to grep "*.*"
 	# Revision        : 35120
 	
-        find=`cat /proc/cpuinfo | grep "Revision" | grep " 25.*" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Revision" | grep " 25.*" | wc -l`
 	if [ $find -eq 1 ]; then
    		platform=MX25;
 		ata_dev_point=sda;
@@ -55,7 +55,7 @@ prepare_platform()
 	fi
 	
 	#find=`cat /proc/cpuinfo | grep "Hardware" | grep "MX31" | wc -l`;
-        find=`cat /proc/cpuinfo | grep "Revision" | grep " 31.*" | wc -l`;
+    find=`cat /proc/cpuinfo | grep "Revision" | grep " 31.*" | wc -l`
 	if [ $find -eq 1 ]; then
    		platform=MX31;
 		#ata_dev_point=hda;
