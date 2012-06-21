@@ -105,11 +105,13 @@ TGE-LV-ALSA-0243	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24M-S24_LE.wa
 TGE-LV-ALSA-0244	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24S-S24_LE.wav -A
 TGE-LV-ALSA-0245	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
 TGE-LV-ALSA-0246	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
-TGE-LV-ALSA-0302	aplay /mnt/nfs/test_stream/alsa_stream_music/*.wav && echo "PASS"
+TGE-LV-ALSA-0302	dac_test1.sh -f /mnt/nfs/test_stream/alsa_stream_music/*.wav -A && echo "PASS"
 TGE-LV-ALSA-3002	arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
+TGE-LV-HDMI-0730	hdmi_stress.sh 2
+TGE-LV-HDMI-AUDIO-011	power_test_hdmi.sh 1
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
-TGE-LV-BENCH-10003_HH	c-ray.sh
+TGE-LV-BENCH-10003	c-ray.sh
 TGE-LV-PerfMon-10000	modprobe mxs-perfmon && cd /sys/devices/platform/mxs-perfmon.0 && echo read > Monitor && echo start > Monitor && cat Monitor | grep "Run mode" && echo stop > Monitor && cat Monitor | grep "Stop mode" && rmmod mxs-perfmon
 TGE-LV-APP-0001	gst-inspect
 TGE-LV-I2C-0001	i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
@@ -122,14 +124,23 @@ TGE-LV-WIFI-0043	modprobe ar6000; sleep 5; iwconfig wlan0 mode managed && iwlist
 TGE-LV-WIFI-0061-Stress	LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ar6000; sleep 10; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && RT=0 ; modprobe -r ar6000; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-ETHERNET-1000	tcpdump -c 10 -i eth0
 TGE-LV-ETHERNET-1003	ethtool eth0
-TGE-LV-ETHERNET-1004_H	tcp_stream_script 10.192.244.7 CPU
-TGE-LV-ETHERNET-1005_H	udp_stream_script 10.192.244.7 CPU
+TGE-LV-ETHERNET-1004	tcp_stream_script 10.192.244.7 CPU
+TGE-LV-ETHERNET-1005	udp_stream_script 10.192.244.7 CPU
 TGE-LV-ETHERNET-1007	touch readme && ftpget -u anonymous 10.192.225.218 readme readme && cat readme | grep welcome && rm readme
 TGE-LV-ETHERNET-1009	ifconfig eth0 | grep "dropped:0"
 TGE-LV-ETHERNET-1011	ifconfig eth0 | grep "overruns:0"
 TGE-LV-FEC-0010	fec_testapp -T 0
 TGE-LV-FEC-0011	if ifconfig |grep 10.200; then fec_testapp -T 1 -H 10.200.1.1; else fec_testapp -T 1 -H 10.192.225.219; fi
 TGE-LV-FEC-0012	fec_testapp -T 2
+TGE-LV-ESLCD-0151	lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10
+TGE-LV-ESLCD-0161	lcd_testapp -T 2 -B /dev/fb0 -D 16 -X 10 -N 10
+TGE-LV-ESLCD-0600	lcd_testapp_power -F /dev/fb0
+TGE-LV-ESLCD-0702	dd if=/dev/urandom of=/dev/fb0 bs=1k count=150
+TGE-LV-ESLCD-0703	echo q | fbv -d /dev/fb0 ${LTPROOT}/testcases/bin/butterfly.png
+TGE-LV-ESLCD-0710	sh -c "fbset -depth 32" && lcd_testapp -T 2 -B /dev/fb0 -D 32 -X 10
+TGE-LV-FB-0010	fbset -depth 16;  lcd_testapp -T 1 -D 16 -B /dev/fb0 -X 10
+TGE-LV-FB-0011	fbset -depth 24;  lcd_testapp -T 1 -D 24 -B /dev/fb0 -X 10; fbset -depth 16
+TGE-LV-FB-1002	fbset && fbset -depth 32 &&  fbset -depth 16 && fbset -depth 24 && fbset -depth 32
 TGE-LV-FB-1003	cat /dev/vcs
 TGE-LV-FB-1006	echo 1 > /sys/class/graphics/fb0/blank && echo 0 > /sys/class/graphics/fb0/blank
 TGE-LV-FB-1007	clk.sh display
@@ -145,40 +156,58 @@ TGE-LV-FB-EPDC-0008	epdc_test -T 0 -g 2 && epdc_test -T 2
 TGE-LV-FB-EPDC-0009	epdc_test -R 0 -T 2 && epdc_test -R 1 -T 2 && epdc_test -R 2 -T 2 && epdc_test -R 3 -T 2
 TGE-LV-FB-EPDC-0010	epdc_test -T 1
 TGE-LV-FB-EPDC-0012	epdc_test -T 2; epdc_test -T 7
-TGE-LV-FB-EPDC-0013_HH	epdc_full.sh 1
+TGE-LV-FB-EPDC-0013	epdc_full.sh 1
 TGE-LV-FB-EPDC-0016	epdc_test -T 8 -y 10
 TGE-LV-FB-EPDC-0017	epdc_test -T 0 -S 0 && epdc_test -T 0 -S 1 && epdc_test -T 0 -S 2
+TGE-LV-FB-EPXP-001	epxp_test -r 0 -s 0:0:320:240 && epxp_test -r 90 -s 0:0:320:240 && epxp_test -r 180 -s 0:0:320:240 && epxp_test -r 270 -s 0:0:320:240
+TGE-LV-FB-EPXP-002	epxp_test -r 0 -s 0:0:320:240
+TGE-LV-FB-EPXP-003	epxp_test -r 0 -s 0:0:320:240 -l 1
+TGE-LV-FB-EPXP-004	epxp_test -m 12
+TGE-LV-FB-EPXP-005	epxp_test -s 0:0:320:240 -a  -c 100 -o 0:0:128:128:0x80000000:255:255 -k 0x80000000
+TGE-LV-FB-EPXP-006	epxp_test -s 0:0:320:240 -a 1 -c 100 -o 0:0:320:240:0:128:128
 TGE-LV-GPT-0010	gpt_testapp
 TGE-LV-HRT-0020	insmod ${LTPROOT}/testcases/bin/hrtimer_test.ko && sleep 1 && rmmod hrtimer_test && dmesg | grep hrtimer_callback
 TGE-LV-TIMER-FREQ-0001	timer_interrupt
 TGE-LV-KMEM-0001	insmod ${LTPROOT}/testcases/bin/memory_test.ko && rmmod memory_test
-TGE-LV-KERNEL-CLOCK-0001	count=`cat /proc/timer_list | grep clock | wc -l`; [ $count -gt 0 ]
 TGE-LV-KERNEL_BOOT-0001	dmesg -c
 TGE-LV-KERNEL-10002	timer_resolution
 TGE-LV-KERNEL-10004	int1=$(cat /proc/interrupts | grep -i time | awk '{print $2}'); sleep 1 ; int2=$(cat /proc/interrupts | grep -i time | awk '{print  $2}'); echo $int1; echo $int2;ret=$(expr $int2 - $int1); echo $ret; [ $ret -lt 100 ] && echo PASS || echo FAIL
 TGE-LV-KERNEL-10005	cat /proc/meminfo | grep HighTotal
-TGE-LV-DVFS-0140_H	dvfs_mx60.sh 1
+TGE-LV-NOR-1102	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x300000 -V
+TGE-LV-NOR-1103	nor_mtd_testapp -T RDRW -D /dev/mtd1 -L 0x00100000 -V
+TGE-LV-NOR-1104	nor_mtd_testapp -T THRDRWE -D /dev/mtd1 -L 0x00100000 -V
+TGE-LV-NOR-1115	nor_mtd_testapp -T WRNER -D /dev/mtd0 -L 0x100000  -V
+TGE-LV-NOR-1116	nor_mtd_testapp -T PERFORM -D /dev/mtd0 -V
+TGE-LV-NOR-1301	nor_test.sh 1 && nor_test.sh 2
+TGE-LV-DVFS-0140	dvfs_mx60.sh 1
 TGE-LV-DVFS-0144	dvfs_mx60.sh 4
-TGE-LV-DVFS-0145_H	dvfs_mx60.sh 5
-TGE-LV-DVFS-0160	dvfs_mx60.sh 6
+TGE-LV-DVFS-0145	dvfs_mx61.sh 5
+TGE-LV-DVFS-0160	dvfs_mx61.sh 6
 TGE-LV-DVFS-0200	cpufreq-info
 TGE-LV-DVFS-0304	dvfs_mx60.sh 3
-TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
+TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 50; sleep 50
 TGE-LV-ALSA-1161	power_test_alsa.sh 1
 TGE-LV-ALSA-1163	power_test_alsa.sh 3
 TGE-LV-ALSA-3005	clk.sh audio
-TGE-LV-ASRC-0211	rtc_testapp_6 -T 15; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
-TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 10 && ifconfig eth0
-TGE-LV-FB-1004	mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 5 && echo q > /tmp/fbv && rm -f /tmp/fbv
+TGE-LV-ASRC-0211	rtc_testapp_6 -T 50; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 50 && ifconfig eth0
+TGE-LV-FB-1004	mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 50 && echo q > /tmp/fbv && rm -f /tmp/fbv
 TGE-LV-GPT-0011	gpt_test_pm.sh 1
 TGE-LV-MMC-1201	storage_all.sh 3
 TGE-LV-PM-0001	powerstate_test.sh
 TGE-LV-PM-USB-0010	clk.sh 8
 TGE-LV-RTC-0102	rtc_test_7.sh
-TGE-LV-SD-1303	umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 15 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
+TGE-LV-SD-1303	mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount |grep mmcblk0p1 || mount /dev/mmcblk0p1 /mnt/mmcblk0p1; rtc_testapp_6 -T 50 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
 TGE-LV-STORAGE-0001	power_test_storage.sh 1
 TGE-LV-STORAGE-0003	power_test_storage.sh 3
-TGE-LV-USB-HOST-DVFS-0001	mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/imx_dvfscore.0/enable  && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt  && umount /mnt/msc && cat /sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state ; echo 0 > /sys/devices/platform/imx_dvfscore.0/enable
+TGE-LV-USB-HOST-DVFS-0001	mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/imx_dvfscore.0/enable  && rtc_testapp_6 -T 50 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt  && umount /mnt/msc && cat /sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state ; echo 0 > /sys/devices/platform/imx_dvfscore.0/enable
+TGE-LV-V4L2-0200	v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 50 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-V4L2-2030	power_test_v4l.sh 1
+TGE-LV-V4L2-2032	power_test_v4l.sh 3
+TGE-LV-VPU-1020	vpu_pm_test.sh 1
+TGE-LV-VPU-1030	vpu_pm_test.sh 2
+TGE-LV-VPU-2020	power_test_vpu.sh 1
+TGE-LV-VPU-2022	power_test_vpu.sh 3
 TGE-LV-RTC-0010	rtc_testapp_1
 TGE-LV-RTC-0011	rtc_testapp_2
 TGE-LV-RTC-0013	rtc_testapp_5 -T POLL
@@ -190,14 +219,20 @@ TGE-LV-RTC-2000	rtc_test.sh 3
 TGE-LV-SD-1010	mmc_transfer.sh
 TGE-LV-SD-1050	clk.sh sd
 TGE-LV-SD-1800	cat /proc/partitions | grep mmc
+TGE-LV-SECURITY-008	tcryp.sh 4
 TGE-LV-OTP-0001	otp_test.sh
 TGE-LV-STORAGE-2001	storage_all.sh 1
 TGE-LV-STORAGE-2002	storage_all.sh 2
 TGE-LV-VIIM-0001	iim_test
 TGE-LV-THERMO-0001	ls /sys/devices/virtual/thermal/thermal_zone0/*temp | xargs cat
 TGE-LV-THERMO-0002	ls /sys/devices/virtual/thermal/thermal_zone0/*type | xargs cat
+TGE-LV-THERMO-0004	thermal_freq.sh
+TGE-LV-UART-0018	stty 115200 cs8 -F /dev/ttymxc2 && stty -a -F /dev/ttymxc2  | grep cs8 &&  stty -a -F /dev/ttymxc2  | grep cstopb && stty -a -F /dev/ttymxc2  | grep crtscts && stty -a  -F /dev/ttymxc2 | grep ignbrk
 TGE-LV-UART-0020	clk.sh uart
+TGE-LV-UART-0510	RT=0; for i in 9600 115200; do echo "======== Test Baud rate $i ======" && uart_testapp_11 /dev/ttymxc2 $i || RT=$(expr $RT + 1); done; [ $RT -eq 0 ]
 TGE-LV-USB-CLK-0001	clk.sh usb
 TGE-LV-USB-HOST-0010	cat /proc/partitions | grep sd
 TGE-LV-USB-HOST-0030	umount /dev/sda1; mkfs.ext3 /dev/sda1
 TGE-LV-USB-HOST-0040	mkdir -p /media/sda1; mount /dev/sda1 /media/sda1 && bonnie++ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 && umount /media/sda1
+TGE-LV-V4L2-0129	v4l_capture_testapp -C 2 -T 30  -d  $LTPROOT/testcases/bin/ResolutionCfg
+TGE-LV-V4L2-0143	v4l_capture_testapp -C 2 -T 30 -d ResolutionCfg -n 12
