@@ -321,7 +321,12 @@ run_multi_test_list()
      need_umount=1
      mount_point=$(mktemp -d -p /tmp/storage)
 	 umount_point=$(echo $umount_point $mount_point)
-		 mount /dev/$i $mount_point || RC=$(echo $RC $i)
+		 mount /dev/$i $mount_point
+		 if [ $? -ne 0 ]; then
+		 	 RC=$(echo $RC m$i)
+			 rm -rf $mount_point
+			 continue
+		 fi
 		 sleep 5
 		fi
 		for j in $mount_point
