@@ -73,7 +73,9 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-modprobe -r galcore
+if [ -z "$NOCLEANUP" ];then
+	modprobe -r galcore
+fi
 return $RC
 }
 
