@@ -35,6 +35,7 @@ TEST_PATH=$(dirname $0)
 export PATH=$PATH:${TEST_PATH}/testcases/bin
 
 dos2unix ${TEST_PATH}/runtest/$CMDFILE
+mount -t tmpfs tmpfs /tmp
 #dmesg -c
 #enalbe dvfs
 #dvfs_ctl=$(find /sys/devices -name *dvfscore*)
@@ -208,3 +209,4 @@ mv ${TEST_PATH}/output/${ARCH_PLATFORM}_${CMDFILE}_log_$tday ${TEST_PATH}/output
 mv ${TEST_PATH}/output/LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}.failed ${TEST_PATH}/output//LTP_RUN_ON-${ARCH_PLATFORM}_${CMDFILE}_log_${tday}_$(date +%m%d%Y).failed
 mv ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_${tday}_$(date +%m%d%Y).txt
 echo "FREESCALE LBG TEST END"
+umount /tmp
