@@ -236,3 +236,4 @@ TGE-LV-GPU-PERF-OPENVG-1001	vg_gc35x.sh 1
 TGE-LV-GPU-FB-CONF-VG-1002	vg_gc35x.sh 2
 TGE-LV-GPU-DFB-0001	dfb_gc320.sh 1
 TGE-LV-GPU-Multi_core	export NOCLEANUP=y; sh -c "dfb_gc320.sh 1 &"; vg_gc35x.sh 1
+TGE-LV-WIFI-0060		wifi_stress.sh 1
