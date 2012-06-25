@@ -90,6 +90,7 @@ test_case_01()
 
     wait
 
+    sleep 30
     echo none > /sys/power/pm_test
 
     wait
@@ -246,6 +247,7 @@ test_case_03()
 
     wait
 
+    sleep 30
     echo none > /sys/power/pm_test
 
     wait

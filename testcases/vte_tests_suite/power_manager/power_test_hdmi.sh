@@ -85,6 +85,8 @@ test_case_01()
             echo mem > /sys/power/state
             echo standby > /sys/power/state
         done
+
+        sleep 30
         echo none > /sys/power/pm_test
 
         wait $bpid
@@ -161,6 +163,8 @@ test_case_03()
         i=$(expr $i + 1)
         echo standby > /sys/power/state
     done
+
+    sleep 30
     echo none > /sys/power/pm_test
 
     wait $bpid

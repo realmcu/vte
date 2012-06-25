@@ -74,6 +74,7 @@ test_case_01()
         echo standby > /sys/power/state
     done
 
+    sleep 30
     echo none > /sys/power/pm_test
 
     wait
@@ -154,6 +155,7 @@ test_case_03()
         echo standby > /sys/power/state
     done
 
+    sleep 30
     echo none > /sys/power/pm_test
 
     wait
