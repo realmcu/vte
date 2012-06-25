@@ -232,3 +232,7 @@ TGE-LV-USB-HOST-0030	umount /dev/sda1; mkfs.ext3 /dev/sda1
 TGE-LV-USB-HOST-0040	mkdir -p /media/sda1; mount /dev/sda1 /media/sda1 && bonnie++ -d /media/sda1 -u 0:0 -s 10 -r 5 && dt of=/media/sda1/test_file bs=4k limit=128m passes=20 && umount /media/sda1
 TGE-LV-V4L2-0129	v4l_capture_testapp -C 2 -T 30  -d  $LTPROOT/testcases/bin/ResolutionCfg
 TGE-LV-V4L2-0143	v4l_capture_testapp -C 2 -T 30 -d ResolutionCfg -n 12
+TGE-LV-GPU-PERF-OPENVG-1001	vg_gc35x.sh 1
+TGE-LV-GPU-FB-CONF-VG-1002	vg_gc35x.sh 2
+TGE-LV-GPU-DFB-0001	dfb_gc320.sh 1
+TGE-LV-GPU-Multi_core	export NOCLEANUP=y; sh -c "dfb_gc320.sh 1 &"; vg_gc35x.sh 1
