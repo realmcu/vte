@@ -4,7 +4,6 @@
 
 camera_module=
 
-NO_REMOVE='Y'
 
 rmodule()
 {
