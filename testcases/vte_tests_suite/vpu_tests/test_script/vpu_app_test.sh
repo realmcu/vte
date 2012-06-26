@@ -143,7 +143,7 @@ return $RC
 fi
 echo "decode 1 frame to lcd with deblock"
 ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1" || return $RC
-if [ $FORMAT == 0 ] || [ $FORMAT == 2 ]; then
+if [ $FORMAT == 0 ] || [ $FORMAT == 4 ]; then
  echo "decode 1 frame to lcd with debering"
  ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1" || return $RC
  echo "decode 1 frame to lcd with debering & deblock"
@@ -169,7 +169,7 @@ echo "following is chroma interleave mode $l"
       echo "rotation device is $k"
       echo "rotation"
       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -r $i -m $j -u $k -t $l" || return $RC
-      if [ $FORMAT == 0 ] || [ $FORMAT == 2 ]; then
+      if [ $FORMAT == 0 ] || [ $FORMAT == 4 ]; then
        echo "rotation with deblocking"
        ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1 -r $i -m $j -u $k -t $l" || return $RC
        echo "rotation with debering"
