@@ -107,8 +107,6 @@ TGE-LV-ALSA-0245	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
 TGE-LV-ALSA-0246	dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
 TGE-LV-ALSA-0302	dac_test1.sh -f /mnt/nfs/test_stream/alsa_stream_music/*.wav -A && echo "PASS"
 TGE-LV-ALSA-3002	arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
-TGE-LV-HDMI-0730	hdmi_stress.sh 2
-TGE-LV-HDMI-AUDIO-011	power_test_hdmi.sh 1
 TGE-LV-ALSA-0200	(aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
 TGE-LV-ALSA-0201	(arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
 TGE-LV-BENCH-10003	c-ray.sh
@@ -189,7 +187,6 @@ TGE-LV-ALSA-0161	(dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav 
 TGE-LV-ALSA-1161	power_test_alsa.sh 1
 TGE-LV-ALSA-1163	power_test_alsa.sh 3
 TGE-LV-ALSA-3005	clk.sh audio
-TGE-LV-ASRC-0211	rtc_testapp_6 -T 50; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
 TGE-LV-ETHERNET-1006	rtc_testapp_6 -T 50 && ifconfig eth0
 TGE-LV-FB-1004	mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 50 && echo q > /tmp/fbv && rm -f /tmp/fbv
 TGE-LV-GPT-0011	gpt_test_pm.sh 1
@@ -236,6 +233,7 @@ TGE-LV-GPU-PERF-OPENVG-1001	vg_gc35x.sh 1
 TGE-LV-GPU-FB-CONF-VG-1002	vg_gc35x.sh 2
 TGE-LV-GPU-DFB-0001	dfb_gc320.sh 1
 TGE-LV-GPU-Multi_core	export NOCLEANUP=y; sh -c "dfb_gc320.sh 1 &"; vg_gc35x.sh 1
+TGE-LV-WIFI-0050	modprobe ar6000 && sleep 5 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001
 TGE-LV-WIFI-0060		wifi_stress.sh 1
 TGE-LV-WIFI-1062 export SERVERIP=10.192.244.7;power_test_wifi.sh 3
 TGE-LV-WIFI-1060 export SERVERIP=10.192.244.7;power_test_wifi.sh 1
