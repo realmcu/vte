@@ -607,12 +607,7 @@ extern "C" {
 		parm.parm.capture.timeperframe.numerator = 1;
 		parm.parm.capture.timeperframe.denominator =
 		    gV4LTestConfig.mFrameRate;
-                if( gChangResolu )
-                {
-                        parm.parm.capture.capturemode = gResoluConfig.mResolu[gResoluCount].mMode;
-                }
-                else
-              		parm.parm.capture.capturemode = gV4LTestConfig.mMode;
+        parm.parm.capture.capturemode = gV4LTestConfig.mMode;
 		if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0) {
 			tst_resm(TFAIL, "set parm error!");
 			close(gFdV4L);
@@ -622,16 +617,8 @@ extern "C" {
 		/* Set format */
 		CLEAR(gFormat);
 		gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		if( gChangResolu )
-                {
-                        gFormat.fmt.pix.width = gResoluConfig.mResolu[gResoluCount].mWidth;
-                        gFormat.fmt.pix.height = gResoluConfig.mResolu[gResoluCount].mHeight;
-                }
-	        else
-		{
-			gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
-			gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
-                }
+		gFormat.fmt.pix.width = gV4LTestConfig.mWidth;
+		gFormat.fmt.pix.height = gV4LTestConfig.mHeight;
 		gFormat.fmt.pix.pixelformat = gPixelFormat;
 		
 		if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
@@ -870,6 +857,13 @@ extern "C" {
 				 gV4LTestConfig.mV4LDevice);
 			return TFAIL;
 		}
+		if( gChangResolu )
+		{
+		     gV4LTestConfig.mWidth = gResoluConfig.mResolu[gResoluCount].mWidth;
+			 gV4LTestConfig.mHeight = gResoluConfig.mResolu[gResoluCount].mHeight;
+			 gV4LTestConfig.mMode = gResoluConfig.mResolu[gResoluCount].mMode;
+
+	    } 
 #if 1
 		if (gV4LTestConfig.mWidth > 1024 || gV4LTestConfig.mHeight > 1024)
 		{
@@ -1155,7 +1149,7 @@ extern "C" {
 			/* Show on display */
 		case PRP_ENC_ON_D:
 			/* Here conversion of buffer pix foramt to FB pix format */
-			if (gFBPixFormat == gPixelFormat && gV4LTestConfig.inputSrc != eInCSI_MEM) {
+			if (gFBPixFormat == gPixelFormat && gV4LTestConfig.inputSrc != eInCSI_MEM ) {
 				if (gV4LTestConfig.mVerbose) {
 					tst_resm(TINFO,
 						 "process_image() : displaying on framebuffer...");
@@ -1642,7 +1636,6 @@ extern "C" {
 			if (write_file_header() == TFAIL)
 				return retValue;
 		}
-		tst_resm(TINFO, "Start capturing...");
 		while ( times++ < gChangeResoluTimes){
                      do {
                             if (setup_device() != TPASS) {
