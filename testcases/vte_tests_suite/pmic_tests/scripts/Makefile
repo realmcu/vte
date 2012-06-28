@@ -1,4 +1,4 @@
-TARGET = pmic_bat_charing.sh
+TARGET = pmic_bat_charging.sh
 
 
 all:

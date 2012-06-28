@@ -1,5 +1,5 @@
-#!/bin/bash -x
-# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/bash
+# Copyright (C) 2011,2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#    @file   pmic_bat_charing.sh
+#    @file   pmic_bat_charging.sh
 #
-#    @brief  shell script for battery charing test.
+#    @brief  shell script for battery charging test.
 #
 #Revision History:
-#                            Modification     Tracking
-#Author                          Date          Number    Description of Changes
-#Hake                         2011/04/25        NA        init pmic bat test
-#-------------------------   ------------    ----------  -------------------------------------------
+#Author                          Date        Description of Changes
+#Hake                         2011/04/25     init pmic bat test
+#Spring                       2012/06/28     Add support for mx6 max8903
+#-------------------------   ------------    -----------------------
 # 
 
 # Function:     setup
@@ -38,14 +38,26 @@
 setup()
 {
     #TODO Total test case
-    export TST_TOTAL=1
+    export TST_TOTAL=3
 
     export TCID="setup"
     export TST_COUNT=0
     RC=1
     trap "cleanup" 0
 
-    modprobe mc34708_battery
+    platfm.sh ||platfm_id=$?
+
+    if [ platfm_id -eq 50 ]; then
+        modprobe mc34708_battery
+        AC_CHARGER=/sys/class/power_supply/*aux_charger/online
+        USB_CHARGER=/sys/class/power_supply/*usb_charger/online
+        BATTERY=/sys/class/power_supply/*_bat/status
+    else
+        AC_CHARGER=/sys/class/power_supply/*-ac/online
+        USB_CHARGER=/sys/class/power_supply/*-usb/online
+        BATTERY=/sys/class/power_supply/*-charger/status
+    fi
+
 
     RC=0
 
@@ -85,27 +97,29 @@ test_case_01()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
 
     #test list
     clear
     echo "please ensure you boot from battery"
     read -p "please ensure the dc 5v is switch on, press Enter to continue"
 
-    u_online=$(cat /sys/class/power_supply/*aux_charger/online)
+    u_online=$(cat $AC_CHARGER)
     if [ "$u_online" = "0" ]; then
-        RC=1
+        RC=$(expr $RC + 1)
     fi
 
     sleep 2
-    bat_status=$(cat /sys/class/power_supply/*_bat/status)
+    bat_status=$(cat $BATTERY)
     if [ ! "$bat_status" = "Charging"  ];then
-        RC=1
+        RC=$(expr $RC + 1)
     fi
 
-    bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
-    if [ -z "$bat_charge_current" ]; then
-        RC=$(expr $RC + 1)
+    if [ platfm_id -eq 50 ]; then
+        bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
+        if [ -z "$bat_charge_current" ]; then
+            RC=$(expr $RC + 1)
+        fi
     fi
 
     return $RC
@@ -125,7 +139,7 @@ test_case_02()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
 
     #test list
     clear
@@ -134,37 +148,39 @@ test_case_02()
 
     sleep 2
 
-    u_online=$(cat /sys/class/power_supply/*usb_charger/online)
+    set -x
+    u_online=$(cat $USB_CHARGER)
     if [ "$u_online" = "0" ]; then
-        RC=1
-    fi
-
-    bat_status=$(cat /sys/class/power_supply/*_bat/status)
-    if [ ! "$bat_status" = "Charging"  ];then
         RC=$(expr $RC + 1)
     fi
 
-    bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
-    if [ -z "$bat_charge_current" ]; then
-        RC=$(expr $RC + 1)
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Charging" ] || RC=$(expr $RC + 1)
+
+    if [ platfm_id -eq 50 ]; then
+        bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
+        if [ -z "$bat_charge_current" ]; then
+            RC=$(expr $RC + 1)
+        fi
     fi
+    set +x
 
     return $RC
 }
 
 
-test_case_02()
+test_case_03()
 {
     #TODO give TCID 
-    TCID="test_charging_PM"
+    TCID="Test_Charging_Standby"
     #TODO give TST_COUNT
-    TST_COUNT=1
+    TST_COUNT=3
     RC=0
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
 
     #test list
     clear
@@ -173,32 +189,36 @@ test_case_02()
 
     sleep 2
 
-    u_online=$(cat /sys/class/power_supply/*usb_charger/online)
+    set -x
+
+    u_online=$(cat $USB_CHARGER)
     if [ "$u_online" = "0" ]; then
-        RC=1
-    fi
-
-    bat_status=$(cat /sys/class/power_supply/*_bat/status)
-    if [ ! "$bat_status" = "Charging"  ];then
         RC=$(expr $RC + 1)
     fi
 
-    bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
-    if [ -z "$bat_charge_current" ]; then
-        RC=$(expr $RC + 1)
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Charging" ] ||RC=$(expr $RC + 1)
+
+    if [ platfm_id -eq 50 ]; then
+        bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
+        if [ -z "$bat_charge_current" ]; then
+            RC=$(expr $RC + 1)
+        fi
     fi
 
     rtc_testapp_6 -T 50
 
-    bat_status=$(cat /sys/class/power_supply/*_bat/status)
-    if [ ! "$bat_status" = "Charging"  ];then
-        RC=$(expr $RC + 1)
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Charging" ] ||RC=$(expr $RC + 1)
+
+    if [ platfm_id -eq 50 ]; then
+        bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
+        if [ -z "$bat_charge_current" ]; then
+            RC=$(expr $RC + 1)
+        fi
     fi
 
-    bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
-    if [ -z "$bat_charge_current" ]; then
-        RC=$(expr $RC + 1)
-    fi
+    set +x
 
     return $RC
 }
@@ -207,7 +227,9 @@ usage()
 {
     echo "1 aux charging test"	
     echo "2 usb charging test"	
-    echo "3 charging pm charging test"	
+    echo "3 charging suspend test"	
+
+    exit 1
 }
 
 
