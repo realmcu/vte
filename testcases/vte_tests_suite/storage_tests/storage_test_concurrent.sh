@@ -1,4 +1,4 @@
-#Copyright (C) 2008-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2009, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -14,6 +14,7 @@
 #-------------------------   ------------    ----------  -------------------------------------------
 #Ziye Yang                   14/8/2008       n/a        initialization of storage function test application
 #Victor Cui                  24/10/2008      n/a        deal with exceptional situation
+#Andy Tian                   29/06/2012      n/a        A little update to make script run in new platforms
 #====================================================================================================
 #Portability:  ARM GCC  gnu compiler
 #==================================================================================================*/
@@ -54,10 +55,31 @@
  C_TIMES=$5
  CON_NUM=$6
 
+ s_device=`echo $S_PATH | cut -d/ -f3`
+ d_device=`echo $D_PATH | cut -d/ -f3`
+ mkdir -p $S_PATH
+ mkdir -p $D_PATH
+ umount $S_PATH
+ umount $D_PATH
+ if [ "$s_device" = "ata1" -o "$s_device" = "msc" ];then
+	 s_dev="/dev/sda1"
+ else
+	 s_dev="/dev/$s_device"
+ fi
+ if [ "$d_device" = "ata1" -o "$d_device" = "msc" ];then
+	 d_dev="/dev/sda1"
+ else
+	 d_dev="/dev/$s_device"
+ fi
+
+ mount $s_dev $S_PATH
+ mount $d_dev $D_PATH
+
+
  if [ ! -d "$S_PATH" ] || [ ! -d "$D_PATH" ]; then
 	echo "FAIL: the directory may be not exist, Please check!"
 	echo " storage_test_concurrent.sh           TFAIL    "
-	exit 1
+#	exit 1
  fi
 
  s_path_left=`df -k /$S_PATH|awk '{print $4}'`
@@ -69,7 +91,7 @@
  if [ -z $s_path_left ] || [ -z $d_path_left ]; then
 	echo "FAIL: the directory may be not exist, Please check!!"
 	echo " storage_test_concurrent.sh           TFAIL    "
-	exit 1
+#	exit 1
  fi
 
 if [ $S_PATH = $D_PATH ]; then
@@ -163,6 +185,8 @@ tpass_num=`cat storage_test_concurrent_log | grep "TPASS" | wc -l`
 rm storage_test_concurrent_log
 rm storage_test_pid
 rm ps_log
+umount $S_PATH
+umount $D_PATH
 if [ $tpass_num -eq $CON_NUM ]; then
         echo " storage_test_concurrent.sh           TPASS    "
 	echo "[Storage Concurrent copy/delete test end]"
