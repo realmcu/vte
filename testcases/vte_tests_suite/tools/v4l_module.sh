@@ -48,6 +48,10 @@ check_platform_camera()
 				camera_module=
 				rmodule ${camera}_camera${apd}
 			fi
+		elif [ "$DUAL" = "2"  ];then
+				camera_module=$(echo $camera_module  ${camera}_camera${apd})
+				rmodule ${camera}_camera${apd}
+
 		else
 			rmodule ${camera}_camera${apd}
 			sleep 1
@@ -99,6 +103,7 @@ v4l_setup()
 	   if [ $retry -eq 0 ]; then
 		   return 1;
 	   fi
+   
    retry=$(expr $retry - 1)
    done
 
@@ -108,7 +113,7 @@ v4l_setup()
 v4l_cleanup()
 {
 	CAMERA=
-
+	
 	check_platform_camera || RC=1
 
 	if [ $RC -ne 0 ]; then
@@ -133,9 +138,8 @@ echo $CAMERA
 
 if [ -z "$CAMERA" ]; then
 	if [ "$DUAL" = "2"  ]  ; then
-  		echo "define default"
-  		CAMERA=ov5640
-	elif [ "$DUAL" = "3" ] ; then
+  		echo "dual camera support"
+  	elif [ "$DUAL" = "3" ] ; then
 		echo "will probe all registed camera"
 	else
 		pt=$(platfm.sh)
