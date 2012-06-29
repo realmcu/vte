@@ -53,6 +53,9 @@ trap "cleanup" 0
 #TODO add setup scripts
 #export VSALPHA to show normal color in LVDS according to Angolini Daiane
 export VSALPHA=1
+echo 0 > /sys/class/graphics/fb2/blank
+echo 0 > /sys/class/graphics/fb1/blank
+echo -e "\033[9;0]" > /dev/tty0
 return $RC
 }
 
