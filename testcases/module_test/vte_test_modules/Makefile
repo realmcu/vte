@@ -2,6 +2,7 @@
 
 include ../../vte_tests_suite/vte_configs/$(ARCH_PLATFORM)_deconfigs 
 
+SUBDIRS-$(CONFIG_VM_G_ZERO)   += g_zero_module
 SUBDIRS-$(CONFIG_VM_DRYICE)	  += dryice_test_module
 SUBDIRS-$(CONFIG_VM_HACC)     += hacc_test_module
 SUBDIRS-$(CONFIG_HRTIMER)	  += hrtimer
