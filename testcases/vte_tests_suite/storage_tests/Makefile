@@ -31,7 +31,7 @@
 TARGET = auto_prepare.sh
 
 # storage test basic scripts
-TARGET += storage_test.sh storage_test_concurrent.sh storage_random_test.sh usbh_test.sh usb_test.sh
+TARGET += storage_test.sh storage_test_concurrent.sh storage_random_test.sh usbh_test.sh usb_test.sh pcie_storage_stress.sh
 
 # usb
 TARGET += usbd_testall.pl usbd_test.pl
