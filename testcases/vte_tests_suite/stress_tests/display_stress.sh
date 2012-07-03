@@ -375,6 +375,37 @@ done
 return $RC
 }
 
+# Function:     test_case_08
+# Description   - Test if dual 720P overnight playback
+#  
+test_case_08()
+{
+#TODO give TCID 
+TCID="test_720PLAYBACK_test"
+#TODO give TST_COUNT
+TST_COUNT=8
+RC=0
+
+STREAM=/mnt/nfs/test_stream/video
+a_stream=${STREAM}/h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264
+
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream}" &
+pid1=$!
+
+if [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video19 ]; then
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 19 " &
+	pid2=$!
+elif [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video18 ]; then
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 18 " &
+	pid2=$!
+fi
+
+#pass pid to wait otherwise wait will return 0 always
+wait $pid2 $pid1 || RC=$?
+
+return $RC
+}
+
 
 
 usage()
