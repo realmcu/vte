@@ -162,8 +162,6 @@ TGE-LV-ACC-0010	acc_test_MMA845x.sh -m MODE_8G
 TGE-LV-ACC-0011	acc_test_MMA845x.sh -m MODE_4G
 TGE-LV-ACC-0012	acc_test_MMA845x.sh -m MODE_2G
 TGE-LV-ACC-0013	acc_test_MMA845x.sh -m MODE_STANDBY
-TGE-LV-MAGN-0010	ecompass_mag3110.sh 1
-TGE-LV-MAGN-0011	ecompass_mag3110.sh 2
 TGE-LV-DISPLAY-0002	dd if=/dev/urandom of=/dev/fb2 bs=1024 count=100
 TGE-LV-DISPLAY-DUAL-0001	echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png && lcd_testapp -T 1 -B /dev/fb2 -D 16 -X 10
 TGE-LV-PMICLIGHT-0091_LightSensor	isl_test.sh 1
