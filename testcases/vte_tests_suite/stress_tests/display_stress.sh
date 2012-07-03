@@ -93,22 +93,22 @@ run_test()
 			echo GPU
 			export FB_FRAMEBUFFER_0=/dev/fb2
 			gles_viv.sh 1 &
-			pGPU=$1
+			pGPU=$!
 			;;
 			'VPU' )
 			echo VPU
 			test_case_04 &
-			pVPU=$1
+			pVPU=$!
 			;;
 			'IPU' )
 			echo IPU
 			ipu_test.sh 1 &
-			pIPU=$1
+			pIPU=$!
 			;;
 			'IO' )
 			echo IO
 			storage_all.sh 1 &
-			pIO=$1
+			pIO=$!
 			;;
 			'*' )
 			echo "skip"
