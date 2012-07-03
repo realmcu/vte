@@ -18,7 +18,8 @@
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
-#hake Huang/-----             20090609     N/A          Initial version
+#hake Huang/-----             20090609         N/A          Initial version
+#Andy Tian                    20120702         N/A        Add USB remote wakeup stress test 
 # 
 ###################################################################################################
 
@@ -33,6 +34,7 @@
 #
 # Return        - zero on success
 #               - non zero on failure. return value from commands ($RC)
+
 setup()
 {
 #TODO Total test case
@@ -179,23 +181,42 @@ return $RC
 }
 
 # Function:     test_case_04
-# Description   - Test if <TODO test function> ok
+# Description   - usb remote wakeup stress test
 #  
 test_case_04()
 {
 #TODO give TCID 
-TCID="test_demo4_test"
+TCID="USB remote wakeup stress test"
 #TODO give TST_COUNT
 TST_COUNT=4
-RC=0
+RC=1
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
+if [ -z $skip_port ];then
+	echo "Need usb port number as argument. Setup FAIL"
+	exit 1
+elif [ ! -e "/sys/bus/usb/devices/$skip_port" ]; then
+	echo "Can not find the usb port of $skip_port, please check it. Setup FAIL"
+	exit 1
+fi
+#Enable remote wakeup for all usb ports
+low_power_usb.sh $skip_port || exit $?
 
+#suspend 3000 times
+i=0
+while [ $i -lt 3000 ];do
+	echo mem > /sys/power/state
+	sleep 1
+	let i=i+1
+	echo $i
+	echo $i
+	echo $i
+done
+RC=0
 return $RC
-
 }
 
 # Function:     test_case_05
@@ -224,7 +245,7 @@ echo "$0 [case ID]"
 echo "1: "
 echo "2: "
 echo "3: "
-echo "4: "
+echo "4 skip_port: USB remote wake up stress test"
 echo "5: "
 }
 
@@ -233,7 +254,7 @@ echo "5: "
 RC=0
 
 #TODO check parameter
-if [ $# -ne 1 ]
+if [ $# -gt 2 ]
 then
 usage
 exit 1 
@@ -252,6 +273,7 @@ case "$1" in
   test_case_03 || exit $RC
   ;;
 4)
+  skip_port=$2
   test_case_04 || exit $RC
   ;;
 5)
