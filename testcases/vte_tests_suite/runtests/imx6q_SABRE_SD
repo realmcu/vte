@@ -360,7 +360,6 @@ TGE-LV-V4L2-0126 v4l_capture_testapp  -C 3 -T 100 -Z
 TGE-LV-V4L2-0127 v4l_capture_testapp -C 3 -T 100  -r 15 -Z
 TGE-LV-V4L2-0128 v4l_capture_testapp -C 3 -T 1000 -Z && v4l_capture_testapp -C 3 -T 1000  -r 15 -Z
 TGE-LV-V4L2-1011 echo 1 > /sys/class/graphics/fb0/blank && v4l_capture_testapp -T 10 && echo 1 > /sys/class/graphics/fb0/blank
-TGE-LV-V4L2-1131 export CAMERA=ov8820_mipi; v4l2_still_test.sh
 TGE-LV-WIFI-0061-Stress LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ar6000; sleep 20; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && RT=0 ; modprobe -r ar6000; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-USB-HOST-0010 cat /proc/partitions | grep sd
 TGE-LV-I2C-0001 i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
@@ -383,7 +382,6 @@ TGE-LV-ALSA-1163 power_test_alsa.sh 3
 TGE-LV-PerfMon-10000 modprobe mxs-perfmon.ko && cd /sys/devices/platform/mxs-perfmon.0 && echo read > Monitor && echo start > Monitor && cat Monitor | grep "Run mode" && echo stop > Monitor && cat Monitor | grep "Stop mode" && rmmod mxs-perfmon.ko
 TGE-LV-SD-1303 umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 15 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
 TGE-LV-VPU-20004 vpu_app_test.sh 4
-TGE-LV-V4L2-1137 export CAMERA=ov8820_mipi; mxc_v4l2_overlay.sh 2
 TGE-LV-V4L2-1138 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 3
 TGE-LV-V4L2-1139 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 4
 TGE-LV-V4L2-1140 export CAMERA=ov5640_mipi; mxc_v4l2_overlay.sh 5
