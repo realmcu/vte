@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 #Copyright 2008-2010, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -22,6 +22,7 @@
 #Justin Qiu                   <20091201>     N/A          add ipu performance test
 #Spring Zhang                 <20100816>     N/A          copy stream to mem
 #Andy Tian                    <20120530>     N/A          copy stream to SATA for case_07
+#Andy Tian                    <20120530>     N/A          exit if no scsi device for case_07
 # 
 ###############################################################################
 
@@ -433,6 +434,55 @@ test_case_06()
     return $RC
 }
 
+# Function:		u_mount
+# Description 	u_mount the device or mount point given by args
+#
+u_mount()
+{
+	for mlist in $*; do
+		mt=`mount | grep "$mlist"`
+		while [ -n "$mt" ]; do
+			umount $mlist
+			mt=`mount | grep "$mlist"`
+		done
+	done
+}  
+
+p_node()
+{
+ RC=1
+ #get cylinder size
+ SZ=$(fdisk -l $1 | grep "Units =" | awk '{print $9}')
+ BEGC=$(echo "((10*1024*1024)/${SZ})" | bc)
+ let BEGC=BEGC+1
+ #set the end cylinder
+ ENDC=$(echo "(($2*1024)/${SZ})" | bc)
+ let ENDC=ENDC+1
+ tmpfile=$(mktemp -p /tmp)
+ if [ $? -ne 0 ]; then
+  return $RC
+ fi
+ cat >$tmpfile <<EOF
+
+n
+p
+1
+$BEGC
+$ENDC
+
+w
+EOF
+
+fdisk $1 < $tmpfile
+if [ $? -eq 0 ]; then
+	RC=0
+fi
+
+sleep 5
+rm -f $tmpfile
+return $RC
+}
+
 # Function:     test_case_07
 # Description   - Performance for IPU decoder
 #
@@ -444,10 +494,58 @@ test_case_07()
     TST_COUNT=7
     RC=1
 
+	#find the scsi device
+	scsi_atas=`get_scsi.sh 2`
+	scsi_usbs=`get_scsi.sh 4`
+	if [ -n "$scsi_atas" ]; then
+		scsi_dev=$scsi_atas
+	elif [ -n "$scsi_usbs" ]; then
+		scsi_dev=$scsi_usbs
+	    echo "No ata device, use u-disk $scsi_dev"	
+	else
+		echo "No scsi device, program exit"
+		exit 7
+	fi
+
+	#fdisk,mkfs to scsi device if needed
+	mt_pt=''
+	tmp_dir=$(mktemp -d -p /mnt)
+	for i in $scsi_dev; do
+		p_list=`cat /proc/partitions | grep $scsi_dev[0-9].* | awk '{print $4}'`
+		if [ -z "$p_list" ]; then
+			#no partition table
+			p_node /dev/$i 1048576 || continue
+			p_list="${i}1"
+			mkfs.ext3 /dev/${p_list}
+			mt_pt=$p_list
+			break
+		else
+			for pt in $p_list; do
+				u_mount $tmp_dir
+				mount -t ext3 /dev/$pt $tmp_dir || ( mkfs.ext3 /dev/$pt && mount -t ext3 /dev/$pt $tmp_dir )
+				free_size=`df | grep -m 1 $pt | awk '{print $4}'`
+				if [ $free_size -gt 1048576 ]; then
+					mt_pt=$pt
+					break
+				fi
+			done
+		fi
+		if [ -n "$mt_pt" ]; then
+			break
+		fi
+	done
+	u_mount $tmp_dir
+	rm -rf $tmp_dir
+	if [ -z "$mt_pt" ]; then
+		echo "No enought free space in SCSI device!!!"
+		echo "Please use another SCSI device or free the current SCSI device."
+		exit 7
+	fi
+
     #mount sata
     mkdir -p /mnt/msc
-    mount |grep msc ||mount /dev/sda1 /mnt/msc
-
+	u_mount /mnt/msc /dev/$mt_pt
+	mount /dev/$mt_pt /mnt/msc
 
     #print test info
     tst_resm TINFO "test $TST_Count: $TCID "
@@ -467,9 +565,7 @@ test_case_07()
         WD=$(echo $infile | sed "s/+/ /g" | awk '{print $1}' )
         HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
         infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
-        if [ ! -e /mnt/msc/$infilename ]; then
-            cp ${STREAM_PATH}/video/${infilename} /mnt/msc || return $?
-        fi
+		cp ${STREAM_PATH}/video/${infilename} /mnt/msc || return $?
         echo "TST_INFO: --------- rotate only test --------------------"
         for r in $ROTATION
         do
@@ -538,6 +634,7 @@ test_case_07()
                 TOTAL=$(expr $TOTAL + 1)
             done
         done
+		rm -rf /mnt/msc/${infilename}
     done
 
     echo "Total cases $TOTAL"
@@ -646,7 +743,6 @@ usage()
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-    usage
     exit 1 
 fi
 
