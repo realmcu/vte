@@ -6,31 +6,31 @@ TGE-LV-ESAI-0101 aplay -D hw:0,0  $STREAM_PATH/esai_stream/8k16bit-six.wav
 TGE-LV-ESAI-0102 aplay -D hw:0,0  $STREAM_PATH/esai_stream/11k16bit-six.wav
 TGE-LV-ESAI-0103 aplay -D hw:0,0  $STREAM_PATH/esai_stream/16k16bit-six.wav
 TGE-LV-ESAI-0104 aplay -D hw:0,0  $STREAM_PATH/esai_stream/22k16bit-six.wav
-TGE-LV-ESAI-0105 aplay -Dplughw:0,0  $STREAM_PATH/esai_stream/24k16bit-six.wav
-TGE-LV-ESAI-0106 aplay -D hw:0,0  $STREAM_PATH/esai_stream/32k16bit-six.wav
+TGE-LV-ESAI-0105 amixer sset "ASRC" "disable" && aplay -Dplughw:0  $STREAM_PATH/esai_stream/24k16bit-six.wav && amixer sset "ASRC" "24KHz" && sleep 5 && aplay -Dhw:0  $STREAM_PATH/esai_stream/24k16bit-six.wav
+TGE-LV-ESAI-0106 amixer sset "ASRC" "disable" && aplay -Dplughw:0  $STREAM_PATH/esai_stream/32k16bit-six.wav && amixer sset "ASRC" "32KHz" && sleep 5 && aplay -Dhw:0  $STREAM_PATH/esai_stream/32k16bit-six.wav
 TGE-LV-ESAI-0108 aplay -D hw:0,0  $STREAM_PATH/esai_stream/48k16bit-six.wav
-TGE-LV-ESAI-0109 aplay -D hw:0,0  $STREAM_PATH/esai_stream/64k16bit-six.wav
-TGE-LV-ESAI-0110 aplay -D hw:0,0  $STREAM_PATH/esai_stream/88k16bit-six.wav
-TGE-LV-ESAI-0111 aplay -D hw:0,0  $STREAM_PATH/esai_stream/96k16bit-six.wav
-TGE-LV-ESAI-0112 aplay -D hw:0,0  $STREAM_PATH/esai_stream/176k16bit-six.wav
-TGE-LV-ESAI-0113 aplay -D hw:0,0  $STREAM_PATH/esai_stream/192k16bit-six.wav
+TGE-LV-ESAI-0109 amixer sset "ASRC" "disable" && aplay -M -Dplughw:0  $STREAM_PATH/esai_stream/64k16bit-six.wav && amixer sset "ASRC" "64KHz" && sleep 5 && aplay -M -D hw:0  $STREAM_PATH/esai_stream/64k16bit-six.wav
+TGE-LV-ESAI-0110 amixer sset "ASRC" "disable" && aplay -M -D plughw:0 $STREAM_PATH/esai_stream/88k16bit-six.wav && amixer sset "ASRC" "88.2KHz" && sleep 5 && aplay -M -D hw:0 $STREAM_PATH/esai_stream/88k16bit-six.wav
+TGE-LV-ESAI-0111 amixer sset "ASRC" "disable" && aplay -M -Dhw:0  $STREAM_PATH/esai_stream/96k16bit-six.wav && amixer sset "ASRC" "96KHz" && sleep 5 && aplay -M -D hw:0  $STREAM_PATH/esai_stream/96k16bit-six.wav
+TGE-LV-ESAI-0112 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/176k16bit-six.wav && amixer sset "ASRC" "176.4KHz" && sleep 5 && aplay -D hw:0  $STREAM_PATH/esai_stream/176k16bit-six.wav
+TGE-LV-ESAI-0113 aplay -M -D plughw:0  $STREAM_PATH/esai_stream/192k16bit-six.wav
 TGE-LV-ESAI-0301 aplay -D hw:0,0  $STREAM_PATH/esai_stream/8k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0302 aplay -D hw:0,0  $STREAM_PATH/esai_stream/11k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0303 aplay -D hw:0,0  $STREAM_PATH/esai_stream/16k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0304 aplay -D hw:0,0  $STREAM_PATH/esai_stream/22k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0305 aplay -D plughw:0,0  $STREAM_PATH/esai_stream/24k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0306 aplay -D hw:0,0  $STREAM_PATH/esai_stream/32k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0307 aplay -D hw:0,0  $STREAM_PATH/esai_stream/44k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0308 aplay -D hw:0,0  $STREAM_PATH/esai_stream/48k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0309 aplay -D hw:0,0  $STREAM_PATH/esai_stream/64k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0310 aplay -D hw:0,0  $STREAM_PATH/esai_stream/88k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0311 aplay -D hw:0,0  $STREAM_PATH/esai_stream/96k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0312 aplay -D hw:0,0  $STREAM_PATH/esai_stream/176k24bit-six-S24_LE.wav
-TGE-LV-ESAI-0313 aplay -D hw:0,0  $STREAM_PATH/esai_stream/192k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0305 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/24k24bit-six-S24_LE.wav && amixer sset "ASRC" "24KHz" && sleep 5 && aplay -D hw:0  $STREAM_PATH/esai_stream/24k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0306 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/32k24bit-six-S24_LE.wav && amixer sset "ASRC" "32KHz" && sleep 5 && aplay -D hw:0,0  $STREAM_PATH/esai_stream/32k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0307 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/44k24bit-six-S24_LE.wav && amixer sset "ASRC" "44.1KHz" && sleep 5 && aplay -D hw:0  $STREAM_PATH/esai_stream/44k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0308 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/48k24bit-six-S24_LE.wav  && amixer sset "ASRC" "48KHz" && sleep 5 && aplay -D hw:0  $STREAM_PATH/esai_stream/48k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0309 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/64k24bit-six-S24_LE.wav && amixer sset "ASRC" "64KHz"  && sleep 5 &&  aplay -D hw:0  $STREAM_PATH/esai_stream/64k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0310 amixer sset "ASRC" "disable" && aplay -D plughw:0,0  $STREAM_PATH/esai_stream/88k24bit-six-S24_LE.wav && amixer sset "ASRC" "88.2KHz" && sleep 5 && aplay -D hw:0,0  $STREAM_PATH/esai_stream/88k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0311 amixer sset "ASRC" "disable" && aplay -D plughw:0,0  $STREAM_PATH/esai_stream/96k24bit-six-S24_LE.wav && amixer sset "ASRC" "96KHz" && sleep 5 && aplay -D hw:0,0  $STREAM_PATH/esai_stream/96k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0312 amixer sset "ASRC" "disable" && aplay -D plughw:0  $STREAM_PATH/esai_stream/176k24bit-six-S24_LE.wav && amixer sset "ASRC" "176.4KHz" && sleep 5 && aplay -D hw:0  $STREAM_PATH/esai_stream/176k24bit-six-S24_LE.wav
+TGE-LV-ESAI-0313 aplay -D plughw:0  $STREAM_PATH/esai_stream/192k24bit-six-S24_LE.wav
 TGE-LV-ESAI-0200 aplay -D hw:0,0 $STREAM_PATH/alsa_stream/audio44k16M.wav
 TGE-LV-ESAI-1003 aplay -Dhw:0,0 $STREAM_PATH/esai_stream/sine-8ch48k16bit.wav
 TGE-LV-ESAI-1004 aplay -Dplughw:0,0 $STREAM_PATH/esai_stream/sine-8ch192k16bit.wav
-TGE-LV-ESAI-0107 aplay -D hw:0,0  $STREAM_PATH/esai_stream/44k16bit-six.wav
+TGE-LV-ESAI-0107 amixer sset "ASRC" "disable" && aplay -Dplughw:0  $STREAM_PATH/esai_stream/44k16bit-six.wav && amixer sset "ASRC" "44.1KHz" && sleep 5 && aplay -M -Dhw:0  $STREAM_PATH/esai_stream/44k16bit-six.wav
 TGE-LV-ESAI-0100 aplay -l | grep -i cs42888
 TGE-LV-ESAI-1002 esai_test.sh 2
 TGE-LV-FEC-0010 fec_testapp -T 0
@@ -89,6 +89,8 @@ TGE-LV-VPU-10220  vpu_multi_enc_test.sh 2
 TGE-LV-VPU-10221  vpu_multi_enc_test.sh 3
 TGE-LV-VPU-20007 vpu_app_test.sh 7
 TGE-LV-VPU-20008 vpu_app_test.sh 8
+TGE-LV-WIFI-0050 modprobe ar6000 && sleep 5 && iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001
+TGE-LV-WIFI-0060 wifi_stress.sh 1
 TGE-LV-WIFI-0043 modprobe ar6000; sleep 5; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001  && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprobe -r ar6000;
 TGE-LV-WIFI-0061-Stress LOOP=30; while [ $LOOP -gt 0 ] ; do LOOP=$(expr $LOOP - 1);RT=1; modprobe ar6000; sleep 10; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001 && RT=0 ; modprobe -r ar6000; echo $LOOP;sleep 30 ; done ; [ $RT -eq 0 ]
 TGE-LV-ASRC-0409 asrc_clock_source_test2.sh 0409
@@ -117,8 +119,8 @@ TGE-LV-ETHERNET-1008 ethtool eth0 | grep 1000
 TGE-LV-V4L2-0069 v4l_capture_testapp -C 3 -r 15 -M 5 -O BGR24 -o /mnt/nfs/temp/output_1920_1080 && v4l_capture_testapp -C 3  -r 15 -M 6 -O BGR24 -o /mnt/nfs/temp/output_1944_2592 && conv -i /mnt/nfs/temp/output_1920_1080_BGR24 -b 256 -I BGR24 -x 1920 -y 1080 -o /mnt/nfs/temp/out_1920_1080.bmp && conv -i /mnt/nfs/temp/output_1944_2592_BGR24 -b 256 -I BGR24 -x 2592 -y 1944 -o /mnt/nfs/temp/out_2592_1944.bmp
 TGE-LV-V4L2-0126 v4l_capture_testapp  -C 3  -M 7 -T 200 -Z && v4l_capture_testapp  -C 3 -M 1 -T 200 -Z && v4l_capture_testapp  -C 3 -M 0 -T 200 -Z &&v4l_capture_testapp  -C 3  -M 4  -T 200 -Z
 TGE-LV-V4L2-0127 v4l_capture_testapp -C 3 -M 7 -T 200 -Z  -r 15&& v4l_capture_testapp -C 3 -M 1 -T 200 -Z -r 15 && v4l_capture_testapp -C 3-M 0 -T 200 -Z  -r 15&& v4l_capture_testapp -C 3 -M 5 -T 200 -Z -r 15 && v4l_capture_testapp -C 3 -M 6 -T 200 -Z -r 15
-TGE-LV-V4L2-0129 v4l_capture_testapp -C 2 -T 30  -d  $LTPROOT/testcases/bin/ResolutionCfg
-TGE-LV-V4L2-0143 v4l_capture_testapp -C 2 -T 30 -d ResolutionCfg -n 12
+TGE-LV-V4L2-0129 v4l_capture_testapp -C 2 -T 30  -O YUV420 -d  $LTPROOT/testcases/bin/ResolutionCfg
+TGE-LV-V4L2-0143 v4l_capture_testapp -C 2 -T 30  -O YUV420 -d ResolutionCfg -n 12
 TGE-LV-DVFS-0200 cpufreq-info
 TGE-LV-DVFS-0140 dvfs_mx61.sh 1
 TGE-LV-DVFS-0160 dvfs_mx61.sh 6
@@ -251,7 +253,7 @@ TGE-LV-ALSA-0133 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24S-S24_LE.wav
 TGE-LV-ALSA-0134 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24S-S24_LE.wav
 TGE-LV-ALSA-0136 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24S-S24_LE.wav
 TGE-LV-ALSA-0138 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24S-S24_LE.wav
-TGE-LV-ALSA-0302 dac_test1.sh -f /mnt/nfs/test_stream/alsa_stream_music/*.wav -A && echo "PASS"
+TGE-LV-ALSA-0302 dac_test1.sh -f /mnt/nfs/test_stream/alsa_stream/*.wav -A && echo "PASS"
 TGE-LV-ALSA-0137 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24S-S24_LE.wav
 TGE-LV-ALSA-3002 arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
 TGE-LV-ALSA-0502 adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A
@@ -294,16 +296,16 @@ TGE-LV-ESLCD-0810 mxcfb_test -T 2 -D /dev/fb0 -d /dev/fb1
 TGE-LV-ESLCD-0820 mxcfb_test -T 3 -D /dev/fb0 -d /dev/fb1
 TGE-LV-ESLCD-0830 RC=0;LOOP=20; while [ $LOOP -gt 0 ]; do mxcfb_test -T 4 -D /dev/fb0 -d /dev/fb1 || RC=1; LOOP=$(expr $LOOP - 1); done; [ $RC -eq 0 ]
 TGE-LV-ESLCD-0840 mxcfb_test -T 5 -D /dev/fb0 -d /dev/fb1
-TGE-LV-ETHERNET-1006  rtc_testapp_6 -T 10 && ifconfig eth0
+TGE-LV-ETHERNET-1006 rtc_testapp_6 -T 50 && ifconfig eth0
 TGE-LV-MMC-1201 storage_all.sh 3
 TGE-LV-RTC-0102 rtc_test_7.sh
 TGE-LV-VPU-1020 vpu_pm_test.sh 1
 TGE-LV-VPU-1030 vpu_pm_test.sh 2
-TGE-LV-ASRC-0211 rtc_testapp_6 -T 15; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
-TGE-LV-ALSA-0161 (dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 5 ; sleep 50
+TGE-LV-ASRC-0211 rtc_testapp_6 -T 50; asrc_test1.sh -to 48000 $STREAM_PATH/asrc_stream/audio8k16S.wav
+TGE-LV-ALSA-0161 (dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 50; sleep 50
 TGE-LV-PM-0001 powerstate_test.sh
-TGE-LV-FB-1004 mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 5 && echo q > /tmp/fbv && rm -f /tmp/fbv
-TGE-LV-USB-HOST-DVFS-0001 mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/imx_dvfscore.0/enable  && rtc_testapp_6 -T 10 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt  && umount /mnt/msc && cat /sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state ; echo 0 > /sys/devices/platform/imx_dvfscore.0/enable
+TGE-LV-FB-1004 mkfifo /tmp/fbv;sh -c "cat /tmp/fbv | fbv ${LTPROOT}/testcases/bin/butterfly.png &" && sleep 5 && rtc_testapp_6 -T 50 && echo q > /tmp/fbv && rm -f /tmp/fbv
+TGE-LV-USB-HOST-DVFS-0001 mkdir -p /mnt/msc ; mount /dev/sda1 /mnt/msc ; echo 1 > /sys/devices/platform/imx_dvfscore.0/enable  && rtc_testapp_6 -T 50 && echo "hello world" > /mnt/msc/test.txt && cat /mnt/msc/test.txt  && umount /mnt/msc && cat /sys/devices/system/cpu/cpu*/cpufreq/stats/time_in_state ; echo 0 > /sys/devices/platform/imx_dvfscore.0/enable
 TGE-LV-STORAGE-0001 power_test_storage.sh 1
 TGE-LV-ALSA-1161 power_test_alsa.sh 1
 TGE-LV-VPU-2020 power_test_vpu.sh 1
@@ -311,15 +313,18 @@ TGE-LV-SPDIF-0601 rtc_testapp_6 -T 5 && aplay -l && aplay -D hw:1,0 $STREAM_PATH
 TGE-LV-STORAGE-0003 power_test_storage.sh 3
 TGE-LV-VPU-2022 power_test_vpu.sh 3
 TGE-LV-ALSA-1163 power_test_alsa.sh 3
-TGE-LV-SD-1303 umount /mnt/mmcblk0p1; mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount /dev/mmcblk0p1 /mnt/mmcblk0p1 && rtc_testapp_6 -T 15 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
+TGE-LV-SD-1303 mkdir -p /mnt/mmcblk0p1; ln -sf /dev/rtc0 /dev/rtc; mount |grep mmcblk0p1 || mount /dev/mmcblk0p1 /mnt/mmcblk0p1; rtc_testapp_6 -T 50 && echo "hello world" > /mnt/mmcblk0p1/test.txt && cat /mnt/mmcblk0p1/test.txt
 TGE-LV-GPT-0011 gpt_test_pm.sh 1
 TGE-LV-ALSA-3005 clk.sh audio
-TGE-LV-SATA-1201 rtc_testapp_6 -T 10; ls -l /sys/block | grep ahci
+TGE-LV-SATA-1201 rtc_testapp_6 -T 50; ls -l /sys/block | grep ahci
+TGE-LV-WIFI-1060 export SERVERIP=10.192.225.222;power_test_wifi.sh 1
+TGE-LV-WIFI-1062 export SERVERIP=10.192.244.7;power_test_wifi.sh 3
+TGE-LV-ENET-1060 export SERVERIP=10.192.244.7;power_test_enet.sh 1
 TGE-LV-PM-USB-0010 clk.sh 8
 TGE-LV-GPU-1005 gles_viv.sh 4 ; vg_gc2000.sh 4
 TGE-LV-GPU-1006 power_test_gpu.sh 1
 TGE-LV-GPU-1008 power_test_gpu.sh 3
-TGE-LV-V4L2-0200 v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 15 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
+TGE-LV-V4L2-0200 v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565 && rtc_testapp_6 -T 50 && v4l_output_testapp -C 2 -X 200 -Y 150 -F $LTPROOT/testcases/bin/blue_RGB565
 TGE-LV-V4L2-2030 power_test_v4l.sh 1
 TGE-LV-V4L2-2032 power_test_v4l.sh 3
 TGE-LV-STORAGE-0002 power_test_storage.sh 2
@@ -357,11 +362,11 @@ TGE-LV-GPU-FB-CL11-0002 cl_gc2000.sh 2
 TGE-LV-GPU-FB-CL11-0003 cl_gc2000.sh 3
 TGE-LV-GPU-EGL-FB-0001 gles_viv.sh 1
 TGE-LV-GPU-FB-PERF-GLES-0006 gles_viv.sh 2
-TGE-LV-GPU-PERF-OPENVG-0001 vg_gc2000.sh 1
-TGE-LV-GPU-FB-CONF-VG-0002 vg_gc2000.sh 2
 TGE-LV-GPU-CLOCK-0001 clk.sh gpu
 TGE-LV-GPU-EGL-FB-0011 export FB_MULTI_BUFFER=4;gles_viv.sh 1
-TGE-LV-GPU-FB-MULTI-0001 export NOCLEANUP=1; vg_gc2000.sh 2 & pid_vg=$!; gles_viv.sh 2 & pid_gles=$! ; wait $pid_vg && wait $pid_gles; RC=$?;wait; [ $RC -eq 0 ]
+TGE-LV-GPU-FB-CONF-VG-1002 vg_gc35x.sh 2
+TGE-LV-GPU-PERF-OPENVG-1001 vg_gc35x.sh 1
+TGE-LV-GPU-DFB-0001 dfb_gc320.sh 1
 TSG-LV-GPU-FB-CONF-GC35X_openVG-0001-stress vg_gc35x.sh 3
 TGE-LV-GPU-CONF-GLES-0005 gles_viv.sh 3
 TSG-LV-GPU-FB-CONF-GC35X_openVG-0002-stress vg_gc2000.sh 3
