@@ -385,10 +385,6 @@ TGE-LV-V4L2-1079 mxc_v4l2_output.sh 2
 TGE-LV-V4L2-1080 mxc_v4l2_output.sh 3
 TGE-LV-V4L2-1081 mxc_v4l2_output.sh 4
 TGE-LV-V4L2-1082 mxc_v4l2_output.sh 5
-TGE-LV-V4L2-1131 export CAMERA=ov8820_mipi; v4l2_still_test.sh
-TGE-LV-V4L2-1138 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 3
-TGE-LV-V4L2-1139 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 4
-TGE-LV-V4L2-1140 export CAMERA=ov5640_mipi; mxc_v4l2_overlay.sh 5
 TGE-LV-V4L2-2010_HL    (v4l_capture_testapp -T 300 -X &) &&  v4l_capture_testapp -C 3 -H 240 -W 320 -K 1
 TGE-LV-V4L2-2030 power_test_v4l.sh 1
 TGE-LV-V4L2-2032 power_test_v4l.sh 3
