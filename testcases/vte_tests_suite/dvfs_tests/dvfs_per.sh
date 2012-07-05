@@ -289,6 +289,10 @@ RC=0
 setup  || exit $RC
 
 case "$1" in
+    0)
+    # only enable busfreq and quit
+    exit 0
+    ;;
     1)
     dvfs_per_basic || exit $RC
     ;;
