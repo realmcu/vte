@@ -418,7 +418,8 @@ echo "4: "
 echo "5: "
 echo "6: "
 echo "7: "
-echo "8: [GPU] [VPU] [IO] [CPU] [IPU]"
+echo "8: "
+echo "9: [GPU] [VPU] [IO] [CPU] [IPU]"
 }
 
 # main function
@@ -457,6 +458,9 @@ case "$1" in
   test_case_07 || exit $RC
   ;;
 8)
+  test_case_08 || exit $RC
+  ;;
+9)
   run_test $@ || exit $RC
   ;;
 *)
