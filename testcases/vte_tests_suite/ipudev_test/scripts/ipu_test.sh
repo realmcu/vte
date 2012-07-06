@@ -743,6 +743,7 @@ usage()
 #TODO check parameter
 if [ $# -ne 1 ]
 then
+	usage
     exit 1 
 fi
 
