@@ -405,6 +405,7 @@ int VT_fb_setup(void)
     {
         tst_brkm(TBROK, cleanup, "Cannot open fb0 framebuffer: %s", strerror(errno));
     }
+    CALL_IOCTL(ioctl(fb_fd, FBIOBLANK, FB_BLANK_UNBLANK));
     /* Get constant fb info */
     if ((ioctl(fb_fd, FBIOGET_FSCREENINFO, &fb_info)) < 0)
     {
