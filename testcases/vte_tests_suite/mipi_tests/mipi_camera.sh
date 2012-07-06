@@ -73,7 +73,7 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
-CAPTURER=/unit_tests/mxc_v4l2_capture.out
+CAPTURER="/unit_tests/mxc_v4l2_capture.out -d /dev/video1"
 PLAYER=/unit_tests/mxc_v4l2_output.out
 TARGET=/tmp/test.yuv
 # V4L2 Capture Tests
