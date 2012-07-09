@@ -453,7 +453,7 @@ test_can_08()
 
     if [ ! -e /etc/modprobe.d/vcan ]; then
         mkdir /etc/modprobe.d
-        cat <<-EOF > /etc/modprobe.d/vcan
+        cat > /etc/modprobe.d/vcan <<-EOF
         # protocol family PF_CAN
         alias net-pf-29 can
         # protocols in PF_CAN
@@ -466,7 +466,7 @@ test_can_08()
         EOF
     fi
 
-    ip2 link add dev vcan0 type vcan
+    ${LTPROOT}/testcases/bin/ip link add dev vcan0 type vcan
     ifconfig vcan0 up
     tst-filter-server > output_ltp-can.txt &
     sleep 1
