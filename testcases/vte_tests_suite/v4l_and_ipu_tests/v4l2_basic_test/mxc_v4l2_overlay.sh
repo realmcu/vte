@@ -1,4 +1,5 @@
-#Copyright (C) 2009-2010, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
+#!/bin/sh
+#Copyright (C) 2009-2010,2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,22 +7,20 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
-###################################################################################################
+################################################################################
 #
 #    @file   mxc_v4l2_overlay.sh
 #
 #    @brief  shell script for v4l2 capture camera to overlay.
 #
-###################################################################################################
+################################################################################
 #Revision History:
-#                            Modification     Tracking
-#Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
-#Hake Huang/-----             20090217        N/A          Initial version
-#Andy Tian                    20120314        N/A          Update the support mode of fps 15
-#                                                          for ov5642
-###################################################################################################
+#Author                          Date       Description of Changes
+#-------------------------   ------------   -----------------------
+#Hake Huang/-----             20090217      Initial version
+#Andy Tian                    20120314      Update the support mode of fps 15
+#                                           for ov5642
+################################################################################
 
 
 
@@ -51,7 +50,6 @@ echo -e "\033[9;0]" > /dev/tty0
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 
-check_platform
 
 TSTCMD=/unit_tests/mxc_v4l2_overlay.out
 
@@ -59,6 +57,9 @@ v4l_module.sh setup
 OV=$?
 
 RESSIZE=$(fbset | grep "mode \"" |  sed "s/\"//g" | sed "s/-/ /" | awk {'print $2'})
+
+platfm.sh
+TARGET=$?
 
 if [ "$TARGET" = "25" ]
 then
@@ -90,7 +91,7 @@ then
 RESSIZE="240x320 720x480 1280x720"
 fi
 
-if [ "$TARGET" = "61" ]
+if [ "$TARGET" = "61" ] || [ "$TARGET" = "63" ]
 then
 RESSIZE="240x320 720x480 1024x768 1280x720 1920x1280"
 fi
@@ -468,19 +469,6 @@ RC=0
 return $RC
 }
 
-check_platform()
-{
- PLATFORM="25 31 35 37 51 53"
- CPU_REV=$(platfm.sh)
- for i in $PLATFORM
- do
-    find=$(echo $CPU_REV | grep $i | wc -l )
-    if [ $find -ne 0 ]
-    then
-      TARGET=$i
-     fi
- done
-}
 
 usage()
 {
@@ -491,6 +479,7 @@ echo "3: rotation test"
 echo "4: rotation and offset test"
 echo "5: capture resolution test"
 echo "6: gamma test"
+exit 1
 }
 
 # main function
@@ -501,8 +490,7 @@ RC=0
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1
+    usage
 fi
 
 TARGET=
