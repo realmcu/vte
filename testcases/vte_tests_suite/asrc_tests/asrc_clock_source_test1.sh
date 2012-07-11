@@ -110,7 +110,7 @@ setup()
     for dev in $easi_devices; do
         if [ -z "$ESAI_CARD_NO" ]; then
             aplay -l | grep $dev
-            if [ $? -eq 0 ]
+            if [ $? -eq 0 ]; then
                 ESAI_CARD_NO=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
                 echo "ESAI card device number: ${ESAI_CARD_NO}"
             fi
