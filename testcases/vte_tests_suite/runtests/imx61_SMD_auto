@@ -181,10 +181,6 @@ TGE-LV-V4L2-0152 echo 1 > /sys/class/graphics/fb0/blank ; echo 1 > /sys/class/gr
 TGE-LV-V4L2-0068 v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 2 -H 640 -W 480 -T 100 -X -M 6 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15 && v4l_capture_testapp -C 1 -H 640 -W 480 -T 100 -X -M 5 -r 15
 TGE-LV-V4L2-0128 v4l_capture_testapp -C 3 -T 2000 -Z
 TGE-LV-V4L2-1011 echo 1 > /sys/class/graphics/fb0/blank && v4l_capture_testapp -T 10 && echo 1 > /sys/class/graphics/fb0/blank
-TGE-LV-V4L2-1131 export CAMERA=ov8820_mipi; v4l2_still_test.sh
-TGE-LV-V4L2-1138 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 3
-TGE-LV-V4L2-1139 export CAMERA=ov5640_mipi;mxc_v4l2_overlay.sh 4
-TGE-LV-V4L2-1140_HHH export CAMERA=ov5640_mipi; mxc_v4l2_overlay.sh 5
 TGE-LV-IPU_DEV-0010 ipu_test.sh 1
 TGE-LV-IPU_DEV-0020 ipu_test.sh 2
 TGE-LV-IPU_DEV-0030 ipu_test.sh 3
