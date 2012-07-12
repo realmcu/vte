@@ -63,9 +63,9 @@ else
     dfl_alsa_dev=`aplay -l |grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
 fi
 
-if [ "$dfl_alsa_dev" != "" ]; then
-    return $dfl_alsa_dev
+if [ -n "$dfl_alsa_dev" ]; then
+    exit $dfl_alsa_dev
 else
     echo "ALSA DAC device not found"
-    return 255
+    exit 255
 fi
