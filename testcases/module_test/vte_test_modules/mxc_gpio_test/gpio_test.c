@@ -30,7 +30,10 @@
 #include <asm/atomic.h>
 #include <mach/hardware.h>
 
-#define MX6_ARM2_DISP0_RESET        IMX_GPIO_NR(5, 0)
+#define MX6_ARM2_DISP0_RESET IMX_GPIO_NR(5, 0)
+#define SABRESD_DISP0_RST_B IMX_GPIO_NR(3, 8)
+#define  GPIO_PSR 8
+#define  GPIO_DR 0
 
 static unsigned test_count = 10000;
 module_param(test_count,uint,0);
@@ -40,11 +43,11 @@ static struct timeval start, finish;
 
 static long calc_time(unsigned long size)
 {
-	long ms, speed;
-
-	ms = (finish.tv_sec - start.tv_sec) * 1000 +
-	     (finish.tv_usec - start.tv_usec) / 1000;
-	speed = ms * 1000 / size;
+	unsigned long us, speed;
+	us = (finish.tv_sec - start.tv_sec) * 1000 * 1000 +
+	     (finish.tv_usec - start.tv_usec);
+	printk("totle time is %ldus\n", us);
+	speed = us / size;
 	return speed;
 }
 
@@ -52,20 +55,31 @@ static long calc_time(unsigned long size)
 static int test_init(void)
 {
 	int count = test_count;
-	unsigned long speed = 0; 
-	
+	unsigned long speed = 0;
+	/*map GPIO3*/
+	void __iomem *reg = ioremap(GPIO3_BASE_ADDR,SZ_32K); 
+	u32 l;
+
 	printk(KERN_INFO "gpio test on disp0-reset\n");
-   
-/*test memory io*/
- gpio_request(MX6_ARM2_DISP0_RESET, "disp0-reset");
- do_gettimeofday(&start);
-  while(count--){
- 	gpio_direction_output(MX6_ARM2_DISP0_RESET, 0);
-  }
-  do_gettimeofday(&finish);
-  speed = calc_time(test_count);
-  printk(KERN_INFO "gpio set speed is %ld ms\n", speed);  
-  return -ENODEV;
+	/*test memory io*/
+	gpio_request(SABRESD_DISP0_RST_B, "disp0-reset");
+	do_gettimeofday(&start);
+	while(count--){
+		gpio_direction_output(SABRESD_DISP0_RST_B, 0);
+	}
+	do_gettimeofday(&finish);
+	speed = calc_time(test_count);
+	printk(KERN_INFO "gpio set speed is %ld us\n", speed);
+	count = test_count;
+	do_gettimeofday(&start);
+	l = (__raw_readl(reg + GPIO_DR) & (~(1 << 8))) | (!!1 << 8);
+	while(count--){
+		__raw_writel(l ,reg + GPIO_DR);
+	}
+	do_gettimeofday(&finish);
+	speed = calc_time(test_count);
+	printk(KERN_INFO "gpio set speed is %ld us\n", speed);
+	return -ENODEV;
 }
 
 static void test_exit(void)
