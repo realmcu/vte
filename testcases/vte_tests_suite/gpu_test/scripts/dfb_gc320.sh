@@ -111,9 +111,13 @@ rm -rf result/*
 
 echo $RC
 if [ "$RC" = "0" ]; then
- RC=0
+    tst_resm TINFO "Test Pass"
+    RC=0
 else
-  RC=1
+	echo $RC
+	echo "Test Fail, above line inclues the error information."
+    tst_resm TINFO "Test Fail"
+    RC=1
 fi
 
 return $RC
