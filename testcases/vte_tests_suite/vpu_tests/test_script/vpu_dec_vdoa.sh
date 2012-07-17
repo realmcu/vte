@@ -334,10 +334,10 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 echo "TST_INFO: h264 MP VDI test"
-FILES="H264_MP30_interlaced_poc2_720x576.h264 
+FILES="H264_MP30_interlaced_poc2_720x576.h264 \
 	  1080i_shields1088i2997_shields_ter_4x300_15fps_track1.h264 \
       H264_HP41_1920x1088_30fps_55.8Mbps_shields_ter_Noaudio_track1.h264"
-while sf in $FILES
+for sf in $FILES
 do
 cp ${STREAM_PATH}/video/$sf /tmp/
 STREAM_FILE=/tmp/$sf
@@ -421,7 +421,7 @@ test_case_16()
 TCID="vpu_AVS_test"
 #TODO give TST_COUNT
 TST_COUNT=16
-RC=1
+RC=0
 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
