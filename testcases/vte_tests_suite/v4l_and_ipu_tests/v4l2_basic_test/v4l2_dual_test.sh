@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 #Copyright (C)  2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -19,6 +19,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  ---------------------------------------
 #Shelly Cheng                 20120614        N/A         Initial
+#Andy Tian	                  20120715        N/A         add some modes and fix fps 15 setting error
 ###################################################################################################
 
 
@@ -88,10 +89,10 @@ test_case_01()
 	#TODO add function test scripte here
 	ROTATION="0 1 2 3 4 5 6 7"
 	RESLIST="320x240 176x144 640x480 1024x768"
-	MIPIMODES30FPS="0 1 2 3 4 5 6 7"
-	MIPIMODES15FPS="0 1 2 3 4 5 6 7"
-	MODES564230FPS="0 1 2 3 4 7"
-	MODES564215FPS="0 1 2 3 5 6 7"
+	MIPIMODES30FPS="0 1 2 3 4 5 7 8"
+	MIPIMODES15FPS="0 1 2 3 4 5 6 7 8"
+	MODES564230FPS="0 1 2 3 4 7 8"
+	MODES564215FPS="0 1 2 3 4 5 6 7 8"
 	echo "rotation with offset"
 	for k in $ROTATION
 	do
@@ -105,7 +106,10 @@ test_case_01()
 			do
 				for n in $MODES564215FPS
 				do
-					${TSTCMD} -T 5 -C 2 -D /dev/video0 -R $k -M $n -W $OWD -H  $OHT & ${TSTCMD} -T 5 -C 2 -s CSI_MEM -O YUV420 -R $k -H $OHT -W $OWD -D /dev/video1 -M $m ||return $RC
+					${TSTCMD} -T 5 -C 2 -D /dev/video0 -R $k -M $n -W $OWD -H  $OHT -r 15 & 
+					pid=$!
+					${TSTCMD} -T 5 -C 2 -s CSI_MEM -O YUV420 -R $k -H $OHT -W $OWD -D /dev/video1 -M $m -r 15 ||return $RC
+					wait $pid || return $RC
 				done
 			done
 			echo "farme rate 30"
@@ -113,7 +117,10 @@ test_case_01()
 			do
 				for n in $MODES564230FPS
 				do
-					${TSTCMD} -T 5 -C 2 -D /dev/video0 -R $k -M $n -W $OWD -H  $OHT & ${TSTCMD} -T 5 -C 2 -s CSI_MEM -O YUV420 -R $k -H $OHT -W $OWD -D /dev/video1 -M $m ||return $RC
+					${TSTCMD} -T 5 -C 2 -D /dev/video0 -R $k -M $n -W $OWD -H  $OHT &
+				   	pid=$!
+				   	${TSTCMD} -T 5 -C 2 -s CSI_MEM -O YUV420 -R $k -H $OHT -W $OWD -D /dev/video1 -M $m ||return $RC
+					wait $pid || return $RC
 				done
 			done
 		done
