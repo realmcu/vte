@@ -2,8 +2,9 @@
 
 # Platforms with one watchdog only
 
-obj-m= gpio_test.o
-TARGET= gpio_test.ko
+obj-m = gpio_test.o
+obj-m += wdt_gpio.o
+TARGET= gpio_test.ko wdt_gpio.ko 
 
 all: 
 	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
