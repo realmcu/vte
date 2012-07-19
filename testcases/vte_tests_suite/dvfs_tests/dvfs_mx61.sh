@@ -93,8 +93,11 @@ run_manual_test_list()
     read -p "press any key when ready" key
     modprobe ehci-hcd
     sleep 20
-    mkfs.vfat /dev/sda1 || return $RC
-    mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 || return $RC
+    mkdir -p /media/sda1
+    mount /dev/sda1 /media/sda1 || {
+        mkfs.vfat /dev/sda1 || return $RC
+        mount /dev/sda1 /media/sda1
+    }
     bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 || return $RC
     dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || return $RC
     modprobe -r ehci-hcd
@@ -116,7 +119,7 @@ run_manual_test_list()
     mkfs.ext3 /var/storage.img
     modprobe g_file_storage file=/var/storage.img
     echo "now please mount the usb device on PC"
-    echo "please run bwloe on pc"
+    echo "please run below on pc"
     echo "mount -t ext3 /dev/sd? /mnt/flash"
     echo "bonnie\+\+ -d /mnt/flash -u 0:0 -s 10 -r 5"
     echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
@@ -136,11 +139,13 @@ run_manual_test_list()
     echo "SD test"
     echo "please insert SD card"
     read -p "press any key when ready" key
-    mkfs.vfat /dev/mmcblk0p1
     mkdir -p /mnt/mmc
-    mount -t vfat /dev/mmcblk0p1 /mnt/mmc
-    bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5
-    dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20
+    mount /dev/mmcblk0p1 /mnt/mmc || {
+        mkfs.vfat /dev/mmcblk0p1
+        mount -t vfat /dev/mmcblk0p1 /mnt/mmc
+    }
+    bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5 || return $RC
+    dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20 || return $RC
 
     RC=0
     return $RC
@@ -292,6 +297,7 @@ test_case_03()
             #test list
             powerstate_test.sh  || RC=$(expr $RC + 1)
         else
+            RC=1
             return $RC
         fi
     done
