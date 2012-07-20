@@ -91,7 +91,7 @@ setup()
         return $RC
     fi
 
-    if [ ! -e $FILE ]; then
+    if [ ! -e "$FILE" ]; then
         tst_resm TBROK "audio stream is not ready, pls check..."
         RC=66
         return $RC
