@@ -98,8 +98,10 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 times=5000
 
-mkdir /mnt/mmcblk0p1
-mount /dev/mmcblkop1 /mnt/mmcblk0p1
+temp=$(mktmp -d)
+mount /dev/mmcblk0p1 $temp
+
+pth=-1
 
 while [ $times -gt 0 ]
 do
@@ -111,7 +113,16 @@ echo 1 > /sys/devices/system/cpu/cpu1/online
 echo 1 > /sys/devices/system/cpu/cpu2/online
 echo 1 > /sys/devices/system/cpu/cpu3/online
 
-bonnie\+\+ -d /mnt/mmcblk0p1 -s 32 -r 16 -u 0:0 -m FSL &
+if [ $pth -eq -1  ];then
+bonnie\+\+ -d $temp -s 32 -r 16 -u 0:0 -m FSL &
+pth=$!
+else
+ps -p $pth 
+if [ $? -ne 0 ]; then
+bonnie\+\+ -d $temp -s 32 -r 16 -u 0:0 -m FSL &
+pth=$!
+fi
+fi
 cat /proc/interrupts
 
 times=$(expr $times - 1)
@@ -119,7 +130,8 @@ echo $times
 done
 
 #comment to make WuKong work
-#umount /mnt/mmcblk0p1
+umount $temp
+rm -rf $temp
 
 return $RC
 }
