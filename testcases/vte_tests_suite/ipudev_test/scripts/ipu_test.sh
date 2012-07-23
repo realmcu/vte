@@ -246,7 +246,7 @@ test_case_02()
         #done
         #end for CRP
     done
-    echo "Total cases is $TOTAL, faile $RC"
+    echo "Total cases is $TOTAL, failed cases $RC"
     return $RC
 
 }
@@ -280,7 +280,7 @@ test_case_03()
         done
         #end for CRP
     done
-    echo "Total cases is $TOTAL, faile $RC"
+    echo "Total cases is $TOTAL, failed cases $RC"
     return $RC
 }
 
@@ -310,7 +310,7 @@ test_case_04()
             exec_test
         done
     done
-    echo "Total cases is $TOTAL, faile $RC"
+    echo "Total cases is $TOTAL, failed cases $RC"
 
     return $RC
 }
@@ -408,7 +408,7 @@ test_case_05()
     motion=1
     exec_test
 
-    echo "Total cases is $TOTAL, faile $RC"
+    echo "Total cases is $TOTAL, failed cases $RC"
 
     return $RC
 }
