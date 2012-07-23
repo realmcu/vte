@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+#include /usr/share/cdbs/1/rules/dpatch.mk
+include /usr/share/cdbs/1/rules/patchsys-quilt.mk
+
+DEB_CONFIGURE_EXTRA_FLAGS := --enable-demo
+
+build/netperf::
+	cd doc && make netperf.pdf netperf.html
+	#cd doc && make netperf.{pdf,ps,html}
+
+binary-post-install/netperf::
+	rm debian/$(cdbs_curpkg)/usr/share/doc/netperf/changelog
+	rm -rf debian/$(cdbs_curpkg)/usr/share/info
+	#rm debian/$(cdbs_curpkg)/usr/share/info/netperf.info
+	cp COPYING debian/$(cdbs_curpkg)/usr/share/doc/netperf/copyright
+	cp doc/netperf.pdf debian/$(cdbs_curpkg)/usr/share/doc/netperf/netperf.pdf
+	#cp doc/netperf.ps debian/$(cdbs_curpkg)/usr/share/doc/netperf/netperf.ps
+	cp doc/netperf.html debian/$(cdbs_curpkg)/usr/share/doc/netperf/netperf.html
+
+clean/netperf::
+	make distclean

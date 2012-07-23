@@ -12,8 +12,8 @@ SUBDIRS-$(CONFIG_TP_ETHTOOL) += ethtool-6
 clean_SUBDIR-$(CONFIG_TP_ETHTOOL) += clean_ethtool-6
 SUBDIRS-$(CONFIG_TP_PPP)     += ppp-2.4.3
 clean_SUBDIR-$(CONFIG_TP_PPP) += clean_ppp-2.4.3
-SUBDIRS-$(CONFIG_TP_NETPERF) +=  netperf-2.4.4
-clean_SUBDIR-$(CONFIG_TP_NETPERF) += clean_netperf-2.4.4
+SUBDIRS-$(CONFIG_TP_NETPERF) +=  netperf-2.5.0
+clean_SUBDIR-$(CONFIG_TP_NETPERF) += clean_netperf-2.5.0
 SUBDIRS-$(CONFIG_TP_TCPDUMP) += tcpdump-3.9.8
 clean_SUBDIR-$(CONFIG_TP_TCPDUMP) += clean_tcpdump-3.9.8
 SUBDIRS-$(CONFIG_TP_MII)     += mii-tool-1.9.1.1
@@ -25,8 +25,8 @@ all: $(SUBDIRS-y)
 
 install:
 	-ln -f ethtool-6/ethtool ../../bin/
-	-ln -f netperf-2.4.4/src/netperf ../../bin/
-	-ln -f netperf-2.4.4/doc/examples/*script ../../bin/
+	-ln -f netperf-2.5.0/src/netperf ../../bin/
+	-ln -f netperf-2.5.0/doc/examples/*script ../../bin/
 	-ln -f mii-tool-1.9.1.1/mii-tool ../../bin/
 	-ln -f ppp-2.4.3/pppd/pppd ../../bin/
 	-ln -f tcpdump-3.9.8/tcpdump ../../bin/
@@ -35,12 +35,10 @@ install:
 clean: $(clean_SUBDIR-y)
 
 ethtool-6: blank
-	cd $@;./myconfig; cd ..
-	$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
+	cd $@;./myconfig;$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
 
 clean_ethtool-6:
-	-$(MAKE) -C ethtool-6 clean
-	-ac_cv_func_setpgrp_void=yes $(MAKE) -C ethtool-6 distclean
+	-$(MAKE) -C ethtool-6 clean; ac_cv_func_setpgrp_void=yes $(MAKE) -C ethtool-6 distclean
 
 ppp-2.4.3: blank
 	cd $@;./myconfig; cd ..
@@ -50,17 +48,14 @@ clean_ppp-2.4.3:
 	-$(MAKE) -C ppp-2.4.3 clean
 	-$(MAKE) -C ppp-2.4.3 dist-clean
 
-netperf-2.4.4: blank
-	cd $@; ./myconfig; cd ..
-	ac_cv_func_setpgrp_void=yes $(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
+netperf-2.5.0: blank
+	cd $@; ./myconfig; $(MAKE) CC=$(CROSS_COMPILE)gcc
 
-clean_netperf-2.4.4:
-	-$(MAKE) -C netperf-2.4.4 clean
-	-ac_cv_func_setpgrp_void=yes $(MAKE) -C netperf-2.4.4 distclean
+clean_netperf-2.5.0:
+	-$(MAKE) -C netperf-2.5.0 clean; $(MAKE) -C netperf-2.5.0 distclean
 
 tcpdump-3.9.8: libs
-	cd $@; ./myconfig; cd ..
-	$(MAKE) -C $@
+	cd $@; ./myconfig; $(MAKE) -C $@
 
 clean_tcpdump-3.9.8:
 	-$(MAKE) -C  tcpdump-3.9.8 clean
