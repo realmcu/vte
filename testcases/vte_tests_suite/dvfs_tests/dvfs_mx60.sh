@@ -420,11 +420,11 @@ test_case_07()
 		echo "now we are at low power system idle"
 		sleep 3
 		/tmp/rtc_testapp_6 -m mem -T 50
-		axi=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/axi_clk)
+		axi=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/axi_clk/rate)
 		if [ $axi -ne 24000 ]; then
 			RC=$(expr $RC + 1)
 		fi
-		ahb=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/ahb_clk)
+		ahb=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/ahb_clk/rate)
 		if [ $ahb -ne 24000 ]; then
 			RC=$(expr $RC + 2)
 		fi
