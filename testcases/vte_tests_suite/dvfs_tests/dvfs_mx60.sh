@@ -162,6 +162,8 @@ run_auto_test_list()
     aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || RC=$(expr $RC + 23)
 	echo "timer interrupt"
 	timer_interrupt
+	echo "EPDC test"
+	epdc_test -T 7
     return $RC
 }
 
@@ -364,7 +366,7 @@ test_case_06()
     #TODO give TCID
     TCID="CPUFreq_timer"
     #TODO give TST_COUNT
-    TST_COUNT=5
+    TST_COUNT=6
     RC=0
 
     #print test info
@@ -383,6 +385,73 @@ test_case_06()
 		fi
         i=`expr $i + 1`
 	done
+    return $RC
+}
+
+# Function:     test_case_07
+# Description   - Test if interrupt latency measurement
+#
+test_case_07()
+{
+    #TODO give TCID
+    TCID="CPUFreq_timer"
+    #TODO give TST_COUNT
+    TST_COUNT=7
+    RC=0
+
+    #print test info
+    echo TINFO "test $TST_COUNT: $TCID "
+
+    /unit_tests/dump-clocks.sh
+    mount -t tmpfs tmpfs /tmp
+	cp /mnt/nfs/test_stream/power_stream/128kbps_44khz_s_mp3.mp3 /tmp/
+	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
+	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
+	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
+	i=0
+    LOOPS=$TOTAL_PT
+	while [ $i -lt $LOOPS ]; do
+		#enther low power mode
+        echo userspace > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+		echo 1 > /sys/class/graphics/fb0/blank
+		ifconfig eth0 down
+		echo 1 > /sys/devices/platform/imx_busfreq.0/enable
+		echo 198000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+		echo "now we are at low power system idle"
+		sleep 3
+		/tmp/rtc_testapp_6 -m mem -T 50
+		axi=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/axi_clk)
+		if [ $axi -ne 24000 ]; then
+			RC=$(expr $RC + 1)
+		fi
+		ahb=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/ahb_clk)
+		if [ $ahb -ne 24000 ]; then
+			RC=$(expr $RC + 2)
+		fi
+
+		#enter audio playback mode
+		echo "now we are at audio low power"
+	    gplay /tmp/128kbps_44khz_s_mp3.mp3 || RC=$(expr $RC + 4)
+		
+		/tmp/rtc_testapp_6 -m mem -T 50
+		#enter system loading high mode
+	    /tmp/dry2 || RC=$(expr $RC + 8)
+
+		/tmp/rtc_testapp_6 -m mem -T 50
+		#open display and run at full speed
+		ifconfig eth0 up
+		echo 0 > /sys/class/graphics/fb0/blank
+		echo 996000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+		/tmp/epdc_test -T 7
+		/tmp/rtc_testapp_6 -m mem -T 50
+        i=`expr $i + 1`
+	done
+
+    rm -rf /tmp/128kbps_44khz_s_mp3.mp3
+	rm -rf /tmp/dry2
+	rm -rf /tmp/epdc_test
+	rm -rf /tmp/
+
     return $RC
 }
 
@@ -434,6 +503,9 @@ case "$1" in
     ;;
 6)
     test_case_06 || exit $RC
+    ;;
+7)
+    test_case_07 || exit $RC
     ;;
 *)
     usage
