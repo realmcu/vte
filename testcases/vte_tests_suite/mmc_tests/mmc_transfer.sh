@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 # Copyright (C) 2011-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -26,18 +26,18 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=1
+    #TODO Total test case
+    export TST_TOTAL=1
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
+    trap "cleanup" 0
 
-#TODO add setup scripts
+    #TODO add setup scripts
 
-return $RC
+    return $RC
 }
 
 # Function:     cleanup
@@ -48,10 +48,10 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
-return $RC
+    #TODO add cleanup code here
+    return $RC
 }
 
 setup
@@ -69,9 +69,10 @@ rm -rf /tmp/rs
 
 judge=$(echo "$rs > ( $user + $sys)" | bc)
 if [  $judge -eq 1 ]; then
-  echo "wait time implys there are DMA transfer, test PASS"
-	exit 0
+    echo "wait time implys there are DMA transfer, test PASS"
+    exit 0
 fi
+
 echo "test FAIL, no DMA involved"
 exit 1
 
