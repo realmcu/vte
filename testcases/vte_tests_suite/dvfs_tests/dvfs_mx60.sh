@@ -404,10 +404,11 @@ test_case_07()
 
     /unit_tests/dump-clocks.sh
     mount -t tmpfs tmpfs /tmp
-	cp /mnt/nfs/test_stream/power_stream/128kbps_44khz_s_mp3.mp3 /tmp/
+	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
 	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
 	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
+	sleep 10
 	i=0
     LOOPS=$TOTAL_PT
 	while [ $i -lt $LOOPS ]; do
@@ -431,7 +432,7 @@ test_case_07()
 
 		#enter audio playback mode
 		echo "now we are at audio low power"
-	    gplay /tmp/128kbps_44khz_s_mp3.mp3 || RC=$(expr $RC + 4)
+	    aplay /tmp/audio12k16M.wav || RC=$(expr $RC + 4)
 		
 		/tmp/rtc_testapp_6 -m mem -T 50
 		#enter system loading high mode
