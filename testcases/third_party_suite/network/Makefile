@@ -35,14 +35,13 @@ install:
 clean: $(clean_SUBDIR-y)
 
 ethtool-6: blank
-	cd $@;./myconfig;$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
+	cd $@;./myconfig;$(MAKE) CC=$(CROSS_COMPILE)gcc
 
 clean_ethtool-6:
 	-$(MAKE) -C ethtool-6 clean; ac_cv_func_setpgrp_void=yes $(MAKE) -C ethtool-6 distclean
 
 ppp-2.4.3: blank
-	cd $@;./myconfig; cd ..
-	$(MAKE) -C $@ CC=$(CROSS_COMPILE)gcc
+	cd $@;./myconfig; $(MAKE) CC=$(CROSS_COMPILE)gcc
 
 clean_ppp-2.4.3:
 	-$(MAKE) -C ppp-2.4.3 clean
@@ -55,7 +54,7 @@ clean_netperf-2.5.0:
 	-$(MAKE) -C netperf-2.5.0 clean; $(MAKE) -C netperf-2.5.0 distclean
 
 tcpdump-3.9.8: libs
-	cd $@; ./myconfig; $(MAKE) -C $@
+	cd $@; ./myconfig; $(MAKE)
 
 clean_tcpdump-3.9.8:
 	-$(MAKE) -C  tcpdump-3.9.8 clean
