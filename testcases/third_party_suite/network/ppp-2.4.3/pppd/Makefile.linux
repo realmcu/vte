@@ -167,7 +167,7 @@ endif
 ifdef PLUGIN
 CFLAGS	+= -DPLUGIN
 LDFLAGS	+= -Wl,-E
-LIBS	+= -ldl
+LIBS	+= -ldl -lcrypt
 endif
 
 ifdef FILTER
