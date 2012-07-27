@@ -342,7 +342,7 @@ do
 cp ${STREAM_PATH}/video/$sf /tmp/
 STREAM_FILE=/tmp/$sf
 ${TSTCMD} -D "-i $STREAM_FILE -f 2 -w 720 -h 640 -y 0" || RC=1
-${TSTCMD} -D "-i $STREAM_FILE -f 2 -w 720 -h 640 -y 1" || RC=$(expr $RC + 2)
+${TSTCMD} -D "-i $STREAM_FILE -f 2 -w 720 -h 640 -y 2" || RC=$(expr $RC + 2)
 rm -rf $STREAM_FILE
 done
 
