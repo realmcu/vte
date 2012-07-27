@@ -1,4 +1,4 @@
-SCRIPTS = smp_test.sh
+SCRIPTS = smp_test.sh storage_stress.sh
 
 all:
 	
