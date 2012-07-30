@@ -408,7 +408,7 @@ test_case_07()
 	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
 	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
-	sleep 10
+	sleep 2
 	i=0
     LOOPS=$TOTAL_PT
 	while [ $i -lt $LOOPS ]; do
@@ -420,31 +420,34 @@ test_case_07()
 		echo 198000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
 		echo "now we are at low power system idle"
 		sleep 3
-		/tmp/rtc_testapp_6 -m mem -T 50
 		axi=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/axi_clk/rate)
-		if [ $axi -ne 24000 ]; then
+		if [ $axi -ne 24000000 ]; then
 			RC=$(expr $RC + 1)
 		fi
 		ahb=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/ahb_clk/rate)
-		if [ $ahb -ne 24000 ]; then
+		if [ $ahb -ne 24000000 ]; then
 			RC=$(expr $RC + 2)
 		fi
-
+		/tmp/rtc_testapp_6 -m mem -T 50
+		sleep 3
 		#enter audio playback mode
 		echo "now we are at audio low power"
 	    aplay /tmp/audio12k16M.wav || RC=$(expr $RC + 4)
 		
 		/tmp/rtc_testapp_6 -m mem -T 50
+		sleep 3
 		#enter system loading high mode
 	    /tmp/dry2 || RC=$(expr $RC + 8)
 
 		/tmp/rtc_testapp_6 -m mem -T 50
+		sleep 3
 		#open display and run at full speed
 		ifconfig eth0 up
 		echo 0 > /sys/class/graphics/fb0/blank
 		echo 996000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
 		/tmp/epdc_test -T 7
 		/tmp/rtc_testapp_6 -m mem -T 50
+		sleep 3
         i=`expr $i + 1`
 	done
 
