@@ -70,12 +70,13 @@ get_clk_cnt()
 {
   target=$1
   ct=0
-  list=$(find ${mount_pt} -name "${target}*")
-  for i in $list
-	  do
-    cnt=$(cat ${i}/usecount)
-    ct=$(expr $cnt + $ct)
- done
+  list=$(find ${mount_pt}/clock -name "${target}*")
+  for i in $list; do
+    if [ -e $i/usecount ]; then
+        cnt=$(cat ${i}/usecount)
+        ct=$(expr $cnt + $ct)
+    fi
+  done
   return $ct	
 }
 
@@ -99,13 +100,15 @@ test_case_01()
     #now check the clocks
     #esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/usecount | grep -v 0)
     get_clk_cnt esai
+    esai_ct=$?
+    get_clk_cnt ssi
 	ssi_ct=$?
 	get_clk_cnt spdif
     spdif_ct=$?
 
     get_clk_cnt asrc
     asrc=$?
-    if [ -n "$esai_ct" ] || [ -n "$ssi_ct" ] || [ -n "$spdif_ct" ] || [ $asrc -gt 0  ]; then
+    if [ $esai_ct -gt 0 ] || [ $ssi_ct -gt 0 ] || [ $spdif_ct -gt 0 ] || [ $asrc -gt 0  ]; then
         RC=1
     else
         RC=0
@@ -169,11 +172,13 @@ test_case_03()
     #now check the clocks
     get_clk_cnt ipu
 	ipuct=$?
-    get_clk_cnt ldb
-	ldbct=$?
+    # ldb usecount can't use the routine
+    ldbct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v 0)
+
+    hdmi_cnt=0
     if ! cat /proc/cmdline |grep -i hdmi; then
-	get_clk_cnt hdmi
-    hdmi=$?
+        get_clk_cnt hdmi
+        hdmi_cnt=$?
     fi
 
     echo 0 > /sys/class/graphics/fb0/blank
@@ -183,7 +188,7 @@ test_case_03()
     echo 0 > /sys/class/graphics/fb3/blank
     echo 0 > /sys/class/graphics/fb4/blank
 
-    if [ -n "$ipuct" ] || [ -n "$ldbct" ] || [ $hdmi -gt 0 ]; then
+    if [ $ipuct -gt 0 ] || [ -n "$ldbct" ] || [ $hdmi_cnt -gt 0 ]; then
         RC=3
     else
         RC=0
@@ -210,10 +215,10 @@ test_case_04()
     #disable the framebuffer
     
 	get_clk_cnt gpu
-    gpu=$?
-    #now check the clocks
+    gpu_cnt=$?
     
-    if [ $gpu -gt 0 ]; then
+    #now check the clocks
+    if [ $gpu_cnt -gt 0 ]; then
         RC=4
     else
         RC=0
@@ -240,9 +245,9 @@ test_case_05()
     #disable the framebuffer
 
 	get_clk_cnt i2c
-    i2c=$?
+    i2c_cnt=$?
 
-    if [ $i2c -gt 0 ]; then
+    if [ $i2c_cnt -gt 0 ]; then
         RC=5
     else
         RC=0
@@ -274,7 +279,7 @@ test_case_06()
     sdhc_ct=$?
     #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
 
-    if [ -n "$sdhc_ct" ]; then
+    if [ $sdhc_ct -gt 0 ]; then
         RC=6
     else
         RC=0
@@ -301,9 +306,9 @@ test_case_07()
     #disable the framebuffer
 
     get_clk_cnt uart
-    uart=$?
+    uart_cnt=$?
 
-    if [ $uart -gt 1 ]; then
+    if [ $uart_cnt -gt 1 ]; then
         RC=7
     else
         RC=0
@@ -330,9 +335,9 @@ test_case_08()
     #disable the framebuffer
 
     get_clk_cnt usb
-    usb=$?
+    usb_cnt=$?
 
-    if [ $usb -gt 0 ]; then
+    if [ $usb_cnt -gt 0 ]; then
         RC=8
     else
         RC=0
@@ -358,12 +363,11 @@ test_case_09()
     #TODO add function test script here
     #disable the framebuffer
 
-    vpu=0
     #now check the clocks
     get_clk_cnt vpu
-	vpu=$?
+	vpu_cnt=$?
 
-    if [ $vpu -gt 0 ]; then
+    if [ $vpu_cnt -gt 0 ]; then
         RC=9
     else
         RC=0
@@ -392,11 +396,10 @@ test_case_10()
     #TODO add function test script here
     #disable the framebuffer
 
-    enet=0
     #now check the clocks
     get_clk_cnt enet
-	enet=$?
-    if [ $enet -gt 0 ]; then
+	enet_cnt=$?
+    if [ $enet_cnt -gt 0 ]; then
         RC=10
     else
         RC=0
@@ -422,12 +425,11 @@ test_case_11()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    pcie=0
     #TODO add function test script here
     get_clk_cnt pcie
-    pcie=$?
+    pcie_cnt=$?
 
-    if [ $pcie -gt 0 ]; then
+    if [ $pcie_cnt -gt 0 ]; then
         RC=11
     else
         RC=0
