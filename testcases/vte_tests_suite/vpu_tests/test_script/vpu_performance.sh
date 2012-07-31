@@ -212,8 +212,8 @@ test_case_04()
 	cat ${stream_path}/${stream_list} |
 	while read line
 	do
-  		filename=$line
-		fileformat=2
+  		filename=$(echo $line | cut -d " " -f 1 )
+		fileformat=$(echo $line | cut -d " " -f 2)
 		echo "--------------------------------"
 		echo "start decode $filename"
 		cp ${stream_path}/${filename} /mnt/temp/${filename}
@@ -223,22 +223,6 @@ test_case_04()
 		echo "end of decoding $filename"
 		echo "================================"
 	done
-	stream_list=vpu_performance_test3.txt
-	cat ${stream_path}/${stream_list} |
-	while read line
-	do
-  		filename=$line
-		fileformat=0
-		echo "--------------------------------"
-		echo "start decode $filename"
-		cp ${stream_path}/${filename} /mnt/temp/${filename}
-	  ${TSTCMD} -D "-a 100 -i /mnt/temp/${filename} \
-	  -f ${fileformat} -y 1" || RC=$(expr RC + 1)
-		 rm -rf /mnt/temp/${filename}
-		echo "end of decoding $filename"
-		echo "================================"
-	done
-
 
 	return $RC
 }
