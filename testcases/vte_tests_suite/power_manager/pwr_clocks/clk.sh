@@ -66,6 +66,19 @@ cleanup()
     return $RC
 }
 
+get_clk_cnt()
+{
+  target=$1
+  ct=0
+  list=$(find ${mount_pt} -name "${target}*")
+  for i in $list
+	  do
+    cnt=$(cat ${i}/usecount)
+    ct=$(expr $cnt + $ct)
+ done
+  return $ct	
+}
+
 # Function:     test_case_01
 # Description   - Aduio clock test
 #
@@ -85,19 +98,13 @@ test_case_01()
 
     #now check the clocks
     #esai_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/esai_clk/usecount | grep -v 0)
-    esai_ct=$(cat ${mount_pt}/clock/anaclk_2/pll4_audio_main_clk/esai_clk/usecount | grep -v 0)
-    ssi_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_508M/ssi*_clk/usecount | grep -v 0)
-    spdif_ct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_454M/spdif0_clk_0/usecount | grep -v 0)
-    #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
+    get_clk_cnt esai
+	ssi_ct=$?
+	get_clk_cnt spdif
+    spdif_ct=$?
 
-    asrc_list=$(find ${mount_pt}  -name asrc*)
-    asrc=0
-    for i in $asrc_list
-    do
-        temp=$(cat ${i}/usecount)
-        asrc=$(expr $temp + $asrc)
-    done
-
+    get_clk_cnt asrc
+    asrc=$?
     if [ -n "$esai_ct" ] || [ -n "$ssi_ct" ] || [ -n "$spdif_ct" ] || [ $asrc -gt 0  ]; then
         RC=1
     else
@@ -122,15 +129,8 @@ test_case_02()
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
     #TODO add function test script here
-    can_list=$(find ${mount_pt}  -name "can*")
-
-    can=0
-    for i in $can_list
-    do
-        temp=$(cat ${i}/usecount)
-        can=$(expr $temp + $can)
-    done
-
+    get_clk_cnt can
+    can=$?
 
     if [ $can -gt 0 ]; then
         RC=2
@@ -167,21 +167,13 @@ test_case_03()
     sleep 1
 
     #now check the clocks
-    ipuct=$(cat /sys/kernel/debug/clock/osc_clk/pll5_video_main_clk/ipu*/usecount| grep -v 0)
-    ldbct=$(cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v 0)
-    #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
-
-    hdmi=0
-    # don't count hdmi_isfr_clk if hdmi video is defined in kernel cmdline
-    # it won't be zero in this case
+    get_clk_cnt ipu
+	ipuct=$?
+    get_clk_cnt ldb
+	ldbct=$?
     if ! cat /proc/cmdline |grep -i hdmi; then
-        cd /sys/kernel/debug/
-        hdmi_list=$(find . -name hdmi*)
-        for i in $hdmi_list
-        do
-            temp=$(cat ${i}/usecount)
-            hdmi=$(expr $temp + $hdmi)
-        done
+	get_clk_cnt hdmi
+    hdmi=$?
     fi
 
     echo 0 > /sys/class/graphics/fb0/blank
@@ -216,17 +208,11 @@ test_case_04()
 
     #TODO add function test script here
     #disable the framebuffer
-
-    gpu=0
+    
+	get_clk_cnt gpu
+    gpu=$?
     #now check the clocks
-    cd /sys/kernel/debug/
-    gpu_list=$(find . -name "gpu*")
-    for i in $gpu_list
-    do
-        temp=$(cat ${i}/usecount)
-        gpu=$(expr $temp + $gpu)
-    done
-
+    
     if [ $gpu -gt 0 ]; then
         RC=4
     else
@@ -253,14 +239,8 @@ test_case_05()
     #TODO add function test script here
     #disable the framebuffer
 
-    i2c_list=$(find ${mount_pt}  -name "i2c*")
-    i2c=0
-    for i in $i2c_list
-    do
-        temp=$(cat ${i}/usecount)
-        i2c=$(expr $temp + $i2c)
-    done
-
+	get_clk_cnt i2c
+    i2c=$?
 
     if [ $i2c -gt 0 ]; then
         RC=5
@@ -290,7 +270,8 @@ test_case_06()
     #disable the framebuffer
 
     #now check the clocks
-    sdhc_ct=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd_400M/usdhc*/usecount | grep -v 0)
+	get_clk_cnt usdhc
+    sdhc_ct=$?
     #cat /sys/kernel/debug/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/usecount
 
     if [ -n "$sdhc_ct" ]; then
@@ -319,18 +300,8 @@ test_case_07()
     #TODO add function test script here
     #disable the framebuffer
 
-    uart_list=$(find ${mount_pt}  -name "uart*")
-    uart=0
-    for i in $uart_list
-    do
-        if [ -e "${i}/usecount"  ]; then
-            temp=$(cat ${i}/usecount)
-            if [ $temp -gt 0 ]; then
-                # only add 1 if usecount > 0
-                uart=$(expr 1 + $uart)
-            fi
-        fi
-    done
+    get_clk_cnt uart
+    uart=$?
 
     if [ $uart -gt 1 ]; then
         RC=7
@@ -358,14 +329,8 @@ test_case_08()
     #TODO add function test script here
     #disable the framebuffer
 
-    usb_list=$(find ${mount_pt}  -name "usb*")
-    usb=0
-    for i in $usb_list; do
-        if [ -e "${i}/usecount" ]; then
-            temp=$(cat ${i}/usecount)
-            usb=$(expr $temp + $usb)
-        fi
-    done
+    get_clk_cnt usb
+    usb=$?
 
     if [ $usb -gt 0 ]; then
         RC=8
@@ -395,13 +360,8 @@ test_case_09()
 
     vpu=0
     #now check the clocks
-    cd /sys/kernel/debug/
-    vpu_list=$(find . -name "vpu*")
-    for i in $vpu_list
-    do
-        temp=$(cat ${i}/usecount)
-        vpu=$(expr $temp + $vpu)
-    done
+    get_clk_cnt vpu
+	vpu=$?
 
     if [ $vpu -gt 0 ]; then
         RC=9
@@ -424,31 +384,18 @@ test_case_10()
     RC=10
 
     #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
-
-    read -p "The Ethernet is going to turn off, are you sure to continue?[y/n]" answer
-
-    if [ "$answer" != "y" ]; then
-        RC=1
-        echo "The case doesn't run due to a negtive answer"
-        return $RC
-    fi
+    tst_resm TINFO "test $TST_COUNT: $TCID"
 
     ifconfig eth0 down || return $?
 
+    echo "Ethernet turn off..."
     #TODO add function test script here
     #disable the framebuffer
 
     enet=0
     #now check the clocks
-    cd /sys/kernel/debug/
-    enet_list=$(find . -name "enet*")
-    for i in $enet_list
-    do
-        temp=$(cat ${i}/usecount)
-        enet=$(expr $temp + $enet)
-    done
-
+    get_clk_cnt enet
+	enet=$?
     if [ $enet -gt 0 ]; then
         RC=10
     else
@@ -475,16 +422,10 @@ test_case_11()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test script here
-    pcie_list=$(find ${mount_pt}  -name "pcie*")
-
     pcie=0
-    for i in $pcie_list
-    do
-        temp=$(cat ${i}/usecount)
-        pcie=$(expr $temp + $pcie)
-    done
-
+    #TODO add function test script here
+    get_clk_cnt pcie
+    pcie=$?
 
     if [ $pcie -gt 0 ]; then
         RC=11
