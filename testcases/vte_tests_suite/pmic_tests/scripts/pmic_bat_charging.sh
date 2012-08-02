@@ -45,9 +45,9 @@ setup()
     RC=1
     trap "cleanup" 0
 
-    platfm.sh ||platfm_id=$?
+    platfm.sh || platfm_id=$?
 
-    if [ platfm_id -eq 50 ]; then
+    if [ $platfm_id -eq 50 ]; then
         modprobe mc34708_battery
         AC_CHARGER=/sys/class/power_supply/*aux_charger/online
         USB_CHARGER=/sys/class/power_supply/*usb_charger/online
@@ -115,7 +115,7 @@ test_case_01()
         RC=$(expr $RC + 1)
     fi
 
-    if [ platfm_id -eq 50 ]; then
+    if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
         if [ -z "$bat_charge_current" ]; then
             RC=$(expr $RC + 1)
@@ -157,7 +157,7 @@ test_case_02()
     bat_status=$(cat $BATTERY)
     [ "$bat_status" = "Charging" ] || RC=$(expr $RC + 1)
 
-    if [ platfm_id -eq 50 ]; then
+    if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
         if [ -z "$bat_charge_current" ]; then
             RC=$(expr $RC + 1)
@@ -199,7 +199,7 @@ test_case_03()
     bat_status=$(cat $BATTERY)
     [ "$bat_status" = "Charging" ] ||RC=$(expr $RC + 1)
 
-    if [ platfm_id -eq 50 ]; then
+    if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
         if [ -z "$bat_charge_current" ]; then
             RC=$(expr $RC + 1)
@@ -211,7 +211,7 @@ test_case_03()
     bat_status=$(cat $BATTERY)
     [ "$bat_status" = "Charging" ] ||RC=$(expr $RC + 1)
 
-    if [ platfm_id -eq 50 ]; then
+    if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
         if [ -z "$bat_charge_current" ]; then
             RC=$(expr $RC + 1)
