@@ -389,7 +389,7 @@ test_case_06()
 }
 
 # Function:     test_case_07
-# Description   - Test if interrupt latency measurement
+# Description   - bus freq state transition test
 #
 test_case_07()
 {
