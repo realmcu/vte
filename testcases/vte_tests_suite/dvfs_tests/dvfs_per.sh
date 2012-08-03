@@ -239,10 +239,19 @@ suspend_stress()
     i=0
     while [ $i -lt 500 ]; do
         i=`expr $i + 1`
+        # Screen will unblank when resume, now blank them again to satisfy the busfreq condition
+        for i in 1 2 3 4; do
+            echo 1 > /sys/class/graphics/fb${i}/blank
+        done
+        sleep 2
         rtc_testapp_6 -m standby -T 50 || return $RC
         tst_resm TINFO "RTC wakeup standby mode test times: $i"
 
         RC=5
+        for i in 1 2 3 4; do
+            echo 1 > /sys/class/graphics/fb${i}/blank
+        done
+        sleep 2
         rtc_testapp_6 -m mem -T 50 || return $RC
         tst_resm TINFO "RTC wakeup mem mode test times: $i"
     done
