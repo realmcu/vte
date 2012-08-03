@@ -1,7 +1,7 @@
 #!/bin/sh
 ##############################################################################
 #
-#  Copyright 2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#  Copyright 2009,2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 ##############################################################################
 #
@@ -19,6 +19,7 @@
 # Author                   Date          Number    Description of Changes
 #-------------------   ------------    ----------  ---------------------
 # Justin Qiu            09/08/2009        n/a        Initial ver. 
+# Spring Zhang          03/08/2012        n/a      Add support for multi cards
 #############################################################################
 # Portability:  ARM sh 
 #
@@ -103,6 +104,9 @@ setup()
     fi
 
     [ -z "$STEREO_CARD_NO" ] && STEREO_CARD_NO=0
+    if [ `echo $STEREO_CARD_NO|wc -w` -gt 1 ]; then
+        STEREO_CARD_NO=`echo $STEREO_CARD_NO| awk '{print $1}'`
+    fi
     echo "stereo device number: ${STEREO_CARD_NO}"
 
     # cs42888 is for MX6 ARD board
@@ -111,7 +115,12 @@ setup()
         if [ -z "$ESAI_CARD_NO" ]; then
             aplay -l | grep $dev
             if [ $? -eq 0 ]; then
-                ESAI_CARD_NO=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                ESAI_CARD=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                ESAI_CARD_NO=$(echo $ESAI_CARD | sed -n '1p'| awk '{print $1}')
+                # ESAI ASRC card interface
+                if [ "`echo $ESAI_CARD|wc -w`" -eq 2 ]; then
+                    ESAI_CARD_NO="${ESAI_CARD_NO},1"
+                fi
                 echo "ESAI card device number: ${ESAI_CARD_NO}"
             fi
         fi
@@ -147,7 +156,7 @@ cleanup()
 test_case_0301()
 {
     RC=0    # Return value from setup, and test functions.
-    aplay -D hw:${ESAI_CARD_NO},0 \
+    aplay -D hw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k24S-S24_LE_long.wav -d 15 &
     sleep 5
     rm -f /tmp/asrc.wav
@@ -217,7 +226,7 @@ test_case_0361()
 {
     RC=0    # Return value from setup, and test functions.
 
-    aplay -D plughw:${ESAI_CARD_NO},0 \
+    aplay -D plughw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k16S_long.wav -d 15 &
     sleep 5
     rm -f /tmp/asrc.wav
@@ -241,7 +250,7 @@ test_case_0362()
 {
     RC=0    # Return value from setup, and test functions.
 
-    aplay -D plughw:${ESAI_CARD_NO},0 \
+    aplay -D plughw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k16S_long.wav -d 15 &
     sleep 2
     aplay -D hw:${STEREO_CARD_NO},0 \
@@ -268,7 +277,7 @@ test_case_036a()
 {
     RC=0    # Return value from setup, and test functions.
 
-    aplay -D plughw:${ESAI_CARD_NO},0 \
+    aplay -D plughw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k16S_long.wav -d 15 &
     sleep 5
     rm -f /tmp/asrc.wav
@@ -294,7 +303,7 @@ test_case_0371()
     aplay -D hw:${STEREO_CARD_NO},0 \
     $STREAM_PATH/alsa_stream/audio32k24S-S24_LE_long.wav -d 15 &
     sleep 3
-    aplay -D hw:${ESAI_CARD_NO},0 \
+    aplay -D hw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k16S_long.wav -d 15 &
     sleep 3
     rm -f /tmp/asrc.wav
@@ -369,7 +378,7 @@ test_case_03a1()
 {
     RC=0    # Return value from setup, and test functions.
 
-    aplay -D plughw:${ESAI_CARD_NO},0 \
+    aplay -D plughw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k16S_long.wav -d 15&
 
     sleep 3
@@ -449,7 +458,7 @@ check_result()
     sleep 10
     tst_resm TINFO "Test #1: play the dest audio stream, please check the \
     HEADPHONE, hear if there is voice."
-    aplay -D plughw:${STEREO_CARD_NO},0 /tmp/asrc.wav || RC=$?
+    aplay -D plughw:${STEREO_CARD_NO} /tmp/asrc.wav || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #1: play error, please check..."
@@ -458,7 +467,7 @@ check_result()
 
     tst_resm TINFO "Do you hear the voice clearly and smoothly from the headphone?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
         tst_resm TPASS "Test #1: ASRC test success."
     else

@@ -136,6 +136,9 @@ setup()
     fi
 
     [ -z "$STEREO_CARD_NO" ] && STEREO_CARD_NO=0
+    if [ `echo $STEREO_CARD_NO|wc -w` -gt 1 ]; then
+        STEREO_CARD_NO=`echo $STEREO_CARD_NO| awk '{print $1}'`
+    fi
     echo "stereo device number: ${STEREO_CARD_NO}"
     
     # cs42888 is for MX6 ARD board
@@ -144,7 +147,12 @@ setup()
         if [ -z "$ESAI_CARD_NO" ]; then
             aplay -l | grep $dev
             if [ $? -eq 0 ]
-                ESAI_CARD_NO=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                ESAI_CARD=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                ESAI_CARD_NO=$(echo $ESAI_CARD | sed -n '1p'| awk '{print $1}')
+                # ESAI ASRC card interface
+                if [ "`echo $ESAI_CARD|wc -w`" -eq 2 ]; then
+                    ESAI_CARD_NO="${ESAI_CARD_NO},1"
+                fi
                 echo "ESAI card device number: ${ESAI_CARD_NO}"
             fi
         fi
@@ -208,7 +216,7 @@ test_case_0564()
 {
     RC=0    # Return value from setup, and test functions.
 
-    aplay -D hw:${ESAI_CARD_NO},0 \
+    aplay -D hw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio32k24S-S24_LE_long.wav -d 15 &
 
     sleep 3
@@ -276,7 +284,7 @@ test_case_0591()
 
     sleep 3
 
-    aplay -D hw:${ESAI_CARD_NO},0 \
+    aplay -D hw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio44k24S-S24_LE_long.wav -d 15 &
 
     sleep 3
@@ -425,7 +433,7 @@ check_result()
 
     tst_resm TINFO "Do you hear the voice clearly and smoothly from the headphone?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
         tst_resm TPASS "Test #1: ASRC test success."
     else

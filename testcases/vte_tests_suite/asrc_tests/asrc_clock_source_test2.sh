@@ -65,7 +65,7 @@ setup()
                     2. connect to pc by M-Audio card 
                     Are you ready?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
         tst_resm TPASS "Test #1: Great!."
     else
@@ -77,7 +77,7 @@ setup()
                     44100Hz, 16bits/sample, stereo
                     Are you ready?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
         tst_resm TPASS "Test #1: Great! Go on please."
     else
@@ -148,6 +148,9 @@ setup()
     fi
 
     [ -z "$STEREO_CARD_NO" ] && STEREO_CARD_NO=0
+    if [ `echo $STEREO_CARD_NO|wc -w` -gt 1 ]; then
+        STEREO_CARD_NO=`echo $STEREO_CARD_NO| awk '{print $1}'`
+    fi
     echo "stereo device number: ${STEREO_CARD_NO}"
     
     # cs42888 is for MX6 ARD board
@@ -156,7 +159,13 @@ setup()
         if [ -z "$ESAI_CARD_NO" ]; then
             aplay -l | grep $dev
             if [ $? -eq 0 ]
-                ESAI_CARD_NO=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                ESAI_CARD=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
+                ESAI_CARD_NO=$(echo $ESAI_CARD | sed -n '1p'| awk '{print $1}')
+                # ESAI ASRC card interface
+                if [ "`echo $ESAI_CARD|wc -w`" -eq 2 ]; then
+                    ESAI_CARD_NO="${ESAI_CARD_NO},1"
+                fi
+
                 echo "ESAI card device number: ${ESAI_CARD_NO}"
             fi
         fi
@@ -194,7 +203,7 @@ test_case_0409()
     RC=0    # Return value from setup, and test functions.
 
     arecord -D hw:${SPDIF_CARD_NO},0 -t wav -c 2 -r 44100 -f S24_LE -d 15 | \
-    aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    aplay -D hw:${STEREO_CARD_NO} -t wav &
     
     sleep 5
     rm -f /dev/asrc.wav
@@ -222,11 +231,11 @@ test_case_0441()
     cp $STREAM_PATH/alsa_stream/audio32k16S_long.wav /dev/test1.wav
     cp $STREAM_PATH/asrc_stream/audio44k16S.wav /dev/test2.wav
     arecord -D hw:${SPDIF_CARD_NO},0 \
-    -t wav -c 2 -r 44100 -f S24_LE -d 15 | aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    -t wav -c 2 -r 44100 -f S24_LE -d 15 | aplay -D hw:${STEREO_CARD_NO} -t wav &
     
     sleep 3
 
-    aplay -D hw:${ESAI_CARD_NO},0 /dev/test1.wav -d 15 &
+    aplay -D hw:${ESAI_CARD_NO} /dev/test1.wav -d 15 &
     
     sleep 5
     rm -f /dev/asrc.wav
@@ -256,7 +265,7 @@ test_case_0442()
 
     sleep 3
 
-    aplay -D hw:${STEREO_CARD_NO},0 \
+    aplay -D hw:${STEREO_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio32k24S-S24_LE_long.wav -d 15 &
     
     sleep 5
@@ -285,7 +294,7 @@ test_case_0449()
     RC=0    # Return value from setup, and test functions.
 
     arecord -D hw:${SPDIF_CARD_NO},0 \
-    -t wav -c 2 -r 44100 -f S24_LE -d 15 | aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    -t wav -c 2 -r 44100 -f S24_LE -d 15 | aplay -D hw:${STEREO_CARD_NO} -t wav &
 
     sleep 3
     rm -f /dev/asrc.wav
@@ -311,7 +320,7 @@ test_case_044a()
     RC=0    # Return value from setup, and test functions.
 
     arecord -D hw:${SPDIF_CARD_NO},0 \
-    -t wav -c 2 -r 44100 -f S24_LE -d 15 | aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    -t wav -c 2 -r 44100 -f S24_LE -d 15 | aplay -D hw:${STEREO_CARD_NO} -t wav &
 
     sleep 3
     rm -f /dev/asrc.wav
@@ -337,13 +346,13 @@ test_case_0469()
 {
     RC=0    # Return value from setup, and test functions.
 
-    aplay -D plughw:${ESAI_CARD_NO},0 \
+    aplay -D plughw:${ESAI_CARD_NO} \
     $STREAM_PATH/alsa_stream/audio32k16S_long.wav -d 15 &
     
     sleep 3
     
     arecord -D hw:${SPDIF_CARD_NO},0 -t wav -c 2 -r 44100 -f S24_LE -d 15 | \
-    aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    aplay -D hw:${STEREO_CARD_NO} -t wav &
 
     sleep 3
     rm -f /dev/asrc.wav
@@ -370,7 +379,7 @@ test_case_0479()
     RC=0    # Return value from setup, and test functions.
 
     arecord -D hw:${SPDIF_CARD_NO},0 -t wav -c 2 -r 44100 -f S24_LE \
-    -d 15 | aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    -d 15 | aplay -D hw:${STEREO_CARD_NO} -t wav &
 
     sleep 3
     rm -f /dev/asrc.wav
@@ -398,7 +407,7 @@ test_case_04a9()
     RC=0    # Return value from setup, and test functions.
 
     arecord -D hw:${SPDIF_CARD_NO},0 -t wav -c 2 -r 44100 -f S24_LE \
-    -d 15 | aplay -D hw:${STEREO_CARD_NO},0 -t wav &
+    -d 15 | aplay -D hw:${STEREO_CARD_NO} -t wav &
 
     sleep 3
     rm -f /dev/asrc.wav
@@ -429,7 +438,7 @@ check_result()
     sleep 10
     tst_resm TINFO "Test #1: play the dest audio stream, please check the \
     HEADPHONE, hear if there is voice."
-    aplay -D plughw:${STEREO_CARD_NO},0 /dev/asrc.wav || RC=$?
+    aplay -D plughw:${STEREO_CARD_NO} /dev/asrc.wav || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #1: play error, please check..."
@@ -438,7 +447,7 @@ check_result()
 
     tst_resm TINFO "Do you hear the voice clearly and smoothly from the headphone?[y/n]"
     read answer
-    if [ $answer = "y" ]
+    if [ "$answer" = "y" ]
     then
         tst_resm TPASS "Test #1: ASRC test success."
     else
