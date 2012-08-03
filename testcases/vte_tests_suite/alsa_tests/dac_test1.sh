@@ -1,4 +1,5 @@
 #!/bin/bash
+##############################################################################
 #Copyright (C) 2008,2010-2012 Freescale Semiconductor, Inc.
 #All Rights Reserved.
 #
@@ -191,16 +192,25 @@ dac_play()
             tst_resm TFAIL "Specified card $HW_keyword not found, please check."
             return $RC
         fi
+
+        #in case there are more than one card match the search pattern
         dev_num=0
         for dev in $alsa_dev; do
             dev_num=`expr $dev_num + 1`
         done
+
         if [ $dev_num -gt 1 ]; then
-            RC=70
-            tst_resm TFAIL "Specified card $HW_keyword match num is not single, please provide more detail name"
-            return $RC
+            if [ "$platfm" = "IMX6Solo-SABREAUTO" ] || [ "$platfm" = "IMX6-SABREAUTO" ]; then
+                # on ARD with CS42888 ASRC, there're two cs42888 devices, use primary one for ALSA device
+                tst_resm TWARN "Specified card $HW_keyword match num is not single, it's better to provide more detail name"
+                alsa_dev=`echo $alsa_dev | sed -n '1p'| awk '{print $1}'`
+            else
+                tst_resm TFAIL "Specified card $HW_keyword match num is not single, it's better to provide more detail name"
+                RC=70
+                return $RC
+            fi
         fi
-        #in case there are more than one card match the search pattern
+
         total_card_num=1
         if [ -z "$HW" ]; then
             plugin="plug"
@@ -326,7 +336,7 @@ manual_check()
 {
     tst_resm TINFO "Do you hear the music from the headphone?[y/n]"
     read answer
-    if [ "$answer" = "y" ]; then
+    if [ "x$answer" = "xy" ]; then
         tst_resm TPASS "Test #1: ALSA DAC test success."
         return 0
     else
