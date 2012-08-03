@@ -1,6 +1,6 @@
 #!/bin/sh
 ##############################################################################
-#Copyright (C) 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2008-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU General Public
 # License. You may obtain a copy of the GNU General Public License
@@ -23,6 +23,8 @@
 # Spring                 11/12/2009       n/a      Add support to other case
 # Spring                 24/03/2010       n/a      Add support to mx53
 # Spring                 17/03/2011       n/a      Add default device match
+# Spring                 03/08/2012       n/a      Add handler for confused
+#                                       dual cs42888 device on MX6 ARD board
 #############################################################################
 # File Name:     dac_vol_adj.sh   
 # Total Tests:   1
@@ -86,8 +88,27 @@ setup()
         return $RC
     fi
 
-    detect_alsa_dev.sh
-    dfl_alsa_dev=$?
+    platfm_str=`platfm.sh` || platfm=$?
+    if [ $platfm -eq 67 ]
+    then
+        RC=$platfm
+        return $RC
+    fi
+
+    eval def_cfg_name="audio_dac_${platfm_str}.cfg"
+    if [ -e /etc/asound/$def_cfg_name ]; then
+        CFG_FILE=/etc/asound/$def_cfg_name
+    elif [ -e $LTPROOT/testcases/bin/$def_cfg_name ]; then
+        CFG_FILE=$LTPROOT/testcases/bin/$def_cfg_name
+    else
+        tst_resm TBROK "Default config file can't find, pls check..."
+        RC=67
+        return $RC
+    fi
+    HW_keyword=`head -n 1 $CFG_FILE`
+    dfl_alsa_dev=`aplay -l |grep card| grep -i "$HW_keyword" |awk '{ print $2 }'|sed 's/://'`
+    tmp=`echo $dfl_alsa_dev|sed -n '1p'|awk '{ print $1 }'`
+    dfl_alsa_dev=$tmp
     #parameter of HW playback and plughw playback
     hw_play="-Dhw:${dfl_alsa_dev},0"
     plughw_play="-Dplughw:${dfl_alsa_dev},0"
@@ -104,10 +125,13 @@ cleanup()
     RC=0
     echo "clean up environment..."
 
-    ctl_id=`amixer_ctl_id`
+    # get ctl_ifaces
+    amixer_ctl_id
     max_vol || MAX=$?
     MAX=`expr $MAX / 3 \* 2`
-    amixer -c $dfl_alsa_dev cset "$ctl_id" $MAX 
+    for j in $ctl_ifaces; do
+        amixer -c $dfl_alsa_dev cset "$j" $MAX 
+    done
 
     echo "clean up environment end"
     return $RC
@@ -126,7 +150,7 @@ amixer_ctl_id()
 
     if [ $platfm -eq 31 ]
     then
-        ctl_id=name='Master Playback Volume'
+        ctl_id=`amixer contents| grep "Master Playback Volume"`
     elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] \
         || [ $platfm -eq 41 ] || [ $platfm -eq 53 ] #sgtl5k
     then
@@ -135,14 +159,22 @@ amixer_ctl_id()
     then
         ctl_id=name='Playback PCM Volume'
     elif [ $platfm -eq 50 ]
-		then
-				ctl_id=name='Headphone Volume'
+    then
+        ctl_id=name='Headphone Volume'
     elif [ $platfm -eq 63 ] || [ $platfm -eq 61 ]
-		then
-				ctl_id=name='Headphone Playback Volume'
-		fi
+    then
+        ctl_id=name='Headphone Playback Volume'
+    fi
+
+    # wm8962: MX6 SabreSD
+    # sgtl5000: Babbage, MX51 3DS, MX53 SMD, MX53 LOCO
+    ctl_id=`amixer contents|grep "Headphone Volume"| sed 's/,.*//'`
+
+    if aplay -l |grep -i cs42888; then
+        ctl_id=`amixer contents|grep "Playback Volume"| sed 's/,.*//'`
+    fi
  
-    echo $ctl_id
+    ctl_ifaces=$ctl_id
 }
 
 # Function:     max_vol
@@ -157,18 +189,24 @@ max_vol()
     MAX_MX31=99
     MAX_SGTL5K=127
     MAX_MX37=255
+    MAX_CS42888=255
 
     if [ $platfm -eq 31 ]
     then
         return $MAX_MX31
-    elif [ $platfm -eq 35 ] || [ $platfm -eq 51 ] \
-        || [ $platfm -eq 41 ] || [ $platfm -eq 53 ] \
-        || [ $platfm -eq 50 ] || [ $platfm -eq 63 ] || [ $platfm -eq 61 ] #sgtl5k
-    then
-        return $MAX_SGTL5K
-    elif [ $platfm -eq 37 ]
-    then
+    elif [ $platfm -eq 37 ]; then
         return $MAX_MX37
+    fi
+
+    # On MX6 ARD
+    if aplay -l |grep -i cs42888; then
+        return $MAX_CS42888
+    fi
+
+    # wm8962: MX6 SabreSD
+    # sgtl5000: Babbage, MX51 3DS, MX53 SMD, MX53 LOCO
+    if aplay -l |grep -i sgtl5000; then
+        return $MAX_SGTL5K
     fi
 
     return 0
@@ -186,29 +224,23 @@ adj_vol()
 {
     RC=0    # Return value from setup, and test functions.
 
-    platfm.sh || platfm=$?
-    if [ $platfm -eq 67 ]
-    then
-        RC=$platfm
-        return $RC
-    fi
-    platform="mx$platfm"
-
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
  hear if the voice is from MIN(0) to MAX(MX31:100, MX51:128, MX37:256)."
 
     STEP=5
     #if DECREASE=0, vol: MIN->MAX; DECREASE=1, vol: MAX->MIN
-    for DECREASE in 0 1
-    do
+    for DECREASE in 0 1; do
         i=0
         while [ $i -le $STEP ]
         do
             max_vol || MAX=$?
             vol=`expr $DECREASE % 2 \* -2 + 1` 
             vol=`expr $vol \* $MAX \* $i / $STEP + $DECREASE % 2 \* $MAX`
-            ctl_id=`amixer_ctl_id`
-            amixer -c $dfl_alsa_dev cset "$ctl_id" $vol
+            # get ctl_ifaces
+            amixer_ctl_id
+            for ctl_iface in $ctl_ifaces; do
+                amixer -c $dfl_alsa_dev cset "$ctl_iface" $vol
+            done
 
             aplay -M -N $hw_play $1 2>/dev/null || RC=$?
             if [ $RC -ne 0 ]
@@ -253,7 +285,6 @@ left_right_channel()
         RC=$platfm
         return $RC
     fi
-    platform="mx$platfm"
 
     max_vol || MAX=$?
     if [ $MAX -eq 0 ]; then
@@ -261,12 +292,15 @@ left_right_channel()
         return 67
     fi
     vol=`expr $MAX / 3 \* 2`
-    ctl_id=`amixer_ctl_id`
-        #for mx50 set the palyback voulme as well
-		if [ $platfm -eq 50 ]; then
-		amixer -c $dfl_alsa_dev cset "name='Playback Volume'" 190,0
-		fi
-    amixer -c $dfl_alsa_dev cset "$ctl_id" $vol,0
+    # get ctl_ifaces
+    amixer_ctl_id
+    #for mx50 set the palyback voulme as well
+    if [ $platfm -eq 50 ]; then
+        amixer -c $dfl_alsa_dev cset "name='Playback Volume'" 190,0
+    fi
+    for ctl_iface in $ctl_ifaces; do
+        amixer -c $dfl_alsa_dev cset "$ctl_iface" $vol,0
+    done
     aplay -M -N $hw_play $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
@@ -274,16 +308,19 @@ left_right_channel()
         return $RC
     fi
         #for mx50 set the palyback voulme as well
-		if [ $platfm -eq 50 ]; then
+    if [ $platfm -eq 50 ]; then
 		amixer -c $dfl_alsa_dev cset "name='Playback Volume'" 0,190
     fi
-		amixer -c $dfl_alsa_dev cset "$ctl_id" 0,$vol
+    for ctl_iface in $ctl_ifaces; do
+        amixer -c $dfl_alsa_dev cset "$ctl_iface" 0,$vol
+    done
     aplay -M -N $hw_play $1 2>/dev/null || RC=$?
     if [ $RC -ne 0 ]
     then
         tst_resm TFAIL "Test #2: play error, please check the stream file"
         return $RC
     fi
+
     tst_resm TINFO "Do you hear the voice from left channel then from right channel[y/n]"
     read answer
     if [ "x$answer" = "xy" ]
@@ -291,9 +328,10 @@ left_right_channel()
         tst_resm TPASS "Test #2: left and right channel test."
     else
         tst_resm TFAIL "Test #2: left and right channel test fail."
-     RC=67
-    return $RC
+        RC=67
+        return $RC
     fi
+
     return $RC
 }
 # Function:     usage
