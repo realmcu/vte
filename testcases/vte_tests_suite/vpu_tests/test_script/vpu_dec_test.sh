@@ -195,7 +195,7 @@ cd /tmp
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_divx 
 ${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_divx || RC=0 
 SIZE=$(ls -s divx311_320x240.yuv | awk '{print $1}') 
-rm -rf divx311_320x240.yuv divx311_320x240.avi
+rm -rf /tmp/divx311_320x240.yuv /tmp/divx311_320x240.avi
 
 if [ $SIZE -eq 0 ] && [ $RC -eq 0 ]
 then
@@ -341,7 +341,7 @@ cd /tmp
 #vpu_testapp -C ${LTPROOT}/testcases/bin/config_dec_h264-bp 
 ${TSTCMD} -C ${LTPROOT}/testcases/bin/config_dec_h264-bp || RC=1
 SIZE=$(ls -s starwars640x480.yuv | awk '{print $1}')
-rm -rf starwars640x480.yuv starwars640x480.264
+rm -rf /tmp/starwars640x480.yuv /tmp/starwars640x480.264
 
 if [ $SIZE -ne 0 ] && [ $RC -eq 0 ]
 then
