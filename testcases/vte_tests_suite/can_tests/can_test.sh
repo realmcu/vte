@@ -463,7 +463,7 @@ test_can_08()
         alias can-proto-4 can-tp20
         alias can-proto-5 can-mcnet
         alias can-proto-6 can-isotp
-        EOF
+EOF
     fi
 
     ${LTPROOT}/testcases/bin/ip link add dev vcan0 type vcan
