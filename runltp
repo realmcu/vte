@@ -854,7 +854,8 @@ main()
 #log the latest finished log file name
 echo latest_test_report_${CMDFILES}_$(date +%H%m%d%Y) >> $LTPROOT/output/latest_test_report
 chmod -R 777 $LTPROOT/output
-append_md5=$(md5sum $OUTPUTFILE | cut -c 1-6)
+check_file=$(echo $OUTPUTFILE | cut -c4-)
+append_md5=$(md5sum $check_file | cut -c 1-6)
 cat > $LTPROOT/output/latest_test_report_${CMDFILES}_$(date +%H%m%d%Y) <<EOF
 export LTP_VERSION=$version_date
 export TEST_START_TIME="$test_start_time"
