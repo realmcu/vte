@@ -382,10 +382,8 @@ extern "C" {
 */
 	int init_overlay(void) {
 		struct v4l2_streamparm streamParm;
-/*
-				v4l2_std_id stdID;
-				int displayLCD = 0;
-*/
+		int g_display_lcd = 0;
+/*	v4l2_std_id stdID;*/
 		/* Get Frame Buffer overlay parametrs */
 		if (ioctl(gFdV4L, VIDIOC_G_FBUF, &fbuffer) < 0) {
 			tst_resm(TWARN,
@@ -509,6 +507,44 @@ extern "C" {
 				 "ERROR init_overlay() : get format failed");
 			return TFAIL;
 		}
+		if (gV4LTestConfig.mCaseNum == PRP_VF) {
+			int fg = 0;
+			int cnt = 0;
+			struct v4l2_output outputs;
+			struct fb_fix_screeninfo fix;
+			if (gV4LTestConfig.mOutputDevice == NULL) {
+				if ((fg = open("/dev/fb0", O_RDWR)) < 0) {
+					perror("open");
+					return TFAIL;
+				}
+			} else {
+				if ((fg = open(gV4LTestConfig.mOutputDevice, O_RDWR)) < 0) {
+					printf("error open %s\n", gV4LTestConfig.mOutputFile);
+					perror("open");
+					return TFAIL;
+				}
+			}
+			if (ioctl(fg, FBIOGET_FSCREENINFO, &fix) < 0) {
+				printf("Unable to get frame buffer parameter\n");
+				return TFAIL;
+			}
+		
+			memset(&outputs,0,sizeof(struct v4l2_output));	
+			while(ioctl(gFdV4L, VIDIOC_ENUMOUTPUT, &outputs) == 0) {
+				if (strcmp(fix.id, outputs.name) == 0) {
+        			g_display_lcd = cnt;
+					if(ioctl(gFdV4L, VIDIOC_S_OUTPUT, &g_display_lcd) < 0)
+					{
+		   				tst_resm(TWARN,"ERROR init_overlay() : VIDIOC_S_OUTPUT failed");
+		   				return TFAIL;
+					}
+				}
+			 	memset(&outputs,0,sizeof(struct v4l2_output));
+			 	cnt++;
+			 	outputs.index = cnt;
+			}
+		}
+
 		/*
 		   if(ioctl(gFdV4L, VIDIOC_G_STD, &stdID) < 0)
 		   {
@@ -571,7 +607,6 @@ extern "C" {
 	int init_capture(void) {
 		struct v4l2_streamparm parm;
 		int i = 0;
-                int j = 0;
 		/* Open Frame Buffer Device */
 		if (gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
 			if (open_out_device() == TFAIL)
@@ -1619,7 +1654,6 @@ extern "C" {
 		unsigned int cnt = gV4LTestConfig.mCount;
 		fd_set fds;
 		struct timeval tv;
-        enum v4l2_buf_type type;
         long frame_time;
 		int max_time,min_time;
         int total_frame;

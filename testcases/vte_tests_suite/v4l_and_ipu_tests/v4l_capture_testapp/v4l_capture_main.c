@@ -121,9 +121,9 @@ extern "C" {
 		printf
 		    ("Usage : -B <left,top,width,height> To do cropping of the video.\n");
 		printf
-		    ("                                   The cropping restangle size is (width,heyght) pixels.\n");
+		    (" The cropping restangle size is (width,heyght) pixels.\n");
 		printf
-		    ("                                   The offset of this restangle is (left,top)\n");
+		    (" The offset of this restangle is (left,top)\n");
 		printf
 		    ("Usage : -E To imply \"v4l_capture_testcase -V\" error cases with unsupported format\n");
 		printf("Usage : -T <n>. To make the capture n times\n");
@@ -145,6 +145,16 @@ extern "C" {
 		    ("Usage : -r capture frame rate setting. <15 to 30 > default is  30\n");
 		printf("Usage: -M <camera input mode> <0 - 5>\n");
 		printf("Usage: -s <IPU path> CSI_IC_MEM / CSI_MEM\n");
+		printf("D: define the video capture device\n");	/* Video capturing device */
+		printf("K: block IO \n");
+		printf("N:Capture times\n");
+		printf("R: Rotation test\n");
+		printf("S Resize test\n");
+		printf("X  Disable asking user \n");
+		printf("v Verbose mode \n");
+  		printf("Z frame rate performance test \n");
+        printf("d: dynamic change resolution configure file \n");
+        printf("n: change resolution times \n");
 
 	}
 
@@ -171,44 +181,40 @@ extern "C" {
 		};
 		/* parse options. */
 		char *msg;
-		int Dflag = 0, Hflag = 0, Wflag = 0, Rflag = 0, Sflag = 0, Bflag = 0, Tflag = 0, oflag = 0, Oflag = 0, Cflag = 0, uflag = 0, Eflag = 0, Mflag = 0, Xflag = 0, Nflag = 0, Yflag = 0, vflag = 0, rflag = 0, Kflag = 0,	/*block io */
-		    sflag = 0,Zflag = 0,dflag = 0,nflag = 0;	/*capture input select */
-
-		char *Dopt,
-		    *Hopt,
-		    *Wopt,
-		    *Ropt,
-		    *Topt,
-		    *oopt,
-		    *Oopt,
-		    *Copt,
-		    *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt, *Bopt, *dopt, *nopt;
+		int Dflag = 0, Hflag = 0, Wflag = 0, Rflag = 0, Sflag = 0, Bflag = 0,
+		Tflag = 0, oflag = 0, Oflag = 0, Cflag = 0, uflag = 0, Eflag = 0,
+		Mflag = 0, Xflag = 0, Nflag = 0, Yflag = 0, vflag = 0, rflag = 0, Kflag = 0,
+		sflag = 0, Zflag = 0, dflag = 0,nflag = 0;
+		char *Dopt, *Hopt, *Wopt, *Ropt, *Topt, *oopt, *Oopt,
+		*Copt, *uopt, *Yopt, *Mopt, *Nopt, *ropt, *Kopt, *sopt,
+		*Bopt, *dopt, *nopt;
 		option_t options[] = {
-			{"D:", &Dflag, &Dopt},	/* Video capturing device               */
-			{"H:", &Hflag, &Hopt},	/* Capturing height                     */
-			{"W:", &Wflag, &Wopt},	/* Capturing width                      */
-			{"R:", &Rflag, &Ropt},	/* Rotation test                        */
-			{"S", &Sflag, NULL},	/* Resize test                          */
 			{"B:", &Bflag, &Bopt},	/* Cropping test                        */
-			{"T:", &Tflag, &Topt},	/* Capture times                        */
-            	        {"o:", &oflag, &oopt},	/* Path to output file                  */
-			{"O:", &Oflag, &Oopt},	/* Pixel format                         */
 			{"C:", &Cflag, &Copt},	/* Case number                          */
-			{"u:", &uflag, &uopt},	/* Output device (default /dev/fb0)     */
-			{"Y:", &Yflag, &Yopt},	/* Overlay Type (for Overlay only)      */
-			{"E", &Eflag, NULL},	/* Error cases                          */
-			{"X", &Xflag, NULL},	/* Disable asking user                  */
-			{"N:", &Nflag, &Nopt},	/* Capture times                        */
-			{"v", &vflag, NULL},	/* Verbose mode                         */
-			{"r:", &rflag, &ropt},
+			{"D:", &Dflag, &Dopt},	/* Video capturing device               */
+			{"E",  &Eflag, NULL},	/* Error cases                          */
+			{"H:", &Hflag, &Hopt},	/* Capturing height                     */
 			{"K:", &Kflag, &Kopt},	/*block IO                              */
-			{"s:", &sflag, &sopt},
+			{"N:", &Nflag, &Nopt},	/* Capture times                        */
 			{"M:", &Mflag, &Mopt},
-  		        {"Z", &Zflag, NULL},    /* frame rate performance test          */
-                        {"d:", &dflag, &dopt},    /* dynamic change resolution configure file*/
-                        {"n:", &nflag, &nopt},    /* change resolution times*/
+			{"O:", &Oflag, &Oopt},	/* Pixel format                         */
+			{"R:", &Rflag, &Ropt},	/* Rotation test                        */
+			{"S",  &Sflag, NULL},	/* Resize test                          */
+			{"T:", &Tflag, &Topt},	/* Capture times                        */
+			{"W:", &Wflag, &Wopt},	/* Capturing width                      */
+			{"X",  &Xflag, NULL},	/* Disable asking user                  */
+			{"Y:", &Yflag, &Yopt},	/* Overlay Type (for Overlay only)      */
+           	{"o:", &oflag, &oopt},	/* Path to output file                  */
+			{"u:", &uflag, &uopt},	/* Output device (default /dev/fb0)     */
+			{"r:", &rflag, &ropt},
+			{"s:", &sflag, &sopt},
+			{"v",  &vflag, NULL},	/* Verbose mode                         */
+  		    {"Z",  &Zflag, NULL},    /* frame rate performance test       */
+            {"d:", &dflag, &dopt},    /* dynamic change resolution configure file*/
+            {"n:", &nflag, &nopt},    /* change resolution times*/
 			{NULL, NULL, NULL}	/* NULL required to end array           */
 		};
+
 		if ((msg = parse_opts(argc, argv, options, help)) != NULL) {
 			tst_brkm(TBROK, cleanup, "OPTION PARSING ERROR - %s",
 				 msg);
