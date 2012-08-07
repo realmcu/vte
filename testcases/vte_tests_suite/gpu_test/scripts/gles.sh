@@ -125,8 +125,8 @@ test_case_01()
     echo "==========================="
     echo simple draw
     echo "==========================="
-    simple_draw 100 || RC=$(echo $RC simple draw)
-    simple_draw 100 -s || RC=$(echo $RC simple draw -s)
+    ${S_PREFIX}simple_draw 100 || RC=$(echo $RC simple draw)
+    ${S_PREFIX}simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
@@ -150,14 +150,17 @@ test_case_01()
     echo "==========================="
     echo es11ex
     echo "==========================="
-    tmpdir=$(mktemp -d)
-    mkdir $tmpdir
-    mkfifo $tmpdir/es11_fifo
-    sh -c "cat $tmpdir/es11_fifo | es11ex || RC=$(echo $RC es11ex )" &
-    sleep 20
-    echo y > $tmpdir/es11_fifo
-    rm -rf $tmpdir
-
+    if which es11ex; then
+        tmpdir=$(mktemp -d)
+        mkdir $tmpdir
+        mkfifo $tmpdir/es11_fifo
+        sh -c "cat $tmpdir/es11_fifo | es11ex || RC=$(echo $RC es11ex )" &
+        sleep 20
+        echo y > $tmpdir/es11_fifo
+        rm -rf $tmpdir
+    else
+        echo "WARNING!!! No es11ex provided!"
+    fi
 
     echo $RC
 
@@ -226,8 +229,8 @@ test_case_02()
     echo "==========================="
     echo simple draw
     echo "==========================="
-    simple_draw 1000 &
-    simple_draw 1000 -s &
+    ${S_PREFIX}simple_draw 1000 &
+    ${S_PREFIX}simple_draw 1000 -s &
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
@@ -240,23 +243,28 @@ test_case_02()
 
     wait
 
+    cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo es11ex
     echo "==========================="
-    tmpdir=$(mktemp -d)
-    mkdir $tmpdir
-    mkfifo $tmpdir/es11_fifo
-    sh -c "cat $tmpdir/es11_fifo | es11ex || RC=$(echo $RC es11ex )" &
+    if which es11ex; then
+        tmpdir=$(mktemp -d)
+        mkdir $tmpdir
+        mkfifo $tmpdir/es11_fifo
+        sh -c "cat $tmpdir/es11_fifo | es11ex || RC=$(echo $RC es11ex )" &
 
-    simple_draw 1000 -s &
+        ${S_PREFIX}simple_draw 1000 -s &
 
-    sleep 20
+        sleep 20
 
-    #terminate es11
-    echo y > $tmpdir/es11_fifo
-    rm -rf $tmpdir
+        #terminate es11
+        echo y > $tmpdir/es11_fifo
+        rm -rf $tmpdir
 
-    wait
+        wait
+    else
+        echo "WARNING!!! No es11ex provided!"
+    fi
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
@@ -388,7 +396,7 @@ setup || exit $RC
 rt="Ubuntu"
 cat /etc/issue | grep Ubuntu || rt="others"
 
-if [ $rt = "Ubuntu" ];then
+if [ "$rt" = "Ubuntu" ]; then
     APP_SUB_DIR="ubuntu_10.10/test"
     export DISPLAY=:0.0
 else
@@ -404,6 +412,9 @@ else
     53)
         APP_SUB_DIR="imx53_rootfs/test"
         ;;
+    61)
+        APP_SUB_DIR="imx61_rootfs/test"
+        ;;
     63)
         APP_SUB_DIR="imx63_rootfs/test"
         ;;
@@ -411,6 +422,15 @@ else
         exit 0
         ;;
     esac
+fi
+
+if which simple_draw; then
+    S_PREFIX=""
+else
+    # No system provided GPU vender test bin, use user side ones
+    # Only work on MX61 now
+    # Simple draw path PREFIX
+    S_PREFIX="${TEST_DIR}/${APP_SUB_DIR}/"
 fi
 
 
