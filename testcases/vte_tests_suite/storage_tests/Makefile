@@ -40,7 +40,7 @@ TARGET += usbd_testall.pl usbd_test.pl
 #TARGET += gserial.inf linux.inf usbser.sys
 
 #performance
-TARGET += performance performance_command_line performance_prepare.sh performance_test.sh
+TARGET += performance performance_command_line performance_prepare.sh performance_test.sh storage_performance.sh
 
 #ubi 
 TARGET += ubi_test.sh
