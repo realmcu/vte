@@ -122,7 +122,7 @@ part_disk()
     #leave 1% space(40MB for 4G) for uboot, its env and partition table
     partition1_start=`expr $cylinders / 100`
     partition1_size=`expr $cylinders / 4`
-    partition2_start=`expr $partition1_end + partition1_size + 1`
+    partition2_start=`expr $partition1_start + $partition1_size + 1`
     sfdisk --force $1 << EOF
 ${partition1_start},${partition1_size},0c
 ${partition2_start}
