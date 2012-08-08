@@ -146,6 +146,14 @@ check_platform()
     fi
 }
 
+# Used global var: $RC, $error_cmd_index
+record_result()
+{
+    RC=$(expr $RC + 1)
+    error_cmd_index="$error_cmd_index, $TOTAL"
+    echo $error_cmd_index
+}
+
 check_format_bits()
 {
     #FMLIST="RGBP BGR3 RGB3 BGR4 BGRA RGB4 RGBA ABGR YUYV UYVY Y444 NV12 I420 422P YV16"
@@ -246,7 +254,7 @@ test_case_02()
         #done
         #end for CRP
     done
-    echo "Total cases is $TOTAL, failed cases $RC"
+    echo "Total cases is $TOTAL, failed cases $RC, $error_cmd_index"
     return $RC
 
 }
@@ -280,7 +288,7 @@ test_case_03()
         done
         #end for CRP
     done
-    echo "Total cases is $TOTAL, failed cases $RC"
+    echo "Total cases is $TOTAL, failed cases $RC, $error_cmd_index"
     return $RC
 }
 
@@ -310,7 +318,7 @@ test_case_04()
             exec_test
         done
     done
-    echo "Total cases is $TOTAL, failed cases $RC"
+    echo "Total cases is $TOTAL, failed cases $RC, $error_cmd_index"
 
     return $RC
 }
@@ -329,7 +337,7 @@ exec_test()
         HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
         INFILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
 
-        if [ $ff != "I420" ];then
+        if [ "$ff" != "I420" ];then
             ${TST_CMD} -p 0 -d 0 -c 1 -l 1 \
                 -i ${WD},${HT},I420,0,0,0,0,0,0 \
                 -O  ${WD},${HT},${ff},0,0,0,0,0 -s 0\
@@ -338,7 +346,7 @@ exec_test()
         else
             cp ${STREAM_PATH}/video/${INFILE} /tmp/ipu_dev/tmp.dat
         fi
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             echo "TST ERROR: can not convert from 422P to $i"
         else
             for k in $RESLIST
@@ -355,22 +363,24 @@ exec_test()
                     echo " no motion"
                     ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},0,0 \
                         -O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
-                        || RC=$(expr $RC + 1)
+                        || record_result
                     TOTAL=$(expr $TOTAL + 1)
                     if [ $motion -eq 1 ]; then
                         echo "motion_sel = 0(medium_motion)"
                         ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,0 \
                             -O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
-                            || RC=$(expr $RC + 1)
+                            || record_result
+                        TOTAL=$(expr $TOTAL + 1)
                         echo "motion_sel = 1(low_motion)"
                         ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,1 \
                             -O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
-                            || RC=$(expr $RC + 1)
+                            || record_result
+                        TOTAL=$(expr $TOTAL + 1)
                         echo "motion_sel = 2(high_motion)"
                         ${TST_CMD} -p 0 -d 0 -c 1 -l 1 -i ${WD},${HT},${ff},${CRP},1,2 \
                             -O  ${w},${h},${tf},${r},${CRP} -f $OUTPUTFB -s 1 /tmp/ipu_dev/tmp.dat \
-                            || RC=$(expr $RC + 1)
-                        TOTAL=$(expr $TOTAL + 3)
+                            || record_result
+                        TOTAL=$(expr $TOTAL + 1)
                         #motion
                     fi
                 fi
@@ -408,7 +418,7 @@ test_case_05()
     motion=1
     exec_test
 
-    echo "Total cases is $TOTAL, failed cases $RC"
+    echo "Total cases is $TOTAL, failed cases $RC, $error_cmd_index"
 
     return $RC
 }
@@ -646,6 +656,7 @@ test_case_07()
 # main function
 
 RC=0
+error_cmd_index="Failed cmd index list: "
 
 OUTPUTFB="ipu0-1st-ovfb"
 IN_FILE="352+288+COASTGUARD_CIF_IJT.yuv"
