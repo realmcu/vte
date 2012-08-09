@@ -277,14 +277,14 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
 
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" &
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -a 100" &
 pid1=$!
 
 if [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video19 ]; then
-	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 19 " &
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 19 -a 100" &
 	pid2=$!
 elif [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video18 ]; then
-	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 18 " &
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 18 -a 100" &
 	pid2=$!
 fi
 
@@ -314,7 +314,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 #TODO add function test scripte here
 cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 a_stream_path=/mnt/nfs/test_stream/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.h264
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -w 1920 -h 1080" || RC=1
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -w 1920 -h 1080 -a 100" || RC=1
 cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 
 #pass pid to wait otherwise wait will return 0 always
@@ -336,10 +336,10 @@ RC=0
 
 v4l_module.sh setup
 
-/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1280 -h 720 -t 1 -x 17" &
+/unit_tests/mxc_vpu_test.out -L "-f 2 -w 1280 -h 720 -t 1 -x 17 -a 100" &
 pid=$!
 a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -x 16" || RC=1
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -x 16 -a 100" || RC=1
 sleep 15
 kill -9 $pid
 
@@ -368,7 +368,7 @@ start_date=$(date +%d)
 now_date=$(date +%d)
 while [ $now_date > $start_date ]
 	do
-/unit_tests/mxc_vpu_test.out -D "-f 2 -y 1 -i ${a_stream_path}"
+/unit_tests/mxc_vpu_test.out -D "-f 2 -y 1 -i ${a_stream_path} -a 100"
 now_date=$(date +%d)
 done
 
@@ -389,14 +389,14 @@ RC=0
 STREAM=/mnt/nfs/test_stream/video
 a_stream=${STREAM}/h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo_broken-ntsc_tvc_video.h264
 
-/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream}" &
+/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -a 100" &
 pid1=$!
 
 if [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video19 ]; then
-	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 19 " &
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 19 -a 100" &
 	pid2=$!
 elif [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video18 ]; then
-	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 18 " &
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 18 -a 100" &
 	pid2=$!
 fi
 
