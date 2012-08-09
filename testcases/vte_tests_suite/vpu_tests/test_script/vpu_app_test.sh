@@ -1,3 +1,5 @@
+#!/bin/sh
+################################################################################
 #Copyright (C) 2009, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,24 +8,23 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
-###################################################################################################
+################################################################################
 #
 #    @file   vpu_app_test.sh
 #
 #    @brief  shell script for testcase design for VPU app
 #
-###################################################################################################
+################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
+#-------------------------   ------------    ----------  -----------------------
 #<Hake Huang>/-----             <2009/02/12>     N/A          Initial version
 #Andy Tian                    05/10/2012         N/A      rotation device set to vpu if output size
 #														  larger or equal 720p
 #Andy Tian                    05/16/2012         N/A      add encode size list if camera used.
 # 
-###################################################################################################
+################################################################################
 
 
 
@@ -139,11 +140,11 @@ SIZE=$(ls -s /tmp/_out_.yuv | awk '{print $1}')
 rm -rf /tmp/_out_.yuv
 if [ $SIZE -eq 0 ]
 then
-return $RC
+    return $RC
 fi
 echo "decode 1 frame to lcd with deblock"
 ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1" || return $RC
-if [ $FORMAT == 0 ] || [ $FORMAT == 4 ]; then
+if [ $FORMAT -eq 0 ] || [ $FORMAT -eq 4 ]; then
  echo "decode 1 frame to lcd with debering"
  ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -e 1" || return $RC
  echo "decode 1 frame to lcd with debering & deblock"
@@ -169,7 +170,7 @@ echo "following is chroma interleave mode $l"
       echo "rotation device is $k"
       echo "rotation"
       ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -r $i -m $j -u $k -t $l" || return $RC
-      if [ $FORMAT == 0 ] || [ $FORMAT == 4 ]; then
+      if [ $FORMAT -eq 0 ] || [ $FORMAT -eq 4 ]; then
        echo "rotation with deblocking"
        ${TSTCMD} -D "-i $srcfile -f $FORMAT -c 1 -d 1 -r $i -m $j -u $k -t $l" || return $RC
        echo "rotation with debering"
@@ -510,7 +511,7 @@ fi
 TSTCMD="/unit_tests/mxc_vpu_test.out"
 
 setup || exit $RC
-if [ $OV == 56 ]; then
+if [ $OV -eq 56 ]; then
 	EN_SIZELIST=$SIZELIST_5642
 fi
 
