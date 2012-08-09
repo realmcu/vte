@@ -140,7 +140,7 @@ for i in $SIZELIST
 		do
 			for r in $ROTATION
 				do
-time -p $TSTCMD -E "-i /dev/zero -f 2 -w $OWD -h $OHT -o /dev/null -c 10 -b $j -r $r" || RC=$(expr $RC + 1)
+time -p $TSTCMD -E "-i /dev/zero -f 2 -w $OWD -h $OHT -o /dev/null -c 10 -b $j -r $r -a 100" || RC=$(expr $RC + 1)
         done
     done
  done
