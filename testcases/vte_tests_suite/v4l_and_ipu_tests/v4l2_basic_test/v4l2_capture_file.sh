@@ -121,7 +121,7 @@ test_case_01()
 			exit 1
 		fi
 		#fill the screen with random data to see the picture more clear
-		dd if=/dev/urandom of=/dev/fb
+		dd if=/dev/urandom of=/dev/fb0
 		fbv -f -s 30 /mnt/nfs/temp/${mac}_${fps}fps_out_M${M}.bmp
 		read -p "Is the quality of this picture acceptable? (y/n)" ans
 		if [ "$ans" != "y" -a "$ans" != "Y" ]; then
