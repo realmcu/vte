@@ -92,11 +92,13 @@ setup()
         return $RC
     fi
 
-    if [ ! -e "$FILE" ]; then
-        tst_resm TBROK "audio stream is not ready, pls check..."
-        RC=66
-        return $RC
-    fi
+	for f in $FILE; do
+		if [ ! -e "$f" ]; then
+			tst_resm TBROK "audio stream is not ready, pls check..."
+			RC=66
+			return $RC
+		fi
+	done
 
     if [ -n "$CFG_FILE" ]; then
         if [ ! -e "$CFG_FILE" ]; then
