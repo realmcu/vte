@@ -9,6 +9,7 @@ all: $(TARGET)
 install:
 	-ln -f $(TARGET) ../../bin/
 	-ln -f timer_latency.sh ../../bin/
+	-ln -f timer_res.sh ../../bin/
 
 clean:
 	-rm -rf $(TARGET)
