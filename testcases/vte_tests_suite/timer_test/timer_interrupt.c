@@ -24,6 +24,7 @@
  *
  */
 
+#include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +34,7 @@
 
 #define USECREQ 2
 #define LOOPS   1000
+static long interval = 200;
 
 void event_handler (int signum)
 {
@@ -52,7 +54,7 @@ void event_handler (int signum)
    double delta = (double)(udiff/cnt)/1000000;
    int hz = (unsigned)(1.0/delta);
    printf ("kernel timer interrupt frequency is approx. %d Hz", hz);
-   if (hz >= (int) (1.0/((double)(USECREQ)/1000000))) {
+   if (hz >= (int) (1.0/((double)(interval)/1000000))) {
      printf (" or higher");
    }       
    printf ("\n");
@@ -64,15 +66,27 @@ int main (int argc, char **argv)
 {
  struct sigaction sa;
  struct itimerval timer;
+ int issleep = 0;
+
+ if (argc >= 2 && NULL != argv[1])
+	interval = atoi(argv[1]);
+ else
+	interval = USECREQ;
+
+ if(argc >=3 && NULL != argv[2])
+	 issleep = atoi(argv[2])?1:0;
 
  memset (&sa, 0, sizeof (sa));
  sa.sa_handler = &event_handler;
  sigaction (SIGALRM, &sa, NULL);
  timer.it_value.tv_sec = 0;
- timer.it_value.tv_usec = USECREQ;
+ timer.it_value.tv_usec = interval;
  timer.it_interval.tv_sec = 0;
- timer.it_interval.tv_usec = USECREQ;
+ timer.it_interval.tv_usec = interval;
  setitimer (ITIMER_REAL, &timer, NULL);
- while (1);
+ while (1) {
+	 if(issleep)
+		 sleep(1);
+ }
 }
 

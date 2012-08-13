@@ -35,7 +35,7 @@
 #include <errno.h>
 
 #define gettimeofday(a,b)  syscall(__NR_gettimeofday,a,b)
-#define MAX_LOOP 100
+#define MAX_LOOP 10
 
 #ifdef HOST_BUILD
 #define tst_resm(a,b,...) printf(b,##__VA_ARGS__); printf("\n")
@@ -49,7 +49,7 @@ char *TCID = "timer resolutions";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
 
 int Tflag;
-char *tlen = "100";
+char *tlen = "10";
 
 int Lflag;
 char *lres = "10";
@@ -83,7 +83,8 @@ int main(int ac, char **av)
 {
 	int delay=0;
 	int iloop = MAX_LOOP;
-	struct timeval tv1, tv2;
+	int avg_time = 0;
+	struct timeval tv1, tv2, tv3, tv4;
 	char *msg;
 
 #ifndef HOST_BUILD
@@ -121,12 +122,13 @@ int main(int ac, char **av)
 		iloop = MAX_LOOP;
 		while(iloop--){
 			int cd = 0;
-			if (gettimeofday(&tv2, NULL) != 0)
+			if (gettimeofday(&tv4, NULL) != 0)
 			tst_brkm(TBROK, cleanup,"loop gettimeofday() failed: %s\n",strerror(errno));
-			usleep(1);
-			if (gettimeofday(&tv1, NULL) != 0)
+			//usleep(100);
+			sleep(1);
+			if (gettimeofday(&tv3, NULL) != 0)
 			tst_brkm(TBROK, cleanup,"loop gettimeofday() failed: %s\n",strerror(errno));
-      cd = 1000000 * (tv1.tv_sec - tv2.tv_sec) + (tv1.tv_usec - tv2.tv_usec) - 1;
+      cd = 1000000 * (tv3.tv_sec - tv4.tv_sec) + (tv3.tv_usec - tv4.tv_usec) - 1;
 			delay = delay > cd ? delay : cd;
 		}
 	//	tst_resm(TINFO,"average task transfer delay is %d",delay);
@@ -134,22 +136,18 @@ int main(int ac, char **av)
 			tst_brkm(TBROK, cleanup,
 				 "loop gettimeofday() failed: %s\n",
 				 strerror(errno));
-		/*now try to get the minimum time interval*/
-	  usleep(1);	
-		if (gettimeofday(&tv1, NULL) != 0)
-			tst_brkm(TBROK, cleanup,
-				 "loop gettimeofday() failed: %s\n",
-				 strerror(errno));
-		if (1000000 * (tv1.tv_sec - tv2.tv_sec)
-		    + (tv1.tv_usec - tv2.tv_usec) - 2 * delay > atoi(lres)) {
+		avg_time = (1000000 * (tv2.tv_sec - tv1.tv_sec) + (tv2.tv_usec - tv1.tv_usec))/MAX_LOOP;
+		tst_resm(TINFO,"avg_time is %d", avg_time);
+			if ( avg_time  - 2 * delay > atoi(lres)) {
 			tst_resm(TFAIL,
 				 "Time resolution is not achieved %d old %jd.%jd vs new %jd.%jd",atoi(lres),
 				 (intmax_t)tv2.tv_sec, (intmax_t)tv2.tv_usec, (intmax_t)tv1.tv_sec,
 				 (intmax_t)tv1.tv_usec);
 			cleanup();
 			return 1;
+			}
 		}
- }
+	tst_resm(TINFO,"max delay is %d", delay);
 	tst_resm(TPASS, "gettimeofday resolution is less than %s", lres);
 	cleanup();
 	return 0;
