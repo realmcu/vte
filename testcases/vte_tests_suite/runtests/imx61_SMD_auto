@@ -407,7 +407,7 @@ TGE-LV-ALSA-0136 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24S-S24_LE.wav
 TGE-LV-ALSA-0138 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24S-S24_LE.wav
 TGE-LV-ALSA-0201 (arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav &); aplay $STREAM_PATH/alsa_stream/audio44k16S.wav && aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav && sleep 20 && aplay file.wav
 TGE-LV-ALSA-0200 (aplay -M $STREAM_PATH/alsa_stream/audio48k16S.wav &); arecord -r 16000 -c 1 -f S16_LE -N -M -d 20 file.wav && aplay file.wav
-TGE-LV-ALSA-0302 dac_test1.sh -f /mnt/nfs/test_stream/alsa_stream/*.wav -A && echo "PASS"
+TGE-LV-ALSA-0302 list=$(ls /mnt/nfs/test_stream/alsa_stream/*.wav); aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
 TGE-LV-ALSA-1161 power_test_alsa.sh 1
 TGE-LV-ALSA-0161 (dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k16S_long.wav -A &) && sleep 10 && rtc_testapp_6 -T 50; sleep 50
 TGE-LV-WIFI-0043 modprobe ar6000; sleep 5; iwconfig wlan0 mode managed && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001  && udhcpc -i wlan0 && sleep 10 && LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}') && iperf -d -c 10.192.225.222 -n 100M -B $LOCALIP  -t 100 && ifconfig wlan0 down && modprobe -r ar6000;

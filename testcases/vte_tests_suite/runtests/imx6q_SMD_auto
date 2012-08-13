@@ -95,7 +95,7 @@ TGE-LV-ALSA-0243 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24M-S24_LE.wa
 TGE-LV-ALSA-0244 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k24S-S24_LE.wav -A
 TGE-LV-ALSA-0245 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32M.wav -A
 TGE-LV-ALSA-0246 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio192k32S.wav -A
-TGE-LV-ALSA-0302 aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
+TGE-LV-ALSA-0302 list=$(ls /mnt/nfs/test_stream/alsa_stream/*.wav); aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
 TGE-LV-ALSA-0501 adc_test1.sh -f S16_LE -d 5 -c 1 -r 8000 -A
 TGE-LV-ALSA-0502 adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A
 TGE-LV-ALSA-0503 adc_test1.sh -f S16_LE -d 5 -c 1 -r 16000 -A

@@ -365,7 +365,7 @@ TGE-LV-USB-HOST-0010 cat /proc/partitions | grep sd
 TGE-LV-I2C-0001 i2cdetect -y -a -r 0 && i2cdetect -y -a -r 1
 TGE-LV-KERNEL-SMP-0009 smp_test.sh 4
 TGE-LV-BENCH-10001 coremark_F2.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F2.exe  0x3415 0x3415 0x66 0 7 1 2000 && coremark_F2.exe 8 8 8 0 7 1 1200
-TGE-LV-ALSA-0302 aplay /mnt/nfs/test_stream/alsa_stream_music/*.wav && echo "PASS"
+TGE-LV-ALSA-0302 list=$(ls /mnt/nfs/test_stream/alsa_stream/*.wav); aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
 TGE-LV-GPU-1006 power_test_gpu.sh 1
 TGE-LV-FB-1019 echo 1 > /sys/class/graphics/fb0/rotate && echo q | fbv ${LTPROOT}/testcases/bin/butterfly.png
 TGE-LV-GPT-0010 gpt_testapp
