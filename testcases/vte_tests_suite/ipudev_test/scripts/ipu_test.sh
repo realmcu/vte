@@ -122,38 +122,6 @@ cleanup()
     return $RC
 }
 
-check_platform()
-{
-    PLATFORM="31 35 37 51 53"
-    FB_AVAIL="37 51"
-    #  CPU_REV=$(cat /proc/cpuinfo | grep "Revision")
-    CPU_REV=$(platfm.sh)
-    for i in $PLATFORM
-    do
-        find=$(echo $CPU_REV | grep $i | wc -l )
-        if [ $find -ne 0 ]
-        then
-            TARGET=$i
-        fi
-    done
-    if [ ! -z $TARGET ]
-    then
-        CF=$(echo $FB_AVAIL | grep $TARGET | wc -l)
-        if [ $CF -ne 0 ]
-        then
-            FB_ENABLE=TRUE
-        fi
-    fi
-}
-
-# Used global var: $RC, $error_cmd_index
-record_result()
-{
-    RC=$(expr $RC + 1)
-    error_cmd_index="$error_cmd_index, $TOTAL"
-    echo $error_cmd_index
-}
-
 check_format_bits()
 {
     #FMLIST="RGBP BGR3 RGB3 BGR4 BGRA RGB4 RGBA ABGR YUYV UYVY Y444 NV12 I420 422P YV16"
@@ -513,11 +481,12 @@ test_case_07()
 		scsi_dev=$scsi_usbs
 	    echo "No ata device, use u-disk $scsi_dev"	
 	else
-		echo "No scsi device, program exit"
-		exit 7
+		echo "No scsi device, program will run with sd card or memory"
+		scsi_dev=""
 	fi
 
 	#fdisk,mkfs to scsi device if needed
+
 	mt_pt=''
 	tmp_dir=$(mktemp -d -p /mnt)
 	for i in $scsi_dev; do
@@ -546,16 +515,17 @@ test_case_07()
 	done
 	u_mount $tmp_dir
 	rm -rf $tmp_dir
-	if [ -z "$mt_pt" ]; then
-		echo "No enought free space in SCSI device!!!"
-		echo "Please use another SCSI device or free the current SCSI device."
-		exit 7
-	fi
 
     #mount sata
-    mkdir -p /mnt/msc
-	u_mount /mnt/msc /dev/$mt_pt
-	mount /dev/$mt_pt /mnt/msc
+    if [ -e "$mt_pt" ]; then
+		mkdir -p /mnt/msc
+		u_mount /mnt/msc /dev/$mt_pt
+		mount $mt_pt /mnt/msc
+	else
+		if [ -e /dev/mmcblk0p1 ]; then
+			mount /dev/mmcblk0p1 /mnt/msc || mount -t tmpfs tmpfs /mnt/msc
+		fi
+	fi
 
     #print test info
     tst_resm TINFO "test $TST_Count: $TCID "
@@ -575,7 +545,9 @@ test_case_07()
         WD=$(echo $infile | sed "s/+/ /g" | awk '{print $1}' )
         HT=$(echo $infile | sed "s/+/ /g" | awk '{print $2}' )
         infilename=$(echo $infile | sed "s/+/ /g"| awk '{print $3}')
-		cp ${STREAM_PATH}/video/${infilename} /mnt/msc || return $?
+		pstreams=/mnt/msc
+		cp ${STREAM_PATH}/video/${infilename} /mnt/msc/ || pstreams=${STREAM_PATH}/video/
+
         echo "TST_INFO: --------- rotate only test --------------------"
         for r in $ROTATION
         do
@@ -583,7 +555,7 @@ test_case_07()
                 continue;
             fi
             time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-                -O  ${WD},${HT},I420,${r},0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                -O  ${WD},${HT},I420,${r},0,0,0,0 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
             TOTAL=$(expr $TOTAL + 1)
         done
         echo "*************************************************************"
@@ -594,7 +566,7 @@ test_case_07()
             out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
             out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
             time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-                -O  ${out_w},${out_h},I420,0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                -O  ${out_w},${out_h},I420,0,0,0,0,0 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
             TOTAL=$(expr $TOTAL + 1)
         done
 
@@ -604,7 +576,7 @@ test_case_07()
             echo "TST_INFO: output format is: ${format}"
             echo "TST_INFO: --------f $OUTPUTFB -single CSC display---------------"
             time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-                -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
             TOTAL=$(expr $TOTAL + 1)
             dmesg -c
             echo "TST_INFO: --------- rotate with CRS test --------------------"
@@ -614,18 +586,18 @@ test_case_07()
                     continue;
                 fi
                 time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-                    -O  ${WD},${HT},${format},${r},0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                    -O  ${WD},${HT},${format},${r},0,0,0,0 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
                 TOTAL=$(expr $TOTAL + 1)
             done
             echo "TST_INFO: ---------CSC crop test------------"
             echo "CSC crop input"
             time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,32,32,64,64,0,0 \
-                -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                -O  ${WD},${HT},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
             dmesg -c
             TOTAL=$(expr $TOTAL + 1)
             echo "CSC crop output"
             time -p ${TST_CMD} -c ${fc} -i ${WD},${HT},I420,0,0,0,0,0,0 \
-                -O  ${WD},${HT},${format},0,32,32,64,64 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                -O  ${WD},${HT},${format},0,32,32,64,64 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
             dmesg -c
             TOTAL=$(expr $TOTAL + 1)
             #echo "CSC crop input and output"
@@ -640,7 +612,7 @@ test_case_07()
                 out_w=$(echo $outsize | sed "s/,/ /g" | awk '{print $1}')
                 out_h=$(echo $outsize | sed "s/,/ /g" | awk '{print $2}')
                 time -p ${TST_CMD} -c ${fc}  -i ${WD},${HT},I420,0,0,0,0,0,0 \
-                    -O  ${out_w},${out_h},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 /mnt/msc/${infilename}
+                    -O  ${out_w},${out_h},${format},0,0,0,0,0 -f $OUTPUTFB -s 1 ${pstreams}/${infilename}
                 TOTAL=$(expr $TOTAL + 1)
             done
         done
@@ -757,8 +729,6 @@ then
 	usage
     exit 1 
 fi
-
-check_platform
 
 setup || exit $RC
 
