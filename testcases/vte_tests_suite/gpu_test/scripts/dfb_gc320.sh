@@ -101,7 +101,7 @@ cd ${TEST_DIR}/${APP_SUB_DIR}/directfb
 ./dfbtest_window || RC=$(echo $RC dfbtest_window)
 ./direct_test   || RC=$(echo $RC direct_test)
 ./fusion_fork || RC=$(echo $RC fusion_fork)
-./fusion_reactor || RC=$(echo $RC fusion_reactor)
+#./fusion_reactor || RC=$(echo $RC fusion_reactor)
 ./fusion_skirmish || RC=$(echo $RC fusion_skirmish)
 
 cd /opt/viv_samples/hal/unit_test
