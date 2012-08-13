@@ -236,6 +236,6 @@ TGE-LV-V4L2-0010 v4l_capture_testapp -T 10
 TGE-LV-V4L2-4005 export DUAL=2;export NO_REMOVE=Y;v4l2_dual_test.sh 1
 TGE-LV-DVFS-0145_HHHH dvfs_mx60.sh 5
 TGE-LV-WDOG-0020 watchdog_testapp_2 -T 3 -S 1 -W 0
-TGE-LV-ALSA-0302 aplay /mnt/nfs/test_stream/alsa_stream/*.wav
+TGE-LV-ALSA-0302 list=$(ls /mnt/nfs/test_stream/alsa_stream/*.wav); aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
 TGE-LV-SECURITY-003 modprobe tcrypt mode=10 ; dmesg | grep "ecb" ; RT=$? ; echo $RT | grep 1 && dmesg | grep "cbc" ; RT=$? && echo $RT | grep 1 && cryptodev-demo1
 

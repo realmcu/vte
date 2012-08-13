@@ -251,7 +251,7 @@ TGE-LV-ALSA-0133 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k24S-S24_LE.wav
 TGE-LV-ALSA-0134 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio22k24S-S24_LE.wav
 TGE-LV-ALSA-0136 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio32k24S-S24_LE.wav
 TGE-LV-ALSA-0138 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio48k24S-S24_LE.wav
-TGE-LV-ALSA-0302 dac_test1.sh -f /mnt/nfs/test_stream/alsa_stream_music/*.wav -A && echo "PASS"
+TGE-LV-ALSA-0302 list=$(ls /mnt/nfs/test_stream/alsa_stream/*.wav); aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
 TGE-LV-ALSA-0137 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio44k24S-S24_LE.wav
 TGE-LV-ALSA-3002 arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D hw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 -traw && arecord -D plughw:0 -d 10 -f S16_LE -r 44100 -c 2 -traw | aplay -D hw:0 -f S16_LE -r 44100 -c 2 -traw
 TGE-LV-ALSA-0502 adc_test1.sh -f S16_LE -d 5 -c 1 -r 11025 -A
