@@ -1,3 +1,4 @@
+#!/bin/sh
 #Copyright (C) 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,22 +7,20 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
-###################################################################################################
+################################################################################
 #
 #    @file   mx37_vpu_dec_test.sh
 #
 #    @brief  shell script for testcase design for VPU decode
 #
-###################################################################################################
+################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
+#-------------------------   ------------    ----------  -----------------------
 #<Hake Huang>/-----             <2008/11/14>     N/A          Initial version
 # 
-###################################################################################################
-
+################################################################################
 
 
 # Function:     setup
