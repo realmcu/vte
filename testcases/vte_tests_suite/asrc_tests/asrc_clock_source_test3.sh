@@ -146,7 +146,7 @@ setup()
     for dev in $easi_devices; do
         if [ -z "$ESAI_CARD_NO" ]; then
             aplay -l | grep $dev
-            if [ $? -eq 0 ]
+            if [ $? -eq 0 ]; then
                 ESAI_CARD=$(aplay -l | grep $dev | awk '{print $2}' | sed 's/://')
                 ESAI_CARD_NO=$(echo $ESAI_CARD | sed -n '1p'| awk '{print $1}')
                 # ESAI ASRC card interface
