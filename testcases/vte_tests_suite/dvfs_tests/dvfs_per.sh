@@ -64,7 +64,7 @@ setup()
     RC=0
 
     # Total number of test cases in this file. 
-    export TST_TOTAL=3
+    export TST_TOTAL=4
 
     # The TCID and TST_COUNT variables are required by the LTP 
     # command line harness APIs, these variables are not local to this program.
@@ -170,18 +170,14 @@ dvfs_per_basic()
     RC=1
 
     #LCD test
-    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
-        lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10 || return $RC
-    fi
+    lcd_testapp -T 1 -B /dev/fb0 -D 16 -X 10 || return $RC
 
     #storage test
     storage_all.sh 2
 
     #V4L2-0071
-    if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
-        v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24 || return $RC
-        vpu_dec_test.sh 1 || return $RC
-    fi
+    v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24 || return $RC
+    vpu_dec_test.sh 1 || return $RC
     
     #suspend test
     rtc_testapp_6 -m standby -T 50 || return $RC
@@ -214,7 +210,7 @@ dvfs_per_stress()
         }
     fi
 
-    while [ $i -lt 50 ]; do
+    while [ $i -lt 10 ]; do
         i=`expr $i + 1`
 
         RC=2
@@ -224,6 +220,10 @@ dvfs_per_stress()
         RC=3
         adc_test1.sh -f S16_LE -d 5 -c 1 -r 44100 || return $RC
         tst_resm TINFO "Audio catpure test run times: $i"
+
+        RC=4
+        wifi_stress.sh 1 || return $RC
+        tst_resm TINFO "WiFi test run times: $i"
     done
 
     RC=0
@@ -237,7 +237,7 @@ suspend_stress()
     RC=4
 
     i=0
-    while [ $i -lt 500 ]; do
+    while [ $i -lt 200 ]; do
         i=`expr $i + 1`
         # Screen will unblank when resume, now blank them again to satisfy the busfreq condition
         for i in 1 2 3 4; do
