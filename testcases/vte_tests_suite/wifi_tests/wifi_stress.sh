@@ -11,26 +11,26 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=7
+    #TODO Total test case
+    export TST_TOTAL=1
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
-modprobe ar6000 || return 1
-sleep 5
-iwconfig wlan0 mode managed || return 1
-sleep 2
-iwlist wlan0 scanning | grep FSLLBGAP_001
-iwconfig wlan0 key bbd9837522
-iwconfig wlan0 essid FSLLBGAP_001
-udhcpc -i wlan0
-sleep 5
-export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
+    trap "cleanup" 0
+    modprobe ar6000 || return 1
+    sleep 5
+    iwconfig wlan0 mode managed || return 1
+    sleep 2
+    iwlist wlan0 scanning | grep FSLLBGAP_001
+    iwconfig wlan0 key bbd9837522
+    iwconfig wlan0 essid FSLLBGAP_001
+    udhcpc -i wlan0
+    sleep 5
+    export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
 
-return $RC
+    return $RC
 }
 
 # Function:     cleanup
@@ -62,7 +62,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+#TODO add function test script here
 tcp_stream_2nd_script 10.192.225.222 CPU || RC=$(expr $RC + 1)
 udp_stream_2nd_script 10.192.225.222 CPU || RC=$(expr $RC + 1)
 
@@ -73,8 +73,9 @@ return $RC
 
 usage()
 {
-echo "$0 [case ID]"
-echo "1: "
+    echo "$0 [case ID]"
+    echo "1: WiFi stress test with netperf"
+    exit 1
 }
 
 # main function
