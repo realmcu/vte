@@ -7,9 +7,9 @@ DEF_DEVNODE="/dev/sdb"		# default applies to target
 LOGFILE=updater.log
 
 showhelp() {
-bn=`basename $0`
-ver=`echo '$Revision: 1.1 $' | sed 's/.Revision. \(.*\)./\1/'`
-cat << eot
+    bn=`basename $0`
+    ver=`echo '$Revision: 1.1 $' | sed 's/.Revision. \(.*\)./\1/'`
+    cat << eot
 ====================  $bn Version: $ver ==================
 
 usage $bn [-h] [-k <zImage name>] [-b <redboot name>] [-r <ext2 image file>] [-n <device node>] [-o <offset>] [-i] [-c]
@@ -25,6 +25,8 @@ usage $bn [-h] [-k <zImage name>] [-b <redboot name>] [-r <ext2 image file>] [-n
   -c 				Erase the contents of the logfile (${LOGFILE}) before executing
 
 eot
+
+    exit 1
 }
 
 
@@ -47,27 +49,27 @@ GUNZIP=/bin/gunzip
 
 if [ ! -e ${DD} ] ; then
 	echo "Error: ${DD} not found"
-	exit -1
+	exit 255
 fi
 
 if [ ! -e ${OD} ] ; then
         echo "Error: ${OD} not found"
-        exit -1
+        exit 255
 fi
 
 if [ ! -e ${HEAD} ] ; then
         echo "Error: ${HEAD} not found"
-        exit -1
+        exit 255
 fi
 
 if [ ! -e ${SYNC} ] ; then
 	echo "Error: ${SYNC} not found"
-	exit -1
+	exit 255
 fi
 
 if [ ! -e ${GUNZIP} ] ; then
 	echo "Error: ${GUNZIP} not found"
-	exit -1
+	exit 255
 fi
 	
 check_padding() {
@@ -94,7 +96,7 @@ update_chunk() {
 	ECODE=$?
 	if [ ${ECODE} -ne 0 ] ; then
 		echo "Error: ${DD} failed with exit code ${ECODE}"
-		exit -1
+		exit ${ECODE}
 	fi
 }
 
@@ -123,6 +125,7 @@ part_disk()
     partition1_start=`expr $cylinders / 100`
     partition1_size=`expr $cylinders / 4`
     partition2_start=`expr $partition1_start + $partition1_size + 1`
+    sleep 2
     sfdisk --force $1 << EOF
 ${partition1_start},${partition1_size},0c
 ${partition2_start}
@@ -160,7 +163,7 @@ done
 # can not have -k and -r
 #if [ $DO_REDBOOT -eq 1 -a $DO_KERNEL -eq 1 ] ; then
 #	echo "Error: Should offset apply to -k or -r ? Choose"
-#	exit -1
+#	exit 253
 #fi
 
 # anything to do ?
@@ -170,10 +173,10 @@ if [ $DO_REDBOOT -eq 0 -a $DO_KERNEL -eq 0 -a $DO_INIT -eq 0 -a $DO_CLEAN -eq 0 
 fi
 
 # does the device node exist ?
-if [ ! -e ${DEVNODE} ] ; then
+if [ ! -e "${DEVNODE}" ] ; then
 	echo "${DEVNODE}: no such file or directory"
-	exit -1
-elif [ "$DEVNODE" = "/dev/sda" ]; then
+	exit 254
+elif echo $DEVNODE |grep "sda"; then
     echo "device node should not be sda"
     exit 67
 fi
@@ -192,7 +195,7 @@ if [ $DO_INIT -eq 1 ] ; then
 	if [ $ECODE -ne 0 ] ; then
 		echo " Failed"
 		echo "Error: initalization of the device failed ($ECODE)"
-		exit -1
+		exit $ECODE
 	fi
 	echo " Done"
 fi
@@ -203,7 +206,7 @@ if [ $DO_KERNEL -eq 1 ] ; then
 	if [ ! -e ${ZIMAGE} ] ; then
 		echo " Failed"
 		echo "${ZIMAGE}: no such file or directory"
-		exit -1
+		exit 254
 	fi
 	#            FILE       NODE       OFFSET  
 	update_chunk ${ZIMAGE} ${DEVNODE} ${KN_OFFSET} 	
@@ -216,7 +219,7 @@ if [ $DO_REDBOOT -eq 1 ] ; then
 	if [ ! -e ${REDBOOT} ] ; then
 		echo " Failed"
 		echo "${REDBOOT}: no such file or directory"
-		exit -1
+		exit 254
 	fi
 
 	check_padding ${REDBOOT}
@@ -244,12 +247,12 @@ fi
 if [ $DO_RFS -eq 1 ] ; then
 	#if [ $DO_REDBOOT -eq 1 -o $DO_KERNEL -eq 1 -o $DO_INIT -eq 1 ] ; then
 	#	echo 'Error: the device node for -k|-b|-i and -r is different'
-	#	exit -1
+	#	exit 253
 	#fi
 	
 	if [ ! -e ${RFS} ] ; then
 		echo "Error: ${RFS}: no such file or directory"
-		exit -1
+		exit 254
 	fi
 
     prefix_DEVNODE=`echo $DEVNODE |cut -c -8`
@@ -284,6 +287,8 @@ if [ $DO_RFS -eq 1 ] ; then
         echo ${RFS} | egrep -e '\.tgz$' >> ${LOGFILE} 2>&1
         ISTAR=$?
     fi
+	echo ${RFS} | egrep -e '\.ext2$' >> ${LOGFILE} 2>&1
+    ISEXT2=$?
 
     mkdir -p /mnt/msc
     sleep 5
@@ -297,24 +302,31 @@ if [ $DO_RFS -eq 1 ] ; then
     if [ ${ISTAR} -eq 0 ]; then
         tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
         sync
-    elif [ ${ISCMPD} -eq 0 ] ; then
-		EXT2_RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
-		${GUNZIP} -c ${RFS} > ${EXT2_RFS}
-		RET=$?
-		if [ ${RET} -ne 0 ] ; then
-			echo "Error: ${GUNZIP} failed (${RET})"
-			exit -1
-		fi
+    elif [ $ISEXT2 -eq 0 ] || [ ${ISCMPD} -eq 0 ]; then
+        if [ ${ISCMPD} -eq 0 ] ; then
+            EXT2_RFS=`echo rootfs.ext2.gz | sed -e 's/\.gz$//'`
+            ${GUNZIP} -c ${RFS} > ${EXT2_RFS}
+            RET=$?
+            if [ ${RET} -ne 0 ] ; then
+                echo "Error: ${GUNZIP} failed (${RET})"
+                exit $RET
+            fi
+        fi
+        if [ -n "$EXT2_RFS" ]; then
+            real_rfs=$EXT2_RFS
+        else
+            real_rfs=$RFS
+        fi
         mkdir -p /mnt/ext2
-        mount -t ext2 -o loop $EXT2_RFS /mnt/ext2 >> ${LOGFILE} 2>&1
+        mount -t ext2 -o loop $real_rfs /mnt/ext2 >> ${LOGFILE} 2>&1
         cp -a /mnt/ext2/* /mnt/msc
         RET=$?
         if [ ${RET} -ne 0 ] ; then
             echo "Error: ${DD} failed with exit code ${RET}"
-            exit -1
+            exit $RET
         fi
         #clean
-        sync && sync
+        sync || sync
         umount /mnt/ext2
     fi
     umount /mnt/msc >> ${LOGFILE} 2>&1
