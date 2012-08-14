@@ -23,6 +23,7 @@
 #Andy Tian                    05/10/2012         N/A      rotation device set to vpu if output size
 #														  larger or equal 720p
 #Andy Tian                    05/16/2012         N/A      add encode size list if camera used.
+#Shelly Cheng                 08/14/2012         N/A      MX6 ARD board no support camera.
 # 
 ################################################################################
 
@@ -63,6 +64,16 @@ echo 1100 > /sys/class/regulator/regulator_1_SW2/uV
 fi
 fi
 
+pt=$(platfm.sh)
+case "$pt" in
+'IMX6Solo-SABREAUTO'):
+NO_CAMERA=y
+;;
+'IMX6-SABREAUTO') :
+NO_CAMERA=y
+;;
+esac
+                                                                                         
 if [ -z $NO_CAMERA ]; then
 v4l_module.sh setup
 OV=$?
