@@ -1,3 +1,7 @@
-export PATH=$PATH:$(pwd)/testcases/bin
-export STREAM_PATH=$(pwd)/../test_stream
+#!/bin/sh
+echo "--------------------"
 export LTPROOT=$(pwd)
+echo $LTPROOT
+export STREAM_PATH=$(pwd)/../test_stream
+export PATH=$PATH:$(pwd)/testcases/bin
+echo "--------------------"
