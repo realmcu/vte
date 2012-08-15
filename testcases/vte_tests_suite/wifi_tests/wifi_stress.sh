@@ -26,6 +26,7 @@ setup()
     iwlist wlan0 scanning | grep FSLLBGAP_001
     iwconfig wlan0 key bbd9837522
     iwconfig wlan0 essid FSLLBGAP_001
+    ifconfig wlan0 up
     udhcpc -i wlan0 || dhclient wlan0 || return 1
     sleep 5
     export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
