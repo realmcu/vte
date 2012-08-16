@@ -440,7 +440,7 @@ audio)
      [ $ddr -eq 50000000 ] || RC=2
     ;;
 medium)
-    [ $ddr -eq 400000000 ] || RC=3
+    [ $ddr -eq  396000000 ] || RC=3
     ;;
 high)
     [ $ddr -eq 528000000 ] || RC=4
@@ -515,6 +515,7 @@ high_mode()
 {
 	RC=0
 	ifconfig eth0 up
+	udhclient || dhclient
 	echo 0 > /sys/class/graphics/fb0/blank
 	sleep 5
 	modprobe galcore
@@ -524,7 +525,7 @@ high_mode()
 	/unit_tests/mxc_vpu_test.out -D "-f 2 -a 100 -y 1 -i /tmp/test_video.h264" & 
 	check_status high
 	RC2=$(wait)
-	RC=$(expr $RC1 + RC2)
+	RC=$(expr $RC1 + $RC2 )
 	return $RC
 }
 
@@ -548,12 +549,13 @@ test_case_07()
     #print test info
     echo TINFO "test $TST_COUNT: $TCID "
 	pre_bus_mode
-	i=0
+	cnt=0
     LOOPS=$TOTAL_PT
-	while [ $i -lt $LOOPS ]; do
+	while [ $cnt -lt $LOOPS ]; do
 	low_bus_mode || RC=$(expr $RC + 1)
 	audio_mode || RC=$(expr $RC + 1)
 	high_mode || RC=$(expr $RC + 1)
+	cnt=$(expr $cnt + 1)
 	done
 
 	clean_bus_mode
