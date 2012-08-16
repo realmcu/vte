@@ -79,7 +79,7 @@ cleanup()
 
     #TODO add cleanup code here
 
-
+	clean_bus_mode
     return $RC
 }
 
@@ -407,6 +407,161 @@ test_case_06()
     return $RC
 }
 
+pre_bus_mode()
+{
+	mount -t debugfs nodev /sys/kernel/debug
+	axi_path=$(find /sys/kernel/debug/clock/osc_clk -name axi_clk)
+	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch0_axi_clk)
+	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+    mount -t tmpfs tmpfs /tmp
+	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
+	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
+	cp $a_stream_path /tmp/test_video.h264
+	cp /mnt/nfs/util/Graphics/imx61_rootfs/test/simple_draw /tmp/
+}
+
+clean_bus_mode()
+{
+	ifconfig eth0 up
+    umount /tmp
+}
+
+check_status()
+{
+RC=0
+axi=$(cat ${axi_path}/rate)
+ddr=$(cat ${ddr_path}/rate)
+case "$1" in
+low)
+#axi bus to 24M
+     [ $axi -eq 24000000 ] || RC=1
+    ;;
+audio)
+     [ $ddr -eq 50000000 ] || RC=2
+    ;;
+medium)
+    [ $ddr -eq 400000000 ] || RC=3
+    ;;
+high)
+    [ $ddr -eq 528000000 ] || RC=4
+    ;;
+*)
+    ;;
+esac
+
+echo "$1 status is $RC"
+
+return $RC
+}
+
+screen_off()
+{
+	for i in $(find  /sys/class/graphics/ -name fb* )
+		do
+	if [ -e ${i}/blank  ]; then
+		echo 1 > ${i}/blank	
+	fi
+	done
+	
+}
+
+low_bus_mode()
+{
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+    check_status low	
+	#now do suspned and resume
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	screen_off
+	sleep 5
+    check_status low	
+	return $RC
+}
+
+audio_mode()
+{
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+	aplay /tmp/audio12k16M.wav &
+	check_status audio
+	RC=$(wait)
+	return $RC
+}
+
+medium_mode()
+{
+#note this can not be test automatically, as usboh can not be off when there is usb
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+	#usboh3_clk is the medium one
+	mount /dev/sda1 /mnt/sda1
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	umount /dev/sda1 /mnt/sda1
+}
+
+high_mode()
+{
+	RC=0
+	ifconfig eth0 up
+	echo 0 > /sys/class/graphics/fb0/blank
+	sleep 5
+	modprobe galcore
+	/temp/simple_draw &
+	check_status high
+	RC1=$(wait)
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -a 100 -y 1 -i /tmp/test_video.h264" & 
+	check_status high
+	RC2=$(wait)
+	RC=$(expr $RC1 + RC2)
+	return $RC
+}
+
+# Function:     test_case_07
+# Description   - Test if experiences of all possible bus status
+#
+test_case_07()
+{
+    #TODO give TCID
+    TCID="CPUFreq_bus"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
+    #flag 24  CPU_FREQ_TRIG_UPDATE | AHB_HIGH_SET_POINT
+    #flag 40  CPU_FREQ_TRIG_UPDATE | AHB_MED_SET_POINT
+	#flag 72  CPU_FREQ_TRIG_UPDATE | AHB_AUDIO_SET_POINT
+	#needed test binary
+
+    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	sleep 5 
+    #print test info
+    echo TINFO "test $TST_COUNT: $TCID "
+	pre_bus_mode
+	i=0
+    LOOPS=$TOTAL_PT
+	while [ $i -lt $LOOPS ]; do
+	low_bus_mode || RC=$(expr $RC + 1)
+	audio_mode || RC=$(expr $RC + 1)
+	high_mode || RC=$(expr $RC + 1)
+	done
+
+	clean_bus_mode
+    return $RC
+}
+
+
+
 usage()
 {
     echo "$0 [case ID]"
@@ -455,6 +610,9 @@ case "$1" in
     ;;
 6)
     test_case_06 || exit $RC
+    ;;
+7)
+    test_case_07 || exit $RC
     ;;
 *)
     usage
