@@ -141,7 +141,9 @@ done
 for i in $on_chip_controller_device_list
 do
   #1. find devices node
-  d_list=$(cat /proc/partitions | grep -i $i | awk '{print $4}'| grep -vi "${i}p")
+  # grep out "boot" in case list including mmcblk0bootX on SMD board eMMC,
+  # which can not be fdisk
+  d_list=$(cat /proc/partitions | grep -i $i | awk '{print $4}'| grep -vi "boot"| grep -vi "${i}p")
   #2. deteminate partition
 	for j in $d_list
 	do
