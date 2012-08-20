@@ -1,4 +1,4 @@
-#!/bin/sh
+
 #Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # The code contained herein is licensed under the GNU General Public
@@ -68,8 +68,6 @@ cleanup()
     kill -9 $ts_pid
     kill -9 $acc_pid
     kill -9 $sensor_pid
-    cd $old_dir
-    umount /mnt/stream
 
     echo "clean up environment end"
     return $RC
@@ -121,8 +119,9 @@ overload_test()
     while [ $# -gt 0 ]; do
         case $1 in
             audio)
-            if [ aplay -l |grep 'card 0' ]; then
-                while true; do aplay $STREAM_PATH/alsa_stream/audio44k16S_long.wav; done &
+            aplay -l |grep 'card 0'
+            if [ $? -eq 0 ]; then
+                aplay $STREAM_PATH/alsa_stream/*.wav &
                 audio_pid=$!
             else
                 echo "WARNING: No sound card found, won't proceed with audio test"
@@ -133,19 +132,8 @@ overload_test()
             camera_pid=$!
             shift;;
             hdmi)
-            old_dir=$(pwd)
-            mkdir -p /mnt/stream && mount -t nfs -o nolock 10.192.225.210:/d2/01_CodecVectors /mnt/stream && cd /mnt/stream/SHAVectors/H264Dec/Conformance/1080p
-            if [ ! -d /mnt/stream/SHAVectors/H264Dec/Conformance/1080p ];then
-                echo "WARNING: HDMI test stream mount failed, ignore HDMI test, please check."
-            else
-                gplay H264_MP40_1920x1080_23.976_9682_AACLC_44.1_98_2_CBR_donmckay.mov
-                if [ $? -eq 0 ]; then
-                    while true; do gplay H264_MP40_1920x1080_23.976_9682_AACLC_44.1_98_2_CBR_donmckay.mov; done &
-                    hdmi_pid=$!
-                else
-                    echo "WARNING: gplay can't play the streams, please check."
-                fi
-            fi
+                 /unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.h264 -f 2 -x 18" &
+                 hdmi_pid=$!
             shift;;
             ts)
             evtest /dev/input/ts0 &
