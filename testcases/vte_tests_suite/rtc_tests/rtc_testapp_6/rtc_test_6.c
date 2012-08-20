@@ -398,7 +398,8 @@ int VT_rtc_test6(char* sleep_mode, int seconds)
         }
         if  (rtc_tm.tm_hour >= 24)
         {
-                tst_brkm( TRETR, cleanup, "    Run test issue. Restart it." );
+			rtc_tm.tm_hour = 0;
+            /*tst_brkm( TRETR, cleanup, "    Run test issue. Restart it." );*/
         }
 
         retval = ioctl( file_desc, RTC_ALM_SET, &rtc_tm );
