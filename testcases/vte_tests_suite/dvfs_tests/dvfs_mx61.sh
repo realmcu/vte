@@ -413,6 +413,7 @@ pre_bus_mode()
 	axi_path=$(find /sys/kernel/debug/clock/osc_clk -name axi_clk)
 	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch0_axi_clk)
 	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+	platfm=$(platfm.sh)
     mount -t tmpfs tmpfs /tmp
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
 	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
@@ -431,19 +432,37 @@ check_status()
 RC=0
 axi=$(cat ${axi_path}/rate)
 ddr=$(cat ${ddr_path}/rate)
+
+declare -a axi;
+declare -a ddr;
+
+if [ $platfm -eq 63 ]then
+  axi="24000000 132000000 264000000 264000000"
+  ddr="24000000 50000000  396000000 528000000"
+elif [ $platfm -eq 61  ];then
+  axi="24000000 132000000 264000000 264000000"
+  ddr="24000000 50000000 396000000 396000000"
+elif [ $platfm -eq 60 ]; then
+  axi="24000000 198000000 198000000 198000000"
+  ddr="24000000 396000000 396000000 396000000"
+else
+  axi="24000000 132000000 264000000 264000000"
+  ddr="24000000 50000000  396000000 528000000"
+fi
+
 case "$1" in
 low)
 #axi bus to 24M
-     [ $axi -eq 24000000 ] || RC=1
+     [ axi[0] -eq 24000000 ] || RC=1
     ;;
 audio)
-     [ $ddr -eq 50000000 ] || RC=2
+     [ ddr[1] -eq 50000000 ] || RC=2
     ;;
 medium)
-    [ $ddr -eq  396000000 ] || RC=3
+    [ ddr[2] -eq  396000000 ] || RC=3
     ;;
 high)
-    [ $ddr -eq 528000000 ] || RC=4
+    [ ddr[3] -eq 528000000 ] || RC=4
     ;;
 *)
     ;;
