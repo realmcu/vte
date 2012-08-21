@@ -48,7 +48,7 @@ test_case_01()
     #TODO add function test scripte here
     storage_all.sh 1 &
 
-    sleep 5
+    sleep 50
     echo "core test"
     i=0
     loops=10
@@ -57,7 +57,9 @@ test_case_01()
     do
         i=$(expr $i + 1)
         echo mem > /sys/power/state
+		sleep 5
         echo standby > /sys/power/state
+		sleep 5
     done
 
     sleep 30
@@ -88,14 +90,16 @@ test_case_02()
     #TODO add function test scripte here
     storage_all.sh 1 &
 
-    sleep 5
+    sleep 50
     i=0
     loops=1000
     while [ $i -lt $loops ]
     do
         i=$(expr $i + 1)
         rtc_testapp_6 -T 50 -m mem
+		sleep 5
         rtc_testapp_6 -T 50 -m standby
+		sleep 5
     done
 
     wait
@@ -123,7 +127,7 @@ test_case_03()
     #TODO add function test scripte here
     storage_all.sh 1 &
 
-    sleep 5
+    sleep 50
     echo "core test"
     i=0
     loops=10
@@ -132,6 +136,7 @@ test_case_03()
     do
         i=$(expr $i + 1)
         echo standby > /sys/power/state
+		sleep 5
     done
 
     sleep 30
