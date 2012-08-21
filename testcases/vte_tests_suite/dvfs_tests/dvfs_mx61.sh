@@ -436,7 +436,7 @@ ddr=$(cat ${ddr_path}/rate)
 declare -a axi;
 declare -a ddr;
 
-if [ $platfm -eq 63 ]then
+if [ $platfm -eq 63 ]; then
   axi="24000000 132000000 264000000 264000000"
   ddr="24000000 50000000  396000000 528000000"
 elif [ $platfm -eq 61  ];then
