@@ -79,7 +79,7 @@ test_case_01()
 	TCID="capture_mode"
 	#TODO give TST_COUNT
 	TST_COUNT=1
-	RC=1
+	RC=0
 
 	#print test info
 	tst_resm TINFO "test $TST_COUNT: $TCID "
@@ -97,7 +97,7 @@ test_case_01()
 	do
 		for n in $MODES564215FPS
 		do
-			${TSTCMD} -T 5 -C 2 -D /dev/video0  -M $n  & ${TSTCMD} -T 5  -v -C 2 -s CSI_MEM -O YUV420  -D /dev/video1 -M $m ||return $RC
+			${TSTCMD} -T 5 -C 2 -D /dev/video0  -M $n  & ${TSTCMD} -T 5  -v -C 2 -s CSI_MEM -O YUV420  -D /dev/video1 -M $m ||RC=$(expr $RC + 1 )
 		done
 	done
 	echo "farme rate 30"
@@ -105,7 +105,7 @@ test_case_01()
 	do
 		for n in $MODES564230FPS
 		do
-			${TSTCMD} -T 5 -C 2 -D /dev/video0 -M $n & ${TSTCMD} -T 5 -C 2 -v -s CSI_MEM -O YUV420   -D /dev/video1 -M $m ||return $RC
+			${TSTCMD} -T 5 -C 2 -D /dev/video0 -M $n & ${TSTCMD} -T 5 -C 2 -v -s CSI_MEM -O YUV420   -D /dev/video1 -M $m || RC=$(expr $RC + 1 )
 		done
 	done
 	return $RC
