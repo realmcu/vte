@@ -229,11 +229,8 @@ TGE-LV-STORAGE-0001 power_test_storage.sh 1
 TGE-LV-WIFI-1062 export SERVERIP=10.192.244.7;power_test_wifi.sh 3
 TGE-LV-ENET-1060 export SERVERIP=10.192.244.7;power_test_enet.sh 1
 TGE-LV-WIFI-1060 export SERVERIP=10.192.225.222;power_test_wifi.sh 1
-TGE-LV-V4L2-0143 v4l_capture_testapp -C 2 -T 30  -O YUV420 -d ResolutionCfg -n 12
 TGE-LV-USB-HOST-0010 get_scsi.sh usbs
 TGE-LV-FB-EPDC-0013_HHHH epdc_full.sh 1
-TGE-LV-V4L2-0010 v4l_capture_testapp -T 10
-TGE-LV-V4L2-4005 export DUAL=2;export NO_REMOVE=Y;v4l2_dual_test.sh 1
 TGE-LV-DVFS-0145_HHHH dvfs_mx60.sh 5
 TGE-LV-WDOG-0020 watchdog_testapp_2 -T 3 -S 1 -W 0
 TGE-LV-ALSA-0302 list=$(ls /mnt/nfs/test_stream/alsa_stream/*.wav); aplay -N -M /mnt/nfs/test_stream/alsa_stream/*.wav
