@@ -148,13 +148,18 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
+tempfile=$(mktemp)
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
 echo cl11 conformance
 echo "==========================="
 cd cl11/conform
-./test_all.sh || RC=1
+./test_all.sh | tee -a $tempfile 
+
+RC=$(cat $tempfile | grep -i "fail" | wc -l)
+
+rm -rf $tempfile
 
 return $RC
 }
