@@ -95,6 +95,10 @@ test_case_02()
     loops=1000
     while [ $i -lt $loops ]
     do
+    	echo core > /sys/power/pm_test
+        rtc_testapp_6 -T 50 -m mem
+    	echo none > /sys/power/pm_test
+		sleep 5
         i=$(expr $i + 1)
         rtc_testapp_6 -T 50 -m mem
 		sleep 5
