@@ -24,7 +24,7 @@
 #Author                          Date          Number    Description of Changes
 #Hake                         2011/03/17        NA        init multi-device test
 #-------------------------   ------------    ----------  -------------------------------------------
-# 
+#
 
 p_node()
 {
@@ -123,7 +123,7 @@ do
 			umount $tmp_dir
 		done
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
-#no partition then partition it to 1 partition 
+#no partition then partition it to 1 partition
        p_node /dev/$j || break
 			 target_list=$target_list" "${j}1
 		fi
@@ -171,7 +171,7 @@ do
 			umount $tmp_dir
 		done
     	if [ $(echo $p_list | wc -w) -eq 0 ]; then
-#no partition then partition it to 1 partition 
+#no partition then partition it to 1 partition
        		p_node /dev/$j || break
 			target_list=$target_list" "${j}p1
 		fi
@@ -230,10 +230,9 @@ run_single_test_list()
 		fi
 		for j in $mount_point
 		do
-		 free_size=$(df -m $j | tail -1 | awk '{print $4}')
-		 free_size=$(expr $free_size - 50)
-	 	 bonnie\+\+ -d $j -u 0:0 -s $free_size  -r 100 || RC=$(echo $RC b$i)  
-		 dt of=$j/test_file bs=4k limit=$free_size passes=10 || RC=$(echo $RC d$i)
+         free_size=`get_free_size_mb $j`
+	 	 bonnie\+\+ -d $j -u 0:0 -s $free_size  -r 100 || RC=$(echo $RC b$i)
+		 dt of=$j/test_file bs=4k limit=${free_size}m passes=10 || RC=$(echo $RC d$i)
 		 if [ $need_umount -eq 1  ];then
       		umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
@@ -298,10 +297,10 @@ run_iozone_test_list()
 
 # Function:     test_case_01
 # Description   - Test if single ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_storage_single"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -322,10 +321,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if single ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_storage_single"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -367,12 +366,14 @@ target_list=""
 
 setup || exit $RC
 
+source `which api_storage`
+
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
-  test_case_02 $2 || exit $RC 
+  test_case_02 $2 || exit $RC
   ;;
 *)
   usage

@@ -24,7 +24,7 @@
 #Author                          Date          Number    Description of Changes
 #Hake                         2011/01/17        NA        init multi-device test
 #-------------------------   ------------    ----------  -------------------------------------------
-# 
+#
 
 p_node()
 {
@@ -128,7 +128,7 @@ do
 			umount $tmp_dir
 		done
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
-#no partition then partition it to 1 partition 
+#no partition then partition it to 1 partition
        p_node /dev/$j || continue
  	   mkfs.ext3 /dev/${j}1 || continue
 	   target_list=$target_list" "${j}1
@@ -185,7 +185,7 @@ do
 			umount $tmp_dir
 		done
     if [ $(echo $p_list | wc -w) -eq 0 ]; then
-#no partition then partition it to 1 partition 
+#no partition then partition it to 1 partition
        p_node /dev/$j || continue
  	   mkfs.ext3 /dev/${j}p1 || continue
 			 target_list=$target_list" "${j}p1
@@ -238,7 +238,7 @@ run_simple_list()
      mount_point=$(mktemp -d -p /tmp)
 		 mount /dev/$i $mount_point || RC=$(echo $RC m$i)
 		 sleep 5
-		 if [ ! -z $(echo $RC | grep -i $i)  ];then
+		 if [ ! -z "$(echo $RC | grep -i $i)"  ];then
 			 rm -rf $mount_point
 			 continue
 		 fi
@@ -246,18 +246,21 @@ run_simple_list()
 		fi
 		for j in $mount_point
 		do
-	   dt of=$j/test_file bs=4k limit=96m passes=2 || RC=$(echo $RC d$i)
+         limit=`get_dt_limit $j 96000` || limit=96000
+	     dt of=$j/test_file bs=4k limit=${limit}k passes=2 || RC=$(echo $RC d$i)
 		 if [ $need_umount -eq 1  ];then
-      umount $mount_point || RC=$(echo $RC u$i)
+            umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
 		 fi
 		 break
 		done
 	 done
+
 	 if [ "$RC" != "0"  ];then
-	 echo $RC
-	 RC=1
+        echo $RC
+        RC=1
 	 fi
+
 	 return $RC
 }
 
@@ -288,8 +291,9 @@ run_single_test_list()
 		fi
 		for j in $mount_point
 		do
-	 	 bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 || RC=$(echo $RC b$i)  
-	   dt of=$j/test_file bs=4k limit=96m passes=10 || RC=$(echo $RC d$i)
+	 	 bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 || RC=$(echo $RC b$i)
+         limit=`get_dt_limit $j 96000` || limit=96000
+	     dt of=$j/test_file bs=4k limit=${limit}k passes=10 || RC=$(echo $RC d$i)
 		 if [ $need_umount -eq 1  ];then
       umount $mount_point || RC=$(echo $RC u$i)
 			rm -rf $mount_point
@@ -333,8 +337,9 @@ run_multi_test_list()
 		fi
 		for j in $mount_point
 		do
-	  		bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 &  
-	  		dt of=$j/test_file bs=4k limit=96m passes=10 &
+	  		bonnie\+\+ -d $j -u 0:0 -s 96 -r 48 &
+            limit=`get_dt_limit $j 96000` || limit=96000
+	  		dt of=$j/test_file bs=4k limit=${limit}k passes=10 &
 	  		break
 		done
 	done
@@ -355,10 +360,10 @@ run_multi_test_list()
 
 # Function:     test_case_01
 # Description   - Test if single ok
-#  
+#
 test_case_01()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_storage_single"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -378,10 +383,10 @@ return $RC
 
 # Function:     test_case_02
 # Description   - Test if multi ok
-#  
+#
 test_case_02()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_storage_multi"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -401,10 +406,10 @@ return $RC
 
 # Function:     test_case_03
 # Description   - Test if single process power manager ok
-#  
+#
 test_case_03()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_storage_single"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -434,10 +439,10 @@ return $RC
 
 # Function:     test_case_04
 # Description   - Test if single ok
-#  
+#
 test_case_04()
 {
-#TODO give TCID 
+#TODO give TCID
 TCID="test_storage_simple"
 #TODO give TST_COUNT
 TST_COUNT=1
@@ -458,11 +463,12 @@ return $RC
 
 usage()
 {
-echo "$0 [case ID]"
-echo "1: single process test"
-echo "2: multi process test"
-echo "3: power manager test"
-echo "4: simple test"
+    echo "$0 [case ID]"
+    echo "1: single process test"
+    echo "2: multi process test"
+    echo "3: power manager test"
+    echo "4: simple test"
+    exit 1
 }
 
 # main function
@@ -477,24 +483,26 @@ target_list=""
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1 
+    usage
 fi
+
+# source API
+source `which api_storage`
 
 setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
+  test_case_01 || exit $RC
   ;;
 2)
-  test_case_02 || exit $RC 
+  test_case_02 || exit $RC
   ;;
 3)
-  test_case_03 || exit $RC 
+  test_case_03 || exit $RC
   ;;
 4)
-  test_case_04 || exit $RC 
+  test_case_04 || exit $RC
   ;;
 *)
   usage

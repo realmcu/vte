@@ -96,7 +96,8 @@ run_manual_test_list()
     mkfs.vfat /dev/sda1 || return $RC
     mkdir -p /media/sda1; mount -t vfat /dev/sda1 /media/sda1 || return $RC
     bonnie\+\+ -d /media/sda1 -u 0:0 -s 10 -r 5 || return $RC
-    dt of=/media/sda1/test_file bs=4k limit=128m passes=20 || return $RC
+    limit=`get_dt_limit /media/sda1 128000` || limit=128000
+    dt of=/media/sda1/test_file bs=4k limit=${limit}k passes=20 || return $RC
     modprobe -r ehci-hcd
     echo "please un plug the usb card"
     read -p "press any key when ready" key
@@ -119,7 +120,8 @@ run_manual_test_list()
     echo "please run bwloe on pc"
     echo "mount -t ext3 /dev/sd? /mnt/flash"
     echo "bonnie\+\+ -d /mnt/flash -u 0:0 -s 10 -r 5"
-    echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
+    limit=`get_dt_limit /mnt/flash 128000` || limit=128000
+    echo "dt of=/mnt/flash/test_file bs=4k limit=${limit}k passes=20"
 
     read -p "is pc run above case ok? y/n" key
     if [ "$key" = 'n' ]; then
@@ -140,7 +142,8 @@ run_manual_test_list()
     mkdir -p /mnt/mmc
     mount -t vfat /dev/mmcblk0p1 /mnt/mmc
     bonnie\+\+ -d /mnt/mmc -u 0:0 -s 10 -r 5
-    dt of=/mnt/mmc/test_file bs=4k limit=128m passes=20
+    limit=`get_dt_limit /mnt/mmc 128000` || limit=128000
+    dt of=/mnt/mmc/test_file bs=4k limit=${limit}k passes=20
 
     RC=0
     return $RC
@@ -487,6 +490,9 @@ fi
 
 # cpufreq_value[] array will be discovered in setup()
 declare -a cpufreq_value
+
+source `which api_storage`
+
 setup || exit $RC
 
 case "$1" in

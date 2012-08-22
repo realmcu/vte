@@ -96,7 +96,7 @@ run_manual_test_list()
  mkfs.ext3 /var/storage.img
  modprobe g_file_storage file=/var/storage.img
  echo "now please mount the usb device on PC"
- echo "please run bwloe on pc"
+ echo "please run below on PC"
  echo "mount -t ext3 /dev/sd? /mnt/flash"
  echo "bonnie\+\+ -d /mnt/flash -u 0:0 -s 10 -r 5"
  echo "dt of=/mnt/flash/test_file bs=4k limit=128m passes=20"
