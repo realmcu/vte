@@ -1,0 +1,61 @@
+#!/bin/sh
+#############################################################################
+#
+#  Copyright 2012 Freescale Semiconductor, Inc. All Rights Reserved.
+#
+##############################################################################
+#
+#  The code contained herein is licensed under the GNU Lesser General Public
+#  License.  You may obtain a copy of the GNU Lesser General Public License
+#  Version 2.1 or later at the following locations:
+#
+#  http://www.opensource.org/licenses/lgpl-license.html
+#  http://www.gnu.org/copyleft/lgpl.html
+#
+##############################################################################
+# Revision History:
+# Author                   Date          Description
+#-------------------   ------------   ---------------------
+# Spring Zhang          22/08/2012       Initial ver. 
+#############################################################################
+
+# Get free size by KB
+# $1-mount device or mount point, must be full path
+# usage:
+#   get_free_size /dev/sda1
+get_free_size_kb()
+{
+    limit=$(df $1 | tail -1| awk '{print $4}')
+    limit=$(expr $limit - 1)
+    echo $limit
+}
+
+# Get free size by MB
+# $1-mount device or mount point, must be full path
+# usage:
+#   get_free_size /dev/sda1
+get_free_size_mb()
+{
+    limit=$(df -m $1 | tail -1| awk '{print $4}')
+    limit=$(expr $limit - 1)
+    echo $limit
+}
+
+# Get limit size in KB for dt test
+# $1-mount device or mount point, must be full path
+# $2-desired dt limit in KB
+# usage:
+#   get_dt_limit /dev/sda1 128000
+get_dt_limit()
+{
+    limit=$(df $1 | tail -1| awk '{print $4}')
+    limit=$(expr $limit - 1)
+    if [ $limit -lt $2 ]; then
+        size=$limit
+    else
+        size=$2
+    fi
+
+    echo $size
+}
+

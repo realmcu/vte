@@ -61,6 +61,7 @@
 include ./vte_configs/${ARCH_PLATFORM}_deconfigs
 
 
+SUBDIRS-y                         += api
 SUBDIRS-y                         += kernel_tests
 SUBDIRS-y                         += network_tests
 SUBDIRS-y                         += runtests
