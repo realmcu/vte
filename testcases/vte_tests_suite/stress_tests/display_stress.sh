@@ -421,7 +421,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-loop=1
+loop=100
 
 while [ $loop -gt 0 ]; do
 
