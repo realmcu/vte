@@ -405,6 +405,49 @@ wait $pid2 $pid1 || RC=$?
 return $RC
 }
 
+# Function:     test_case_10
+# Description   - Test if dual 1080P playback with vpu
+#  
+test_case_10()
+{
+#TODO give TCID 
+TCID="test_dual_1080P_10hr"
+#TODO give TST_COUNT
+TST_COUNT=4
+RC=0
+
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#TODO add function test scripte here
+
+loop=1
+
+while [ $loop -gt 0 ]; do
+
+vpu_performance.sh 4 &
+
+if [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video19 ]; then
+	vpu_performance.sh 5 "-x19" &
+	pid2=$!
+elif [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video18 ]; then
+	vpu_performance.sh 5 "-x18" &
+	pid2=$!
+fi
+
+#pass pid to wait otherwise wait will return 0 always
+wait $pid2 $pid1
+
+RC=$(expr $RC + $? )
+
+loop=$(expr $loop - 1)
+
+done
+
+return $RC
+
+}
+
 
 
 usage()
@@ -419,6 +462,7 @@ echo "6: "
 echo "7: "
 echo "8: "
 echo "9: [GPU] [VPU] [IO] [CPU] [IPU]"
+echo "10: "
 }
 
 # main function
@@ -461,6 +505,9 @@ case "$1" in
   ;;
 9)
   run_test $@ || exit $RC
+  ;;
+10)
+  test_case_10 || exit $RC
   ;;
 *)
   usage
