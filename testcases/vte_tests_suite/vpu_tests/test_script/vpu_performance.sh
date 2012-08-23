@@ -227,6 +227,33 @@ test_case_04()
 	return $RC
 }
 
+test_case_05()
+{
+#TODO give TCID
+	TCID="vpu_VDOA_Dec test with display option"
+#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=0
+	tst_resm TINFO "test $TCID"
+	stream_path=/mnt/nfs/test_stream/video/
+	stream_list=vpu_performance_test2.txt
+
+	cat ${stream_path}/${stream_list} |
+	while read line
+	do
+  		filename=$(echo $line | cut -d " " -f 1 )
+		fileformat=$(echo $line | cut -d " " -f 2)
+		echo "--------------------------------"
+		echo "start decode $filename"
+	  ${TSTCMD} -D "-a 100 -i ${stream_path}${filename} \
+	  -f ${fileformat} -y 1 ${1}" || RC=$(expr $RC + 1)
+		echo "end of decoding $filename"
+		echo "================================"
+	done
+
+	return $RC
+}
+
 
 
 
@@ -237,12 +264,13 @@ echo "1: Dec performance test"
 echo "2: Enc performance test"
 echo "3: VDOA Dec test"
 echo "4: VDOA Dec test 2"
+echo "5: VDOA Dec test 2 with display option"
 }
 
 TSTCMD="/unit_tests/mxc_vpu_test.out"
 
 #TODO check parameter
-if [ $# -ne 1 ]
+if [ $# -lt 1 ]
 then
 echo "usage $0 <1>"
 exit 1 
@@ -262,6 +290,9 @@ case "$1" in
   ;;
 4)
   test_case_04 || exit $RC 
+  ;;
+5)
+  test_case_05 "$2" || exit $RC 
   ;;
 *)
 #TODO check parameter
