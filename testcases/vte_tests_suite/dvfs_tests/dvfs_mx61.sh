@@ -30,6 +30,9 @@ setup()
     RC=0
 
     trap "cleanup" 0
+
+    old_governor=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`
+
     i=0
     count=$(cpufreq-info -s | wc -w)
     while [ $i -lt $count ]
@@ -77,7 +80,9 @@ cleanup()
 {
     RC=0
 
-    #TODO add cleanup code here
+    if [ -n "$old_governor" ]; then
+        echo $old_governor > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    fi
 
 	clean_bus_mode
     return $RC
