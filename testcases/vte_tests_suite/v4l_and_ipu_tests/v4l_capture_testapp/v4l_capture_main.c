@@ -318,7 +318,7 @@ extern "C" {
 			tst_resm(TINFO, "capture source is %d\n",
 				 gV4LTestConfig.inputSrc);
 		} else {
-			gV4LTestConfig.inputSrc = -1;
+			gV4LTestConfig.inputSrc = eInCSI_MEM;
 		}
 		if (gV4LTestConfig.mFrameRate > 30
 		    || gV4LTestConfig.mFrameRate < 15) {
