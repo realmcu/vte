@@ -453,7 +453,7 @@ elif [ $platfm -eq 61  ];then
   ddr=("24000000" "50000000" "396000000" "396000000");
 elif [ $platfm -eq 60 ]; then
   axi=("24000000" "198000000" "198000000" "198000000");
-  ddr=("24000000" "396000000" "396000000" "396000000");
+  ddr=("24000000" "50000000" "396000000" "396000000");
 else
   axi=("24000000" "198000000" "264000000" "264000000");
   ddr=("24000000" "50000000"  "396000000" "528000000");
@@ -521,6 +521,7 @@ audio_mode()
 	aplay /tmp/audio12k16M.wav &
 	check_status audio
 	RC=$(wait)
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
 	return $RC
 }
 
@@ -554,6 +555,7 @@ high_mode()
 	check_status high
 	RC2=$(wait)
 	RC=$(expr $RC1 + $RC2 )
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
 	return $RC
 }
 
@@ -565,7 +567,7 @@ test_case_07()
     #TODO give TCID
     TCID="CPUFreq_bus"
     #TODO give TST_COUNT
-    TST_COUNT=5
+    TST_COUNT=7
     RC=0
     #flag 24  CPU_FREQ_TRIG_UPDATE | AHB_HIGH_SET_POINT
     #flag 40  CPU_FREQ_TRIG_UPDATE | AHB_MED_SET_POINT

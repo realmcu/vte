@@ -391,6 +391,157 @@ test_case_06()
     return $RC
 }
 
+pre_bus_mode()
+{
+	mount -t debugfs nodev /sys/kernel/debug
+	axi_path=$(find /sys/kernel/debug/clock/osc_clk -name axi_clk)
+	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch0_axi_clk)
+	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+	platfm.sh
+	platfm=$?
+    mount -t tmpfs tmpfs /tmp
+	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
+	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
+	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
+	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
+}
+
+clean_bus_mode()
+{
+	ifconfig eth0 up
+	udhcpc eth0
+    umount /tmp
+}
+
+check_status()
+{
+RC=0
+axi=$(cat ${axi_path}/rate)
+ddr=$(cat ${ddr_path}/rate)
+
+declare -a axi;
+declare -a ddr;
+
+if [ $platfm -eq 63 ]; then
+  axi=("24000000" "198000000" "264000000" "264000000");
+  ddr=("24000000" "50000000"  "396000000" "528000000");
+elif [ $platfm -eq 61  ];then
+  axi=("24000000" "198000000" "264000000" "264000000");
+  ddr=("24000000" "50000000" "396000000" "396000000");
+elif [ $platfm -eq 60 ]; then
+  axi=("24000000" "198000000" "198000000" "198000000");
+  ddr=("24000000" "50000000" "396000000" "396000000");
+else
+  axi=("24000000" "198000000" "264000000" "264000000");
+  ddr=("24000000" "50000000"  "396000000" "528000000");
+fi
+
+case "$1" in
+low)
+#axi bus to 24M
+     [ ${axi[0]} -eq 24000000 ] || RC=1
+    ;;
+audio)
+     [ ${ddr[1]} -eq 50000000 ] || RC=2
+    ;;
+medium)
+    [ ${ddr[2]} -eq  396000000 ] || RC=3
+    ;;
+high)
+    [ ${ddr[3]} -eq 528000000 ] || RC=4
+    ;;
+*)
+    ;;
+esac
+
+echo "$1 status is $RC"
+
+return $RC
+}
+
+screen_off()
+{
+	for i in $(find  /sys/class/graphics/ -name fb* )
+		do
+	if [ -e ${i}/blank  ]; then
+		echo 1 > ${i}/blank	
+	fi
+	done
+	
+}
+
+low_bus_mode()
+{
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+    check_status low	
+	#now do suspned and resume
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	screen_off
+	sleep 5
+    check_status low	
+	return $RC
+}
+
+audio_mode()
+{
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+	aplay /tmp/audio12k16M.wav &
+	check_status audio
+	RC=$(wait)
+	/tmp/rtc_testapp_6 -m mem -T 50
+	return $RC
+}
+
+medium_mode()
+{
+#note this can not be test automatically, as usboh can not be off when there is usb
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+	#usboh3_clk is the medium one
+	mount /dev/sda1 /mnt/sda1
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	umount /dev/sda1 /mnt/sda1
+}
+
+high_mode()
+{
+	RC=0
+	ifconfig eth0 up
+	udhclient || dhclient
+	echo 0 > /sys/class/graphics/fb0/blank
+	sleep 5
+	/tmp/rtc_testapp_6 -m mem -T 50
+	modprobe galcore
+	/temp/simple_draw &
+	check_status high
+	RC=$(wait)
+	/tmp/epdc_test -T 7
+	check_status high
+	RC1=$(wait)
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -a 100 -y 1 -i /tmp/test_video.h264" & 
+	check_status high
+	RC2=$(wait)
+	RC=$(expr $RC1 + $RC2  + $RC)
+	return $RC
+}
+
+
+
+
 # Function:     test_case_07
 # Description   - bus freq state transition test
 #
@@ -405,60 +556,19 @@ test_case_07()
     #print test info
     echo TINFO "test $TST_COUNT: $TCID "
 
-    /unit_tests/dump-clocks.sh
-    mount -t tmpfs tmpfs /tmp
-	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
-	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
-	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
-	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
-	sleep 2
-	i=0
-    LOOPS=$TOTAL_PT
+    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    sleep 5
+	cnt=0
+	pre_bus_mode
+	LOOPS=$TOTAL_PT
 	while [ $i -lt $LOOPS ]; do
-		#enther low power mode
-        echo userspace > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-		echo 1 > /sys/class/graphics/fb0/blank
-		ifconfig eth0 down
-		echo 1 > /sys/devices/platform/imx_busfreq.0/enable
-		echo 198000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
-		echo "now we are at low power system idle"
-		sleep 3
-		axi=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/axi_clk/rate)
-		if [ $axi -ne 24000000 ]; then
-			RC=$(expr $RC + 1)
-		fi
-		ahb=$(cat /sys/kernel/debug/clock/osc_clk/pll2_528_bus_main_clk/pll2_pfd2_400M/periph_clk/ahb_clk/rate)
-		if [ $ahb -ne 24000000 ]; then
-			RC=$(expr $RC + 2)
-		fi
-		/tmp/rtc_testapp_6 -m mem -T 50
-		sleep 3
-		#enter audio playback mode
-		echo "now we are at audio low power"
-	    aplay /tmp/audio12k16M.wav || RC=$(expr $RC + 4)
-		
-		/tmp/rtc_testapp_6 -m mem -T 50
-		sleep 3
-		#enter system loading high mode
-	    /tmp/dry2 || RC=$(expr $RC + 8)
-
-		/tmp/rtc_testapp_6 -m mem -T 50
-		sleep 3
-		#open display and run at full speed
-		ifconfig eth0 up
-		echo 0 > /sys/class/graphics/fb0/blank
-		echo 996000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
-		/tmp/epdc_test -T 7
-		/tmp/rtc_testapp_6 -m mem -T 50
-		sleep 3
-        i=`expr $i + 1`
+		low_bus_mode || RC=$(expr $RC + 1)
+		audio_mode || RC=$(expr $RC + 1)
+		high_mode || RC=$(expr $RC + 1)
+		cnt=$(expr $cnt + 1)
 	done
 
-    rm -rf /tmp/128kbps_44khz_s_mp3.mp3
-	rm -rf /tmp/dry2
-	rm -rf /tmp/epdc_test
-	rm -rf /tmp/
-
+	clean_bus_mode
     return $RC
 }
 

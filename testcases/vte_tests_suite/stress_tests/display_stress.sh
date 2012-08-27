@@ -425,7 +425,7 @@ loop=100
 
 while [ $loop -gt 0 ]; do
 
-vpu_performance.sh 4 &
+vpu_performance.sh 5 &
 
 if [ -e /sys/devices/platform/mxc_v4l2_output.0/video4linux/video19 ]; then
 	vpu_performance.sh 5 "-x19" &
