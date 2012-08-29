@@ -128,7 +128,7 @@ overload_test()
             fi
             shift;;
             camera)
-            v4l_capture_testapp -C 2 -T 1800 &
+            v4l_capture_testapp -C 2 -T 1800 -s CSI_MEM -O YUV420 -M 2 &
             camera_pid=$!
             shift;;
             hdmi)
