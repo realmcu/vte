@@ -16,9 +16,19 @@
 # Author: Spring Zhang
 # Version1: 08.14.2012
 
+usage()
+{
+    cat <<-EOF
+    ./${0##*/} [SD rootfs root directory path]
+    e.g.: ./${0##*/} /mnt/msc
+    /mnt/msc is the mount point of SD rootfs root directory
+EOF
+    exit 1
+}
+
 if [ $# -lt 1 ]; then
     echo "please specify rootfs dir path"
-    exit 1
+    usage
 fi
 
 # Rootfs
