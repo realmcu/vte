@@ -395,7 +395,7 @@ pre_bus_mode()
 {
 	mount -t debugfs nodev /sys/kernel/debug
 	axi_path=$(find /sys/kernel/debug/clock/osc_clk -name axi_clk)
-	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch0_axi_clk)
+	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch1_axi_clk)
 	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 	platfm.sh
 	platfm=$?
@@ -561,7 +561,7 @@ test_case_07()
 	cnt=0
 	pre_bus_mode
 	LOOPS=$TOTAL_PT
-	while [ $i -lt $LOOPS ]; do
+	while [ $cnt -lt $LOOPS ]; do
 		low_bus_mode || RC=$(expr $RC + 1)
 		audio_mode || RC=$(expr $RC + 1)
 		high_mode || RC=$(expr $RC + 1)
