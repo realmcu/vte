@@ -43,8 +43,8 @@ general()
     cat >> $rfs/etc/rc.local <<-EOF
 echo 7 > /proc/sys/kernel/printk
 mkdir -p /mnt/nfs && mount -t nfs -o nolock 10.192.225.222:/rootfs/wb /mnt/nfs/
-#echo 256 > /proc/sys/vm/lowmem_reserve_ratio
-echo 1 1 > /proc/sys/vm/lowmem_reserve_ratio
+echo 256 > /proc/sys/vm/lowmem_reserve_ratio
+#echo 1 1 > /proc/sys/vm/lowmem_reserve_ratio
 rm -f /var/cache/apt/*.bin.*
 ntpdate 10.208.0.120
 EOF
