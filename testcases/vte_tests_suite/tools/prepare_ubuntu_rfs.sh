@@ -81,7 +81,7 @@ usage()
     ./${0##*/} [type] [rootfs path]
     type: "rootfs" - execute normal process
     type: "staf" - execute normal and staf process
-    "staf" mode can only work on ARM machine
+    All mode can only work on ARM machine
     e.g.: ./${0##*/} rootfs /
     e.g.: ./${0##*/} rootfs /mnt/msc
     e.g.: ./${0##*/} staf /
