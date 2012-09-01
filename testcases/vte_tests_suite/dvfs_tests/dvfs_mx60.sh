@@ -574,6 +574,34 @@ test_case_07()
     return $RC
 }
 
+# Function:     test_case_08
+# Description   - bus freq state transition test
+#
+test_case_08()
+{
+    #TODO give TCID
+    TCID="CPUFreq_timer"
+    #TODO give TST_COUNT
+    TST_COUNT=8
+    RC=0
+
+    #print test info
+    echo TINFO "test $TST_COUNT: $TCID "
+
+    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    sleep 5
+	cnt=0
+	pre_bus_mode
+	LOOPS=100
+	while [ $cnt -lt $LOOPS ]; do
+		low_bus_mode || RC=$(expr $RC + 1)
+	done
+
+	clean_bus_mode
+    return $RC
+}
+
+
 usage()
 {
     echo "$0 [case ID]"
@@ -583,6 +611,8 @@ usage()
     echo "4: run modules test with CPU working points switching on the fly"
     echo "5: stress test of 4"
     echo "6: test interrupt latency on random CPU working points"
+    echo "7: low power mode loop"
+    echo "8: low power mode suspend"
 
     exit 1
 }
@@ -628,6 +658,9 @@ case "$1" in
     ;;
 7)
     test_case_07 || exit $RC
+    ;;
+8)
+    test_case_08 || exit $RC
     ;;
 *)
     usage
