@@ -550,7 +550,7 @@ test_case_07()
     #print test info
     echo TINFO "test $TST_COUNT: $TCID "
 
-    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    #echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     sleep 5
 	cnt=0
 	pre_bus_mode
@@ -580,7 +580,7 @@ test_case_08()
     #print test info
     echo TINFO "test $TST_COUNT: $TCID "
 
-    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    #echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     sleep 5
 	cnt=0
 	pre_bus_mode
