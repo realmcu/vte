@@ -64,6 +64,8 @@ setup()
         i=$(expr $i + 1)
     done
 
+   echo 8 > /proc/sys/kernel/printk
+   echo enabled > /sys/class/tty/$(basename ${UART})/power/wakeup
     return $RC
 }
 
