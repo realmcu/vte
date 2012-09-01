@@ -527,17 +527,9 @@ high_mode()
 	echo 0 > /sys/class/graphics/fb0/blank
 	sleep 5
 	/tmp/rtc_testapp_6 -m mem -T 50
-	modprobe galcore
-	/temp/simple_draw &
 	check_status high
-	RC=$(wait)
 	/tmp/epdc_test -T 7
-	check_status high
-	RC1=$(wait)
-	/unit_tests/mxc_vpu_test.out -D "-f 2 -a 100 -y 1 -i /tmp/test_video.h264" & 
-	check_status high
-	RC2=$(wait)
-	RC=$(expr $RC1 + $RC2  + $RC)
+	RC=$(expr $RC1 + $RC)
 	return $RC
 }
 
