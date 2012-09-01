@@ -235,7 +235,7 @@ dvfs_per_stress()
 suspend_stress()
 {
     RC=4
-
+	cp ${LTPROOT}/testcase/bin/rtc_testapp_6 /tmp/
     i=0
     while [ $i -lt 200 ]; do
         i=`expr $i + 1`
@@ -244,7 +244,7 @@ suspend_stress()
             echo 1 > /sys/class/graphics/fb${j}/blank
         done
         sleep 2
-        rtc_testapp_6 -m standby -T 50 || return $RC
+        /tmp/rtc_testapp_6 -m standby -T 50 || return $RC
         tst_resm TINFO "RTC wakeup standby mode test times: $i"
 
         RC=5
@@ -252,10 +252,11 @@ suspend_stress()
             echo 1 > /sys/class/graphics/fb${j}/blank
         done
         sleep 2
-        rtc_testapp_6 -m mem -T 50 || return $RC
+        /tmp/rtc_testapp_6 -m mem -T 50 || return $RC
         tst_resm TINFO "RTC wakeup mem mode test times: $i"
     done
 
+	rm -rf  /tmp/rtc_testapp_6 
     RC=0
     echo "Pass DVFS-per/busfreq suspend and resume stress test"
     return $RC
