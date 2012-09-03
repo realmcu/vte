@@ -479,7 +479,7 @@ low_bus_mode()
 	#ethernet off
 	screen_off
 	ifconfig eth0 down
-	sleep 5
+	sleep 25
     check_status low	
 	#now do suspned and resume
 	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
@@ -496,7 +496,7 @@ audio_mode()
 	#ethernet off
 	screen_off
 	ifconfig eth0 down
-	sleep 5
+	sleep 25
 	aplay /tmp/audio12k16M.wav &
 	check_status audio
 	RC=$(wait)
@@ -529,7 +529,7 @@ high_mode()
 	/tmp/rtc_testapp_6 -m mem -T 50
 	check_status high
 	/tmp/epdc_test -T 7
-	RC=$(expr $RC1 + $RC)
+	wait
 	return $RC
 }
 
