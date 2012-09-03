@@ -453,12 +453,12 @@ int VT_rtc_test6(char* sleep_mode, int seconds)
         /***************************************/
         /* Restore the initial date & time     */
         /***************************************/
-        
+       #if 0 
         if( !restore_rtc_state( RTC_TIME ) )
         {
                 is_ok = 0;
         }
-        
+       #endif
        
         /***************************************/
         /* Final test result                   */
