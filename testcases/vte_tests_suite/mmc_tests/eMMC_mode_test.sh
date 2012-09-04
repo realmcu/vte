@@ -50,7 +50,7 @@ setup
 
 platStr=`platfm.sh`
 
-if [ "$platStr" = 'IMX6Q-Sabre-SD' ] || [ "$platStr" = 'IMX6DL-Sabre-SD' ]; then
+if [ "$platStr" = 'IMX6Q-Sabre-SD' ] || [ "$platStr" = 'IMX6DL-Sabre-SD' ] || [ "$platStr" = 'IMX6SL-EVK' ]; then
 	mmc=mmc0
 else
 	mmc=mmc1
