@@ -33,7 +33,7 @@ setup()
     num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
 
     tmpdir=`mktemp -d -p /tmp`
-    cp /mnt/nfs/test_stream/alsa_stream/audio48k16S.wav $tmpdir || RC=1
+    cp /mnt/nfs/test_stream/alsa_stream_music/audio44k24S-S24_LE_long.wav $tmpdir || RC=1
     return $RC
 }
 
@@ -72,7 +72,7 @@ test_case_01()
     while [ $count -lt $tloops ]
     do
         # Add input indrecting to avoid 'stopped (TTY output)'
-        aplay -Dplughw:$num -M $tmpdir/audio48k16S.wav < /dev/null &
+        aplay -Dplughw:$num -M $tmpdir/audio44k24S-S24_LE_long.wav < /dev/null &
         bpid=$!
         sleep 5
         echo "core test"
@@ -83,7 +83,9 @@ test_case_01()
         do
             i=$(expr $i + 1)
             echo mem > /sys/power/state
+			sleep 5
             echo standby > /sys/power/state
+			sleep 5
         done
 
         sleep 30
