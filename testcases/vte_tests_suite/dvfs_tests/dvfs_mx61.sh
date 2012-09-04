@@ -441,8 +441,8 @@ clean_bus_mode()
 check_status()
 {
 RC=0
-axi=$(cat ${axi_path}/rate)
-ddr=$(cat ${ddr_path}/rate)
+axi_real=$(cat ${axi_path}/rate)
+ddr_real=$(cat ${ddr_path}/rate)
 
 declare -a axi;
 declare -a ddr;
@@ -464,16 +464,16 @@ fi
 case "$1" in
 low)
 #axi bus to 24M
-     [ ${axi[0]} -eq 24000000 ] || RC=1
+     [ ${axi[0]} -eq $axi_real ] || RC=1
     ;;
 audio)
-     [ ${ddr[1]} -eq 50000000 ] || RC=2
+     [ ${ddr[1]} -eq $ddr_real ] || RC=2
     ;;
 medium)
-    [ ${ddr[2]} -eq  396000000 ] || RC=3
+    [ ${ddr[2]} -eq  $ddr_real ] || RC=3
     ;;
 high)
-    [ ${ddr[3]} -eq 528000000 ] || RC=4
+    [ ${ddr[3]} -eq $ddr_real ] || RC=4
     ;;
 *)
     ;;
