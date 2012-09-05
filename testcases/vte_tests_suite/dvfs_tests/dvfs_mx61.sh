@@ -427,14 +427,26 @@ pre_bus_mode()
 	platfm=$?
     mount -t tmpfs tmpfs /tmp
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
-	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
+	cp /mnt/nfs/test_stream/alsa_stream_music/audio44k24S-S24_LE_long.wav /tmp/
 	cp $a_stream_path /tmp/test_video.h264
 	cp /mnt/nfs/util/Graphics/imx61_rootfs/test/simple_draw /tmp/
+	sync
+	nfs_list=`mount | awk '/:\// {print $3}'`
+	for dir in ${nfs_list}; do
+	umount $dir
+	if [ $? -ne 0 ];then
+		echo "Can not umount the nfs mount point $dir"
+		echo "Need copy `basename $0` to local and run it locally"
+		exit 1
+	fi
+	done
+	
 }
 
 clean_bus_mode()
 {
 	ifconfig eth0 up
+	udhcpc || dhclient
     umount /tmp
 }
 
@@ -464,16 +476,52 @@ fi
 case "$1" in
 low)
 #axi bus to 24M
-     [ ${axi[0]} -eq $axi_real ] || RC=1
+while [ true ]; do
+	if [ ${axi[0]} -ne $axi_real ];then
+		sleep 1
+		axi_real=$(cat ${axi_path}/rate)
+		ddr_real=$(cat ${ddr_path}/rate)
+	else
+		RC=0
+		break
+	fi
+done
     ;;
 audio)
-     [ ${ddr[1]} -eq $ddr_real ] || RC=2
+while [ true ]; do
+	if [ ${ddr[1]} -lt $ddr_real ];then
+		sleep 1
+		axi_real=$(cat ${axi_path}/rate)
+		ddr_real=$(cat ${ddr_path}/rate)
+	else
+		RC=0
+		break
+	fi
+done
     ;;
 medium)
-    [ ${ddr[2]} -eq  $ddr_real ] || RC=3
+while [ true ]; do
+	if [ ${ddr[2]} -ne $ddr_real ];then
+		sleep 1
+		axi_real=$(cat ${axi_path}/rate)
+		ddr_real=$(cat ${ddr_path}/rate)
+	else
+		RC=0
+		break
+	fi
+done
     ;;
 high)
-    [ ${ddr[3]} -eq $ddr_real ] || RC=4
+while [ true ]; do
+	if [ ${ddr[3]} -ne $ddr_real ];then
+		sleep 1
+		axi_real=$(cat ${axi_path}/rate)
+		ddr_real=$(cat ${ddr_path}/rate)
+	else
+		RC=0
+		break
+	fi
+done
     ;;
 *)
     ;;
@@ -505,7 +553,7 @@ low_bus_mode()
 	sleep 5
     check_status low	
 	#now do suspned and resume
-	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
 	screen_off
 	sleep 5
     check_status low	
@@ -520,10 +568,14 @@ audio_mode()
 	screen_off
 	ifconfig eth0 down
 	sleep 5
-	aplay /tmp/audio12k16M.wav &
+	while [ true ]; do
+		aplay /tmp/audio44k24S-S24_LE_long.wav
+	done &
+	pid=$!
 	check_status audio
-	RC=$(wait)
-	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	sleep 20
+	kill -9 $pid
+	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
 	return $RC
 }
 
@@ -538,7 +590,7 @@ medium_mode()
 	sleep 5
 	#usboh3_clk is the medium one
 	mount /dev/sda1 /mnt/sda1
-	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
 	umount /dev/sda1 /mnt/sda1
 }
 
@@ -546,18 +598,21 @@ high_mode()
 {
 	RC=0
 	ifconfig eth0 up
-	udhclient || dhclient
+	udhcpc || dhclient
+	#udhclient || dhclient
 	echo 0 > /sys/class/graphics/fb0/blank
 	sleep 5
 	modprobe galcore
 	/temp/simple_draw &
 	check_status high
-	RC1=$(wait)
+	wait
+	RC1=$?
 	/unit_tests/mxc_vpu_test.out -D "-f 2 -a 100 -y 1 -i /tmp/test_video.h264" & 
 	check_status high
-	RC2=$(wait)
+	wait
+	RC2=$?
 	RC=$(expr $RC1 + $RC2 )
-	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
 	return $RC
 }
 
