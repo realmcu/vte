@@ -284,7 +284,7 @@ determine_platform()
     then
         #echo "Platform MX31"
         RC=31
-	elif [ $p ="IMX25-3STACK"  ]
+	elif [ $p = "IMX25-3STACK"  ]
 	then
 		RC=25
     elif [ $p = "IMX35-3STACK" ]
