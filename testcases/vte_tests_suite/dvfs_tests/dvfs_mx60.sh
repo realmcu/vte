@@ -226,7 +226,6 @@ test_case_01()
 
     cpufreq-set -f ${cpufreq_value[0]}
     return $RC
-
 }
 
 # Function:     test_case_02
@@ -402,7 +401,7 @@ pre_bus_mode()
 	platfm.sh
 	platfm=$?
     mount -t tmpfs tmpfs /tmp
-	cp /mnt/nfs/test_stream/alsa_stream/audio12k16M.wav /tmp/
+	cp /mnt/nfs/test_stream/alsa_stream/audio44k16S_long.wav /tmp/audio_test.wav
 	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
 	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
@@ -441,22 +440,51 @@ fi
 case "$1" in
 low)
 #axi bus to 24M
-     [ ${axi[0]} -eq $axi_real ] || RC=1
+     while [ ${axi[0]} -ne $axi_real ]
+	 do 
+		 echo "$1 mode pedning wait more"
+		 sleep 1
+		 axi_real=$(cat ${axi_path}/rate)
+		 ddr_real=$(cat ${ddr_path}/rate)
+	 done
     ;;
 audio)
-     [ ${ddr[1]} -eq $ddr_real ] || RC=2
+    count=10
+	while [ ${ddr[1]} -lt $ddr_real ] || [ ${ddr[1]} -eq $ddr_real ]
+	do
+		echo "$1 mode pedning wait more"
+		 axi_real=$(cat ${axi_path}/rate)
+		 ddr_real=$(cat ${ddr_path}/rate)
+		 if [ $count -lt 1 ];then
+		 	break
+		 fi
+		count=$(expr $count - 1 )
+		sleep 1
+	done
     ;;
 medium)
-    [ ${ddr[2]} -eq  $ddr_real ] || RC=3
+    while [ ${ddr[2]} -ne  $ddr_real ]
+	do
+		echo "$1 mode pedning wait more"
+		 axi_real=$(cat ${axi_path}/rate)
+		 ddr_real=$(cat ${ddr_path}/rate)
+		sleep 1
+	done
     ;;
 high)
-    [ ${ddr[3]} -eq $ddr_real ] || RC=4
+    while [ ${ddr[3]} -ne $ddr_real ]
+	do
+		echo "$1 mode pedning wait more"
+		 axi_real=$(cat ${axi_path}/rate)
+		 ddr_real=$(cat ${ddr_path}/rate)
+		sleep 1
+	done
     ;;
 *)
     ;;
 esac
 
-echo "$1 status is $RC"
+echo "$1 status is ok"
 
 return $RC
 }
@@ -497,9 +525,9 @@ audio_mode()
 	screen_off
 	ifconfig eth0 down
 	sleep 25
-	aplay /tmp/audio12k16M.wav &
+	aplay /tmp/audio_test.wav &
 	check_status audio
-	RC=$(wait)
+	wait
 	/tmp/rtc_testapp_6 -m mem -T 50
 	return $RC
 }
