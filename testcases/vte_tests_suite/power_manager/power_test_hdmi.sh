@@ -67,13 +67,15 @@ test_case_01()
     #TODO add function test scripte here
     echo 0 > /sys/class/graphics/fb0/blank
     echo -e "\033[9;0]" > /dev/tty0
+	while [ true ]; do
+        aplay -Dplughw:$num -M $tmpdir/audio44k24S-S24_LE_long.wav
+	done &
+	bpid=$!
+
     tloops=20000
     count=0
     while [ $count -lt $tloops ]
     do
-        # Add input indrecting to avoid 'stopped (TTY output)'
-        aplay -Dplughw:$num -M $tmpdir/audio44k24S-S24_LE_long.wav < /dev/null &
-        bpid=$!
         sleep 5
         echo "core test"
         i=0
@@ -91,9 +93,9 @@ test_case_01()
         sleep 30
         echo none > /sys/power/pm_test
 
-        wait $bpid
         count=$(expr $count + 1)
     done
+	kill -9 $bpid
     RC=0
     return $RC
 }
