@@ -124,6 +124,7 @@ setup()
         #BUS_FREQ_DIR=/sys/devices/platform/busfreq.0
         BUS_FREQ_DIR=`find /sys/devices -name "*busfreq*"|sed -n '1p'`
         bus_freq_ctl=${BUS_FREQ_DIR}/enable
+        ahb_path=`find /sys/kernel/debug/clock  -name "ahb_clk"`
         echo 1 > $bus_freq_ctl
         res=`cat $bus_freq_ctl | grep "enabled" | wc -l`
         if [ $res -eq 1 ]; then
@@ -144,7 +145,26 @@ setup()
             ifconfig eth0 down
             ifconfig eth1 down 2>/dev/null
 
-            #TODO Add clock determination for entered low busfreq mode
+            # Clock determination for entered low busfreq mode
+            sleep 5
+            loop=3
+            k=0
+            if_success=0
+            while [ $k -lt $loop ]; do
+                ahb_rate=`cat $ahb_path/rate`
+                if [ $ahb_rate -eq 24000000 ]; then
+                    if_success=1
+                fi
+                k=`expr $k + 1`
+                sleep 1
+            done
+            if [ $if_success -eq 0 ]; then
+                echo "TPASS: System enters low busfreq mode"
+            else
+                echo "TFAIL: System can't enter low busfreq mode, AHB rate doesn't meet 24MHz"
+                RC=1
+                return $RC
+            fi
         fi
     fi
 
