@@ -86,7 +86,9 @@ cleanup()
         echo $old_governor > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     fi
 
-	clean_bus_mode
+	if [ $caseID -eq 7 ]; then
+		clean_bus_mode
+	fi
     return $RC
 }
 
@@ -676,6 +678,7 @@ then
     usage
     exit 1
 fi
+caseID=$1
 
 # cpufreq_value[] array will be discovered in setup()
 declare -a cpufreq_value
