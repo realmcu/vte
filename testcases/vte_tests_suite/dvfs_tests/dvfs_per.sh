@@ -141,7 +141,7 @@ setup()
         # if for mx6
         if [ $platfm -ne 53 ]; then
             # turn off screen
-            for i in 1 2 3 4; do
+            for i in 0 1 2 3 4; do
                 echo 1 > /sys/class/graphics/fb${i}/blank
             done
             # turn off ethernet
@@ -150,7 +150,7 @@ setup()
 
             ahb_path=`find /sys/kernel/debug/clock -name "ahb_clk"`
             # Clock determination for entered low busfreq mode
-            sleep 5
+            sleep 10
             loop=3
             k=0
             if_success=0
@@ -158,11 +158,12 @@ setup()
                 ahb_rate=`cat $ahb_path/rate`
                 if [ $ahb_rate -eq 24000000 ]; then
                     if_success=1
+                    break
                 fi
                 k=`expr $k + 1`
-                sleep 1
+                sleep 10
             done
-            if [ $if_success -eq 0 ]; then
+            if [ $if_success -eq 1 ]; then
                 echo "TPASS: System enters low busfreq mode"
             else
                 echo "TFAIL: System can't enter low busfreq mode, AHB rate doesn't meet 24MHz"
