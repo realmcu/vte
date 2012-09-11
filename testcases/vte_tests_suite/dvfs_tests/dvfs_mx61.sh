@@ -555,7 +555,7 @@ low_bus_mode()
 	sleep 5
     check_status low	
 	#now do suspned and resume
-	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
 	screen_off
 	sleep 5
     check_status low	
@@ -577,7 +577,7 @@ audio_mode()
 	check_status audio
 	sleep 20
 	kill -9 $pid
-	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
 	return $RC
 }
 
@@ -592,7 +592,7 @@ medium_mode()
 	sleep 5
 	#usboh3_clk is the medium one
 	mount /dev/sda1 /mnt/sda1
-	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
 	umount /dev/sda1 /mnt/sda1
 }
 
@@ -605,7 +605,7 @@ high_mode()
 	echo 0 > /sys/class/graphics/fb0/blank
 	sleep 5
 	modprobe galcore
-	/temp/simple_draw &
+	/tmp/simple_draw &
 	check_status high
 	wait
 	RC1=$?
@@ -614,7 +614,7 @@ high_mode()
 	wait
 	RC2=$?
 	RC=$(expr $RC1 + $RC2 )
-	/tmp/rtc_testapp_6 -m mem -T 10 || RC=1
+	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
 	return $RC
 }
 
