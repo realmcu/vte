@@ -105,6 +105,10 @@ setup()
         fi
     fi
 
+    if ! mount|grep -sq '/sys/kernel/debug'; then
+        mount -t debugfs none /sys/kernel/debug
+    fi
+
     #enable dvfs-per on MX51 only
     DVFS_PER_DIR=/sys/devices/platform/mxc_dvfsper.0
     dvfs_per_ctl=${DVFS_PER_DIR}/enable
@@ -124,7 +128,6 @@ setup()
         #BUS_FREQ_DIR=/sys/devices/platform/busfreq.0
         BUS_FREQ_DIR=`find /sys/devices -name "*busfreq*"|sed -n '1p'`
         bus_freq_ctl=${BUS_FREQ_DIR}/enable
-        ahb_path=`find /sys/kernel/debug/clock  -name "ahb_clk"`
         echo 1 > $bus_freq_ctl
         res=`cat $bus_freq_ctl | grep "enabled" | wc -l`
         if [ $res -eq 1 ]; then
@@ -145,6 +148,7 @@ setup()
             ifconfig eth0 down
             ifconfig eth1 down 2>/dev/null
 
+            ahb_path=`find /sys/kernel/debug/clock -name "ahb_clk"`
             # Clock determination for entered low busfreq mode
             sleep 5
             loop=3
