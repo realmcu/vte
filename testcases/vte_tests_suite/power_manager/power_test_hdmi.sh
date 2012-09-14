@@ -33,13 +33,15 @@ setup()
     num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
 
     tmpdir=`mktemp -d -p /tmp`
-    cp /mnt/nfs/test_stream/alsa_stream_music/audio44k24S-S24_LE_long.wav $tmpdir || RC=1
+	alsa_stream="audio44k24S-S24_LE_long.wav"
+    cp /mnt/nfs/test_stream/alsa_stream_music/${alsa_stream} $tmpdir || RC=1
     return $RC
 }
 
 cleanup()
 {
     echo "CLEANUP "
+	kill -9 $bpid
     rm -rf $tmpdir
 }
 
@@ -68,7 +70,7 @@ test_case_01()
     echo 0 > /sys/class/graphics/fb0/blank
     echo -e "\033[9;0]" > /dev/tty0
 	while [ true ]; do
-        aplay -Dplughw:$num -M $tmpdir/audio44k24S-S24_LE_long.wav
+        aplay -Dplughw:$num -M $tmpdir/${alsa_stream}
 	done &
 	bpid=$!
 
@@ -118,10 +120,12 @@ test_case_02()
     tloops=20000
     count=0
     #TODO add function test scripte here
+	while [ true ]; do
+        aplay -Dplughw:$num -M $tmpdir/${alsa_stream}
+	done &
+	bpid=$!
     while [ $count -lt $tloops ]
     do
-        aplay -Dplughw:$num -M $tmpdir/audio48k16S.wav < /dev/null &
-        bpid=$!
         sleep 5
         i=0
         loops=10
@@ -129,12 +133,14 @@ test_case_02()
         do
             i=$(expr $i + 1)
             rtc_testapp_6 -T 50 -m mem
+			sleep 5
             rtc_testapp_6 -T 50 -m standby
+			sleep 5
         done
 
-        wait $bpid
         count=$(expr $count + 1)
     done
+	kill -9 $bpid
     RC=0
     return $RC
 }
@@ -155,7 +161,7 @@ test_case_03()
 
     #TODO add function test scripte here
     echo 0 > /sys/class/graphics/fb0/blank
-    aplay -Dplughw:$num -M $tmpdir/audio48k16S.wav < /dev/null &
+    aplay -Dplughw:$num -M $tmpdir/${alsa_stream} < /dev/null &
     bpid=$!
     sleep 5
     echo "core test"
