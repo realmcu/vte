@@ -493,7 +493,7 @@ test_case_07()
 		p_list=`cat /proc/partitions | grep $scsi_dev[0-9].* | awk '{print $4}'`
 		if [ -z "$p_list" ]; then
 			#no partition table
-			p_node /dev/$i 1048576 || continue
+			p_node /dev/$i 3145728 || continue
 			p_list="${i}1"
 			mkfs.ext3 /dev/${p_list}
 			mt_pt=$p_list
@@ -517,10 +517,10 @@ test_case_07()
 	rm -rf $tmp_dir
 
     #mount sata
-    if [ -e "$mt_pt" ]; then
+    if [ -e "/dev/${mt_pt}" ]; then
 		mkdir -p /mnt/msc
-		u_mount /mnt/msc /dev/$mt_pt
-		mount $mt_pt /mnt/msc
+		u_mount /mnt/msc /dev/${mt_pt}
+		mount /dev/${mt_pt} /mnt/msc
 	else
 		if [ -e /dev/mmcblk0p1 ]; then
 			mount /dev/mmcblk0p1 /mnt/msc || mount -t tmpfs tmpfs /mnt/msc
