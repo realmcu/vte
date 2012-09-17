@@ -1,3 +1,4 @@
+#!/bin/sh
 #Copyright (C) 2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ###################################################################################################
 #
 #    @file   usb_otg_cdc.sh
@@ -60,6 +60,7 @@ echo "please connect the board to host with usb cable"
 
 sleep 3
 
+echo "Target board IP is $CLIENTIP"
 echo "please set up the host usb0 to $HOSTIP"
 echo "plese run following command on host"
 echo "modprobe usbnet;modprobe cdc_ether;modprobe g_ether"
