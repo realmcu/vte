@@ -181,6 +181,10 @@ test_case_03()
 	  ${TSTCMD} -D "-a 100 -i /mnt/temp/${filename} \
 	  -f ${fileformat} -y 1" || RC=$?
 		 rm -rf /mnt/temp/${filename}
+	  sync
+	  echo 3 > /proc/sys/vm/drop_caches
+	  echo 1 > /proc/sys/vm/compact_memory
+	  sleep 10
 		echo "end of decoding $filename"
 		echo "================================"
 	done
@@ -220,6 +224,10 @@ test_case_04()
 	  ${TSTCMD} -D "-a 100 -i /mnt/temp/${filename} \
 	  -f ${fileformat} -y 1" || RC=$(expr $RC + 1)
 		 rm -rf /mnt/temp/${filename}
+	  sync
+	  echo 3 > /proc/sys/vm/drop_caches
+	  echo 1 > /proc/sys/vm/compact_memory
+	  sleep 10
 		echo "end of decoding $filename"
 		echo "================================"
 	done
