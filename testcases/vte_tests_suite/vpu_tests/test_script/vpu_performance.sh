@@ -247,6 +247,10 @@ test_case_05()
 		echo "start decode $filename"
 	  ${TSTCMD} -D "-a 100 -i ${stream_path}${filename} \
 	  -f ${fileformat} -y 1 ${1}" || RC=$(expr $RC + 1)
+	  sync
+	  echo 3 > /proc/sys/vm/drop_caches
+	  echo 1 > /proc/sys/vm/compact_memory
+	  sleep 10
 		echo "end of decoding $filename"
 		echo "================================"
 	done
