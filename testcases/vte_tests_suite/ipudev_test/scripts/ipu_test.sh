@@ -517,7 +517,7 @@ test_case_07()
 	rm -rf $tmp_dir
 
     #mount sata
-    if [ -e "/dev/${mt_pt}" ]; then
+    if [ -n "${mt_pt}" ]; then
 		mkdir -p /mnt/msc
 		u_mount /mnt/msc /dev/${mt_pt}
 		mount /dev/${mt_pt} /mnt/msc
