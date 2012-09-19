@@ -1,5 +1,5 @@
 
-TAEGET= mipi_camera.sh
+TARGET= mipi_camera.sh
 
 all:
 
