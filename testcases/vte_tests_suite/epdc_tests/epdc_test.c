@@ -1036,7 +1036,7 @@ extern "C" {
 			}
 			sleep(1);
 		}
-		if(1){
+		if(im_update.update_marker){
 			struct mxcfb_update_marker_data upd_marker_data;
 			upd_marker_data.update_marker = im_update.update_marker;
 			while(ioctl(fb_fd, MXCFB_WAIT_FOR_UPDATE_COMPLETE,&upd_marker_data) < 0) {
