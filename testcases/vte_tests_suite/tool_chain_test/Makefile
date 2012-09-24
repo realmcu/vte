@@ -12,6 +12,7 @@ SRC = $(SRC_memcpy) $(SRC_spread) $(SRC_membm)
 CFLAGS = -Wall -O2 -lrt -std=gnu99
 
 all: $(Target_memcpy) $(Target_spread) $(Target_membm) 
+	$(MAKE) -C neon_test
 
 $(Target_memcpy): $(SRC_memcpy)
 	$(CC) -o $@ $(CFLAGS) $<
@@ -22,8 +23,10 @@ $(Target_spread): $(SRC_spread)
 $(Target_membm):$(SRC_membm)
 	$(CC) -o $@ $(CFLAGS) $<
 
+
 install:
 	ln -f $(TARGET) ../../bin/
 
 clean:
 	rm -rf $(TARGET)
+	${MAKE} -C neon_test clean
