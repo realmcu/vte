@@ -30,7 +30,7 @@ SUBDIRS= dumpmem
 #Platform identify script
 TARGETS = platfm.sh ./debian_install/pkg_handle.sh 
 TARGETS += get_total_memory.sh v4l_module.sh dump-clocks ipuperf.py clocks.sh
-TARGETS += prepare_ubuntu_rfs.sh
+TARGETS += prepare_ubuntu_rfs.sh prepare_offline_vte.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
