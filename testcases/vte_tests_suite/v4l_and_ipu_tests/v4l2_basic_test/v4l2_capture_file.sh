@@ -19,6 +19,8 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  ---------------------------------------
 #Andy Tian	                 20120715        N/A         Initial
+#Andy Tian	                 20120924        N/A         Bypass CS_IC_MEM test for it is not 
+#														 supported any more
 ###################################################################################################
 
 
@@ -96,25 +98,14 @@ test_case_01()
 	for M in $modes; do
 		let w=2*M
 		let h=2*M+1
-		if [ ${size[$w]} -gt 1024 -o ${size[$h]} -gt 1024 ]; then
 			#use CSI_MEM by default and YUV420 format
-			$TSTCMD -r ${fps} -C 3 -M $M -W ${size[$w]} -H ${size[$h]} -O YUV420 -o /mnt/nfs/temp/${mac}_${fps}fps_output_M${M}
-		else
-			#if resolution w/h < 1024, use CSI_IC_MEM use BGR24 to verify IPU
-			#color space convert
-			$TSTCMD -r ${fps} -C 3 -M $M -W ${size[$w]} -H ${size[$h]} -O BGR24 -o /mnt/nfs/temp/${mac}_${fps}fps_output_M${M}
-		fi
+		$TSTCMD -r ${fps} -C 3 -M $M -W ${size[$w]} -H ${size[$h]} -O YUV420 -o /mnt/nfs/temp/${mac}_${fps}fps_output_M${M}
 		if [ $? -ne 0 ];then
 			skip_modes="$skip_modes $M"
 			continue
 		fi
-		if [ ${size[$w]} -gt 1024 -o ${size[$h]} -gt 1024 ]; then
-			conv -i /mnt/nfs/temp/${mac}_${fps}fps_output_M${M}_YUV420 -b 256 -I YUV420 -x ${size[$w]} -y ${size[$h]} \
-				-o /mnt/nfs/temp/${mac}_${fps}fps_out_M${M}.bmp
-		else
-			conv -i /mnt/nfs/temp/${mac}_${fps}fps_output_M${M}_BGR24 -b 256 -I BGR24 -x ${size[$w]} -y ${size[$h]} \
-				-o /mnt/nfs/temp/${mac}_${fps}fps_out_M${M}.bmp
-		fi
+		conv -i /mnt/nfs/temp/${mac}_${fps}fps_output_M${M}_YUV420 -b 256 -I YUV420 -x ${size[$w]} -y ${size[$h]} \
+			-o /mnt/nfs/temp/${mac}_${fps}fps_out_M${M}.bmp
 		if [ $? -ne 0 ]; then
 			echo "conv to bmp fail. Pls check it manually"
 			tst_resm TINFO "$TCID: Test FAIL"
