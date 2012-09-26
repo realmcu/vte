@@ -155,11 +155,7 @@ echo "==========================="
 echo cl11 conformance
 echo "==========================="
 cd cl11/conform
-./test_all.sh | tee -a $tempfile 
-
-RC=$(cat $tempfile | grep -i "fail" | wc -l)
-
-rm -rf $tempfile
+python run_conformance.py opencl_conformance_tests_quick.csv
 
 return $RC
 }
