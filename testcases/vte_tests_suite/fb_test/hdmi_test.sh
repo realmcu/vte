@@ -28,6 +28,11 @@
 
 setup()
 {
+    export TST_TOTAL=4   # Total number of test cases in this file.
+    export TCID="TGE_LV_HDMI_TEST"       # Test case identifier
+    export TST_COUNT=0   # Set up is initialized as test 0
+
+
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
        echo "Already enable HDMI in boot cmdline"
        if [ $(cat /sys/devices/platform/mxc_hdmi/cable_state) = "plugout" ]; then
@@ -126,15 +131,21 @@ hdmi_audio_playback_modeSwitch()
 
 hdmi_audio_playback_multichannel()
 {
-	tst_resm TINFO "test hdmi multi channel"
-	num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
-	stream_path=$STREAM_PATH/esai_stream/
-	FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav  sine-6ch48k16bit.wav  sine-6ch44k16bit.wav sine-6ch32k16bit.wav sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav"    
-    	for i in $FILELIST
-    	do
-		aplay -Dhw:$num ${stream_path}$i || RC=$?
-	done
-    	return $RC
+    export TST_COUNT=3   # Set up is initialized as test 0
+
+    tst_resm TINFO "Test HDMI multi channel"
+    for i in "0 1 2 3 4"; do
+        echo 0 > /sys/class/graphic/fb${i}/blank
+    done
+    num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
+    stream_path=$STREAM_PATH/esai_stream/
+    FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav  sine-6ch48k16bit.wav  sine-6ch44k16bit.wav sine-6ch32k16bit.wav sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav"    
+    
+    tst_resm TINFO "Use plughw to playback" 
+    for i in $FILELIST; do
+        aplay -Dplughw:$num ${stream_path}/$i || RC=$?
+    done
+    return $RC
 }
 
 # Function:     main
