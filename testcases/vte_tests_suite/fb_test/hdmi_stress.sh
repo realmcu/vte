@@ -41,6 +41,7 @@ setup()
        echo "Not enable HDMI in boot cmdline"
        RC=1
      fi
+	platfm=$(platfm.sh)
     return $RC
 }
 
@@ -82,11 +83,13 @@ do
         echo "times: $i"
         sleep 4
 
+        if [ $platfm != 60 ]; then
         echo S:640x480p-60 > /sys/class/graphics/fb0/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png
         cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
+		fi
 
         echo S:1280x720p-50 > /sys/class/graphics/fb0/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png
@@ -94,11 +97,13 @@ do
         echo "times: $i"
         sleep 4
 
+        if [ $platfm != 60 ]; then
         echo S:720x480p-60 > /sys/class/graphics/fb0/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png
         cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
+		fi
 
         echo S:1920x1080p-24 > /sys/class/graphics/fb0/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png
@@ -106,11 +111,13 @@ do
         echo "times: $i"
         sleep 4
 
+        if [ $platfm != 60 ]; then
         echo S:720x576p-50 > /sys/class/graphics/fb0/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png
         cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
+		fi
 
         echo S:1280x720p-60 > /sys/class/graphics/fb0/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png
@@ -154,11 +161,13 @@ do
         echo "times: $i"
         sleep 4
 
+        if [ $platfm != 60 ]; then
         echo S:640x480p-60 > /sys/class/graphics/fb0/mode
         aplay -Dplughw:$num -M /mnt/temp/audio32k16S.wav
         cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
+		fi
 
         echo S:1280x720p-50 > /sys/class/graphics/fb0/mode
         aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav
@@ -166,11 +175,13 @@ do
         echo "times: $i"
         sleep 4
 
+        if [ $platfm != 60 ]; then
         echo S:720x480p-60 > /sys/class/graphics/fb0/mode
         aplay -Dplughw:$num -M /mnt/temp/audio48k16S.wav
         cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
+		fi
 
         echo S:1920x1080p-24 > /sys/class/graphics/fb0/mode
         aplay -Dplughw:$num -M /mnt/temp/audio88k16S.wav
@@ -178,11 +189,13 @@ do
         echo "times: $i"
         sleep 4
 
+        if [ $platfm != 60 ]; then
         echo S:720x576p-50 > /sys/class/graphics/fb0/mode
         aplay -Dplughw:$num -M /mnt/temp/audio176k16S.wav
         cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
+		fi
 
         echo S:1280x720p-60 > /sys/class/graphics/fb0/mode
         aplay -Dplughw:$num -M /mnt/temp/audio192k16S.wav
@@ -201,6 +214,7 @@ return $RC
 # Description:  - Execute all tests, exit with test status.
 #
 RC=0    # Return value for setup, and test functions.
+platfm=63
 
 setup || exit $RC
 case "$1" in
