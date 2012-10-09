@@ -17,12 +17,13 @@ typedef float FLOAT_TYPE;
 inline FLOAT_TYPE af_filter_fir(register unsigned int n, const FLOAT_TYPE* w,
                                 const FLOAT_TYPE* x)
  {
+	int i;
     register FLOAT_TYPE y; // Output
     y = 0.0;
-    do{
-      n--;
-      y+=w[n]*x[n];
-    }while(n != 0);
+    for(i =1 ; i <= n; i++)
+	{
+      y+=w[n - i]*x[n - i];
+    }
     return y;
  }
 
@@ -44,7 +45,7 @@ inline FLOAT_TYPE af_filter_fir(register unsigned int n, const FLOAT_TYPE* w,
 	FLOAT_TYPE * mx = (FLOAT_TYPE *)x;
     float32x4_t f0 = { 0.0f, 0.0f, 0.0f, 0.0f };
 	FLOAT_TYPE iy[4];
-	for (;c;c -= 8, mw += 8, mx += 8)
+	for (c = n;c;c -= 8, mw += 8, mx += 8)
 	{
 		float32x4_t f1 = vmulq_f32(vld1q_f32(mw),vld1q_f32(mx));
 		float32x4_t f2 = vmulq_f32(vld1q_f32(&mw[4]),vld1q_f32(&mx[4]));

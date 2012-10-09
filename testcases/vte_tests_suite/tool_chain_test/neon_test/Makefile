@@ -8,7 +8,8 @@ ALL_TARGET = $(TARGET_vfp) $(TARGET_neon) $(TARGET_intrinsics) $(TARGET_asm)
 SOURCE = fir.cpp
 
 CFLAGS := -O3 -fsigned-char -mcpu=cortex-a9 -mfpu=vfp -mfloat-abi=softfp 
-CFLAGS_NEON = -O3 -fsigned-char -mcpu=cortex-a9 -mfloat-abi=softfp -mfpu=neon
+CFLAGS_NEON = -O3 -fsigned-char -mcpu=cortex-a9 -mfloat-abi=softfp -mfpu=neon \
+-ftree-vectorize -ftree-vectorizer-verbose=6
 LDFLAGS = -lm
 CROSS_COMPILE := arm-linux-gnueabi-
 CC = $(CROSS_COMPILE)g++
