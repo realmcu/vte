@@ -14,6 +14,8 @@
 # Author                   Date       Description of Changes
 #-------------------   ------------   ---------------------
 # Sally Guo               29/05/2012     Initial ver.
+# Andy Tian               18/09/2012  Make tools run more flexible.   
+# Andy Tian               11/10/2012  Add case_03.   
 #############################################################################
 # Function:     setup
 #
@@ -30,7 +32,8 @@ setup()
     export TST_TOTAL=1
     export TCID="setup"
     export TST_COUNT=0
-    trap "cleanup" 0
+	# trap exit and ctrl+c
+    trap "cleanup" 0 2
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
        echo "Already enable HDMI in boot cmdline"
        if [ $(cat /sys/devices/platform/mxc_hdmi/cable_state) = "plugout" ]; then
@@ -40,8 +43,33 @@ setup()
     else
        echo "Not enable HDMI in boot cmdline"
        RC=1
-     fi
-	platfm=$(platfm.sh)
+    fi
+	platfm.sh
+	platfm=$?
+	#check the VTE env
+	if [ -z "$STREAM_PATH" ]; then
+		RC=1
+		echo "Please enable VTE env firstly"
+	fi
+	
+	#find the fb device related with hdmi
+	dev_names=`cat /sys/class/graphics/fb*/fsl_disp_dev_property`
+	i=0
+	for name in $dev_names; do
+		if [ "$name" = "hdmi" ]; then
+			hdmi_fb="fb$i"
+			let out_video=17+i
+			break
+		fi
+		let i=i+1
+	done
+	modes=`cat /sys/class/graphics/${hdmi_fb}/modes`
+	if [ $platfm -eq 60 ]; then
+		modes_60=`cat /sys/class/graphics/${hdmi_fb}/modes | grep '1280x720'`
+		modes_60="`cat /sys/class/graphics/${hdmi_fb}/modes | grep '1920x1080'` $modes_60"
+		modes=$modes_60
+	fi
+
     return $RC
 }
 
@@ -53,12 +81,18 @@ setup()
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-   RC=0
+	if [ -n "$pid_video" ]; then
+		kill -9 $pid_video
+	fi
+	sleep 3
+	umount /mnt/temp
+    RC=0
 }
 usage()
 {
    echo "1: display mode stress test"
    echo "2: audio mode stress test"
+   echo "3: HDMI video and audio test under 1080p resolution"
 }
 test_case_01()
 {
@@ -67,63 +101,32 @@ TCID="Display mode stress test"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
-echo 0 > /sys/class/graphics/fb0/blank
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
 echo -e "\033[9;0]" > /dev/tty0 
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 i=0
-loops=10000000
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
+cp $STREAM_PATH/video/$stream_name /mnt/temp
+loops=5000
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
-
-        echo S:1920x1080p-60 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-
-        if [ $platfm != 60 ]; then
-        echo S:640x480p-60 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
+	for mode in $modes; do
+		echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+        echo q| fbv $LTPROOT/testcases/bin/butterfly.png -d /dev/${hdmi_fb}
+		/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30"|| exit 1
+        cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
+		if [ "$mode" != "$cur_mode" ]; then
+			echo "Error happens during set mode: $mode"
+			exit 1
 		fi
-
-        echo S:1280x720p-50 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
-
-        if [ $platfm != 60 ]; then
-        echo S:720x480p-60 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-		fi
-
-        echo S:1920x1080p-24 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-
-        if [ $platfm != 60 ]; then
-        echo S:720x576p-50 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-		fi
-
-        echo S:1280x720p-60 > /sys/class/graphics/fb0/mode
-        echo q| fbv $LTPROOT/testcases/bin/butterfly.png
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
+	done
 done
 RC=0
 return $RC
@@ -135,76 +138,96 @@ test_case_02()
 TCID="Audio mode stress test"
 #TODO give TST_COUNT
 TST_COUNT=2
-RC=1
-echo 0 > /sys/class/graphics/fb0/blank
+RC=2
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
 echo -e "\033[9;0]" > /dev/tty0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
-mkdir /mnt/temp
-mount -t tmpfs tmpfs /mnt/temp || exit 4
+mkdir -p /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 2
 FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
 for fname in $FILES
 do
-cp /mnt/nfs/test_stream/alsa_stream/$fname /mnt/temp
+cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
 done
 num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
 
 i=0
-loops=10000000
+loops=10000
 while [ $i -lt $loops ]
 do
-        i=`expr $i + 1`
-
-        echo S:1920x1080p-60 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio11k16S.wav
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-
-        if [ $platfm != 60 ]; then
-        echo S:640x480p-60 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio32k16S.wav
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
+    i=`expr $i + 1`
+	for mode in $modes; do
+		echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+        aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 2
+        cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
+		if [ "$mode" != "$cur_mode" ]; then
+			echo "Error happens during set mode: $mode"
+			exit 2
 		fi
-
-        echo S:1280x720p-50 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav
-        cat /sys/class/graphics/fb0/mode
         echo "times: $i"
         sleep 4
-
-        if [ $platfm != 60 ]; then
-        echo S:720x480p-60 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio48k16S.wav
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-		fi
-
-        echo S:1920x1080p-24 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio88k16S.wav
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-
-        if [ $platfm != 60 ]; then
-        echo S:720x576p-50 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio176k16S.wav
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-		fi
-
-        echo S:1280x720p-60 > /sys/class/graphics/fb0/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio192k16S.wav
-        cat /sys/class/graphics/fb0/mode
-        echo "times: $i"
-        sleep 4
-
+	done
 done
 umount /mnt/temp
+RC=0
+return $RC
+}
+
+test_case_03()
+{
+#TODO give TCID 
+TCID="HDMI video and audio test under 1080p resolution"
+#TODO give TST_COUNT
+TST_COUNT=3
+RC=3
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+
+#check mode is 1080p, if not, set it
+mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
+echo $mode | grep "1920x1080"
+if [ $? -ne 0 ]; then
+	#set 1080p mode
+	mode_1080=`echo $modes | grep -m 1 "1920x1080"`
+	if [ $? -ne 0 ]; then
+		#1080p mode is not supported by display, exit
+		echo "1080p mode is not supported by this display, case can not run."
+		exit 3
+	else
+		echo ${mode_1080} > /sys/class/graphics/${hdmi_fb}/mode
+	fi
+fi
+
+#1080P video playback 
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+a_stream=ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 3
+FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
+for fname in $FILES
+do
+cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
+done
+cp $STREAM_PATH/video/$a_stream /mnt/temp
+
+while [ true ]; do
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" || exit 3
+done &
+pid_video=$!
+
+#audio playback
+loops=5000
+i=0
+while [ $i -lt $loops ]; do
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
+	let i=i+1
+done
+
+kill -9 $pid_video
 RC=0
 return $RC
 }
@@ -214,15 +237,18 @@ return $RC
 # Description:  - Execute all tests, exit with test status.
 #
 RC=0    # Return value for setup, and test functions.
-platfm=63
+Platfm=63
 
 setup || exit $RC
 case "$1" in
 1)
-  test_case_01 || exit 2
+  test_case_01 || exit 1
   ;;
 2)
-  test_case_02 || exit 3
+  test_case_02 || exit 2
+  ;;
+3)
+  test_case_03 || exit 3
   ;;
 *)
   usage
