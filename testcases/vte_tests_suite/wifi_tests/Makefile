@@ -31,12 +31,16 @@ SUBDIRS=
 # AP test scripts
 SCRIPTS=wifi_testap001.sh wifi_testap002.sh wifi_testap003.sh wifi_testap004.sh wifi_testap005.sh wifi_testap008.sh wifi_testap009.sh wifi_testap010.sh
 SCRIPTS += wifi_stress.sh
+
 # ad-hoc test scripts
 SCRIPTS+= wifi_testadhoc005.sh wifi_testadhoc005c.sh wifi_testadhoc005cw.sh
 SCRIPTS+= wifi_testadhoc006.sh wifi_testadhoc006c.sh wifi_testadhoc006cw.sh
 SCRIPTS+= wifi_testadhoc007.sh wifi_testadhoc007c.sh wifi_testadhoc007cw.sh
 # config file
 SCRIPTS+= WPA-PSK.conf WPA-PSK-wrong.conf WPA-PSK2.conf
+
+# Performance test scripts
+SCRIPTS += wifi_perf.sh
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
