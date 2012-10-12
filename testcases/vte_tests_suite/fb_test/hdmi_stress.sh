@@ -214,20 +214,19 @@ cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
 done
 cp $STREAM_PATH/video/$a_stream /mnt/temp
 
-while [ true ]; do
-	/unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" || exit 3
-done &
-pid_video=$!
-
-#audio playback
+#audio + video playback
 loops=5000
 i=0
 while [ $i -lt $loops ]; do
+	/unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" &
+	pid_video=$!
     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
+	wait $pid_video || exit 3
 	let i=i+1
 done
 
-kill -9 $pid_video
 RC=0
 return $RC
 }
