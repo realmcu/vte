@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 ##############################################################################
 #Copyright (C) 2012 Freescale Semiconductor, Inc.
 #All Rights Reserved.
@@ -30,11 +30,13 @@
 setup()
 {
     # Initialize return code to zero.
-    RC=0                # Exit values of system commands used
+    RC=1                # Exit values of system commands used
 
     export TST_TOTAL=1   # Total number of test cases in this file.
     export TCID="WIFI_PERFORMANCE"       # Test case identifier
     export TST_COUNT=0   # Set up is initialized as test 0
+
+    trap "cleanup" 0 2
 
 	# Set global variables to the default value
 	std_time=0		#default test start time is Beijing time 0:00AM
@@ -60,6 +62,10 @@ setup()
 	if [ ! -e "/usr/bin/iperf" ]; then
 		cp `which iperf` /usr/bin || { RC=-1; echo "Setup Error: Pls set VTE env!"; }
 	fi
+	if [ ! -e "/usr/bin/ntpdate" ]; then
+		cp `which ntpdate` /usr/bin || cp /mnt/nfs/util/ntpdate /usr/bin
+	fi
+	#ntpdate 10.192.225.222 || /mnt/nfs/util/ntpdate 10.192.225.222
 	ntpdate 10.192.225.222 || /mnt/nfs/util/ntpdate 10.192.225.222
 	[ $? -eq 0 ] || { RC=-1; echo "Setup Error: Can not sync time with 222 server"; }
 	TZ='Asia/Shanghai'; export TZ
@@ -71,8 +77,8 @@ setup()
 		umount $dir
 	done
 	ifconfig eth0 down
+	RC=0
 
-    trap "cleanup" 0
 	return $RC
 }
 
@@ -84,18 +90,19 @@ setup()
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-    RC=0
 
 	# Remove ar6000 and bring up eth0
 	rmmod ar6000
+	count=100
 	ifconfig eth0 up
 	udhcpc -i eth0 || dhclient eth0
 
 	if [ "$best_speed" -gt 0 ]; then
 	    echo "The best result is:  $best_log" 
 	fi
+	exit $RC
 
-    return $RC
+   # return $RC
 }
 
 # Function:     wifi_perf()
@@ -107,20 +114,20 @@ cleanup()
 #
 wifi_perf()
 {
-	RC=0
+	RC=1
 	modprobe ar6000
 	sleep 5
 	iwconfig wlan0 mode managed || RC=1
 	iwconfig wlan0 key bbd9837522 || RC=1
 	iwconfig wlan0 essid FSLLBGAP_001 || RC=1
 	udhcpc -i wlan0 || dhclient wlan0
-	[ $? -eq 0 ] || { RC=1; echo "Error: Can not get IP addr for wlan0"; }
+	[ $? -eq 0 ] || { RC=1; echo "Error: Can not get IP addr for wlan0"; exit 1; }
 	sleep 5
 	LOCALIP=$(ifconfig wlan0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'); 
 	time -p iperf -c 10.192.225.222 -n 500M -t 100 -f m
 	sleep 5
 	rmmod ar6000
-	return $RC
+	RC=0
 }
 
 # Function:     wifi_auto()
@@ -155,19 +162,14 @@ wifi_auto()
 		if [ $cur_time -ge $std_time -a $cur_time -le $end_time ];then
 			# It is the time to do wifi performance test
 			if [ $count -lt $counts ]; then
-				#temp_log=`wifi_perf`
 				wifi_perf >> $log_file
 				if [ $? -eq 0 ]; then
-				  	#speed=`tail $log_file -n 15 | grep -m 1 "s/sec" | awk {'print $7'} | cut -d. -f1`
 				  	speed=`tail $log_file -n 15 | grep -m 1 "Mbits/sec" | awk {'print $7'} | cut -d. -f1`
-					#speed=$(tail $log_file -n 15 | grep -m 1 "Mbits/sec" | cut -d. -f3 | awk '{print $5}');
 				fi
-				echo $speed 
 				if [ $speed -gt $best_speed ]; then
 					best_speed=$speed
 					best_log=`tail $log_file -n 15 | grep -m 1 "Mbits/sec"`
 				fi
-				#echo $temp_log >> $log_file
 				let count=count+1
 			else
 				# Max time reached, test finished
@@ -216,7 +218,7 @@ EOF
 # Exit:         - zero on success
 #               - non-zero on failure.
 #
-RC=0    # Return value from setup, and test functions.
+RC=1    # Return value from setup, and test functions.
 
 if [ $# -gt 8 ]; then
     usage
