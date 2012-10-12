@@ -26,6 +26,7 @@ $(Target_membm):$(SRC_membm)
 
 install:
 	ln -f $(TARGET) ../../bin/
+	$(MAKE) -C neon_test install
 
 clean:
 	rm -rf $(TARGET)
