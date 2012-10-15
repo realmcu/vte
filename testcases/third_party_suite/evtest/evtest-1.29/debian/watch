@@ -1,0 +1,3 @@
+version=3
+
+http://cgit.freedesktop.org/evtest/ /evtest/snapshot/evtest-(.*)\.tar\.bz2

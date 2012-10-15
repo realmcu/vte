@@ -1,0 +1,27 @@
+Source: evtest
+Section: utils
+Priority: extra
+Maintainer: Stephen Kitt <steve@sk2.org>
+Build-Depends:
+ asciidoc,
+ debhelper (>= 7.0.50~),
+ dh-autoreconf,
+ libxml2-dev,
+ pkg-config,
+ xmlto,
+ xsltproc
+Standards-Version: 3.9.2
+Homepage: http://cgit.freedesktop.org/evtest/
+Vcs-Git: git://git.debian.org/collab-maint/evtest.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/evtest.git;a=summary
+
+Package: evtest
+Architecture: linux-any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: utility to monitor Linux input device events
+ evtest monitors a Linux input device, displaying all the events it
+ generates.
+ .
+ It can be used to determine mice button bindings, keymaps for exotic
+ keyboards... It is commonly used to debug issues with input devices
+ in X.Org.
