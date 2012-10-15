@@ -553,6 +553,7 @@ high_mode()
 	ifconfig eth0 up
 	udhclient || dhclient
 	echo 0 > /sys/class/graphics/fb0/blank
+	echo 0 > /sys/class/graphics/fb1/blank
 	sleep 5
 	/tmp/rtc_testapp_6 -m mem -T 50
 	check_status high
