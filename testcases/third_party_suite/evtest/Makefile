@@ -11,3 +11,4 @@ install:
 	-ln -f ${SOURCE_DIR}/${TARGET} ../../../testcases/bin/ 
 
 clean:
+	$(MAKE) -C ${SOURCE_DIR} clean	
