@@ -57,18 +57,22 @@ extern "C"{
 
 
 const char gaPixFormat[7][10] = { 
+									"uyvy",
                                     "YUYV",
                                     "YUV420"
+									"rgb565"
                                 };
                                 
                                 
 const int gaPixFormatID[7] =   {  
+									V4L2_PIX_FMT_UYVY,
                                     V4L2_PIX_FMT_YUYV,
-                                    V4L2_PIX_FMT_YUV420
+                                    V4L2_PIX_FMT_YUV420,
+                                    V4L2_PIX_FMT_RGB565
                                };
 /*======================== LOCAL MACROS =====================================*/
 
-#define PIX_FMT_NUM             2
+#define PIX_FMT_NUM             3
 #define CLEAR(x)                memset(&x, 0, sizeof(x));
 #define MXCFB_MEM_ADDRESS       0x83F00000
 #define MAX_STR_LEN 50
@@ -77,8 +81,9 @@ const int gaPixFormatID[7] =   {
 
 typedef struct
 {
-        void    *mpStart;
-        size_t   mLength;
+	unsigned char	*mpStart;
+	size_t offset;
+	unsigned int mLength;
 } sBuffer;
 
 typedef struct
@@ -106,12 +111,12 @@ static struct v4l2_format gFormat;
 static struct v4l2_framebuffer fbuffer;
 static struct v4l2_framebuffer fbuffer_save;
 
-static int gPixelFormat = V4L2_PIX_FMT_YUV420;
-static char gPixFmtName[40] = "YUV420";
+static int gPixelFormat = V4L2_PIX_FMT_RGB565;
+static char gPixFmtName[40] = "RGB565";
 static char gOrigPixFmtName[40] = "Unknown";
 static FILE* pDumpFile = NULL;
-static int gFBPixFormat = V4L2_PIX_FMT_RGB565X;
-static char gFBPixFmtName[40] = "RGB565X";
+static int gFBPixFormat = V4L2_PIX_FMT_RGB565;
+static char gFBPixFmtName[40] = "RGB565";
 
 static int gUsecase = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
@@ -249,7 +254,7 @@ int open_device(void)
                 return TFAIL;
         }
 
-        if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR|O_NONBLOCK, 0)) < 0)
+        if((gFdV4L = open(gV4LTestConfig.mV4LDevice, O_RDWR, 0)) < 0)
         {
                 tst_resm(TBROK, "Unable to open %s", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
@@ -297,6 +302,7 @@ int close_device(void)
 */
 int open_out_device(void)
 {
+	struct fb_var_screeninfo var;
         /* Open FrameBuffer Device */
 
         if((gFdFB = open(gV4LTestConfig.mOutputDevice, O_RDWR)) < 0)
@@ -306,9 +312,22 @@ int open_out_device(void)
         }
 
         //change_fb_format (V4L2_PIX_FMT_BGR24);
-        
+ 
+		if (ioctl(gFdFB, FBIOGET_VSCREENINFO, &var) < 0) {
+			printf("FBIOPUT_VSCREENINFO failed\n");
+			return TFAIL;
+		}
+
+		var.xres_virtual = var.xres;
+		var.yres_virtual = 2 * var.yres;
+		if (ioctl(gFdFB, FBIOPUT_VSCREENINFO, &var) < 0) {
+			printf("FBIOPUT_VSCREENINFO failed\n");
+			return TFAIL;
+		}
+       
         if(detect_fb_fmt() == TFAIL)
                 return TFAIL;
+#if 0
         //Current kernel config for imx27 does not support 24-bit framebuffer  
         if(gFBPixFormat != V4L2_PIX_FMT_RGB565X)
         {
@@ -332,7 +351,7 @@ int open_out_device(void)
                 if(gV4LTestConfig.mVerbose)
                         print_fb_info ();
         }
-
+#endif
         gVideoBufferSize = gScreenInfo.xres * gScreenInfo.yres * gScreenInfo.bits_per_pixel / 8;
 
         if((gpFB = mmap(0, gVideoBufferSize, PROT_READ | PROT_WRITE, MAP_SHARED, gFdFB, 0)) < 0)
@@ -356,9 +375,9 @@ int open_out_device(void)
 int close_out_device(void)
 {
         int retValue = TPASS;
-        if (isfb_format_switch == 1)
-        if(ioctl(gFdFB, FBIOPUT_VSCREENINFO, &gOld_VarInfo))
-                tst_resm(TWARN, "Unable to return the previous framebuffer format !");
+    //    if (isfb_format_switch == 1)
+    //    if(ioctl(gFdFB, FBIOPUT_VSCREENINFO, &gOld_VarInfo))
+    //            tst_resm(TWARN, "Unable to return the previous framebuffer format !");
 
         munmap (gpFB, gVideoBufferSize);
 
@@ -562,29 +581,39 @@ int init_overlay(void)
 */
 int init_capture(void)
 {
-
+        struct v4l2_streamparm parm;
         /* Open Frame Buffer Device */
 
         if(gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
                 if(open_out_device() == TFAIL) 
                         return TFAIL;
-      
+   
+   		
+		parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		parm.parm.capture.capturemode = 0;
+        parm.parm.capture.timeperframe.numerator = 1;
+        parm.parm.capture.timeperframe.denominator = 30;
+		if (ioctl(gFdV4L, VIDIOC_S_PARM, &parm) < 0)
+		{
+			tst_resm(TWARN, "%s Set PARM failed", gV4LTestConfig.mV4LDevice);
+			return TFAIL;
+		}
         /* Get original format */
         
         CLEAR(gFormat);
 
+
         gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-        if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
+		if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
         {
-                tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
+                tst_resm(TWARN, "%s get formatting failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
         
         gOrigFormatRect.width = gFormat.fmt.pix.width;
         gOrigFormatRect.height = gFormat.fmt.pix.height;
         gOrigPixFormat = gFormat.fmt.pix.pixelformat;
-        
         int i = 0;
         
         for(i=0; i < PIX_FMT_NUM; i++)
@@ -686,8 +715,8 @@ int init_mmap(void)
   
         CLEAR(reqBuffers);  
         
-        reqBuffers.count = 3;  /* 4 doesn't work */
-        reqBuffers.type = gUsecase;  
+        reqBuffers.count = 32;
+        reqBuffers.type = V4L2_BUF_TYPE_VIDEO_CAPTURE; 
         reqBuffers.memory = V4L2_MEMORY_MMAP;
 
         if(ioctl (gFdV4L, VIDIOC_REQBUFS, &reqBuffers) < 0)
@@ -713,17 +742,17 @@ int init_mmap(void)
                                   
                 CLEAR(buffer);    
                 
-                buffer.type = gUsecase;    
-                buffer.memory = V4L2_MEMORY_MMAP;    
-                buffer.index = gBuffNumber;    
-                
-                if (ioctl(gFdV4L, VIDIOC_QUERYBUF, &buffer) < 0)    
-                {      
-                        tst_resm(TWARN, "VIDIOC_QUERYBUF error");      
-                        return TFAIL;    
+                buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                //buffer.memory = V4L2_MEMORY_MMAP;
+                buffer.index = gBuffNumber;
+                if (ioctl(gFdV4L, VIDIOC_QUERYBUF, &buffer) < 0)
+                {
+                        tst_resm(TWARN, "VIDIOC_QUERYBUF error");
+                        return TFAIL;
                 } 
                    
                 gpBuffers[gBuffNumber].mLength = buffer.length;    
+				gpBuffers[gBuffNumber].offset = (size_t) buffer.m.offset;
                 gpBuffers[gBuffNumber].mpStart = mmap (NULL, buffer.length,
                                                  PROT_READ | PROT_WRITE, MAP_SHARED,
                                                  gFdV4L, buffer.m.offset);
@@ -764,14 +793,15 @@ int start_capturing (void)
                                 buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;     
                                 buffer.memory = V4L2_MEMORY_MMAP;      
                                 buffer.index = i;
-                                
+								buffer.m.offset = gpBuffers[i].offset;
                                 if (ioctl (gFdV4L, VIDIOC_QBUF, &buffer) < 0)
                                 { 
-                                        tst_resm(TBROK,"VIDIOC_QBUF failed. ERROR : %s", strerror(errno));
-                                        return TFAIL;
-                                }     
+                                tst_resm(TBROK,"VIDIOC_QBUF failed. ERROR : %s", strerror(errno));
+                                return TFAIL;
+                                } 
                         }
-                       
+                      
+						typeBuffer = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                         if(ioctl (gFdV4L, VIDIOC_STREAMON, &typeBuffer) < 0)
                         {
                                 tst_resm(TBROK,"VIDIOC_STREAMON failed. ERROR : %s", strerror(errno));
@@ -835,7 +865,6 @@ int stop_capturing (void)
                 case V4L2_BUF_TYPE_VIDEO_CAPTURE: 
                          
                         typeBuffer = V4L2_BUF_TYPE_VIDEO_CAPTURE;          
-                        
                         if(ioctl (gFdV4L, VIDIOC_STREAMOFF, &typeBuffer) < 0)          
                         {            
                                 tst_resm(TWARN,"Error stop_capturing() for VIDIOC_STREAMOFF : %s",strerror(errno));
@@ -891,19 +920,19 @@ int init_device (void)
         
         if(gUsecase == V4L2_BUF_TYPE_VIDEO_CAPTURE)
         {
-
+#if 1
                 if(!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
                 {
                         tst_resm(TWARN, "%s does not support capturing", gV4LTestConfig.mV4LDevice);
-                        return TFAIL;
+                        //return TFAIL;
                 }
-        
                 if(!(cap.capabilities & V4L2_CAP_STREAMING))
                 {      
                         tst_resm(TWARN, "%s does not support streaming I/O", gV4LTestConfig.mV4LDevice);      
-                        return TFAIL;    
+                        //return TFAIL;
                 }
         
+#endif        
                 if(init_capture() == TFAIL) 
                         return TFAIL;
     
@@ -1110,9 +1139,9 @@ int process_image(const unsigned char *aStart, int aLength)
                 case PRP_ENC_ON_D:  
                         /* Here conversion of buffer pix foramt to FB pix format */
                         tst_resm(TINFO, "Displaying frame...");
-                        if (gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420)
+                        if (gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420 && gPixelFormat != gFBPixFormat)
                         {
-                                tst_resm (TINFO, "Unsupported pixel format: gPixelFormat");
+                                tst_resm (TINFO, "Unsupported pixel format: %s", gFBPixFmtName);
                                 return TFAIL; 
                         }
 
@@ -1124,7 +1153,7 @@ int process_image(const unsigned char *aStart, int aLength)
                                               RGB_ORIENT_NORMAL, RGB_565 );
                                 tst_resm (TINFO, "Color space conversion YUYV->RGB565X success!");
                         }
-                        else
+                        else if (gPixelFormat == V4L2_PIX_FMT_YUV420)
                         {
                                 YCbCrToRGB((unsigned char *) aStart, gFormat.fmt.pix.width,
                                            (unsigned char *) aStart + gFormat.fmt.pix.width * gFormat.fmt.pix.height, 
@@ -1133,10 +1162,14 @@ int process_image(const unsigned char *aStart, int aLength)
                                            gFormat.fmt.pix.width, gFormat.fmt.pix.height,
                                            RGB_ORIENT_NORMAL, RGB_565);
                                 tst_resm (TINFO, "Color space conversion YUV420->RGB565X success!");
-                        }
+                        }else{
+							/* Buggie temp set display to FB directly for this format */
+                    		display_to_fb((void*)aStart, aLength);
+							//memcpy(gpFB,aStart,aLength);
+							break;
+						}
 
                     display_to_fb((void*)gpRGBconv_buf, aLength);
-                    sleep(1);
                         
                 break;
 
@@ -1179,15 +1212,13 @@ int read_frame(void)
                         }
 
                         CLEAR(buffer); 
-                             
                         buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;      
                         buffer.memory = V4L2_MEMORY_MMAP;      
-                        
                         if(ioctl (gFdV4L, VIDIOC_DQBUF, &buffer) < 0)      
                         {       
                                 if(gV4LTestConfig.mVerbose) 
                                 {
-                                        tst_resm(TINFO,"ERROR read_frame(): %s",strerror(errno));
+									tst_resm(TINFO,"ERROR read_frame(): %s",strerror(errno));
                                 }
                                               
                                 switch(errno)
@@ -1203,19 +1234,26 @@ int read_frame(void)
                                                 return TFAIL;
                                 }
                         }
-                        
+
+                       tst_resm(TINFO,"read_frame() for display");
+
+                       #if 1 
                         if(buffer.index >= gBuffNumber)
                         {        
                                 tst_resm(TWARN, "Invalid buffer index");
                                 return TFAIL;      
                         }
-
                         else
                                 aStart = gpBuffers[buffer.index].mpStart;
 
                         if(process_image (aStart,gpBuffers[buffer.index].mLength) == TFAIL) 
                                 return TFAIL;
-                                
+						/*
+						if (ioctl(gFdFB, FBIOPAN_DISPLAY, &gScreenInfo) < 0) {
+							printf("FBIOPAN_DISPLAY failed\n");
+						}
+						*/
+                       #endif     
                         if(ioctl (gFdV4L, VIDIOC_QBUF, &buffer) < 0)
                         {       
                                 tst_resm(TWARN, "Buffer error");
@@ -1349,8 +1387,8 @@ int detect_fb_fmt(void)
                             (gScreenInfo.green.offset == 5) && (gScreenInfo.green.length == 6) &&           
                             (gScreenInfo.blue.offset == 0) && (gScreenInfo.blue.length == 5))   
                         {          
-                                gFBPixFormat = V4L2_PIX_FMT_RGB565X;          
-                                strcpy(gFBPixFmtName,"RGB565X");
+                                gFBPixFormat = V4L2_PIX_FMT_RGB565;          
+                                strcpy(gFBPixFmtName,"RGB565");
                                 break;
                         }        
                         
@@ -1358,8 +1396,8 @@ int detect_fb_fmt(void)
                             (gScreenInfo.green.offset == 6) && (gScreenInfo.green.length == 5) &&           
                             (gScreenInfo.blue.offset == 1) && (gScreenInfo.blue.length == 5))   
                         {          
-                                gFBPixFormat = V4L2_PIX_FMT_RGB555X;          
-                                strcpy(gFBPixFmtName,"RGB555X");          
+                                gFBPixFormat = V4L2_PIX_FMT_RGB555;          
+                                strcpy(gFBPixFmtName,"RGB555");          
                                 break;        
                         }
 
@@ -1367,8 +1405,8 @@ int detect_fb_fmt(void)
                             (gScreenInfo.green.offset == 5) && (gScreenInfo.green.length == 6) &&           
                             (gScreenInfo.blue.offset == 11) && (gScreenInfo.blue.length == 5))  
                         {          
-                                gFBPixFormat = V4L2_PIX_FMT_RGB565;          
-                                strcpy(gFBPixFmtName,"RGB565");          
+                                gFBPixFormat = V4L2_PIX_FMT_RGB565X;          
+                                strcpy(gFBPixFmtName,"RGB565X");          
                                 break;        
                         }        
                         
@@ -1376,8 +1414,8 @@ int detect_fb_fmt(void)
                             (gScreenInfo.green.offset == 6) && (gScreenInfo.green.length == 5) &&           
                             (gScreenInfo.blue.offset == 11) && (gScreenInfo.blue.length == 5))  
                         {          
-                                gFBPixFormat = V4L2_PIX_FMT_RGB555;          
-                                strcpy(gFBPixFmtName,"RGB555");          
+                                gFBPixFormat = V4L2_PIX_FMT_RGB555X;          
+                                strcpy(gFBPixFmtName,"RGB555X");          
                                 break;        
                         }
                         
@@ -1507,12 +1545,12 @@ void display_to_fb (unsigned char * aStart, int aLength)
         
         int i = 0, j = 0; 
         /* RGB565X ounly */
+#if 0
         while(i < 2 * gFormat.fmt.pix.width * gFormat.fmt.pix.height)
         {
                 *pDst = *pSrc;
                 i++; pSrc++;
                 j++; pDst++;
-                        
                 if (i%srcWidth == 0)
                 {         
                         while(j%dstWidth != 0)
@@ -1522,6 +1560,16 @@ void display_to_fb (unsigned char * aStart, int aLength)
                         }
                 }
         }
+#else
+		int width = srcWidth < dstWidth ? srcWidth : dstWidth;
+		while(i < 2 * gFormat.fmt.pix.width * gFormat.fmt.pix.height)
+        {
+                memcpy(pDst, pSrc, width);
+				pDst += dstWidth;
+				pSrc += srcWidth;
+				i += 2 * gFormat.fmt.pix.width;
+        }
+#endif
 }
 
 /*===== ask_user =====*/
@@ -1546,13 +1594,11 @@ int ask_user(void)
                 tst_resm(TINFO,"Is video displayed right? [y/n] ");
                 fflush(stdout);
                 answer = toupper(fgetc(stdin));
-                
+               	sleep(5); 
                 if(answer == 'Y') 
                         retKeyPress = 0;    
-                else 
-                
-                if(answer == 'N')            
-                        retKeyPress = 1;  
+                else if(answer == 'N')            
+                        retKeyPress = 1;
 
         }
         while(retKeyPress == 2);
@@ -1638,14 +1684,14 @@ int VT_v4l_capture_test(void)
                         return TFAIL;
                 }
         }
+#if 0
         if((gV4LTestConfig.mCaseNum != PRP_ENC_TO_F && gV4LTestConfig.mCaseNum != PRP_VID_TO_F) || 
                 gV4LTestConfig.mCrop) 
                 retValue = ask_user();  
         else 
                 retValue = TPASS; 
-        
-        sleep(1);
-                
+#endif       
+	    retValue = TPASS;
         if(cleanup_device() != TPASS) return TFAIL; 
                 
         return retValue;
@@ -1676,7 +1722,7 @@ int process_capture (void)
         tst_resm(TINFO,"Start capturing..."); 
 
         while(cnt-- > 0)  
-        {    
+        {
                 int ret = -1;   
                 while(ret < 0)    
                 {       
@@ -1700,18 +1746,16 @@ int process_capture (void)
                                 return TFAIL;  
                         }    
                 }    
-                
                 gSnapshot = 0;    
-                
                 if((cnt == (int)(gV4LTestConfig.mCount / 2 + 1)) && (gV4LTestConfig.mCaseNum == PRP_ENC_TO_F)) 
                         gSnapshot = 1;
-
                 if(read_frame() == TFAIL) 
                         return TFAIL;
         } 
+        tst_resm(TINFO,"finish capturing..."); 
         return TPASS; 
 }
-/*===== process_capture =====*/
+/*===== process_video =====*/
 /**
 @brief  Performs the capture and dump video record to file 
 
@@ -1998,7 +2042,9 @@ int cleanup_device(void)
                 tst_resm(TBROK, "%s capturing stop failed", gV4LTestConfig.mV4LDevice);
                 return TFAIL;
         }
-
+		
+        tst_resm(TINFO, "clean ");
+		sleep(5);
         if(reset_device() != TPASS)
         {
                 tst_resm(TBROK, "%s reset failed", gV4LTestConfig.mV4LDevice);

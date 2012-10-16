@@ -37,8 +37,7 @@ extern "C"{
 #include <stdio.h>
 #include <ctype.h>
 
-#include <linux/compiler.h>
-#include <linux/videodev.h>
+#include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -59,7 +58,7 @@ extern "C"{
                                         DEFINES AND MACROS
 ==================================================================================================*/
 
-#define V4L_OUTPUT_DEVICE "//dev//v4l/video16"
+#define V4L_OUTPUT_DEVICE "/dev/video16"
 #define OUTPUT_FILE       "v4l_output_file"
 #define INPUT_FILE        "output_BGR24"
 
