@@ -30,7 +30,7 @@ LIBRARY =
 SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 
-TARGET = v4l_output_testapp
+TARGET = v4l_output_emma
 
 
 all: $(TARGET)

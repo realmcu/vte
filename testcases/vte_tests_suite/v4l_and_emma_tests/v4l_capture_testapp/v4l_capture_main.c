@@ -233,11 +233,11 @@ int main(int argc, char **argv)
         
         /* Init struct sV4LTestConfig*/
         
-        gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/v4l/video0";
+        gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/video0";
         gV4LTestConfig.mOutputDevice =  uflag ? uopt : "/dev/fb0";
         gV4LTestConfig.mOutputFile = NULL;
-        gV4LTestConfig.mWidth = Wflag ? atoi(Wopt) : 240;
-        gV4LTestConfig.mHeight = Hflag ? atoi(Hopt) : 190;
+        gV4LTestConfig.mWidth = Wflag ? atoi(Wopt) : 640;
+        gV4LTestConfig.mHeight = Hflag ? atoi(Hopt) : 480;
         if((gV4LTestConfig.mCount = Tflag ? atoi(Topt) : 10) <=0)
                 tst_resm(TWARN, "Invalid argument for -T  %d", gV4LTestConfig.mCount);;
         gV4LTestConfig.mCaseNum  = Cflag ? atoi(Copt) : PRP_VF;
@@ -312,14 +312,14 @@ int main(int argc, char **argv)
                         &gV4LTestConfig.mFrameRate,
                         &gV4LTestConfig.mDuration);
                 if (gV4LTestConfig.mFrameRate > 30 || gV4LTestConfig.mFrameRate < 1)
-                        gV4LTestConfig.mFrameRate = 20;
+                        gV4LTestConfig.mFrameRate = 30;
                         
                 if (gV4LTestConfig.mDuration > 16 || gV4LTestConfig.mDuration < 1)
                         gV4LTestConfig.mDuration = 4;
         }
         else 
         {
-                gV4LTestConfig.mFrameRate = 20;
+                gV4LTestConfig.mFrameRate = 30;
                 gV4LTestConfig.mDuration = 4;
         }
         
@@ -353,8 +353,6 @@ int main(int argc, char **argv)
                                  gV4LTestConfig.mCropRect.height);
               
         }
-        
-        /* Resizing test */
         
         if((Sflag)&&(gV4LTestConfig.mCaseNum == 1))
         {
@@ -403,7 +401,6 @@ int main(int argc, char **argv)
                 
         /* Print test Assertion using tst_resm() function with argument TINFO. */
         tst_resm(TINFO, "Testing if %s test case is OK", TCID);
-                        
         /* Test Case Body. */
         VT_rv = VT_v4l_capture_test();
         
@@ -457,7 +454,7 @@ void cleanup(void)
                         tst_resm(TWARN, "VT_cleanup() Failed : error code = %d", VT_rv);
                 }
         
-                tst_exit(VT_rv);
+                tst_exit();
         }
 }       
 

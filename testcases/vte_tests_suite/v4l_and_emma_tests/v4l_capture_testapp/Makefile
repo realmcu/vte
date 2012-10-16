@@ -22,14 +22,14 @@
 #-------------------   ----------   ----------   ------------------------------
 #Kardakov Dmitriy/ID   09/11/06     TLSbo76802   Initial version
 ##############################################################################
-CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include/
+CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
 LOADLIBES+=     -L../../../../lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME
-TARGET=v4l_capture_testapp
+TARGET=v4l2_capture_emma
 
 all: $(TARGET)
 	@echo "****************************************************"
