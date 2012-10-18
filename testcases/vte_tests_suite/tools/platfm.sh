@@ -49,9 +49,11 @@
 #   IMX50-RDP3    IMX50-RDP3
 #   IMX6-SABREAUTO IMX6-SABREAUTO
 #   IMX6Solo-SABREAUTO IMX6Solo-SABREAUTO
+#   IMX6DL-SABREAUTO IMX6DL-SABREAUTO
 #   IMX6SL-EVK IMX6SL-EVK
 #   IMX6-SABRELITE IMX6-SABRELITE
 #   IMX6ARM2    IMX6ARM2
+#   IMX6DL-Sabre-SD IMX6DL-Sabre-SD
 #
 # Usage2(return number): 
 #   platfm.sh || platform=$?
@@ -243,7 +245,12 @@ determine_platform()
     then
         find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
 		if [ $find -eq 1 ]; then
-        	p=IMX6Solo-SABREAUTO
+            find=`cat /proc/cpuinfo | grep "BogoMIPS" | wc -l`
+            if [ $find -eq 1 ]; then
+                p=IMX6Solo-SABREAUTO
+            elif [ $find -eq 2 ]; then
+                p=IMX6DL-SABREAUTO
+            fi
 		fi
     fi
 
@@ -327,7 +334,7 @@ determine_platform()
     elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ] || [ $p = "IMX6Q-Sabre-SD" ]
     then
         RC=63
-    elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ] || [ $p = "IMX6DL-Sabre-SD"  ]
+    elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ] || [ $p = "IMX6DL-Sabre-SD"  ] || [ "$p" = "IMX6DL-SABREAUTO" ]
     then
         RC=61
 	elif [ $p = "IMX6Sololite-ARM2" ] || [ $p = "IMX6SL-EVK"  ]
@@ -452,6 +459,43 @@ CPU revision    : 10
 Hardware        : Freescale i.MX 6Quad Armadillo2 Board
 Revision        : 63000
 Serial          : 0000000000000000
+
+----MX6Solo ARD board -201210
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 1581.05
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX 6Quad/DualLite/Solo Sabre Auto Board
+Revision        : 61211
+Serial          : 866511d4d72d7859
+
+
+----MX6DL ARD board -201210
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 1581.05
+
+processor       : 1
+BogoMIPS        : 1581.05
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX 6Quad/DualLite/Solo Sabre Auto Board
+Revision        : 61211
+Serial          : 656421d4d72d785a
+
 
 EOF
 }
