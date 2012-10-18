@@ -63,11 +63,11 @@ setup()
 		fi
 		let i=i+1
 	done
-	modes=`cat /sys/class/graphics/${hdmi_fb}/modes`
 	if [ $platfm -eq 60 ]; then
-		modes_60=`cat /sys/class/graphics/${hdmi_fb}/modes | grep '1280x720'`
-		modes_60="`cat /sys/class/graphics/${hdmi_fb}/modes | grep '1920x1080'` $modes_60"
-		modes=$modes_60
+		modes=`cat /sys/class/graphics/fb0/modes`
+		hdmi_fb=fb0
+	else
+		modes=`cat /sys/class/graphics/${hdmi_fb}/modes`
 	fi
 
     return $RC
@@ -150,7 +150,7 @@ for fname in $FILES
 do
 cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
 done
-num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
+num=`aplay -l |grep -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
 
 i=0
 loops=10000
