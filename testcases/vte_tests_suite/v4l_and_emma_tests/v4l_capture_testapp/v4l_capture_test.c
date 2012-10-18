@@ -715,7 +715,7 @@ int init_mmap(void)
   
         CLEAR(reqBuffers);  
         
-        reqBuffers.count = 32;
+        reqBuffers.count = 4;
         reqBuffers.type = V4L2_BUF_TYPE_VIDEO_CAPTURE; 
         reqBuffers.memory = V4L2_MEMORY_MMAP;
 
