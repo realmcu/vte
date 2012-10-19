@@ -14,7 +14,7 @@
 #
 ##############################################################################
 
-SUBDIRS = conv
+SUBDIRS = conv v4l_modes
 TARGET = CalLightAvg.py
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i CC=$(CROSS_COMPILE)gcc; done
