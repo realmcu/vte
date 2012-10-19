@@ -30,8 +30,8 @@
 
 #define DEFAULT_WIDTH	320
 #define DEFAULT_HEIGHT	240
-
 #define	V4L2_BUF_NUM	2
+#define MAX_V4L2_DEVICE_NR 64
 
 int g_num_buffers;
 
@@ -808,16 +808,42 @@ static void pxp_cleanup(struct pxp_control *pxp)
 
 int main(int argc, char **argv)
 {
+	int i = 0;
+	char index[3] = "";
+	char v4l_device[32] = "/dev/video";
 	struct pxp_control *pxp;
+	struct v4l2_capability cap;
 
 	if (!(pxp = pxp_init(argc, argv)))
 		return 1;
 
+#if 0
         if ((pxp->vfd = open(pxp->vdevfile, O_RDWR, 0)) < 0) {
 		perror("video device open failed");
 		return 1;
-	}
 
+	}
+#else
+	while(i < MAX_V4L2_DEVICE_NR) {
+		sprintf(index, "%d", i);
+		strcat(v4l_device, index);
+
+		if ((pxp->vfd  = open(v4l_device, O_RDWR, 0)) < 0)
+		{
+			i++;
+			continue;
+		}
+		if (ioctl(pxp->vfd , VIDIOC_QUERYCAP, &cap)) {
+			i++;
+			continue;
+		}
+		if (cap.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
+			printf("Find v4l2 capture deice %s\n.", v4l_device);
+			break;
+		}
+		i++;
+	}
+#endif
 	if (pxp_check_capabilities(pxp))
 		return 1;
 
