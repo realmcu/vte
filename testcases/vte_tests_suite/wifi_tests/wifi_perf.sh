@@ -16,6 +16,7 @@
 # Author                   Date       Description of Changes
 #-------------------   ------------   ---------------------
 # Andy Tian            27/09/2012      Initial ver.
+# Andy Tian            19/10/2012      Remove eth0 shutdown part.
 #############################################################################
 
 # Function:     setup
@@ -65,18 +66,17 @@ setup()
 	if [ ! -e "/usr/bin/ntpdate" ]; then
 		cp `which ntpdate` /usr/bin || cp /mnt/nfs/util/ntpdate /usr/bin
 	fi
-	#ntpdate 10.192.225.222 || /mnt/nfs/util/ntpdate 10.192.225.222
-	ntpdate 10.192.225.222 || /mnt/nfs/util/ntpdate 10.192.225.222
+	ntpdate 10.192.225.222
 	[ $? -eq 0 ] || { RC=-1; echo "Setup Error: Can not sync time with 222 server"; }
 	TZ='Asia/Shanghai'; export TZ
 
 	# shut down eth0 to avoid impact to the performance data
 	sync
-	nfs_list=`mount | awk '/:\// {print $3}'`
-	for dir in ${nfs_list}; do
-		umount $dir
-	done
-	ifconfig eth0 down
+	#nfs_list=`mount | awk '/:\// {print $3}'`
+	#for dir in ${nfs_list}; do
+	#	umount $dir
+	#done
+	#ifconfig eth0 down
 	RC=0
 
 	return $RC
@@ -94,8 +94,8 @@ cleanup()
 	# Remove ar6000 and bring up eth0
 	rmmod ar6000
 	count=100
-	ifconfig eth0 up
-	udhcpc -i eth0 || dhclient eth0
+	#ifconfig eth0 up
+	#udhcpc -i eth0 || dhclient eth0
 
 	if [ "$best_speed" -gt 0 ]; then
 	    echo "The best result is:  $best_log" 
@@ -121,6 +121,7 @@ wifi_perf()
 	iwconfig wlan0 key bbd9837522 || RC=1
 	iwconfig wlan0 essid FSLLBGAP_001 || RC=1
 	udhcpc -i wlan0 || dhclient wlan0
+	route add -host 10.192.225.222 dev wlan0
 	[ $? -eq 0 ] || { RC=1; echo "Error: Can not get IP addr for wlan0"; exit 1; }
 	sleep 5
 	LOCALIP=$(ifconfig wlan0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'); 
