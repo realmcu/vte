@@ -141,6 +141,8 @@ int main(int argc, char **argv)
 	char *g_v4l_rate;
 	int max_mode;
 	int mode;
+	int f_mode=0;
+	int rc=0;
 
 	option_t options[] = {
 		{"D:", &Dflag, &Dopt},	/* Select device                        */
@@ -221,11 +223,15 @@ int main(int argc, char **argv)
 		{
 			printf("Case Failed! Below modes unsupported: \n");
 			for ( mode=0; mode<uns_num; mode++)
-				printf("%d ", *(unsup_mode+mode));
-			printf("\n");
-        	close(fd_v4l);
-			cleanup();
-			return -1;
+			{
+				f_mode=*(unsup_mode+mode);
+				printf("%d:%dx%d ",
+						*(modes_res+f_mode*3),
+						*(modes_res+f_mode*3+1),
+						*(modes_res+f_mode*3+2)
+					  );
+			}
+			rc=-1;
 		}
 		else
 		{
@@ -260,7 +266,7 @@ int main(int argc, char **argv)
 	printf("\n");
 	close(fd_v4l);
 	cleanup();
-	return 0;
+	return rc;
 }
 
 /*======================== GLOBAL FUNCTIONS =================================*/
