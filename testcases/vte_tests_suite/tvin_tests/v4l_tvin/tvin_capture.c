@@ -43,6 +43,7 @@ static char gFBPixFmtName[40] = "RGB565";
 static unsigned char * gpFB = NULL;
 static unsigned long gVideoBufferSize;
 static struct v4l2_format gFormat;
+static unsigned long gCount = 1000;
 
 static void errno_exit(const char *s)
 {
@@ -340,9 +341,8 @@ static int read_frame(void)
 
 static void mainloop(void)
 {
-	unsigned int count;
-	count = 1000;
-	while (count-- > 0) {
+	gCount = 1000;
+	while (gCount-- > 0) {
 			fd_set fds;
 			struct timeval tv;
 			int r;
@@ -584,6 +584,7 @@ static void init_device(void)
 		if (-1 == xioctl(fd, VIDIOC_S_CROP, &crop)) {
 			switch (errno) {
 			case EINVAL:
+				printf("set crop fails\n");
 /* Cropping not supported. */
 				break;
 			default:
@@ -592,6 +593,7 @@ static void init_device(void)
 			}
 		}
 	} else {
+		printf("crop not support\n");
 /* Errors ignored. */
 	}
 	CLEAR(fmt);
@@ -675,6 +677,7 @@ static void usage(FILE * fp, int argc, char **argv)
 static const char short_options[] = "d:hmru";
 static const struct option long_options[] = {
 	{"fb", required_argument, NULL, 'b'},
+	{"count", required_argument, NULL, 'c'},
 	{"device", required_argument, NULL, 'd'},
 	{"help", no_argument, NULL, 'h'},
 	{"mmap", no_argument, NULL, 'm'},
@@ -699,6 +702,9 @@ int main(int argc, char **argv)
 			break;
 		case 'b':
 			fb_name = optarg;
+			break;
+		case 'c':
+			gCount = atoi(optarg);
 			break;
 		case 'd':
 			dev_name = optarg;
