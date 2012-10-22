@@ -38,10 +38,12 @@ all: $(TARGET)
 	@echo "** ALL : $(TARGET)  test application  **"
 	@echo "***********************************************"
 	@echo
+	${MAKE} -C v4l_tvin
 
 install:
 	-ln -f $(TARGET_SCRIPT) $(BIN_DIR)bin/
 	-ln -f $(TARGET) $(BIN_DIR)bin/
+	${MAKE} -C v4l_tvin install
 	@echo "***********************************************"
 	@echo "** INSTALL : $(TARGET)                **"
 	@echo "***********************************************"
