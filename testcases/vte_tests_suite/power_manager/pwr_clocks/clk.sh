@@ -438,6 +438,31 @@ test_case_11()
     return $RC
 }
 
+test_case_12()
+{
+    #TODO give TCID
+    TCID="mipi clock test"
+    #TODO give TST_COUNT
+    TST_COUNT=11
+    RC=11
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    #TODO add function test script here
+    get_clk_cnt mipi_pllref_clk
+    mipi_cnt=$?
+
+    if [ $mipi_cnt -gt 0 ]; then
+        RC=11
+    else
+        RC=0
+    fi
+
+    return $RC
+}
+
+
 usage()
 {
     cat <<-EOF
@@ -514,6 +539,9 @@ case "$1" in
     ;;
 11|"pcie")
     test_case_11 || check_result
+    ;;
+12|"mipi_pllref_clk")
+    test_case_12 || check_result
     ;;
 *)
     usage
