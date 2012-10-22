@@ -1,0 +1,8 @@
+#board sanity check test plan for Rigel and Arik
+TGE-S1_H storage_all.sh 2
+TGE-S2_H i=0; while [ $i -lt 30 ]; do display_stress.sh 7; i=`expr $i + 1`; done
+TGE-S3_H i=0; while [ $i -lt 50 ]; do display_stress.sh 4; i=`expr $i + 1`; done
+TGE-S4_H i=0; while [ $i -lt 100 ]; do dac_test1.sh -f $STREAM_PATH/alsa_stream/
+audio32k16S.wav; i=`expr $i + 1`;done
+TGE-S5_H i=0; while [ $i -lt 100 ]; do rtc_testapp_6 -T 15; i=`expr $i + 1`; done
+
