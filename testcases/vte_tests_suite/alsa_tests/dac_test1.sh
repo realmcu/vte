@@ -202,7 +202,8 @@ dac_play()
         done
 
         if [ $dev_num -gt 1 ]; then
-            if [ "$platfm" = "IMX6Solo-SABREAUTO" ] || [ "$platfm" = "IMX6-SABREAUTO" ]; then
+            if [ "$platfm" = "IMX6Solo-SABREAUTO" ] || [ "$platfm" = "IMX6-SABREAUTO" ] \
+                || [ "$platfm" = "IMX6DL-SABREAUTO" ]; then
                 # on ARD with CS42888 ASRC, there're two cs42888 devices, use primary one for ALSA device
                 tst_resm TWARN "Specified card $HW_keyword match num is not single, it's better to provide more detail name"
                 alsa_dev=`echo $alsa_dev | sed -n '1p'| awk '{print $1}'`
