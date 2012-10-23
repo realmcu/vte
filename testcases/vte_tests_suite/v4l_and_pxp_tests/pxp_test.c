@@ -424,8 +424,9 @@ static int pxp_read_infiles(struct pxp_control *pxp)
 	n = read(fd, pxp->buffers[0].start, s0_size);
 	if (n != s0_size) {
 		perror("error reading s0 data");
+		printf("size = %d\n", s0_size);
 		close(fd);
-		return 1;
+		return 0;
 	}
 
 	close(fd);
@@ -817,7 +818,7 @@ int main(int argc, char **argv)
 	if (!(pxp = pxp_init(argc, argv)))
 		return 1;
 
-#if 0
+#if 1
         if ((pxp->vfd = open(pxp->vdevfile, O_RDWR, 0)) < 0) {
 		perror("video device open failed");
 		return 1;
@@ -827,7 +828,7 @@ int main(int argc, char **argv)
 	while(i < MAX_V4L2_DEVICE_NR) {
 		sprintf(index, "%d", i);
 		strcat(v4l_device, index);
-
+		printf("index = %d\n", i);
 		if ((pxp->vfd  = open(v4l_device, O_RDWR, 0)) < 0)
 		{
 			i++;
