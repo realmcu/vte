@@ -53,9 +53,12 @@ setup()
 	mac=`ifconfig | grep -m 1 "HWaddr" | awk '{printf $5}'`
 	if [ "$CAMERA" = "ov5640_mipi" ]; then
 		TSTCMD="v4l_capture_testapp -D /dev/video1"
+		TSTCMDMODEs="v4l_modes -D /dev/video1"
 	else
 		TSTCMD="v4l_capture_testapp"
+		TSTCMDMODEs="v4l_modes -D /dev/video0"
 	fi
+        v4l_module.sh setup	
 	return $RC
 }
 
@@ -94,7 +97,7 @@ test_case_01()
 
 	local -a size
 	size=(640 480 320 240 720 480 720 576 1280 720 1920 1080 2592 1944 176 144 1024 768)
-	modes="0 1 2 3 4 5 6 7 8"
+	modes=`$TSTCMDMODEs -r ${fps}`                                                                                                     
 	for M in $modes; do
 		let w=2*M
 		let h=2*M+1
@@ -119,12 +122,7 @@ test_case_01()
 			bad_quality="$bad_quality $M"
 		fi
 	done
-	echo $skip_modes
 	echo $bad_quality
-	if [ -n "$skip_modes" ];then
-		echo "Below modes are not support, please check it"
-		echo $skip_modes
-	fi
 	if [ -n "$bad_quality" ];then
 		echo "The picture quality is bad for below modes"
 		echo $bad_quality
