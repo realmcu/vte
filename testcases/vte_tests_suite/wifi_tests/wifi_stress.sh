@@ -28,6 +28,7 @@ setup()
     iwconfig wlan0 essid FSLLBGAP_001
     ifconfig wlan0 up
     udhcpc -i wlan0 || dhclient wlan0 || return 1
+    route add -host 10.192.225.222 dev wlan0
     sleep 5
     export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
 
