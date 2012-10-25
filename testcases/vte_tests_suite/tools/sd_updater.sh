@@ -130,6 +130,12 @@ part_disk()
 ${partition1_start},${partition1_size},0c
 ${partition2_start}
 EOF
+    sleep 2
+    sfdisk --force $1 << EOF
+${partition1_start},${partition1_size},0c
+${partition2_start}
+EOF
+
 
     if [ $? -ne 0 ]; then
         return 1
@@ -269,7 +275,9 @@ if [ $DO_RFS -eq 1 ] ; then
     fi
 
     #fdisk & format
-    part_disk $DEVNODE >> ${LOGFILE} 2>&1
+    part_disk $DEVNODE
+    echo "sleep 5"
+    sleep 5
     #determine if it's MMC card node, /dev/mmcblkX, if yes, add 'p'
     if [ "$prefix_DEVNODE" = "/dev/mmc" ]; then
         DEVNODE="${DEVNODE}p"
