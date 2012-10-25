@@ -209,6 +209,7 @@ static int detect_fb_fmt(void)
 static int open_out_device(void)
 {
 	struct fb_var_screeninfo var;
+	printf("open framebuffer %s\n", fb_name);
         /* Open FrameBuffer Device */
 
         if((gFdFB = open(fb_name, O_RDWR)) < 0)
@@ -267,8 +268,7 @@ static void display_to_fb (unsigned char * aStart, int aLength)
 
 static void process_image(const void *p, int aLength)
 {
-	fputc('.',stdout);
-	fflush(stdout);
+	printf(".");
 	display_to_fb( (unsigned char *)p, aLength);
 }
 
@@ -298,6 +298,7 @@ static int read_frame(void)
 		if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
 			switch (errno) {
 			case EAGAIN:
+				printf("Error retry...\n");
 				return 0;
 			case EIO:
 /* Could ignore EIO, see spec. */
@@ -306,6 +307,7 @@ static int read_frame(void)
 				errno_exit("VIDIOC_DQBUF");
 			}
 		}
+		printf("process...\n");
 		assert(buf.index < n_buffers);
 		process_image(buffers[buf.index].start, buffers[buf.index].length);
 		if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
@@ -335,13 +337,16 @@ static int read_frame(void)
 		if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
 			errno_exit("VIDIOC_QBUF");
 		break;
+	  default:
+		printf("process default ...\n");
+	  	break;
 	}
 	return 1;
 }
 
 static void mainloop(void)
 {
-	gCount = 1000;
+	//gCount = 1000;
 	while (gCount-- > 0) {
 			fd_set fds;
 			struct timeval tv;
@@ -674,7 +679,7 @@ static void usage(FILE * fp, int argc, char **argv)
 		"-u | --userp Use application allocated buffers\n" "", argv[0]);
 }
 
-static const char short_options[] = "d:hmru";
+static const char short_options[] = "b:c:d:hmru";
 static const struct option long_options[] = {
 	{"fb", required_argument, NULL, 'b'},
 	{"count", required_argument, NULL, 'c'},
