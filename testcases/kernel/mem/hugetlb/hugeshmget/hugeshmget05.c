@@ -14,7 +14,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program;  if not, write to the Free Software
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 /*
@@ -145,6 +145,7 @@ void setup(void)
 	hpage_size = read_meminfo("Hugepagesize:") * 1024;
 
 	shm_size = hpage_size * hugepages / 2;
+	update_shm_size(&shm_size);
 	shmkey = getipckey();
 	shm_id_1 = shmget(shmkey, shm_size,
 		    SHM_HUGETLB|SHM_RW|IPC_CREAT|IPC_EXCL);

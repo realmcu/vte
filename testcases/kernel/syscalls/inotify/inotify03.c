@@ -17,8 +17,8 @@
  * other software, or any other product whatsoever.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program; if not, write the Free Software Foundation, Inc., 59
- * Temple Place - Suite 330, Boston MA 02111-1307, USA.
+ * with this program; if not, write the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Started by Andrew Vagin <avagin@gmail.com>
  *
@@ -49,6 +49,7 @@
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
+#include "inotify.h"
 
 #if defined(HAVE_SYS_INOTIFY_H)
 #include <sys/inotify.h>
@@ -76,21 +77,6 @@ int event_set[EVENT_MAX];
 
 char event_buf[EVENT_BUF_LEN];
 
-static long myinotify_init()
-{
-	return syscall(__NR_inotify_init);
-}
-
-static long myinotify_add_watch(int fd, const char *pathname, int mask)
-{
-	return syscall(__NR_inotify_add_watch, fd, pathname, mask);
-}
-
-static long myinotify_rm_watch(int fd, int wd)
-{
-	return syscall(__NR_inotify_rm_watch, fd, wd);
-}
-
 #define DEFAULT_FSTYPE	"ext2"
 #define DIR_MODE	S_IRWXU | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP
 
@@ -110,11 +96,10 @@ static option_t options[] = {	/* options supported by mount01 test */
 
 int main(int ac, char **av)
 {
-	char *msg;		/* message returned from parse_opts */
+	char *msg;
 	int ret;
 	int len, i, test_num;
 
-	/* parse standard options */
 	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 

@@ -27,7 +27,7 @@
 
 #define SIGTOTEST SIGALRM
 
-#define LONGSLEEPTIME 10
+#define LONGSLEEPTIME 5
 
 #define NUMTESTS 30
 
@@ -97,12 +97,9 @@ int main(int argc, char *argv[])
 
 	printf("passes %d, fails %d\n", passes, fails);
 
-	if (fails > 0) {
+	if (fails > 0)
 		return PTS_FAIL;
-	} else {
-		return PTS_PASS;
-	}
 
-	printf("This code should not be executed.\n");
-	return PTS_UNRESOLVED;
+	printf("Test PASSED\n");
+	return PTS_PASS;
 }

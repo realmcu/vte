@@ -14,7 +14,7 @@
 /*                                                                            */
 /* You should have received a copy of the GNU General Public License          */
 /* along with this program;  if not, write to the Free Software               */
-/* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    */
+/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA    */
 /*                                                                            */
 /******************************************************************************/
 /*
@@ -27,12 +27,13 @@
 #include <stdio.h>
 #include "config.h"
 #if HAVE_SYS_CAPABILITY_H
+#include <linux/types.h>
 #include <sys/capability.h>
 #endif
 #include "test.h"
 
 char *TCID = "filecaps";
-int TST_TOTAL=1;
+int TST_TOTAL = 1;
 
 #ifdef HAVE_LIBCAP
 void debug_print_caps(char *when)

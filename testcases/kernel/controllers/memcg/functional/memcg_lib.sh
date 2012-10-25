@@ -16,7 +16,7 @@
 ##                                                                            ##
 ## You should have received a copy of the GNU General Public License          ##
 ## along with this program;  if not, write to the Free Software               ##
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
+## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA    ##
 ##                                                                            ##
 ## Author: Peng Haitao <penght@cn.fujitsu.com>                                ##
 ##                                                                            ##
@@ -380,9 +380,11 @@ test_move_charge()
 	echo $! > subgroup_b/tasks
 
 	cd subgroup_b
-	check_mem_stat memory.usage_in_bytes $4
+	check_mem_stat "rss" $4
+	check_mem_stat "cache" $5
 	cd ../subgroup_a
-	check_mem_stat memory.usage_in_bytes $5
+	check_mem_stat "rss" $6
+	check_mem_stat "cache" $7
 
 	cd ..
 	echo $! > tasks

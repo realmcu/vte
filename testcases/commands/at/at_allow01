@@ -80,8 +80,19 @@ do_setup()
 		exit 1
 	fi
 
+	# running under systemd?
+	if command -v systemctl >/dev/null 2>&1; then
+		HAVE_SYSTEMCTL=true
+	else
+		HAVE_SYSTEMCTL=false
+	fi
+
 	# Restart atd daemon.
-	/etc/init.d/atd restart
+	if $HAVE_SYSTEMCTL; then
+		systemctl restart atd.service
+	else
+		/etc/init.d/atd restart
+	fi
 }
 
 #-----------------------------------------------------------------------
@@ -115,7 +126,7 @@ run_test()
 			echo "Error while adding job using at for user ${test_user1}."
 			exit 1
 		fi
-		echo " Sleeping for 75 seconds...."	
+		echo " Sleeping for 75 seconds...."
 		sleep 75
 
 		exit_code=1

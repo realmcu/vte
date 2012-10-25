@@ -17,8 +17,8 @@
  * other software, or any other product whatsoever.
  *
  * You should have received a copy of the GNU General Public License along
- * with this program; if not, write the Free Software Foundation, Inc., 59
- * Temple Place - Suite 330, Boston MA 02111-1307, USA.
+ * with this program; if not, write the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Started by Andrew Vagin <avagin@sw.ru>
  *
@@ -54,6 +54,7 @@
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
+#include "inotify.h"
 
 #if defined(HAVE_SYS_INOTIFY_H)
 #include <sys/inotify.h>
@@ -92,25 +93,10 @@ struct event_t event_set[EVENT_MAX];
 
 char event_buf[EVENT_BUF_LEN];
 
-static long myinotify_init()
-{
-	return syscall(__NR_inotify_init);
-}
-
-static long myinotify_add_watch(int fd, const char *pathname, int mask)
-{
-	return syscall(__NR_inotify_add_watch, fd, pathname, mask);
-}
-
-static long myinotify_rm_watch(int fd, int wd)
-{
-	return syscall(__NR_inotify_rm_watch, fd, wd);
-}
-
 int main(int ac, char **av)
 {
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+	int lc;
+	char *msg;
 
 	/*
 	 * parse standard options

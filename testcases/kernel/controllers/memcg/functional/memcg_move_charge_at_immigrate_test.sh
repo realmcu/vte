@@ -16,7 +16,7 @@
 ##                                                                            ##
 ## You should have received a copy of the GNU General Public License          ##
 ## along with this program;  if not, write to the Free Software               ##
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
+## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA    ##
 ##                                                                            ##
 ################################################################################
 #
@@ -35,27 +35,27 @@ export TST_COUNT=0
 # Test disable moving charges
 testcase_1()
 {
-	test_move_charge "--mmap-anon" $PAGESIZE  0 0 $PAGESIZE
+	test_move_charge "--mmap-anon" $PAGESIZE  0 0 0 $PAGESIZE 0
 }
 
 # Test move anon
 testcase_2()
 {
 	test_move_charge "--mmap-anon --shm --mmap-file" $PAGESIZE 1 \
-		$PAGESIZE $((PAGESIZE*2))
+		$PAGESIZE 0 0 $((PAGESIZE*2))
 }
 
 # Test move file
 testcase_3()
 {
 	test_move_charge "--mmap-anon --shm --mmap-file" $PAGESIZE 2 \
-		$((PAGESIZE*2)) $PAGESIZE
+		0 $((PAGESIZE*2)) $PAGESIZE 0
 }
 
 # Test move anon and file
 testcase_4()
 {
-	test_move_charge "--mmap-anon --shm" $PAGESIZE 3 $((PAGESIZE*2)) 0
+	test_move_charge "--mmap-anon --shm" $PAGESIZE 3 $PAGESIZE $PAGESIZE 0 0
 }
 
 # Run all the test cases

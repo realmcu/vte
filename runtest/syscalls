@@ -439,6 +439,7 @@ inotify_init1_02 inotify_init1_02
 inotify01 inotify01
 inotify02 inotify02
 inotify03 inotify03 -D DEVICE -T DEVICE_FS_TYPE
+inotify04 inotify04
 
 ioperm01 ioperm01
 ioperm02 ioperm02
@@ -685,6 +686,7 @@ mincore02 mincore02
 madvise01 madvise01
 madvise02 madvise02
 madvise03 madvise03
+madvise04 madvise04
 
 newuname01 newuname01
 
@@ -731,6 +733,12 @@ pread03_64 pread03_64
 
 profil01 profil01
 
+process_vm_readv01 process_vm01 -r
+process_vm_readv02 process_vm_readv02
+process_vm_readv03 process_vm_readv03
+process_vm_writev01 process_vm01 -w
+process_vm_writev02 process_vm_writev02
+
 pselect01 pselect01
 pselect01_64 pselect01_64
 
@@ -758,6 +766,9 @@ read01 read01
 read02 read02
 read03 read03
 read04 read04
+
+readahead01 readahead01
+readahead02 readahead02
 
 readdir01 readdir01
 readdir02 readdir02

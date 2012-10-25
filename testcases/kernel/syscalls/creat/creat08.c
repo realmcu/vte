@@ -14,7 +14,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program;  if not, write to the Free Software
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 /*
@@ -87,8 +87,8 @@ int main(int ac, char **av)
 	pid_t mypid;
 
 	int fd;
-	int lc;			/* loop counter */
-	char *msg;		/* message returned from parse_opts */
+	int lc;
+	char *msg;
 
 	/*
 	 * parse standard options
@@ -431,14 +431,13 @@ int main(int ac, char **av)
 	tst_exit();
 }
 
-static void
-setup(void)
+static void setup(void)
 {
 	tst_require_root(NULL);
+	tst_tmpdir();
 }
 
-static void
-cleanup(void)
+static void cleanup(void)
 {
 	if (unlink(setgid_A) == -1) {
 		tst_resm(TBROK, "%s failed", setgid_A);
@@ -461,4 +460,6 @@ cleanup(void)
 	if (rmdir(DIR_B) == -1) {
 		tst_brkm(TBROK|TERRNO, NULL, "rmdir %s failed", DIR_B);
 	}
+
+	tst_rmdir();
 }

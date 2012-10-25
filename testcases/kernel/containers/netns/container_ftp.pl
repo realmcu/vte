@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-################################################################################ 
+################################################################################
 ##                                                                            ##
 ## Copyright (c) International Business Machines  Corp., 2008                 ##
 ##                                                                            ##
@@ -16,13 +16,14 @@
 ##                                                                            ##
 ## You should have received a copy of the GNU General Public License          ##
 ## along with this program;  if not, write to the Free Software               ##
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    ##
+## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA    ##
 ##                                                                            ##
 ## Author:      Veerendra <veeren@linux.vnet.ibm.com>                         ##
-################################################################################ 
+################################################################################
 
 use File::Temp 'tempdir';
 use Net::FTP;
+use File::Path;
 
 if ($#ARGV == -1) {
 	print "usage: $0 host\n";
@@ -35,7 +36,7 @@ my $i = 0;
 my $kount = 51;
 my $file="junkfile";
 
-my $tmpdir = defined($ENV{TMPDIR}) ? $ENV{TMPDIR} : "/tmp";
+my $tmpdir = "/var/ftp";
 
 my $dir;
 $dir = tempdir("container_ftp.XXXXXXX", DIR => $tmpdir);
@@ -47,8 +48,7 @@ if (chmod(0777, $dir) == 0) {
 	push @ERRORS, "Failed to change mode for temporary directory: $!\n";
 	printerr();
 }
-chdir $dir;
-system("dd if=/dev/zero of=$file bs=512 count=10 > /dev/null 2>&1 ");
+system("dd if=/dev/zero of=$dir/$file bs=512 count=10 > /dev/null 2>&1 ");
 
 while ( $i < $kount )
 {
@@ -59,15 +59,17 @@ while ( $i < $kount )
         $ftp->login("anonymous","passwd") or $newerr=1;
         push @ERRORS, "Can't login to $host: $!\n" if $newerr;
         $ftp->quit if $newerr;
-        printerr() if $newerr; 
+        printerr() if $newerr;
 
-        $ftp->cwd($dir) or $newerr=1; 
+        $basedir = `basename "$dir"`;
+        chomp $basedir;
+        $ftp->cwd($basedir) or $newerr=1;
         push @ERRORS, "Can't cd  $!\n" if $newerr;
         $ftp->quit if $newerr;
-        printerr() if $newerr; 
+        printerr() if $newerr;
 
         $newname = $file . "_" . $i ;
-        $ftp->put($file,$newname) or $newerr=1;
+        $ftp->get($file,$newname) or $newerr=1;
         push @ERRORS, "Can't get file $file $!\n" if $newerr;
         printerr() if $newerr;
 
@@ -82,6 +84,5 @@ sub printerr {
 }
 
 END {
-	unlink("$dir/$file");
-	rmdir("$dir");
+	rmtree("$dir");
 }

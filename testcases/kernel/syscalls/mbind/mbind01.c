@@ -16,7 +16,7 @@
 /*									      */
 /* You should have received a copy of the GNU General Public License	      */
 /* along with this program;  if not, write to the Free Software		      */
-/* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    */
+/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA    */
 /*									      */
 /******************************************************************************/
 /******************************************************************************/
@@ -63,6 +63,7 @@
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 #include "include_j_h.h"
+#include "numa_helper.h"
 
 char *TCID = "mbind01";
 int  TST_TOTAL = 2;
@@ -217,15 +218,20 @@ static int do_test(struct test_case *tc)
 	unsigned long maxnode = NUMA_NUM_NODES;
 	unsigned long len = MEM_LENGTH;
 	unsigned long *invalid_nodemask;
+	int test_node = -1;
+
+	ret = get_allowed_nodes(NH_MEMS, 1, &test_node);
+	if (ret < 0)
+		tst_brkm(TBROK|TERRNO, cleanup, "get_allowed_nodes: %d", ret);
 
 #if !defined(LIBNUMA_API_VERSION) || LIBNUMA_API_VERSION < 2
 	nodemask = malloc(sizeof(nodemask_t));
 	nodemask_zero(nodemask);
-	nodemask_set(nodemask, 0);
+	nodemask_set(nodemask, test_node);
 	getnodemask = malloc(sizeof(nodemask_t));
 	nodemask_zero(getnodemask);
 #else
-	numa_bitmask_setbit(nodemask, 0);
+	numa_bitmask_setbit(nodemask, test_node);
 #endif
 	p = mmap(NULL, len, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
 		    0, 0);
@@ -294,6 +300,9 @@ TEST_END:
 
 static void setup(void)
 {
+	/* check syscall availability */
+	syscall(__NR_mbind, NULL, 0, 0, NULL, 0, 0);
+
 	TEST_PAUSE;
 	tst_tmpdir();
 }

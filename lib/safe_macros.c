@@ -222,7 +222,7 @@ safe_read(const char *file, const int lineno, void (*cleanup_fn)(void),
 	ssize_t rval;
 
 	rval = read(fildes, buf, nbyte);
-	if ((len_strict == 0 && rval == -1) || rval != nbyte)
+	if (rval == -1 || (len_strict && rval != nbyte))
 		tst_brkm(TBROK|TERRNO, cleanup_fn, "read failed at %s:%d",
 		    file, lineno);
 
@@ -360,6 +360,50 @@ long safe_strtol(const char *file, const int lineno,
 	if (endptr == str || (*endptr != '\0' && *endptr != '\n'))
 		tst_brkm(TBROK, cleanup_fn,
 			 "Invalid value: '%s' at %s:%d", str, file, lineno);
+
+	return rval;
+}
+
+unsigned long safe_strtoul(const char *file, const int lineno, void (cleanup_fn)(void),
+	    char *str, unsigned long min, unsigned long max)
+{
+	unsigned long rval;
+	char *endptr;
+
+	errno = 0;
+	rval = strtoul(str, &endptr, 10);
+	if ((errno == ERANGE && rval == ULONG_MAX)
+		    || (errno != 0 && rval == 0))
+		tst_brkm(TBROK|TERRNO, cleanup_fn,
+			"strtol failed at %s:%d", file, lineno);
+	if (rval > max || rval < min)
+		tst_brkm(TBROK, cleanup_fn,
+			"converted value out of range (%lu - %lu at %s:%d",
+			min, max, file, lineno);
+	if (endptr == str || (*endptr != '\0' && *endptr != '\n'))
+		tst_brkm(TBROK, cleanup_fn,
+			"Invalid value: '%s' at %s:%d", str, file, lineno);
+
+	return rval;
+}
+
+long safe_sysconf(const char *file, const int lineno,
+		  void (cleanup_fn)(void), int name)
+{
+	long rval;
+	errno = 0;
+
+	rval = sysconf(name);
+
+	if (rval == -1) {
+		if (errno == EINVAL)
+			tst_brkm(TBROK|TERRNO, cleanup_fn,
+				 "sysconf failed at %s:%d", file, lineno);
+		else
+			tst_resm(TINFO, "queried option is not available"
+				 " or thers is no definite limit at %s:%d",
+				 file, lineno);
+	}
 
 	return rval;
 }

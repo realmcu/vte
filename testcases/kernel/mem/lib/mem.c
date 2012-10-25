@@ -22,6 +22,7 @@
 #include "safe_macros.h"
 #include "_private.h"
 #include "mem.h"
+#include "numa_helper.h"
 
 /* OOM */
 
@@ -66,7 +67,12 @@ void oom(int testcase, int mempolicy, int lite)
 	int status;
 #if HAVE_NUMA_H && HAVE_LINUX_MEMPOLICY_H && HAVE_NUMAIF_H \
 	&& HAVE_MPOL_CONSTANTS
-	unsigned long nmask = 2;
+	unsigned long nmask = 0;
+	unsigned int node;
+
+	if (mempolicy)
+		node = get_a_numa_node(cleanup);
+	nmask += 1 << node;
 #endif
 
 	switch (pid = fork()) {
@@ -104,12 +110,8 @@ void testoom(int mempolicy, int lite, int numa)
 {
 	long nodes[MAXNODES];
 
-	if (numa && !mempolicy) {
-		if (count_numa(nodes) <= 1)
-			tst_brkm(TCONF, cleanup, "required a NUMA system.");
-		/* write cpusets to 2nd node */
-		write_cpusets(nodes[1]);
-	}
+	if (numa && !mempolicy)
+		write_cpusets(get_a_numa_node(cleanup));
 
 	tst_resm(TINFO, "start normal OOM testing.");
 	oom(NORMAL, mempolicy, lite);
@@ -129,41 +131,66 @@ void testoom(int mempolicy, int lite, int numa)
 static void _check(char *path, long int value)
 {
 	FILE *fp;
-	char buf[BUFSIZ];
+	char buf[BUFSIZ], fullpath[BUFSIZ];
+	long actual_val;
 
-	snprintf(buf, BUFSIZ, "%s%s", PATH_KSM, path);
-	fp = fopen(buf, "r");
-	if (fp == NULL)
-		tst_brkm(TBROK|TERRNO, tst_exit, "fopen");
-	if (fgets(buf, BUFSIZ, fp) == NULL)
-		tst_brkm(TBROK|TERRNO, tst_exit, "fgets");
-	fclose(fp);
 
-	tst_resm(TINFO, "%s is %ld.", path, atol(buf));
-	if (atol(buf) != value)
+	snprintf(fullpath, BUFSIZ, "%s%s", PATH_KSM, path);
+	read_file(fullpath, buf);
+	actual_val = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
+
+	tst_resm(TINFO, "%s is %ld.", path, actual_val);
+	if (actual_val != value)
 		tst_resm(TFAIL, "%s is not %ld.", path, value);
+}
+
+static void _wait_ksmd_done(void)
+{
+	char buf[BUFSIZ];
+	long pages_shared, pages_sharing, pages_volatile, pages_unshared;
+	long old_pages_shared = 0, old_pages_sharing = 0;
+	long old_pages_volatile = 0, old_pages_unshared = 0;
+	int changing = 1, count = 0;
+
+	while (changing) {
+		sleep(10);
+		count++;
+
+		read_file(PATH_KSM "pages_shared", buf);
+		pages_shared = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
+
+		read_file(PATH_KSM "pages_sharing", buf);
+		pages_sharing = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
+
+		read_file(PATH_KSM "pages_volatile", buf);
+		pages_volatile = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
+
+		read_file(PATH_KSM "pages_unshared", buf);
+		pages_unshared = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
+
+		if (pages_shared != old_pages_shared ||
+		    pages_sharing != old_pages_sharing ||
+		    pages_volatile != old_pages_volatile ||
+		    pages_unshared != old_pages_unshared) {
+			old_pages_shared   = pages_shared;
+			old_pages_sharing  = pages_sharing;
+			old_pages_volatile = pages_volatile;
+			old_pages_unshared = pages_unshared;
+		} else {
+			changing = 0;
+		}
+	}
+
+	tst_resm(TINFO, "ksm daemon takes %ds to scan all mergeable pages",
+		    count * 10);
 }
 
 static void _group_check(int run, int pages_shared, int pages_sharing,
 		int pages_volatile, int pages_unshared,
 		int sleep_millisecs, int pages_to_scan)
 {
-	char buf[BUFSIZ];
-	long old_num, new_num;
-
-	/* 1 seconds for ksm to scan pages. */
-	while (sleep(1) == 1)
-		continue;
-
-	read_file(PATH_KSM "full_scans", buf);
-	/* wait 3 increments of full_scans */
-	old_num = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
-	new_num = old_num;
-	while (new_num < old_num * 3) {
-		sleep(1);
-		read_file(PATH_KSM "full_scans", buf);
-		new_num = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
-	}
+	/* wait for ksm daemon to scan all mergeable pages. */
+	_wait_ksmd_done();
 
 	tst_resm(TINFO, "check!");
 	_check("run", run);
@@ -687,16 +714,35 @@ void mount_mem(char *name, char *fs, char *options, char *path, char *path_new)
 
 /* shared */
 
-long count_numa(long nodes[])
+/* Warning: *DO NOT* use this function in child */
+unsigned int get_a_numa_node(void (*cleanup_fn)(void))
 {
-	long nnodes, i;
+	unsigned int nd1, nd2;
+	int ret;
 
-	nnodes = 0;
-	for (i = 0; i <= MAXNODES; i++)
-		if(path_exist(PATH_SYS_SYSTEM "/node/node%d", i))
-			nodes[nnodes++] = i;
+	ret = get_allowed_nodes(0, 2, &nd1, &nd2);
+	switch (ret) {
+	case 0:
+		break;
+	case -3:
+		tst_brkm(TCONF, cleanup_fn, "requires a NUMA system.");
+	default:
+		tst_brkm(TBROK|TERRNO, cleanup_fn, "1st get_allowed_nodes");
+	}
 
-	return nnodes;
+	ret = get_allowed_nodes(NH_MEMS|NH_CPUS, 1, &nd1);
+	switch (ret) {
+	case 0:
+		tst_resm(TINFO, "get node%lu.", nd1);
+		return nd1;
+	case -3:
+		tst_brkm(TCONF, cleanup_fn, "requires a NUMA system that has "
+				"at least one node with both memory and CPU "
+				"available.");
+	default:
+		break;
+	}
+	tst_brkm(TBROK|TERRNO, cleanup_fn, "2nd get_allowed_nodes");
 }
 
 int path_exist(const char *path, ...)
@@ -785,4 +831,17 @@ void read_file(char *filename, char *retbuf)
 	if (read(fd, retbuf, BUFSIZ) < 0)
 		tst_brkm(TBROK|TERRNO, cleanup, "read %s", filename);
 	close(fd);
+}
+
+void update_shm_size(size_t *shm_size)
+{
+	char buf[BUFSIZ];
+	size_t shmmax;
+
+	read_file(PATH_SHMMAX, buf);
+	shmmax = SAFE_STRTOUL(cleanup, buf, 0, ULONG_MAX);
+	if (*shm_size > shmmax) {
+		tst_resm(TINFO, "Set shm_size to shmmax: %ld", shmmax);
+		*shm_size = shmmax;
+	}
 }

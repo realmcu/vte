@@ -51,6 +51,7 @@
 #include "test.h"
 #include "usctest.h"
 #include "mem.h"
+#include "numa_helper.h"
 
 char *TCID = "cpuset01";
 int TST_TOTAL = 1;
@@ -58,8 +59,8 @@ int TST_TOTAL = 1;
 #if HAVE_NUMA_H && HAVE_LINUX_MEMPOLICY_H && HAVE_NUMAIF_H \
 	&& HAVE_MPOL_CONSTANTS
 volatile int end;
-static long nodes[MAXNODES];
-static long nnodes;
+static int *nodes;
+static int nnodes;
 static long ncpus;
 
 static void testcpuset(void);
@@ -77,11 +78,10 @@ int main(int argc, char *argv[])
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	ncpus = count_cpu();
-	nnodes = count_numa(nodes);
-	tst_resm(TINFO, "The system has %ld CPUs, %ld NUMA nodes",
-			ncpus, nnodes);
+	if (get_allowed_nodes_arr(NH_MEMS|NH_CPUS, &nnodes, &nodes) < 0)
+		tst_brkm(TBROK|TERRNO, NULL, "get_allowed_nodes_arr");
 	if (nnodes <= 1)
-		tst_brkm(TCONF, NULL, "required a NUMA system.");
+		tst_brkm(TCONF, NULL, "requires a NUMA system.");
 
 	setup();
 	testcpuset();
@@ -108,16 +108,16 @@ static void testcpuset(void)
 		tst_brkm(TBROK|TERRNO, cleanup, "fork");
 	case 0:
 		for (i = 0; i < nnodes; i++)
-			nmask += exp2f(i);
+			nmask += 1 << nodes[i];
 		if (set_mempolicy(MPOL_BIND, &nmask, MAXNODES) == -1)
 			tst_brkm(TBROK|TERRNO, cleanup, "set_mempolicy");
 		exit(mem_hog_cpuset(ncpus > 1 ? ncpus : 1));
 	}
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		Tst_count = 0;
-		snprintf(buf, BUFSIZ, "%ld", nodes[0]);
+		snprintf(buf, BUFSIZ, "%d", nodes[0]);
 		write_cpuset_files(CPATH_NEW, "mems", buf);
-		snprintf(buf, BUFSIZ, "%ld", nodes[1]);
+		snprintf(buf, BUFSIZ, "%d", nodes[1]);
 		write_cpuset_files(CPATH_NEW, "mems", buf);
 	}
 

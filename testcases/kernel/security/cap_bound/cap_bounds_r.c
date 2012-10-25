@@ -14,7 +14,7 @@
 /*                                                                            */
 /* You should have received a copy of the GNU General Public License          */
 /* along with this program;  if not, write to the Free Software               */
-/* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA    */
+/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA    */
 /*                                                                            */
 /******************************************************************************/
 /*
@@ -27,6 +27,7 @@
 #include <errno.h>
 #include "config.h"
 #if HAVE_SYS_CAPABILITY_H
+#include <linux/types.h>
 #include <sys/capability.h>
 #endif
 #include <sys/prctl.h>
@@ -37,7 +38,7 @@ int TST_TOTAL=1;
 
 int main(int argc, char *argv[])
 {
-#if HAVE_SYS_CAPABILITY_H
+#ifdef HAVE_LIBCAP
 	int ret = 1;
 	int i;
 
