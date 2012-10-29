@@ -260,7 +260,10 @@ dvfs_per_stress()
 suspend_stress()
 {
     RC=4
-	cp ${LTPROOT}/testcase/bin/rtc_testapp_6 /tmp/
+	cp `which rtc_testapp_6` /tmp/ || {
+        echo "TFAIL: no rtc_testapp_6 found"
+        exit $RC
+    }
     i=0
     while [ $i -lt 200 ]; do
         i=`expr $i + 1`
