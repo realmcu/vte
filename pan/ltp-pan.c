@@ -517,8 +517,7 @@ int main(int argc, char **argv)
 		break;
 	    }
 
-	    cpid = run_child(coll->ary[c], running + i, quiet_mode, &failcnt,
-			     fmt_print, logfile);
+	    cpid = run_child(coll->ary[c], running + i, quiet_mode, &failcnt, fmt_print, logfile);
 	    if (cpid != -1)
 		++num_active;
 	    if ((cpid != -1 || sequential) && starts > 0)
@@ -1183,31 +1182,28 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode,
         {
             //write_test_start(active, errbuf);
             write_test_end(active, errbuf, end_time, termtype, status,
-                termid, &notime, &notime);
+            termid, &notime, &notime);
         }
 		return -1;
 	}
-	active->pgrp = cpid;
+  	active->pgrp = cpid;
 	active->stopping = 0;
 
 	if (zoo_mark_cmdline(zoofile, cpid, colle->name, colle->cmdline)) {
-		fprintf(stderr, "pan(%s): %s\n", panname, zoo_error);
-		exit(1);
-	}
-
-	if (Debug & Dstartup)
+         fprintf(stderr, "pan(%s): %s\n", panname, zoo_error);
+         exit(1);
+    }
+ 
+    if (Debug & Dstartup)
 		fprintf(stderr, "started %s cpid=%d at %s",
 			colle->name, cpid, ctime(&active->mystime));
 	if (Debug & Dstart) {
-		fprintf(stderr, "Executing test = %s as %s", colle->name,
-			colle->cmdline);
-        if (capturing)
-            fprintf(stderr, "with output file = %s\n",
-                active->output);
-        else
-            fprintf(stderr, "\n");
+		fprintf(stderr, "Executing test = %s as %s", colle->name, colle->cmdline);
+	if (capturing)
+		fprintf(stderr, "with output file = %s\n", active->output);
+	else
+		fprintf(stderr, "\n");
 	}
-
 
 	return cpid;
 }
