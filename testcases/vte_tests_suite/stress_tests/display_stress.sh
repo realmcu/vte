@@ -378,7 +378,7 @@ return $RC
 }
 
 # Function:     test_case_08
-# Description   - Test if dual 720P overnight playback
+# Description   - Test if dual 720P playback
 #  
 test_case_08()
 {
