@@ -364,11 +364,14 @@ RC=0
 #a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 a_stream_path=/mnt/nfs/test_stream/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.h264
 
-start_date=$(date +%d)
-now_date=$(date +%d)
-while [ $now_date -le $start_date ]; do
+#start_date=$(date +%d)
+#now_date=$(date +%d)
+#while [ $now_date -le $start_date ]; do
+i=0
+while [ $i -lt 250 ]; do		# it takes 2 mins for 1 loop, 250 times takes around 8 hours.
     /unit_tests/mxc_vpu_test.out -D "-f 2 -y 1 -i ${a_stream_path} -a 100" || RC=$(expr $RC + 1) 
-    now_date=$(date +%d)
+#    now_date=$(date +%d)
+	i=$(expr $i + 1)
 done
 
 return $RC
@@ -406,7 +409,7 @@ return $RC
 }
 
 # Function:     test_case_10
-# Description   - Test if dual 1080P playback with vpu
+# Description   - Test if dual 1080P playback overnight with vpu
 #  
 test_case_10()
 {
