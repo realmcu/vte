@@ -470,8 +470,14 @@ EOF
     ifconfig vcan0 up
     tst-filter-server > output_ltp-can.txt &
     sleep 1
-    tst-filter-master | tee output_ltp-can-verify.txt
-    diff output_ltp-can.txt output_ltp-can-verify.txt || RC=1
+    tst-filter-master | tee output_ltp-can-verify.txt || RC=1
+    # this two text is definitely different, so move failure determination to previous cmd:
+    # -testcase 17 : can_id = 0x80000123 can_mask = 0xDFFFFFFF
+    # -80000123
+    # -testcase 18 : Filtertest done.
+    # +Sending testcase 17 ... acked. Sending patterns ... ok
+    # +Sending testcase 18 ... acked. Filtertest done.
+    diff output_ltp-can.txt output_ltp-can-verify.txt
     ${LTPROOT}/testcases/bin/ip link del dev vcan0 type vcan
 
     return $RC
