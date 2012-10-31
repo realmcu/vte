@@ -367,7 +367,7 @@ a_stream_path=/mnt/nfs/test_stream/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.
 start_date=$(date +%d)
 now_date=$(date +%d)
 while [ $now_date -le $start_date ]; do
-    /unit_tests/mxc_vpu_test.out -D "-f 2 -y 1 -i ${a_stream_path} -a 100"
+    /unit_tests/mxc_vpu_test.out -D "-f 2 -y 1 -i ${a_stream_path} -a 100" || RC=$(expr $RC + 1) 
     now_date=$(date +%d)
 done
 
