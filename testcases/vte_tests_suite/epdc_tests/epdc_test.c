@@ -1243,6 +1243,8 @@ extern "C" {
 			tst_resm(TINFO, "set gray scale mode to %d\n",
 				 mode_info.grayscale);
 		}
+		CALL_IOCTL(ioctl
+			   (fb_fd, MXCFB_SET_PWRDOWN_DELAY, &(m_opt.delay)));
 #if 1
 		/* Get constant fb info */
 		if ((ioctl(fb_fd, FBIOGET_FSCREENINFO, &fb_info)) < 0) {

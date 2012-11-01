@@ -285,7 +285,7 @@ extern "C" {
 		if (y_flag) {
 			m_opt.delay = atoi(y_opt);
 		} else {
-			m_opt.delay = FB_POWERDOWN_DISABLE;
+			m_opt.delay = 0;
 		}
 /*
 		printf("current settings\n");
