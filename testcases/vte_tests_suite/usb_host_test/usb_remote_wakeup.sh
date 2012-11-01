@@ -208,7 +208,6 @@ low_power_usb.sh $skip_port || exit $?
 #suspend 3000 times
 i=0
 while [ $i -lt 3000 ];do
-	echo enabled > /sys/bus/usb/devices/${skip_port}/power/wakeup
 	echo mem > /sys/power/state
 	sleep 1
 	let i=i+1
