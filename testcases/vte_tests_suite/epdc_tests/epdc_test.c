@@ -1211,6 +1211,8 @@ extern "C" {
 				break;
 			fb_num++;
 		}
+		/*unblank the fb*/
+		CALL_IOCTL(ioctl(fb_fd, FBIOBLANK, FB_BLANK_UNBLANK));
 /*
     fb_fd = open(m_opt.dev, O_RDWR);
     if (fb_fd < 0)
