@@ -551,7 +551,8 @@ high_mode()
 {
 	RC=0
 	ifconfig eth0 up
-	udhclient || dhclient
+	sleep 5
+	udhclient || dhclient || udhcpc
 	echo 0 > /sys/class/graphics/fb0/blank
 	echo 0 > /sys/class/graphics/fb1/blank
 	sleep 5
