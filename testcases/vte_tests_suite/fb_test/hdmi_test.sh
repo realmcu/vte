@@ -137,6 +137,7 @@ hdmi_audio_playback_multichannel()
     for i in "0 1 2 3 4"; do
         echo 0 > /sys/class/graphic/fb${i}/blank
     done
+	echo -e "\033[9;0]" > /dev/tty0
     num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
     stream_path=$STREAM_PATH/esai_stream/
     FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav  sine-6ch48k16bit.wav  sine-6ch44k16bit.wav sine-6ch32k16bit.wav sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav"    
