@@ -68,7 +68,9 @@ cleanup()
     kill -9 $ts_pid
     kill -9 $acc_pid
     kill -9 $sensor_pid
-
+    kill -9 $ecompass_pid
+	kill -9 $tvin_pid
+	kill -9 $sensor_pid
     echo "clean up environment end"
     return $RC
 }
@@ -97,6 +99,7 @@ basic_examine()
     echo "i2c sys directory is $i2c_dir"
     echo "i2c devices list:"
     for i in 1 2 3; do
+        echo ${i2c_dir}i2c.$i/i2c-$i/
         cat ${i2c_dir}i2c.$i/i2c-$i/*/name
     done
 }
@@ -140,11 +143,21 @@ overload_test()
             ts_pid=$!
             shift;;
             acc)
-            #TODO add support
-            shift;;
+                 acc_test_MMA845x.sh -m MODE_2G &
+                 acc_pid=$!
+                 shift;;
+            ecompass)
+                 ecompass_mag3110.sh 1 &
+                 ecompass_pid=$!
+                 shift;;
+            tvin)
+                tvin_test.sh 2 &
+                tvin_pid=$!
+                shift;;
             sensor)
-            #TODO add support
-            shift;;
+                 /unit_tests/mxc_isl29023.out &                                                                                                    
+                 sensor_pid=$!
+                 shift;;
             *) shift;;
         esac
     done
@@ -170,7 +183,7 @@ usage()
     TCID 2: multiple i2c device overload test
     usage: ./${0##*/} [TC Id] <more parameters>
             ./${0##*/} 1
-            ./${0##*/} 2 audio camera hdmi ts acc sensor
+            ./${0##*/} 2 audio camera hdmi ts acc sensor ecompass tvin
     e.g.: ./${0##*/} 2 audio hdmi ts
 EOF
     exit 1
