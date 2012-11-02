@@ -163,6 +163,9 @@ ecompass_test()
         #clean up the data before suspend
         #echo > $TMPDIR/mag3110.output
     fi
+    if [ $is_suspend -eq 2 ]; then
+        sleep 1800
+    fi
     #10 seconds to allow data capturing
     sleep 10
     killall $EV_TEST_APP
@@ -218,6 +221,9 @@ case $1 in
     ;;
 	2)
     ecompass_test 1 || exit $RC
+    ;;
+        3)
+    ecompass_test 2 || exit $RC
     ;;
 	*)
     usage
