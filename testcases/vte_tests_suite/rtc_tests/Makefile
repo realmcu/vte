@@ -30,10 +30,11 @@ SUBDIRS =rtc_testapp_1 \
          rtc_testapp_2 \
          rtc_testapp_3 \
          rtc_testapp_4 \
-         rtc_testapp_5 \
          rtc_testapp_6 \
          rtc_testapp_7 \
          rtc_scripts
+
+#         rtc_testapp_5
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
