@@ -173,7 +173,8 @@ test_case_03()
     get_clk_cnt ipu
 	ipuct=$?
     # ldb usecount can't use the routine
-    ldbct=$(cat ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v 0 | grep -v "axi_clk/usecount" | grep -v "pll3_pfd_540M/usecount")
+    ldbct_list=$(find ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v "axi_clk/usecount" | grep -v "pll3_pfd_540M/usecount")
+    ldbct=$(cat $ldbct_list |grep -v 0)
 
     hdmi_cnt=0
     if ! cat /proc/cmdline |grep -i hdmi; then
