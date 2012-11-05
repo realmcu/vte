@@ -51,6 +51,7 @@ install:
 
 clean:
 	-rm -f *.o $(TARGET)
+	${MAKE} -C v4l_tvin clean
 
 $(TARGET): $(SOURCE)
 	$(CC) $(CFLAGS) $(SOURCE) -o $@
