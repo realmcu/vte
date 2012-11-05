@@ -39,38 +39,38 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=1
+    #TODO Total test case
+    export TST_TOTAL=1
 
-export TCID="setup"
-export TST_COUNT=0
-RC=1
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=1
 
-trap "cleanup" 0
+    trap "cleanup" 0
 
-#TODO add setup scripts
+    #TODO add setup scripts
 
 
 
-modprobe g_ether || return 1
+    modprobe g_ether || return 1
 
-ifconfig usb0 $CLIENTIP up || return 1
+    ifconfig usb0 $CLIENTIP up || return 1
 
-echo "please connect the board to host with usb cable"
+    echo "please connect the board to host with usb cable"
 
-sleep 3
+    sleep 3
 
-echo "Target board IP is $CLIENTIP"
-echo "please set up the host usb0 to $HOSTIP"
-echo "plese run following command on host"
-echo "modprobe usbnet;modprobe cdc_ether;modprobe g_ether"
-echo "ifconfig usb0 $HOSTIP up"
+    echo "Target board IP is $CLIENTIP"
+    echo "please set up the host usb0 to $HOSTIP"
+    echo "plese run following command on host"
+    echo "modprobe usbnet;modprobe cdc_ether;modprobe g_ether"
+    echo "ifconfig usb0 $HOSTIP up"
 
-echo "press enter when ready"
-read -p tt
+    echo "press enter when ready"
+    read -p tt
 
-RC=0
-return $RC
+    RC=0
+    return $RC
 }
 
 # Function:     cleanup
@@ -82,20 +82,20 @@ return $RC
 cleanup()
 {
 
-#TODO add cleanup code here
+    #TODO add cleanup code here
 
-modprobe -r g_ether || return 1
-#modprobe -r cdc_ether  #no such device
-#modprobe -r usbnet    #no such module
+    modprobe -r g_ether || return 1
+    #modprobe -r cdc_ether  #no such device
+    #modprobe -r usbnet    #no such module
 
-return $RC
+    return $RC
 }
 
 
 usage()
 {
-echo "$0 <testcase ID>"
-echo "1: icmp test"
+    echo "$0 <testcase ID>"
+    echo "1: icmp test"
 }
 
 
@@ -104,32 +104,31 @@ echo "1: icmp test"
 #  
 test_case_01()
 {
-#TODO give TCID 
-TCID="cdc_icmp_test"
-#TODO give TST_COUNT
-TST_COUNT=1
-RC=1
+    #TODO give TCID 
+    TCID="cdc_icmp_test"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=1
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-PACKSIZE="64 128 256 512 1024 2048 4096 8192 16384"
+    PACKSIZE="64 128 256 512 1024 2048 4096 8192 16384"
 
-for i in $PACKSIZE
-do
-loss=$(ping $HOSTIP -c 4 -s $i | grep ", 0% packet loss")
-if [ -z "$loss" ]
-then
-return 1
-fi 
-done
+    for i in $PACKSIZE
+    do
+        loss=$(ping $HOSTIP -c 4 -s $i | grep ", 0% packet loss")
+        if [ -z "$loss" ]
+        then
+            tst_resm TFAIL "Please try 3 times if failed"
+            return 1
+        fi 
+    done
 
-
-
-RC=0
-return $RC
+    RC=0
+    return $RC
 
 }
 
@@ -138,18 +137,18 @@ return $RC
 #  
 test_case_02()
 {
-#TODO give TCID 
-TCID="test_demo2_test"
-#TODO give TST_COUNT
-TST_COUNT=2
-RC=0
+    #TODO give TCID 
+    TCID="test_demo2_test"
+    #TODO give TST_COUNT
+    TST_COUNT=2
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-return $RC
+    return $RC
 
 }
 
@@ -158,18 +157,18 @@ return $RC
 #  
 test_case_03()
 {
-#TODO give TCID 
-TCID="test_demo3_test"
-#TODO give TST_COUNT
-TST_COUNT=3
-RC=0
+    #TODO give TCID 
+    TCID="test_demo3_test"
+    #TODO give TST_COUNT
+    TST_COUNT=3
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-return $RC
+    return $RC
 
 }
 
@@ -178,18 +177,18 @@ return $RC
 #  
 test_case_04()
 {
-#TODO give TCID 
-TCID="test_demo4_test"
-#TODO give TST_COUNT
-TST_COUNT=4
-RC=0
+    #TODO give TCID 
+    TCID="test_demo4_test"
+    #TODO give TST_COUNT
+    TST_COUNT=4
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-return $RC
+    return $RC
 
 }
 
@@ -198,18 +197,18 @@ return $RC
 #  
 test_case_05()
 {
-#TODO give TCID 
-TCID="test_demo5_test"
-#TODO give TST_COUNT
-TST_COUNT=5
-RC=0
+    #TODO give TCID 
+    TCID="test_demo5_test"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
 
-#print test info
-tst_resm TINFO "test $TST_COUNT: $TCID "
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+    #TODO add function test scripte here
 
-return $RC
+    return $RC
 
 }
 
@@ -220,8 +219,8 @@ RC=0
 #TODO check parameter
 if [ $# -ne 1 ]
 then
-usage
-exit 1 
+    usage
+    exit 1 
 fi
 
 HOSTIP=11.11.11.11
@@ -231,32 +230,24 @@ setup || exit $RC
 
 case "$1" in
 1)
-  test_case_01 || exit $RC 
-  ;;
+    test_case_01 || exit $RC 
+    ;;
 2)
-  test_case_02 || exit $RC
-  ;;
+    test_case_02 || exit $RC
+    ;;
 3)
-  test_case_03 || exit $RC
-  ;;
+    test_case_03 || exit $RC
+    ;;
 4)
-  test_case_04 || exit $RC
-  ;;
+    test_case_04 || exit $RC
+    ;;
 5)
-  test_case_05 || exit $RC
-  ;;
+    test_case_05 || exit $RC
+    ;;
 *)
-#TODO check parameter
-  usage
-  ;;
+    #TODO check parameter
+    usage
+    ;;
 esac
 
-tst_resm TINFO "Test PASS"
-
-
-
-
-
-
-
-
+tst_resm TPASS "Test PASS"
