@@ -122,7 +122,7 @@ test_case_01()
         loss=$(ping $HOSTIP -c 4 -s $i | grep ", 0% packet loss")
         if [ -z "$loss" ]
         then
-            tst_resm TFAIL "Please try 3 times if failed"
+            tst_resm TFAIL "Some packets lost in packet size: $PACKSIZE"
             return 1
         fi 
     done
