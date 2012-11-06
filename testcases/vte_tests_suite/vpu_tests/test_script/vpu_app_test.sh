@@ -69,7 +69,7 @@ case "$pt" in
 'IMX6Solo-SABREAUTO'):
 NO_CAMERA=y
 ;;
-'IMX6-SABREAUTO') :
+'IMX6DL-SABREAUTO') :
 NO_CAMERA=y
 ;;
 esac
