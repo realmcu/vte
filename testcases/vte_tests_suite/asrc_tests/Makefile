@@ -38,7 +38,7 @@ all: $(TARGET)
 	@echo
 
 install:
-	cp -f $(TARGET) $(SCRIPT) $(BIN_DIR)
+	-cp -f $(TARGET) $(SCRIPT) $(BIN_DIR)
 	@echo "****************************************************"
 	@echo "** INSTALL : $(TARGET)                          **"
 	@echo "****************************************************"
@@ -52,6 +52,6 @@ clean:
 	@echo
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) $(LOADLIBES) -o $@
+	-$(CC) $(OBJS) $(LOADLIBES) -o $@
 
 $(OBJS) : $(SRCS)
