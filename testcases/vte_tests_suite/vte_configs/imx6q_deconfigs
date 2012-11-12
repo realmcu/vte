@@ -108,6 +108,7 @@ export CONFIG_MMDC_PROFILE=y
 export CONFIG_HRTIMER=y
 export CONFIG_VM_G_ZERO=y
 export CONFIG_VM_GPIO=y
+export CONFIG_VM_EPIT=y
 
 #platform depended config need read the related Makefile in subfolder
 CONFIG_VTE_KEYPAD_TESTAPP=y

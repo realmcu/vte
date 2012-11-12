@@ -20,7 +20,8 @@ SUBDIRS-$(CONFIG_VM_SCC2)     += scc2_test_module
 SUBDIRS-$(CONFIG_VM_SDMA_API) += sdma_module
 SUBDIRS-$(CONFIG_VM_SDMA)     += sdma_rw_module
 SUBDIRS-$(CONFIG_VM_SPI)      += spi_test_module
-SUBDIRS-$(CONFIG_VM_GPIO)    += mxc_gpio_test
+SUBDIRS-$(CONFIG_VM_GPIO)     += mxc_gpio_test
+SUBDIRS-$(CONFIG_VM_EPIT)     += epit_timer
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
