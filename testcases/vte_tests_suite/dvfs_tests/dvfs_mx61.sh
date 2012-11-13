@@ -429,6 +429,7 @@ pre_bus_mode()
 	platfm=$?
     mount -t tmpfs tmpfs /tmp
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
+	cp ${LTPROOT}/testcases/bin/bonnie++ /tmp/
 	cp /mnt/nfs/test_stream/alsa_stream_music/audio44k24S-S24_LE_long.wav /tmp/
 	cp $a_stream_path /tmp/test_video.h264
 	cp /mnt/nfs/util/Graphics/imx61_rootfs/test/simple_draw /tmp/
@@ -593,7 +594,7 @@ medium_mode()
 	#usboh3_clk is the medium one
 	mount /dev/sda1 /mnt/sda1
 	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
-	umount /dev/sda1 /mnt/sda1
+	umount /mnt/sda1
 }
 
 high_mode()
@@ -615,6 +616,27 @@ high_mode()
 	RC2=$?
 	RC=$(expr $RC1 + $RC2 )
 	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
+	return $RC
+}
+
+medium_mode_audio()
+{
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+	#usboh3_clk is the medium one
+	mkdir -p /mnt/sda1
+	mount /dev/sda1 /mnt/sda1 || return 1
+    bonnie\+\+ -d /mnt/sda1 -u 0:0 -s 80 -r 40 &
+	pid=$!
+	aplay /tmp/audio44k24S-S24_LE_long.wav || return 1
+	/tmp/rtc_testapp_6 -m mem -T 100 || return 1
+	aplay /tmp/audio44k24S-S24_LE_long.wav || return 1
+	wait $pid || return 1
+	umount /mnt/sda1
 	return $RC
 }
 
@@ -651,7 +673,32 @@ test_case_07()
     return $RC
 }
 
+# Function:     test_case_08
+# Description   - Test medium power mode with audio playback
+#
+test_case_08()
+{
+    #TODO give TCID
+    TCID="CPUFreq_bus"
+    #TODO give TST_COUNT
+    TST_COUNT=8
+    RC=0
 
+    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	sleep 5 
+    #print test info
+    echo TINFO "test $TST_COUNT: $TCID "
+	pre_bus_mode
+	cnt=0
+    LOOPS=$TOTAL_PT
+	while [ $cnt -lt $LOOPS ]; do
+	medium_mode_audio || RC=$(expr $RC + 1)
+	cnt=$(expr $cnt + 1)
+	done
+
+	clean_bus_mode
+    return $RC
+}
 
 usage()
 {
@@ -662,6 +709,8 @@ usage()
     echo "4: run modules test with CPU working points switching on the fly"
     echo "5: stress test of 4"
     echo "6: test interrupt latency on random CPU working points"
+    echo "7: low power mode loop"
+    echo "8: medium power mode with audio playback"
 
     exit 1
 }
@@ -707,6 +756,9 @@ case "$1" in
     ;;
 7)
     test_case_07 || exit $RC
+    ;;
+8)
+    test_case_08 || exit $RC
     ;;
 *)
     usage

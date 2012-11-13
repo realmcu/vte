@@ -405,6 +405,7 @@ pre_bus_mode()
 	cp ${LTPROOT}/testcases/bin/epdc_test /tmp/
 	cp ${LTPROOT}/testcases/bin/dry2 /tmp/
 	cp ${LTPROOT}/testcases/bin/rtc_testapp_6 /tmp/
+	cp ${LTPROOT}/testcases/bin/bonnie++ /tmp/
 }
 
 clean_bus_mode()
@@ -544,7 +545,7 @@ medium_mode()
 	#usboh3_clk is the medium one
 	mount /dev/sda1 /mnt/sda1
 	/tmp/rtc_testapp_6 -m mem -T 50 || RC=1
-	umount /dev/sda1 /mnt/sda1
+	umount /mnt/sda1
 }
 
 high_mode()
@@ -564,6 +565,26 @@ high_mode()
 }
 
 
+medium_mode_audio()
+{
+	RC=0
+	#screen off
+	#ethernet off
+	screen_off
+	ifconfig eth0 down
+	sleep 5
+	#usboh3_clk is the medium one
+	mkdir -p /mnt/sda1
+	mount /dev/sda1 /mnt/sda1 || return 1
+    bonnie\+\+ -d /mnt/sda1 -u 0:0 -s 80 -r 40 &
+	pid=$!
+	aplay /tmp/audio44k16S_long.wav || return 1
+	/tmp/rtc_testapp_6 -m mem -T 100 || return 1
+	aplay /tmp/audio44k16S_long.wav || return 1
+	wait $pid || return 1
+	umount /mnt/sda1
+	return 0
+}
 
 
 # Function:     test_case_07
@@ -624,6 +645,33 @@ test_case_08()
 }
 
 
+# Function:     test_case_09
+# Description   - Test medium power mode with audio playback
+#
+test_case_09()
+{
+    #TODO give TCID
+    TCID="CPUFreq_bus"
+    #TODO give TST_COUNT
+    TST_COUNT=9
+    RC=0
+
+    echo interactive > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	sleep 5 
+    #print test info
+    echo TINFO "test $TST_COUNT: $TCID "
+	pre_bus_mode
+	cnt=0
+    LOOPS=$TOTAL_PT
+	while [ $cnt -lt $LOOPS ]; do
+	medium_mode_audio || RC=$(expr $RC + 1)
+	cnt=$(expr $cnt + 1)
+	done
+
+	clean_bus_mode
+    return $RC
+}
+
 usage()
 {
     echo "$0 [case ID]"
@@ -635,6 +683,7 @@ usage()
     echo "6: test interrupt latency on random CPU working points"
     echo "7: low power mode loop"
     echo "8: low power mode suspend"
+    echo "9: medium power mode with audio playback"
 
     exit 1
 }
@@ -683,6 +732,9 @@ case "$1" in
     ;;
 8)
     test_case_08 || exit $RC
+    ;;
+9)
+    test_case_09 || exit $RC
     ;;
 *)
     usage
