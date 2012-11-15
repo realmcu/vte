@@ -397,18 +397,37 @@ test_case_05()
 test_case_06()
 {
     #TODO give TCID 
-    TCID="IPU_Rotation_TEST"
+    TCID="IPU_LARGE_SIZE_TEST"
     #TODO give TST_COUNT
     TST_COUNT=6
-    RC=1
+    RC=0
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
     #TODO add function test scripte here
-
-    RC=0
-
+	mkdir /tmp/ipu_dev/
+    ff=RGBP
+	IN_FILE="4080+2720+zero 4096+4096+zero 352+288+COASTGUARD_CIF_IJT.yuv"
+    #output 1 enalble
+    for j in $IN_FILE
+    do
+        echo "TST INFO: file $j"
+        WD=$(echo $j | sed "s/+/ /g" | awk '{print $1}' )
+        HT=$(echo $j | sed "s/+/ /g" | awk '{print $2}' )
+        FILE=$(echo $j | sed "s/+/ /g"| awk '{print $3}')
+		if [ $FILE = "zero" ]; then
+			INFILE="/dev/zero"
+		else
+			INFILE="${STREAM_PATH}/video/${FILE}"
+		fi
+        if [ "$ff" != "I420" ];then
+            ${TST_CMD} -p 0 -d 0 -c 1 -l 1 \
+                -i ${WD},${HT},I420,0,0,0,0,0,0 \
+                -O  1024,768,${ff},0,0,0,0,0 -s 0\
+                -f /dev/null ${INFILE} || RC=$(expr $RC + 1)
+        fi
+	done
     return $RC
 }
 
@@ -718,7 +737,7 @@ usage()
     echo "3: API rotation"
     echo "4: API to from format"
     echo "5: API motion test"
-    echo "6: tbd"
+    echo "6: IPU LARGE SIZE test"
     echo "7: IPU performance test"
     echo "the iput size and corp mixing need to be round of 8"
 }
