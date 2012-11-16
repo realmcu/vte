@@ -6,6 +6,9 @@ loops=500
 setup()
 {
     trap "clean" 0
+    # to avoid FS syncing problem
+    rtc_testapp_6 -T 20 -m mem
+    rtc_testapp_6 -T 20 -m mem
 }
 
 clean()
@@ -24,11 +27,8 @@ echo core > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
     i=$(expr $i + 1)
-    echo "===Power state core test $i times==="
     echo mem > /sys/power/state
-    sleep 1
     echo standby > /sys/power/state
-    sleep 1
 done
 
 #test the freezing of processes, suspending of devices, platform
@@ -39,11 +39,8 @@ echo processors > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
     i=$(expr $i + 1)
-    echo "===Power state processors test $i times==="
     echo mem > /sys/power/state
-    sleep 1
     echo standby > /sys/power/state
-    sleep 1
 done
 
 #test the freezing of processes, suspending of devices and platform
@@ -54,11 +51,8 @@ echo platform > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
     i=$(expr $i + 1)
-    echo "===Power state platform test $i times==="
     echo mem > /sys/power/state
-    sleep 1
     echo standby > /sys/power/state
-    sleep 1
 done
 
 #test the freezing of processes and suspending of devices
@@ -68,11 +62,8 @@ echo devices > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
     i=$(expr $i + 1)
-    echo "===Power state devices test $i times==="
     echo mem > /sys/power/state
-    sleep 1
     echo standby > /sys/power/state
-    sleep 1
 done
 
 #test the freezing of processes
@@ -82,11 +73,8 @@ echo freezer > /sys/power/pm_test
 while [ $i -lt $loops ]
 do
     i=$(expr $i + 1)
-    echo "===Power state freezer test $i times==="
     echo mem > /sys/power/state
-    sleep 1
     echo standby > /sys/power/state
-    sleep 1
 done
 
 echo "Test Pass"
