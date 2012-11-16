@@ -1,20 +1,19 @@
 
-TARGET = ptp_main
-
+TARGETS = ptp_main ptp_main_1.02
 
 all:
 	@echo "***********************************************"
-	@echo "** ALL : $(TARGET)  test application  **"
+	@echo "** ALL : $(TARGETS)  test application  **"
 	@echo "***********************************************"
 	@echo
-
 install:
-	ln -f $(TARGET) ../../../bin/
-	@echo "***********************************************"
-	@echo "** INSTALL : $(TARGET)                **"
-	@echo "***********************************************"
+	@for i in $(TARGETS); do \
+		ln -f $$i ../../bin/ ;\
+		echo "***********************************************" ; \
+		echo "** INSTALL : $$i " ; \
+		echo "***********************************************" ; \
+		done
 	@echo
-
 clean:
 	@echo "not to clean anything from third party"
 
