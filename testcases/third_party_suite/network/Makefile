@@ -20,6 +20,8 @@ SUBDIRS-$(CONFIG_TP_MII)     += mii-tool-1.9.1.1
 clean_SUBDIR-$(CONFIG_TP_MII) += clean_mii-tool-1.9.1.1
 SUBDIRS-$(CONFIG_TP_IPROUTE)     += iproute-20110315
 clean_SUBDIR-$(CONFIG_TP_IPROUTE) += iproute-20110315
+SUBDIRS-$(CONFIG_TP_NETTOOL) += net-tools-1.60 
+clean_SUBDIR-$(CONFIG_TP_NETTOOL) += net-tools-1.60
 
 all: $(SUBDIRS-y)
 
@@ -32,6 +34,12 @@ install:
 	-ln -f ppp-2.4.3/pppd/pppd ../../bin/
 	-ln -f tcpdump-3.9.8/tcpdump ../../bin/
 	-ln -f iproute-20110315/ip/ip ../../bin/ip
+	-ln -f net-tools-1.60/arp ../../bin/
+	-ln -f net-tools-1.60/nameif ../../bin/
+	-ln -f net-tools-1.60/netstat ../../bin/
+	-ln -f net-tools-1.60/rarp ../../bin/
+	-ln -f net-tools-1.60/route ../../bin/
+	-ln -f net-tools-1.60/slattach ../../bin/
 
 clean: $(clean_SUBDIR-y)
 
@@ -75,6 +83,12 @@ iproute-20110315: blank
 clean_iproute-20110315:
 	$(MAKE) -C iproute-20110315 distclean
 
+net-tools-1.60: blank
+	$(MAKE) -C  $@ CC=$(CROSS_COMPILE)gcc	
+
+clean_net-tools-1.60:
+	$(MAKE) -C  net-tools-1.60 clean	
+	
 libs:
 	$(MAKE) -C $$(pwd)/../../../openlibs
 
