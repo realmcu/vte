@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+###############################################################################
+#Copyright (C) 2005-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,29 +7,31 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-####################################################################################################
+###############################################################################
 #
 #    @file   Makefile
 #
 #    @brief  Rules for compile the asrc test.
 #
-####################################################################################################
+###############################################################################
 #Portability: ARM GCC
 #
-####################################################################################################
+###############################################################################
 BIN_DIR = ../../bin
 
 CFLAGS+= -Wall -I../../../include -I$(KLINUX_SRCDIR)/include \
          -I$(KLINUX_BLTDIR)/include \
 	 -I$(KLINUX_SRCDIR)/drivers/net
 
-LOADLIBES+=     -L../../../lib -lltp
+LOADLIBES+= -L../../../lib -lltp
 
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
 TARGET=asrc_testapp
-SCRIPT=asrc_test1.sh asrc_grp_conv.sh asrc_clock_source_test1.sh asrc_clock_source_test2.sh asrc_clock_source_test3.sh
+SCRIPT=asrc_test1.sh asrc_grp_conv.sh asrc_clock_source_test1.sh
+SCRIPT += asrc_clock_source_test2.sh asrc_clock_source_test3.sh
+SCRIPT += asrc_alsa.sh
 
 all: $(TARGET)
 	rm -f $(OBJS)
