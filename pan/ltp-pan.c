@@ -781,6 +781,7 @@ check_pids(struct tag_pgrp *running, int *num_active, int keep_active,
 						}
 					}
 					ret = system("/bin/dmesg -c");
+					ret = system("rmmod imx2_wd_test");
 					ret = system("reboot");
 					/*	continue;*/
 					while(1) sleep(1);
