@@ -1210,7 +1210,6 @@ extern "C" {
 							   gFormat.fmt.pix.width / 2, (unsigned char *) gpRGBconv_buf, 
 							   gFormat.fmt.pix.width, gFormat.fmt.pix.height,
 							   RGB_ORIENT_NORMAL, RGB_565);
-					tst_resm (TINFO, "Color space conversion YUV420->RGB565X success!");
 			}
 			display_to_fb((void*)gpRGBconv_buf, aLength);
 		}
