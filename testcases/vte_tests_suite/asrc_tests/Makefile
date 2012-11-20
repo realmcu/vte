@@ -58,3 +58,4 @@ $(TARGET): $(OBJS)
 	-$(CC) $(OBJS) $(LOADLIBES) -o $@
 
 $(OBJS) : $(SRCS)
+	-$(CC) $(CFLAGS) -c -o $@ $<
