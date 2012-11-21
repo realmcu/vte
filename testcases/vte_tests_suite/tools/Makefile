@@ -31,6 +31,7 @@ SUBDIRS= dumpmem
 TARGETS = platfm.sh pkg_handle.sh 
 TARGETS += get_total_memory.sh v4l_module.sh dump-clocks ipuperf.py clocks.sh
 TARGETS += prepare_ubuntu_rfs.sh prepare_offline_vte.sh
+TARGETS += dt_x86
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
