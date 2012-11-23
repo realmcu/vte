@@ -108,6 +108,15 @@ setup()
     if ! mount|grep -sq '/sys/kernel/debug'; then
         mount -t debugfs none /sys/kernel/debug
     fi
+    
+    # test data preparation
+    cd $LTPROOT/testcases/bin
+    cp red_BGR24 /tmp/red_BGR24
+    cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
+    cp dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt /tmp
+    cd
+    export PATH=$PATH:/tmp
+    umount /mnt/nfs
 
     modprobe ar6000
     if ifconfig -a |grep wlan0; then
@@ -216,8 +225,8 @@ dvfs_per_basic()
     storage_all.sh 2
 
     #V4L2-0071
-    v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F $LTPROOT/testcases/bin/red_BGR24 || return $RC
-    vpu_dec_test.sh 1 || return $RC
+    v4l_output_testapp -C 2 -R 5 -X 75 -Y 50 -S 5 -F /tmp/red_BGR24 || return $RC
+    /unit_tests/mxc_vpu_test.out -D "-i /tmp/mpeg2_720x576.mpg -f 4" || return $RC
     
     #suspend test
     rtc_testapp_6 -m standby -T 50 || return $RC
