@@ -1,0 +1,6 @@
+[submodule "apps-epd"]
+	path = apps-epd
+	url = git://sw-git.freescale.net/apps-epd.git
+[submodule "testcases/vte_tests_suite/epdc_tests/apps-epd"]
+	path = testcases/vte_tests_suite/epdc_tests/apps-epd
+	url = git://sw-git.freescale.net/apps-epd.git
