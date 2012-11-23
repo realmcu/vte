@@ -20,7 +20,7 @@ CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -trigraphs
 LDFLAGS += -L../../../lib -lltp -lpthread
 
 TARGET = epdc_test
-TARGET_SCRIPT = epdc_full.sh
+TARGET_SCRIPT = epdc_full.sh epdc_REAGL_full.sh
 SRC = epdc_main.c epdc_test.c
 HEADS = epdc_test.h
 OBJ=$(patsubst %.c,%.o,$(SRC))
