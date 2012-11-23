@@ -1,4 +1,4 @@
-SUBDIRS += libpcap-0.9.6 libpng-1.2.20
+SUBDIRS += libpcap-0.9.6 libpng-1.2.20 libjpeg6b-6b1
 export CFLAGS +=  -I$(KLINUX_SRCDIR)/include
 
 all: config
