@@ -629,14 +629,14 @@ medium_mode_audio()
 	sleep 5
 	#usboh3_clk is the medium one
 	mkdir -p /mnt/sda1
+	umount /mnt/sda1
 	mount /dev/sda1 /mnt/sda1 || return 1
-    bonnie\+\+ -d /mnt/sda1 -u 0:0 -s 80 -r 40 &
+    /tmp/bonnie\+\+ -d /mnt/sda1 -u 0:0 -s 80 -r 40 &
 	pid=$!
 	aplay /tmp/audio44k24S-S24_LE_long.wav || return 1
 	/tmp/rtc_testapp_6 -m mem -T 100 || return 1
 	aplay /tmp/audio44k24S-S24_LE_long.wav || return 1
-	wait $pid || return 1
-	umount /mnt/sda1
+	wait $pid
 	return $RC
 }
 
