@@ -109,6 +109,21 @@ setup()
         mount -t debugfs none /sys/kernel/debug
     fi
 
+    modprobe ar6000
+    if ifconfig -a |grep wlan0; then
+        sleep 2
+        iwconfig wlan0 mode managed || return 1
+        sleep 2
+        iwlist wlan0 scanning | grep FSLLBGAP_001
+        iwconfig wlan0 key bbd9837522
+        iwconfig wlan0 essid FSLLBGAP_001
+        ifconfig wlan0 up
+        udhcpc -i wlan0 || dhclient wlan0 || return 1
+        route add -host 10.192.225.222 dev wlan0
+        sleep 5
+        export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
+    fi
+
     #enable dvfs-per on MX51 only
     DVFS_PER_DIR=/sys/devices/platform/mxc_dvfsper.0
     dvfs_per_ctl=${DVFS_PER_DIR}/enable
@@ -247,8 +262,11 @@ dvfs_per_stress()
         tst_resm TINFO "Audio catpure test run times: $i"
 
         RC=4
-        wifi_stress.sh 1 || return $RC
-        tst_resm TINFO "WiFi test run times: $i"
+
+        if ifconfig -a|grep wlan0; then
+            iperf -B $LOCALIP -c 10.192.225.222 -n 10M || return $RC
+            tst_resm TINFO "WiFi test run times: $i"
+        fi
     done
 
     RC=0
