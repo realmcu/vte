@@ -121,12 +121,12 @@ v4l_cleanup()
   		exit 1
     fi
 
+    rmodule mxc_v4l2_capture
+    sleep 2
     set -x
     for cm in $camera_module; do
         rmodule $cm
     done
-    sleep 2
-    rmodule mxc_v4l2_capture || return 1
     set +x
 }
 
