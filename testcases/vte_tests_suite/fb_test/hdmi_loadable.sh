@@ -33,7 +33,7 @@ setup()
     export TST_COUNT=0   # Set up is initialized as test 0
 
 
-    if [ ! -e /lib/modules/`uname -r`/sound/soc/codecs/snd-soc-mxc-hdmi.ko ] || [ ! -e /lib/modules/`uname -r`/sound/soc/imx/snd-soc-imx-hdmi.ko ]; then
+    if [ ! -e /lib/modules/`uname -r`/kernel/sound/soc/codecs/snd-soc-mxc-hdmi.ko ] || [ ! -e /lib/modules/`uname -r`/kernel/sound/soc/imx/snd-soc-imx-hdmi.ko ]; then
        echo "loadable files don't exist"
        RC=1
        return $RC
