@@ -71,7 +71,7 @@ cleanup()
 }
 
 # Function:     test_case_01
-# Description   - Test if capture mode,rotation,input/output size is ok
+# Description   - Test if 30 fps capture mode input/output size is ok
 #
 test_case_01()
 {
@@ -87,34 +87,60 @@ test_case_01()
 	FBY=$(fbset | grep geometry | awk '{print $3}')
 
 	#TODO add function test scripte here
-	ROTATION="0"
-	MIPIMODES30FPS="0 1 2 3 7 8"
-	MIPIMODES15FPS="0 1 2 3 7 8"
-	MODES564230FPS="0 1 2 3 7 8"
-	MODES564215FPS="0 1 2 3 7 8"
-    echo "frame rate 15"
-    for m in $MIPIMODES15FPS
-	do
-		for n in $MODES564215FPS
-		do
-			${TSTCMD} -T 5 -C 2 -D /dev/video0 -s CSI_IC_MEM  -M $n  & ${TSTCMD} -T 5  -v -C 2 -s CSI_MEM -O YUV420  -D /dev/video1 -M $m ||RC=$(expr $RC + 1 )
-		done
-	done
+	CMD_Mode=v4l_modes
+	MIPIMODES30FPS=`$CMD_Mode -D /dev/video1`
+	MODES564230FPS=`$CMD_Mode -D /dev/video0`
 	echo "farme rate 30"
 	for m in $MIPIMODES30FPS
 	do
 		for n in $MODES564230FPS
 		do
-			${TSTCMD} -T 5 -C 2 -D /dev/video0 -M $n -s CSI_IC_MEM  & ${TSTCMD} -T 5 -C 2 -v -s CSI_MEM -O YUV420   -D /dev/video1 -M $m || RC=$(expr $RC + 1 )
+		    echo "--------------current 5642 mode is:" + $n
+			echo "--------------current 5640 mode is:" + $m
+			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2  & ${TSTCMD} -T 100 -C 2 -s CSI_IC_MEM -O YUV420 -D /dev/video1 -M $m
+            ||RC=$(expr $RC + 1)
+			fi
 		done
 	done
 	return $RC
 }
+# Function:     test_case_02
+# Description   - Test if 15 fps dual capture mode input/output size is ok
+#
+test_case_02()
+{
+	#TODO give TCID
+	TCID="capture_mode"
+	#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=0
 
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
+	FBX=$(fbset | grep geometry | awk '{print $2}')
+	FBY=$(fbset | grep geometry | awk '{print $3}')
+
+	#TODO add function test scripte here
+	MIPIMODES15FPS=`v4l_modes -D /dev/video1 -r 15`
+	MODES564215FPS=`v4l_modes -D /dev/video0 -r 15`
+	echo "farme rate 15"
+	for m in $MIPIMODES15FPS
+	do
+		for n in $MODES564215FPS
+		do
+			echo "--------------current 5642 mode is:" + $n
+			echo "--------------current 5640 mode is:" + $m
+			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2 -r 15  & ${TSTCMD} -T 100 -C 2 -s CSI_IC_MEM -O YUV420 -D /dev/video1 -M $m -r 15 ||RC=$(expr $RC + 1)
+			fi
+		done
+	done
+	return $RC
+}
 usage()
 {
 	echo "$0 [case ID]"
-	echo "1: "
+	echo "1: 30fps test on dual camera"
+	echo "2: 15fps test on dual camera"
 }
 
 # main function
@@ -123,6 +149,8 @@ RC=0
 
 
 #TODO check parameter
+usage()
+
 if [ $# -ne 1 ]
 then
 	usage
@@ -135,6 +163,9 @@ setup || exit $RC
 case "$1" in
 	1)
 		test_case_01 || exit $RC
+		;;
+	2)
+		test_case_02 || exit $RC
 		;;
 	*)
 		usage
