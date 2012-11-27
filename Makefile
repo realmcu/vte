@@ -235,6 +235,7 @@ vte:pan utils tools
 	@echo "** MAKE ALL - VTE tests suite                **"
 	@echo "***********************************************"
 	@echo
+	@$(MAKE) -C openlibs
 	@$(MAKE) -C testcases/vte_tests_suite all
 	@$(MAKE) -C testcases/module_test all
 	@echo
