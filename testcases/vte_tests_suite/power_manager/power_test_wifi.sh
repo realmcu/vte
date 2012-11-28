@@ -29,6 +29,7 @@ setup()
         sleep 3
         localip=$(ifconfig wlan0 | grep addr: | cut -d : -f 2 | cut -d " " -f 1)
         export LOCALIP=${localip}
+        route add -host $SERVERIP dev wlan0
     fi
 
 
