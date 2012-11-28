@@ -202,6 +202,9 @@ setup()
 
 cleanup()
 {
+    cd /tmp
+    rm -f red_BGR24 mpeg2_720x576.mpg dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt
+    cd -
     if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
         echo 0 > $dvfs_per_ctl
     fi
