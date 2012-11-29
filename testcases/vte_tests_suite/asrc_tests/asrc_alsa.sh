@@ -101,6 +101,8 @@ cleanup()
     sed -i 's/rate 96000/rate 44100/g' ~/.asoundrc
     if [ -e ~/.asoundrc.bak ]; then
         mv ~/.asoundrc.bak ~/.asoundrc
+    else
+        rm ~/.asoundrc
     fi
     return $RC
 }
