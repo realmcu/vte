@@ -78,7 +78,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-MODE_LIST="2 6 10"
+MODE_LIST="3 4 10"
 
 echo "TST_INFO test"
 
@@ -86,7 +86,7 @@ for i in $MODE_LIST
 do
 insmod ${LTPROOT}/testcases/bin/tcrypt.ko mode=$i
 Ret=$?
-if [ $Ret -ne 0 ]; then
+if [ $Ret -ne 11 ]; then
 RC=$(expr $RC + 1)
 fi
 rmmod tcrypt
@@ -111,13 +111,13 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test scripte here
 
-MODE_LIST="200 303 304"
+MODE_LIST="200"
 
 for i in $MODE_LIST
 do
 insmod ${LTPROOT}/testcases/bin/tcrypt.ko mode=$i sec=3
 Ret=$?
-if [ $Ret -ne 0 ]; then
+if [ $Ret -ne 11 ]; then
 RC=$(expr $RC + 1)
 fi
 rmmod tcrypt
@@ -149,7 +149,7 @@ for i in $MODE_LIST
 do
 insmod ${LTPROOT}/testcases/bin/tcrypt.ko mode=$i sec=3
 Ret=$?
-if [ $Ret -ne 0 ]; then
+if [ $Ret -ne 11 ]; then
 RC=$(expr $RC + 1)
 fi
 rmmod tcrypt
