@@ -30,7 +30,7 @@ app-epd_DIR = apps-epd/linux/demo
 demoColorEpd_SRS_PATH = $(app-epd_DIR)/democolorepd
 CFLAGS_demoColorEpd = $(CFLAGS)
 CFLAGS_demoColorEpd +=  -I../../../openlibs/include -I$(demoColorEpd_SRS_PATH)
-LDFLAGS_demoColorEpd += -L../../../openlibs/lib -lpng -ljpeg -lz -lm
+LDFLAGS_demoColorEpd += -L../../../openlibs/lib -static -lpng -ljpeg -lz -lm
 
 demoColorEpd_SRS = $(wildcard $(demoColorEpd_SRS_PATH)/*.c)
 demoColorEpd_SRS_nodir = $(notdir $(demoColorEpd_SRS))
