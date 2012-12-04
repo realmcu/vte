@@ -20,6 +20,7 @@
 #-------------------------   ------------    ----------  ---------------------------------------
 #Shelly Cheng                 20120614        N/A         Initial
 #Andy Tian	                  20120715        N/A         add some modes and fix fps 15 setting error
+#Andy Tian	                  20121204        N/A         Fix some syntax error and add wait command
 ###################################################################################################
 
 
@@ -95,11 +96,12 @@ test_case_01()
 	do
 		for n in $MODES564230FPS
 		do
-		    echo "--------------current 5642 mode is:" + $n
-			echo "--------------current 5640 mode is:" + $m
-			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2  & ${TSTCMD} -T 100 -C 2 -s CSI_IC_MEM -O YUV420 -D /dev/video1 -M $m
-            ||RC=$(expr $RC + 1)
-			fi
+		    echo "--------------current 5642 mode is: $n"
+			echo "--------------current 5640 mode is: $m"
+			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2  & 
+			pid=$!
+			${TSTCMD} -T 100 -C 2 -s CSI_IC_MEM -O YUV420 -D /dev/video1 -M $m || RC=$(expr $RC + 1)
+			wait $pid || RC=$(expr $RC + 1)
 		done
 	done
 	return $RC
@@ -128,10 +130,12 @@ test_case_02()
 	do
 		for n in $MODES564215FPS
 		do
-			echo "--------------current 5642 mode is:" + $n
-			echo "--------------current 5640 mode is:" + $m
-			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2 -r 15  & ${TSTCMD} -T 100 -C 2 -s CSI_IC_MEM -O YUV420 -D /dev/video1 -M $m -r 15 ||RC=$(expr $RC + 1)
-			fi
+			echo "--------------current 5642 mode is: $n"
+			echo "--------------current 5640 mode is: $m"
+			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2 -r 15  & 
+			pid=$!
+			${TSTCMD} -T 100 -C 2 -s CSI_IC_MEM -O YUV420 -D /dev/video1 -M $m -r 15 ||RC=$(expr $RC + 1)
+			wait $pid || RC=$(expr $RC + 1)
 		done
 	done
 	return $RC
