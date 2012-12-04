@@ -191,7 +191,7 @@ mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
 echo $mode | grep "1920x1080"
 if [ $? -ne 0 ]; then
 	#set 1080p mode
-	mode_1080=`echo $modes | grep -m 1 "1920x1080"`
+	mode_1080=`cat /sys/class/graphics/${hdmi_fb}/modes | grep -m 1 "1920x1080"`
 	if [ $? -ne 0 ]; then
 		#1080p mode is not supported by display, exit
 		echo "1080p mode is not supported by this display, case can not run."
