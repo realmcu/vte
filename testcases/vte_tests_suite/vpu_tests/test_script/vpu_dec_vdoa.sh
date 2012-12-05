@@ -76,7 +76,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
 STREAM_FILE=/tmp/mpeg2_720x576.mpg
 ${TSTCMD} -D "-i ${STREAM_FILE} -f 4 -y 0" || RC=1
-${TSTCMD} -D "-i ${STREAM_FILE} -f 4 -y 1" || RC=$(expr $RC + 2)
+${TSTCMD} -D "-i ${STREAM_FILE} -f 4 -y 2" || RC=$(expr $RC + 2)
 rm -rf $STREAM_FILE
 
 if [ $RC -eq 0 ]
@@ -312,7 +312,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
 STREAM_FILE=/tmp/mpeg2_720x576.mpg
 ${TSTCMD} -D "-i $STREAM_FILE -f 4 -y 0 -d 1" || RC=1
-${TSTCMD} -D "-i $STREAM_FILE -f 4 -y 1 -d 1" || RC=$(expr $RC + 2)
+${TSTCMD} -D "-i $STREAM_FILE -f 4 -y 2 -d 1" || RC=$(expr $RC + 2)
 rm -rf $STREAM_FILE
 return $RC
 }
