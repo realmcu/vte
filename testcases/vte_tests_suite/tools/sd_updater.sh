@@ -287,8 +287,16 @@ if [ $DO_RFS -eq 1 ] ; then
     rm -f format_rootfs.cmd
 
 	# compressed image ?
-	echo ${RFS} | egrep -e '\.gz$' >> ${LOGFILE} 2>&1
-	ISCMPD=$?
+    ISBZ2=1
+    if file ${RFS} | egrep -e 'gzip' >> ${LOGFILE} 2>&1; then
+        ISCMPD=0
+    elif file ${RFS} | egrep -e 'bzip2' >> ${LOGFILE} 2>&1; then
+        ISCMPD=0
+        ISBZ2=0
+    else
+        ISCMPD=1
+    fi
+
 	echo ${RFS} | egrep -e '\.tar\.gz$' >> ${LOGFILE} 2>&1
     ISTAR=$?
     if [ $ISTAR -ne 0 ]; then
@@ -308,7 +316,10 @@ if [ $DO_RFS -eq 1 ] ; then
     }
 
     if [ ${ISTAR} -eq 0 ]; then
-        tar --numeric-owner -xzf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
+        tar --numeric-owner -zxf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
+        sync
+    elif [ ${ISBZ2} -eq 0 ]; then
+        tar --numeric-owner -jxf $RFS -C /mnt/msc >> ${LOGFILE} 2>&1
         sync
     elif [ $ISEXT2 -eq 0 ] || [ ${ISCMPD} -eq 0 ]; then
         if [ ${ISCMPD} -eq 0 ] ; then
