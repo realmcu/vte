@@ -60,4 +60,4 @@ clock=$(cat /sys/kernel/debug/$mmc/ios | grep clock | awk '{print $2}')
 
 [ $clock -eq 52000000 ] || RC=1
 
-return $RC
+exit $RC
