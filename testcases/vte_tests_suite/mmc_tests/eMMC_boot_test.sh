@@ -52,8 +52,10 @@ RC=0
 
 #TODO add cleanup code here
 echo "clean up..."
-if [ -e $emmc_card ];then
-  echo '0' > ${emmc_card}/boot_config
+if [ -n "$emmc_cards" ];then
+	for emmc_card in $emmc_cards;do
+	  echo '0' > ${emmc_card}/boot_config
+    done
 fi
 
 return $RC
@@ -64,29 +66,31 @@ check_emmc_card()
   cards=$(ls /sys/devices/platform/*/mmc_host/*/*/boot_info)	
 	for i in $cards
 	do
-   emmc_card=$(dirname $i)
+   emmc_cards="$emmc_cards $(dirname $i)"
 	done
 }
 RC=0
-emmc_card=""
+emmc_cards=""
 check_emmc_card
 setup
 
 #main
-if [ -e $emmc_card ];then
- echo '8' > ${emmc_card}/boot_config || exit 1
- is_ddr_support=$(echo $emmc_card | grep -i mxsdhci.2)
- if [ ! -z $is_ddr_support ]; then
-    echo '1' > ${emmc_card}/boot_bus_config || exit 1
- fi
- sleep 1
+if [ -n "$emmc_cards" ];then
  dd if=/dev/urandom of=urandom.bin bs=512 count=100
- card_path=$(ls $emmc_card/block)
- card_node=$(basename $card_path)
- dd if=urandom.bin of=/dev/${card_node} bs=512 count=100
- dd if=/dev/${card_node} of=emmc.bin bs=512 count=100
- cmp urandom.bin emmc.bin || RC=1
+ for emmc_card in $emmc_cards; do
+	 echo '8' > ${emmc_card}/boot_config || exit 1
+	 is_ddr_support=$(echo $emmc_card | grep -i mxsdhci.2)
+	 if [ ! -z $is_ddr_support ]; then
+		echo '1' > ${emmc_card}/boot_bus_config || exit 1
+	 fi
+	 sleep 1
+	 card_path=$(ls $emmc_card/block)
+	 card_node=$(basename $card_path)
+	 dd if=urandom.bin of=/dev/${card_node} bs=512 count=100
+	 dd if=/dev/${card_node} of=emmc.bin bs=512 count=100
+	 cmp urandom.bin emmc.bin || RC=1
+ done
  rm -f urandom.bin emmc.bin
 fi
 
-return $RC
+exit $RC
