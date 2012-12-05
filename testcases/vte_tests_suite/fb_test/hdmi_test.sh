@@ -15,6 +15,9 @@
 # Author                   Date       Description of Changes
 #-------------------   ------------   ---------------------
 # Ada Lu               25/04/2012     Initial ver.
+# Andy Tian            05/12/2012     Copy to mem for multi-channel case to avoid
+#                                     underrun issue when large size audio stream
+#                                     used.
 #############################################################################
 # Function:     setup
 #
@@ -144,7 +147,7 @@ hdmi_audio_playback_multichannel()
     
     tst_resm TINFO "Use plughw to playback" 
     for i in $FILELIST; do
-        aplay -Dplughw:$num ${stream_path}/$i || RC=$?
+        dac_test1.sh ${stream_path}/$i -s hdmi || RC=$?
     done
     return $RC
 }
