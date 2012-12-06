@@ -84,7 +84,7 @@ test_case_01()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
 
     gsl_sanity_app || RC=1
 
@@ -105,7 +105,7 @@ test_case_02()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
 
     tmpdir=$(mktemp -d)
     mkdir $tmpdir
@@ -134,7 +134,7 @@ test_case_03()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     simple_draw -f 100 && torusknot 100 
 
     if [ $? -eq 0 ]; then
@@ -161,7 +161,7 @@ test_case_04()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     echo "######################"
     echo "run this case overnight and check program still ok"
 
@@ -183,7 +183,7 @@ test_case_04()
 test_case_05()
 {
     #TODO give TCID 
-    TCID="eles_pm_test"
+    TCID="gles_pm_test"
     #TODO give TST_COUNT
     TST_COUNT=5
     RC=0
@@ -191,23 +191,23 @@ test_case_05()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
-
-    tiger &
-    td1=$!
-    es11ex &
-    td2=$!
+    #TODO add function test script here
+    tmpdir=$(mktemp -d)
+    mkfifo $tmpdir/tiger_fifo
+    mkfifo $tmpdir/es11ex_fifo
+    sh -c "cat $tmpdir/tiger_fifo | tiger -f 10000" &
+    sh -c "cat $tmpdir/es11ex_fifo | es11ex" &
+    sleep 2
 
     rtc_testapp_6 -T 50
 
-    kill -9 $td1
-    kill -9 $td2
+    echo y > $tmpdir/tiger_fifo
+    echo y > $tmpdir/es11ex_fifo
 
     #try again
-    tiger &
-    td1=$!
-    es11ex &
-    td2=$!
+    sh -c "cat $tmpdir/tiger_fifo | tiger -f 10000" &
+    sh -c "cat $tmpdir/es11ex_fifo | es11ex" &
+    sleep 2
 
     rtc_testapp_6 -T 50
     sleep 1
@@ -217,8 +217,8 @@ test_case_05()
     sleep 1
     rtc_testapp_6 -T 50
 
-    kill -9 $td1
-    kill -9 $td2
+    echo y > $tmpdir/tiger_fifo
+    echo y > $tmpdir/es11ex_fifo
 
     echo "test PASS"
     echo "now reboot system!"
