@@ -84,7 +84,7 @@ test_case_01()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     echo "==========================="
     echo tiger
     echo "==========================="
@@ -131,7 +131,7 @@ test_case_02()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     tiger &
     td=$!
 
@@ -168,7 +168,7 @@ test_case_03()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+    #TODO add function test script here
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo vg1.1 conformance
@@ -207,7 +207,10 @@ test_case_04()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    tiger &
+    tmpdir=$(mktemp -d)
+    mkdir $tmpdir
+    mkfifo $tmpdir/tiger_fifo
+    sh -c "cat $tmpdir/tiger_fifo | tiger -f 10000" &
     td=$!
 
     rtc_testapp_6 -T 50
