@@ -35,17 +35,23 @@ setup()
     export TCID="TGE_LV_HDMI_TEST"       # Test case identifier
     export TST_COUNT=0   # Set up is initialized as test 0
 
+    platfm.sh || platid=$?
+    if [ $platid -eq 53 ]; then
+        cable_dir="/sys/devices/platform/sii902x.0"
+    else
+        cable_dir="/sys/devices/platform/mxc_hdmi"
+    fi
 
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
        echo "Already enable HDMI in boot cmdline"
-       if [ $(cat /sys/devices/platform/mxc_hdmi/cable_state) = "plugout" ]; then
+       if [ "$(cat $cable_dir/cable_state)" = "plugout" ]; then
           echo "Not plug in HDMI cable in board"
           RC=1
        fi
     else
        echo "Not enable HDMI in boot cmdline"
        RC=1
-     fi
+    fi
        
     return $RC
        
