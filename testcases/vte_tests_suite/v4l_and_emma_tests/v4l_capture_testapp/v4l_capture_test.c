@@ -784,7 +784,7 @@ int init_mmap(void)
 		CLEAR(buffer);    
 
 		buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		//buffer.memory = V4L2_MEMORY_MMAP;
+		buffer.memory = V4L2_MEMORY_MMAP;
 		buffer.index = gBuffNumber;
 		if (ioctl(gFdV4L, VIDIOC_QUERYBUF, &buffer) < 0)
 		{
