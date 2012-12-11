@@ -41,7 +41,7 @@ setup()
         LTPTMP=/tmp
     fi
 
-    if [ $# -lt 1 ]; then
+    if [ $args -lt 1 ]; then
         usage
     fi
 
@@ -101,8 +101,6 @@ cleanup()
     sed -i 's/rate 96000/rate 44100/g' ~/.asoundrc
     if [ -e ~/.asoundrc.bak ]; then
         mv ~/.asoundrc.bak ~/.asoundrc
-    else
-        rm ~/.asoundrc
     fi
     return $RC
 }
@@ -164,7 +162,7 @@ EOF
 #               - non-zero on failure.
 #
 RC=0    # Return value from setup, and test functions.
-
+args=$#
 #"" will pass the whole args to function setup()
 setup || exit $RC
 
