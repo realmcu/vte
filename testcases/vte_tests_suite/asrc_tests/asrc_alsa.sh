@@ -41,17 +41,7 @@ setup()
         LTPTMP=/tmp
     fi
 
-    if [ $args -lt 1 ]; then
-        usage
-    fi
-
     trap "cleanup" 0
-
-    if ! aplay -l |grep -i asrc; then
-        tst_resm TBROK "No ASRC ALSA lib plugin is found"
-        RC=65
-        return $RC
-    fi
 
     [ ! -z "$STREAM_PATH" ] || {
         tst_resm TBROK "STREAM_PATH not set, pls check!" 
@@ -98,7 +88,9 @@ cleanup()
 {
     RC=0
     echo "Clean up..."
-    sed -i 's/rate 96000/rate 44100/g' ~/.asoundrc
+    if [ -e ~/.asoundrc ]; then
+        sed -i 's/rate 96000/rate 44100/g' ~/.asoundrc
+    fi
     if [ -e ~/.asoundrc.bak ]; then
         mv ~/.asoundrc.bak ~/.asoundrc
     fi
@@ -162,7 +154,10 @@ EOF
 #               - non-zero on failure.
 #
 RC=0    # Return value from setup, and test functions.
-args=$#
+if [ $# -lt 1 ]; then
+    usage
+fi
+
 #"" will pass the whole args to function setup()
 setup || exit $RC
 
