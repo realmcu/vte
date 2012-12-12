@@ -1,3 +1,4 @@
+#!/bin/sh
 #Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -6,7 +7,6 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-#!/bin/sh
 ##############################################################################
 #
 # Revision History:
@@ -43,7 +43,7 @@ setup()
 
     export TST_TOTAL=1   # Total number of test cases in this file.
     LTPTMP=${TMP}        # Temporary directory to create files, etc.
-    export TCID="TGE_LV_ASRC_SMP"       # Test case identifier
+    export TCID="TGE_LV_ASRC_GRP"       # Test case identifier
     export TST_COUNT=0   # Set up is initialized as test 0
     BIN_DIR=`dirname $0`
     export PATH=$PATH:$BIN_DIR
