@@ -116,12 +116,24 @@ asrc_plug_playback()
     (sleep 120; sed -i 's/rate 32000/rate 64000/g' ~/.asoundrc) &
     (sleep 150; sed -i 's/rate 64000/rate 96000/g' ~/.asoundrc) &
 
-    stream_list=`ls ${STREAM_PATH}/alsa_stream_music/audio*.wav`
+    stream_list=`ls ${STREAM_PATH}/alsa_stream_music/audio*.wav| grep -v "24k"`
+    error_list=""
     for i in $stream_list; do
-        aplay -D asrc $i || return $?
+        aplay -D asrc $i || RC=$?
+        if [ $RC -ne 0 ]; then
+            target_rate=`grep 'rate ' ~/.asoundrc |awk '{print $2}'`
+            error_list="$error_list $i=>$target_rate"
+        fi
     done
 
     wait
+
+    if [ -n "$error_list" ]; then
+        tst_resm TFAIL "Some error during playback, please check list:"
+        echo $error_list
+        # return last error code
+        return $RC
+    fi
 
     tst_resm TPASS "Playback finished."
 
