@@ -29,7 +29,7 @@
 p_node()
 {
  RC=1
- SZ=$(fdisk -l $1 | grep "Units =" | awk '{print $9}')
+ SZ=$(fdisk -lu $1 | grep "Units =" | awk '{print $9}')
  SHIFT=$(echo "((10*1024*1024*10)/${SZ}+9)/10" | bc)
  SHIFT=$(expr $SHIFT + 1)
  tmpfile=$(mktemp -p /tmp)
