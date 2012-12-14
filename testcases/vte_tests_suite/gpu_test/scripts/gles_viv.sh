@@ -29,7 +29,7 @@
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
 #Andy Tian                    05/15/2012       N/A      add wait for background
-#                                                       process
+#Andy Tian                    12/14/2012       N/A      add GPU thermal test
 # 
 ################################################################################
 
@@ -45,13 +45,13 @@
 setup()
 {
     #TODO Total test case
-    export TST_TOTAL=4
+    export TST_TOTAL=6
 
     export TCID="setup"
     export TST_COUNT=0
     RC=0
 
-    trap "cleanup" 0
+    trap "cleanup" 0 3
     modprobe galcore
     return $RC
 }
@@ -70,6 +70,13 @@ cleanup()
     if [ -z "$NOCLEANUP" ];then
         modprobe -r galcore
     fi
+
+	if [ -n "$trip_hot_old" ]; then
+	 	echo $trip_hot_old > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
+	fi
+	if [ -n "$trip_act_old" ]; then
+	 	echo $trip_act_old > /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp
+	fi
     return $RC
 }
 
@@ -336,6 +343,55 @@ test_case_05()
 }
 
 
+# Function:     test_case_06
+# Description   - Test if gles applications sequence ok
+#  
+test_case_06()
+{
+    #TODO give TCID 
+    TCID="gles_thermal_test"
+    #TODO give TST_COUNT
+    TST_COUNT=6
+    RC=0
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+
+
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+
+	trip_hot_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp`
+	trip_act_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp`
+	cur_temp=`cat /sys/devices/virtual/thermal/thermal_zone0/temp`
+	if [ $cur_temp -lt $trip_hot_old ]; then
+    	norm_fps=`./simple_draw 200 | grep FPS | cut -f3 -d:`
+	else
+		echo "Already in trip hot status"
+		exit 6
+	fi
+
+	let trip_hot_new=cur_temp-10
+	let trip_act_new=cur_temp-15
+
+	# Set new trip hot value to trigger the trip_hot flag
+	echo ${trip_act_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp
+	echo ${trip_hot_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
+	sleep 2
+	if [ $cur_temp -gt $trip_hot_new ]; then
+    	low_fps=`./simple_draw 200 | grep FPS | cut -f3 -d: `
+	else
+		echo "Set trip hot flag failure"
+		exit 6
+	fi
+
+	let drop_fps=norm_fps-low_fps
+	let half_fps=norm_fps/2
+	[ $drop_fps -gt $half_fps ] || RC=6
+
+    return $RC
+
+}
 usage()
 {
     echo "$0 [case ID]"
@@ -344,6 +400,7 @@ usage()
     echo "3: conformance test"
     echo "4: pm test"
     echo "5: performance test"
+    echo "6: Thermal control test"
 }
 
 # main function
@@ -369,7 +426,6 @@ cat /etc/issue | grep Ubuntu || rt="others"
 if [ $rt = "Ubuntu" ];then
     APP_SUB_DIR="ubuntu_11.10/test"
     export DISPLAY=:0.0
-	export XAUTHORITY=/home/linaro/.Xauthority
 else
     #judge the rootfs
     platfm.sh
@@ -411,6 +467,9 @@ case "$1" in
     ;;
 5)
     test_case_05 || exit $RC
+    ;;
+6)
+    test_case_06 || exit $RC
     ;;
 *)
     usage
