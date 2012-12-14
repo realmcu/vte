@@ -590,16 +590,21 @@ int init_capture(void)
 		if(open_out_device() == TFAIL) 
 			return TFAIL;
 	/* get the pixel format supported by the device*/
+#if 1
 	fmtdesc.index = 0;
 	fmtsize.index = 0;
 	frmival.index = 0;
 	while (ioctl(gFdV4L, VIDIOC_ENUM_FMT, &fmtdesc) >= 0) {
-		tst_resm(TINFO,"pixelformat output by camera: %s",fmtdesc.pixelformat);
+		printf("%s: %c%c%c%c\n", "pixelformat",
+                                        fmtdesc.pixelformat & 0xff,
+                                        (fmtdesc.pixelformat >> 8) & 0xff,
+                                        (fmtdesc.pixelformat >> 16) & 0xff,
+                                        (fmtdesc.pixelformat >> 24) & 0xff);	
 		fmtsize.index = 0;
 	    fmtsize.pixel_format = fmtdesc.pixelformat;
 		/* get the frame height and width given the pixel format*/
 		while (ioctl( gFdV4L, VIDIOC_ENUM_FRAMESIZES, &fmtsize ) >= 0 ){
-			tst_resm(TINFO,"the frame width: %s and high: %s",fmtsize.discrete.width,fmtsize.discrete.height);
+			tst_resm(TINFO,"the frame width: %d and high: %d",fmtsize.discrete.width,fmtsize.discrete.height);
 			frmival.index = 0;
 			frmival.pixel_format = fmtdesc.pixelformat;
 			frmival.width = fmtsize.discrete.width;
@@ -630,6 +635,7 @@ int init_capture(void)
 		tst_resm(TWARN, "%s do VIDIOC_ENUM_FRAMEINTERVALS", gV4LTestConfig.mV4LDevice);
 		return TFAIL;
 	}
+#endif
 	parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	parm.parm.capture.capturemode = 0;
 	parm.parm.capture.timeperframe.numerator = 1;
