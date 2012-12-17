@@ -32,6 +32,7 @@ setup()
     trap "cleanup" 0
 
     old_governor=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`
+    old_freq=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq`
 
     i=0
     count=$(cpufreq-info -s | wc -w)
@@ -84,6 +85,9 @@ cleanup()
 
     if [ -n "$old_governor" ]; then
         echo $old_governor > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    fi
+    if [ -n "$old_freq" ]; then
+        echo $old_freq > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
     fi
 
 	if [ $caseID -eq 7 ]; then
