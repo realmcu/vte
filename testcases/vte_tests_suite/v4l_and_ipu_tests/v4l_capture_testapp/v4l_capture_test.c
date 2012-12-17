@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2004-2011 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2004-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -78,6 +78,7 @@ extern "C" {
 		"RGB32",
 		"YUV422P",
 		"YUV420",
+		"YVU420",
 		"YUYV",
 		"UYVY"
 	};
@@ -89,6 +90,7 @@ extern "C" {
 		V4L2_PIX_FMT_RGB32,
 		V4L2_PIX_FMT_YUV422P,
 		V4L2_PIX_FMT_YUV420,
+		V4L2_PIX_FMT_YVU420,
 		V4L2_PIX_FMT_YUYV,
 		V4L2_PIX_FMT_UYVY
 	};
@@ -1190,7 +1192,7 @@ extern "C" {
 						 "process_image() : displaying on framebuffer...");
 				}
 				display_to_fb((void *)aStart, aLength);
-			} else if ( gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420){
+			} else if ( gPixelFormat != V4L2_PIX_FMT_YUYV && gPixelFormat != V4L2_PIX_FMT_YUV420 && gPixelFormat != V4L2_PIX_FMT_YVU420){
 				tst_resm(TWARN,
 					 "Pixel format %s is not supported by frame buffer or software convertor",
 					 gPixFmtName);
@@ -1203,13 +1205,21 @@ extern "C" {
 								  gFormat.fmt.pix.width, gFormat.fmt.pix.height, 
 								  RGB_ORIENT_NORMAL, RGB_565 );
 					tst_resm (TINFO, "Color space conversion YUYV->RGB565X success!");
-			}else{
+			}else if(gPixelFormat == V4L2_PIX_FMT_YUV420){
 					YCbCrToRGB((unsigned char *) aStart, gFormat.fmt.pix.width,
 							   (unsigned char *) aStart + gFormat.fmt.pix.width * gFormat.fmt.pix.height, 
 							   (unsigned char *) aStart + 5 * gFormat.fmt.pix.width * gFormat.fmt.pix.height / 4, 
 							   gFormat.fmt.pix.width / 2, (unsigned char *) gpRGBconv_buf, 
 							   gFormat.fmt.pix.width, gFormat.fmt.pix.height,
 							   RGB_ORIENT_NORMAL, RGB_565);
+			}
+			else if(gPixelFormat == V4L2_PIX_FMT_YVU420){
+				    YCbCrToRGB((unsigned char *) aStart, gFormat.fmt.pix.width,
+					           (unsigned char *) aStart + 5 * gFormat.fmt.pix.width * gFormat.fmt.pix.height / 4,
+							   (unsigned char *) aStart + gFormat.fmt.pix.width * gFormat.fmt.pix.height,
+					           gFormat.fmt.pix.width / 2, (unsigned char *) gpRGBconv_buf,
+					           gFormat.fmt.pix.width, gFormat.fmt.pix.height,
+					           RGB_ORIENT_NORMAL, RGB_565);
 			}
 			display_to_fb((void*)gpRGBconv_buf, aLength);
 		}
