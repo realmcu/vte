@@ -119,7 +119,8 @@ asrc_plug_playback()
     stream_list=`ls ${STREAM_PATH}/alsa_stream_music/audio*.wav| grep -v "24k"`
     error_list=""
     for i in $stream_list; do
-        aplay -D asrc $i || RC=$?
+        aplay -D asrc $i 
+		RC=$?
         if [ $RC -ne 0 ]; then
             target_rate=`grep 'rate ' ~/.asoundrc |awk '{print $2}'`
             error_list="$error_list $i=>$target_rate"
