@@ -1,9 +1,11 @@
 #!/bin/sh  -x
 
 # Default Offset values
-OFF_KERNEL=1048576    			# 1M after the start
-OFF_REDBOOT=1024			# 1K after the MBR
-DEF_DEVNODE="/dev/sdb"		# default applies to target
+OFF_REDBOOT=1024			# 1K after the start, just after the MBR
+OFF_UCONFIG=786432          # 786K after the start
+OFF_KERNEL=1048576    		# 1M after the start
+UCONFIG_MAX_SIZE=262144     # max uboot config size 256k
+DEF_DEVNODE="/dev/null"		# default applies to target
 LOGFILE=updater.log
 
 showhelp() {
@@ -14,10 +16,11 @@ showhelp() {
 
 usage $bn [-h] [-k <zImage name>] [-b <redboot name>] [-r <ext2 image file>] [-n <device node>] [-o <offset>] [-i] [-c]
   -h				displays this help message
-  -k <zImage name>              update the kernel.
-  -b <redboot name>		update redboot
-  -r <ext2 image file>          update the root file system. Device node is different than -b and -k
-  -n <device node>		device node to use. Default is ${DEF_DEVNODE}.
+  -k <uImage/zImage name>       update the kernel.
+  -f <uboot config name>        update the uboot config env
+  -b <uboot/redboot name>		update uboot/redboot
+  -r <rootfs image file>        update the root file system, including ext2, gz. Device node is different than -b and -k
+  -n <device node>		device node to use. Default is ${DEF_DEVNODE}, so please specify it.
   -o <offset> 			offset to use. In Decimal
 				Default offset for redboot=${OFF_REDBOOT}
 				Default offset for kernel=${OFF_KERNEL}
@@ -29,11 +32,10 @@ eot
     exit 1
 }
 
-
-
 # default actions. None
 DO_REDBOOT=0
 DO_KERNEL=0
+DO_UCONFIG=0
 DO_OFFSET=0			# if -k and -r and -o specified, what does offset mean ?
 DO_INIT=0
 DO_CLEAN=0
@@ -88,11 +90,11 @@ check_padding() {
 
 update_chunk() {
 	local FILE=$1
- 	local OFFSET=$3
 	local NODE=$2
+ 	local OFFSET=$3
 
-        # echo "running: ${DD} if=${FILE} of=${NODE} bs=${OFFSET} seek=1"
-        ${DD} if=${FILE} of=${NODE} bs=${OFFSET} seek=1 >> ${LOGFILE} 2>&1
+    # echo "running: ${DD} if=${FILE} of=${NODE} bs=${OFFSET} seek=1"
+    ${DD} if=${FILE} of=${NODE} bs=${OFFSET} seek=1 >> ${LOGFILE} 2>&1
 	ECODE=$?
 	if [ ${ECODE} -ne 0 ] ; then
 		echo "Error: ${DD} failed with exit code ${ECODE}"
@@ -152,6 +154,7 @@ while [ "$moreoptions" = 1  -a $# -gt 0 ] ; do
   case $1 in
     -h) showhelp ; exit ;;
     -k) ZIMAGE=$2; KN_OFFSET=${OFF_KERNEL} ; DO_KERNEL=1 ; shift ;;
+    -f) UCONFIG=$2; UC_OFFSET=${OFF_UCONFIG} ; DO_UCONFIG=1 ; shift ;;
     -b) REDBOOT=$2 ; BL_OFFSET=${OFF_REDBOOT} ; DO_REDBOOT=1 ; shift ;;
     -r) RFS=$2 ; DO_RFS=1 ; shift ;;
     -o) OFFSET=$2 ; DO_OFFSET=1 ; shift ;;
@@ -173,7 +176,7 @@ done
 #fi
 
 # anything to do ?
-if [ $DO_REDBOOT -eq 0 -a $DO_KERNEL -eq 0 -a $DO_INIT -eq 0 -a $DO_CLEAN -eq 0 -a $DO_RFS -eq 0 ] ; then
+if [ $DO_REDBOOT -eq 0 -a $DO_UCONFIG -eq 0 -a $DO_KERNEL -eq 0 -a $DO_INIT -eq 0 -a $DO_CLEAN -eq 0 -a $DO_RFS -eq 0 ] ; then
 	echo "Nothing to do. Exit"
 	exit 0
 fi
@@ -219,7 +222,24 @@ if [ $DO_KERNEL -eq 1 ] ; then
 	echo " Done"
 fi
 
-# do I have to update redboot ?
+# update uboot config
+if [ $DO_UCONFIG -eq 1 ] ; then
+	echo -n "Writing the uboot config ${UCONFIG} to ${DEVNODE} at offset $UC_OFFSET ..."
+	if [ ! -e ${UCONFIG} ] ; then
+		echo " Failed"
+		echo "${UCONFIG}: no such file or directory"
+		exit 254
+	fi
+    if [ `ls -l ${UCONFIG}|awk '{print $5}'` -gt $UCONFIG_MAX_SIZE ]; then
+        echo " Uboot config file is larger than 256k, will corrupt kernel"
+        exit 254
+    fi
+	#            FILE       NODE       OFFSET  
+	update_chunk ${UCONFIG} ${DEVNODE} ${UC_OFFSET} 	
+	echo " Done"
+fi
+
+# do I have to update bootloader ?
 if [ $DO_REDBOOT -eq 1 ] ; then
 	echo "Writing redboot ${REDBOOT} to ${DEVNODE}..."
 	if [ ! -e ${REDBOOT} ] ; then
