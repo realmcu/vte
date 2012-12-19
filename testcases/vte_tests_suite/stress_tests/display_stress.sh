@@ -41,22 +41,22 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-#TODO Total test case
-export TST_TOTAL=7
+    #TODO Total test case
+    export TST_TOTAL=7
 
-export TCID="setup"
-export TST_COUNT=0
-RC=0
+    export TCID="setup"
+    export TST_COUNT=0
+    RC=0
 
-trap "cleanup" 0
+    trap "cleanup" 0
 
-#TODO add setup scripts
-#export VSALPHA to show normal color in LVDS according to Angolini Daiane
-export VSALPHA=1
-echo 0 > /sys/class/graphics/fb2/blank
-echo 0 > /sys/class/graphics/fb1/blank
-echo -e "\033[9;0]" > /dev/tty0
-return $RC
+    #TODO add setup scripts
+    #export VSALPHA to show normal color in LVDS according to Angolini Daiane
+    export VSALPHA=1
+    echo 0 > /sys/class/graphics/fb2/blank
+    echo 0 > /sys/class/graphics/fb1/blank
+    echo -e "\033[9;0]" > /dev/tty0
+    return $RC
 }
 
 # Function:     cleanup
@@ -97,7 +97,11 @@ run_test()
 			;;
 			'VPU' )
 			echo VPU
-			test_case_04 &
+            if [ $platid -eq 63 ]; then
+                test_case_04 &
+            else
+                test_case_08 &
+            fi
 			pVPU=$!
 			;;
 			'IPU' )
@@ -176,7 +180,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+#TODO add function test script here
 
 echo 0 > /sys/class/graphics/fb0/blank
 echo 0 > /sys/class/graphics/fb1/blank
@@ -228,7 +232,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+#TODO add function test script here
    echo "ADC DAC test"
 	 dac_test1.sh -f $STREAM_PATH/alsa_stream/audio16k16M.wav -A
 	 sh -c "arecord -D plughw:0 -f S16_LE -r 44100 -c 2 -traw | aplay -D plughw:0 -f S16_LE -r 44100 -c 2 || RC='$RC 1' &" 
@@ -270,7 +274,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+#TODO add function test script here
 
 #a_stream_path=/mnt/nfs/test_stream/power_stream/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch.mp4
 #b_stream_path=/mnt/nfs/test_stream/power_stream/V031204_Times_Square_traffic_1920x1088p30_20Mbps_600frm_H264_noaudio.mp4
@@ -311,7 +315,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+#TODO add function test script here
 cat /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state
 a_stream_path=/mnt/nfs/test_stream/video/H264_ML_1920x1080_10Mbps_15fps_noaudio.h264
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -w 1920 -h 1080 -a 100" || RC=1
@@ -422,7 +426,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
+#TODO add function test script here
 
 loop=100
 
@@ -475,9 +479,11 @@ RC=0
 #TODO check parameter
 if [ $# -lt 1 ]
 then
-usage
-exit 1 
+    usage
+    exit 1 
 fi
+
+platfm.sh || platid=$?
 
 setup || exit $RC
 
