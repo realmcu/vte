@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2005-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -34,7 +34,7 @@ typedef signed long                     SInt32;
 typedef     UInt32      DWORD;  
 typedef     UInt16      WORD;  
 typedef     unsigned char   BYTE; 
-typedef     long        LONG;
+typedef     SInt32        LONG;
    
 #ifndef bool  
 typedef     unsigned short bool;  
@@ -114,6 +114,7 @@ typedef enum {
      eUYVY422 = 16,
      eYUY2 = 17,/*YUYV*/
      eYUV444 = 18,
+	 eNV16 = 19,
      eUNKNOWN
    }eEPType_Format;
 
@@ -144,7 +145,8 @@ static sFmt aFmt[ ]= {
        {"UYVY",16,16},
        {"YUY2",17,16},
        {"YUV444",18,24},
-       {NULL, 19, 0}
+	   {"NV16",19,16},
+       {NULL, 20, 0}
       };
 
 char * options = "i:I:x:y:O:o:b:f:Hi:C";
@@ -318,7 +320,6 @@ static int process_img()
     BitmapInfoHeader.biYPelsPerMeter = 0;
     BitmapInfoHeader.biClrUsed = 0;
     BitmapInfoHeader.biClrImportant = 0;
-  
     lseek(fdout,l * yres + 53,SEEK_SET);
     ret = write(fdout,"",1);
     if( ( p_ft = mmap(NULL, l * yres + 54, PROT_READ|PROT_WRITE, MAP_SHARED, fdout, 0 )) == MAP_FAILED)
@@ -497,7 +498,7 @@ static int process_img()
      pout[k + 1] = rgb.rgbGreen;
      pout[k + 2] = rgb.rgbBlue;
     }
-   case eYUV422P:
+   case eNV16:
    {
     long bias = xres * yres;
     if(isz - offset < yres * xres * 2)
@@ -505,355 +506,393 @@ static int process_img()
        printf("file size or offset wrong %d - %ld < %d * %d * 2 \n", (int)isz, offset ,yres, xres);
        exit(-2);
     }
-    /*http://hi.baidu.com/whandsome/blog/item/d060ffef3f1c6b37acafd580.html*/
+	//http://docs.blackfin.uclinux.org/kernel/generated/media/re19.html
     for(i = 0 ; i < yres; i++)
      for(j = 0; j < xres; j = j + 2)
      {
      long y1,u,y2,v,k;
      long ky = i * xres + j; 
-     long ku = ((i * xres)>>1) + (j>>1) + bias;/*u plane*/
-     long kv = ((i * xres)>>1) + (j>>1) + bias + (bias>>1);/*v plane*/   
-     y1 = pdata[ky];
-     u  = pdata[ku]; 
-     y2 = pdata[ky + 1];
-     v  = pdata[kv];
-     rgb.rgbRed   = BOUND255((A1 * (y1 - 16) + A2 * (v - 128))>>10); 
-     rgb.rgbGreen = BOUND255((A1 * (y1 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
-     rgb.rgbBlue  = BOUND255((A1 * (y1 - 16) + A5 * (u - 128))>>10);
-     rgb.rgbReserved = 0;
-     k = i * l  + j * 3;
-     pout[k + 2] = rgb.rgbRed;
-     pout[k + 1] = rgb.rgbGreen;
-     pout[k] = rgb.rgbBlue;
-     rgb.rgbRed   =  BOUND255((A1 * (y2 - 16) + A2 * (v - 128))>>10); 
-     rgb.rgbGreen =  BOUND255((A1 * (y2 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
-     rgb.rgbBlue  =  BOUND255((A1 * (y2 - 16) + A5 * (u - 128))>>10);
-     pout[k + 5] = rgb.rgbRed;
-     pout[k + 4] = rgb.rgbGreen;
-     pout[k + 3] = rgb.rgbBlue;
-     }
-    }
-    break;
+     long ku = ((i * xres) + j + bias)&0xFFFFFFFE;/*u plane*/
+	 long kv = ku + 1;
+	 printf("%d\n", ku - bias);
+	 y1 = pdata[ky];
+	 u  = pdata[ku]; 
+	 y2 = pdata[ky + 1];
+	 v  = pdata[kv];
+	 rgb.rgbRed   = BOUND255((A1 * (y1 - 16) + A2 * (v - 128))>>10); 
+	 rgb.rgbGreen = BOUND255((A1 * (y1 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
+	 rgb.rgbBlue  = BOUND255((A1 * (y1 - 16) + A5 * (u - 128))>>10);
+	 rgb.rgbReserved = 0;
+	 k = i * l  + j * 3;
+	 pout[k + 2] = rgb.rgbRed;
+	 pout[k + 1] = rgb.rgbGreen;
+	 pout[k] = rgb.rgbBlue;
+	 rgb.rgbRed   =  BOUND255((A1 * (y2 - 16) + A2 * (v - 128))>>10); 
+	 rgb.rgbGreen =  BOUND255((A1 * (y2 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
+	 rgb.rgbBlue  =  BOUND255((A1 * (y2 - 16) + A5 * (u - 128))>>10);
+	 pout[k + 5] = rgb.rgbRed;
+	 pout[k + 4] = rgb.rgbGreen;
+	 pout[k + 3] = rgb.rgbBlue;
+	 }
+   }
+   break;
+   case eYUV422P:
+   {
+	   long bias = xres * yres;
+	   if(isz - offset < yres * xres * 2)
+	   {
+		   printf("file size or offset wrong %d - %ld < %d * %d * 2 \n", (int)isz, offset ,yres, xres);
+		   exit(-2);
+	   }
+	   /*http://hi.baidu.com/whandsome/blog/item/d060ffef3f1c6b37acafd580.html*/
+	   for(i = 0 ; i < yres; i++)
+		   for(j = 0; j < xres; j = j + 2)
+		   {
+			   long y1,u,y2,v,k;
+			   long ky = i * xres + j; 
+			   long ku = ((i * xres)>>1) + (j>>1) + bias;/*u plane*/
+			   long kv = ((i * xres)>>1) + (j>>1) + bias + (bias>>1);/*v plane*/   
+			   y1 = pdata[ky];
+			   u  = pdata[ku]; 
+			   y2 = pdata[ky + 1];
+			   v  = pdata[kv];
+			   rgb.rgbRed   = BOUND255((A1 * (y1 - 16) + A2 * (v - 128))>>10); 
+			   rgb.rgbGreen = BOUND255((A1 * (y1 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
+			   rgb.rgbBlue  = BOUND255((A1 * (y1 - 16) + A5 * (u - 128))>>10);
+			   rgb.rgbReserved = 0;
+			   k = i * l  + j * 3;
+			   pout[k + 2] = rgb.rgbRed;
+			   pout[k + 1] = rgb.rgbGreen;
+			   pout[k] = rgb.rgbBlue;
+			   rgb.rgbRed   =  BOUND255((A1 * (y2 - 16) + A2 * (v - 128))>>10); 
+			   rgb.rgbGreen =  BOUND255((A1 * (y2 - 16) - A3 * (v - 128) - A4 * (u - 128))>>10);
+			   rgb.rgbBlue  =  BOUND255((A1 * (y2 - 16) + A5 * (u - 128))>>10);
+			   pout[k + 5] = rgb.rgbRed;
+			   pout[k + 4] = rgb.rgbGreen;
+			   pout[k + 3] = rgb.rgbBlue;
+		   }
+   }
+   break;
    case eYUY2:
    if(isz - offset < yres * xres * 2)
    {
-       printf("file size or offset wrong\n");
-       exit(-2);
+	   printf("file size or offset wrong\n");
+	   exit(-2);
    }
    /*serial 2 pixels in 4 byte*/
    for(i = 0; i < yres; i++)
-    for(j = 0; j < xres - 2; j = j + 2)
-    {
-     long u,y1,v,y2;
-     long k = (i * xres + j) * 2;
-     if (0x01)
-     {
-     y1  = pdata[k];
-     u  = pdata[k + 1];
-     y2 = pdata[k + 2];
-     v  = pdata[k + 3];
-     }else{
-     y1 = pdata[k];
-     v  = pdata[k + 1];
-     y2 = pdata[k + 2];
-     u  = pdata[k + 3];
-     }
-     /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
-     #if OPT
-     rgb.rgbRed   = BOUND255(((y1<<SBIT) +  B1 * (v - 128))>>SBIT);
-     rgb.rgbGreen = BOUND255(((y1<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255(((y1<<SBIT) + B4 * (u - 128))>>SBIT);
-     #else
-     rgb.rgbRed   = BOUND255(y1 +  1.370705 * (v - 128));
-     rgb.rgbGreen = BOUND255(y1 - 0.698001 * (v -128) - 0.337633 * (u - 128));
-     rgb.rgbBlue  = BOUND255(y1 + 1.732446 * (u - 128));
-     #endif
-     rgb.rgbReserved = 0;
-     k = (yres - i - 1) * l  + j * 3;
-     pout[k + 2] = rgb.rgbRed;
-     pout[k + 1] = rgb.rgbGreen;
-     pout[k] = rgb.rgbBlue;
-     #if OPT
-     rgb.rgbRed   = BOUND255(((y2<<SBIT) +  B1 * (v - 128))>>SBIT);
-     rgb.rgbGreen = BOUND255(((y2<<SBIT) - B2 * (v - 128) - B3 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255(((y2<<SBIT) + B4 * (u - 128))>>SBIT);
-     #else
-     rgb.rgbRed   = BOUND255(y2 +  1.370705 * (v - 128));
-     rgb.rgbGreen = BOUND255(y2 - 0.698001 * (v -128) - 0.337633 * (u - 128));
-     rgb.rgbBlue  = BOUND255(y2 + 1.732446 * (u - 128));
-     #endif
-     pout[k + 5] = rgb.rgbRed;
-     pout[k + 4] = rgb.rgbGreen;
-     pout[k + 3] = rgb.rgbBlue;
-    }
+	   for(j = 0; j < xres - 2; j = j + 2)
+	   {
+		   long u,y1,v,y2;
+		   long k = (i * xres + j) * 2;
+		   if (0x01)
+		   {
+			   y1  = pdata[k];
+			   u  = pdata[k + 1];
+			   y2 = pdata[k + 2];
+			   v  = pdata[k + 3];
+		   }else{
+			   y1 = pdata[k];
+			   v  = pdata[k + 1];
+			   y2 = pdata[k + 2];
+			   u  = pdata[k + 3];
+		   }
+		   /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
+#if OPT
+		   rgb.rgbRed   = BOUND255(((y1<<SBIT) +  B1 * (v - 128))>>SBIT);
+		   rgb.rgbGreen = BOUND255(((y1<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
+		   rgb.rgbBlue  = BOUND255(((y1<<SBIT) + B4 * (u - 128))>>SBIT);
+#else
+		   rgb.rgbRed   = BOUND255(y1 +  1.370705 * (v - 128));
+		   rgb.rgbGreen = BOUND255(y1 - 0.698001 * (v -128) - 0.337633 * (u - 128));
+		   rgb.rgbBlue  = BOUND255(y1 + 1.732446 * (u - 128));
+#endif
+		   rgb.rgbReserved = 0;
+		   k = (yres - i - 1) * l  + j * 3;
+		   pout[k + 2] = rgb.rgbRed;
+		   pout[k + 1] = rgb.rgbGreen;
+		   pout[k] = rgb.rgbBlue;
+#if OPT
+		   rgb.rgbRed   = BOUND255(((y2<<SBIT) +  B1 * (v - 128))>>SBIT);
+		   rgb.rgbGreen = BOUND255(((y2<<SBIT) - B2 * (v - 128) - B3 * (u - 128))>>SBIT);
+		   rgb.rgbBlue  = BOUND255(((y2<<SBIT) + B4 * (u - 128))>>SBIT);
+#else
+		   rgb.rgbRed   = BOUND255(y2 +  1.370705 * (v - 128));
+		   rgb.rgbGreen = BOUND255(y2 - 0.698001 * (v -128) - 0.337633 * (u - 128));
+		   rgb.rgbBlue  = BOUND255(y2 + 1.732446 * (u - 128));
+#endif
+		   pout[k + 5] = rgb.rgbRed;
+		   pout[k + 4] = rgb.rgbGreen;
+		   pout[k + 3] = rgb.rgbBlue;
+	   }
 
-    break;
+   break;
    case eYUV444:
    if(isz - offset < yres * xres * 3)
    {
-       printf("file size or offset wrong\n");
-       exit(-2);
+	   printf("file size or offset wrong\n");
+	   exit(-2);
    }
    /*serial 2 pixels in 4 byte*/
    for(i = 0; i < yres; i++)
-    for(j = 0; j < xres; j++)
-    {
-     long u,y,v;
-     long k = (i * xres + j) * 2;
-     y  = pdata[k];
-     u  = pdata[k + 1]; 
-     v = pdata[k + 2];
-     /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
-     #if OPT
-     rgb.rgbRed   = BOUND255(((y<<SBIT) +  B1 * (v - 128))>>SBIT); 
-     rgb.rgbGreen = BOUND255(((y<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255(((y<<SBIT) + B4 * (u - 128))>>SBIT);
-     #else
-     rgb.rgbRed   = BOUND255(y +  1.370705 * (v - 128)); 
-     rgb.rgbGreen = BOUND255(y - 0.698001 * (v -128) - 0.337633 * (u - 128));
-     rgb.rgbBlue  = BOUND255(y + 1.732446 * (u - 128));
-     #endif
-     rgb.rgbReserved = 0;
-     k = (yres - i - 1) * l  + j * 3;
-     pout[k + 2] = rgb.rgbRed;
-     pout[k + 1] = rgb.rgbGreen;
-     pout[k] = rgb.rgbBlue;
-    }
-    break;
+	   for(j = 0; j < xres; j++)
+	   {
+		   long u,y,v;
+		   long k = (i * xres + j) * 2;
+		   y  = pdata[k];
+		   u  = pdata[k + 1]; 
+		   v = pdata[k + 2];
+		   /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
+#if OPT
+		   rgb.rgbRed   = BOUND255(((y<<SBIT) +  B1 * (v - 128))>>SBIT); 
+		   rgb.rgbGreen = BOUND255(((y<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
+		   rgb.rgbBlue  = BOUND255(((y<<SBIT) + B4 * (u - 128))>>SBIT);
+#else
+		   rgb.rgbRed   = BOUND255(y +  1.370705 * (v - 128)); 
+		   rgb.rgbGreen = BOUND255(y - 0.698001 * (v -128) - 0.337633 * (u - 128));
+		   rgb.rgbBlue  = BOUND255(y + 1.732446 * (u - 128));
+#endif
+		   rgb.rgbReserved = 0;
+		   k = (yres - i - 1) * l  + j * 3;
+		   pout[k + 2] = rgb.rgbRed;
+		   pout[k + 1] = rgb.rgbGreen;
+		   pout[k] = rgb.rgbBlue;
+	   }
+   break;
 
    case eUYVY422:
    if(isz - offset < yres * xres * 2)
    {
-       printf("file size or offset wrong\n");
-       exit(-2);
+	   printf("file size or offset wrong\n");
+	   exit(-2);
    }
    /*serial 2 pixels in 4 byte*/
    for(i = 0; i < yres; i++)
-    for(j = 0; j < xres - 2; j = j + 2)
-    {
-     long u,y1,v,y2;
-     long k = (i * xres + j) * 2;
-     if (0x01)
-     {
-     u  = pdata[k];
-     y1  = pdata[k + 1]; 
-     v = pdata[k + 2];
-     y2  = pdata[k + 3];
-     }else{
-     v = pdata[k];
-     y1  = pdata[k + 1]; 
-     u = pdata[k + 2];
-     y2  = pdata[k + 3];
-     }
-     /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
-     #if OPT
-     rgb.rgbRed   = BOUND255(((y1<<SBIT) +  B1 * (v - 128))>>SBIT); 
-     rgb.rgbGreen = BOUND255(((y1<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255(((y1<<SBIT) + B4 * (u - 128))>>SBIT);
-     #else
-     rgb.rgbRed   = BOUND255(y1 +  1.370705 * (v - 128)); 
-     rgb.rgbGreen = BOUND255(y1 - 0.698001 * (v -128) - 0.337633 * (u - 128));
-     rgb.rgbBlue  = BOUND255(y1 + 1.732446 * (u - 128));
-     #endif
-     rgb.rgbReserved = 0;
-     k = (yres - i - 1) * l  + j * 3;
-     pout[k + 2] = rgb.rgbRed;
-     pout[k + 1] = rgb.rgbGreen;
-     pout[k] = rgb.rgbBlue;
-     #if OPT
-     rgb.rgbRed   = BOUND255(((y2<<SBIT) +  B1 * (v - 128))>>SBIT); 
-     rgb.rgbGreen = BOUND255(((y2<<SBIT) - B2 * (v - 128) - B3 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255(((y2<<SBIT) + B4 * (u - 128))>>SBIT);
-     #else
-     rgb.rgbRed   = BOUND255(y2 +  1.370705 * (v - 128)); 
-     rgb.rgbGreen = BOUND255(y2 - 0.698001 * (v -128) - 0.337633 * (u - 128));
-     rgb.rgbBlue  = BOUND255(y2 + 1.732446 * (u - 128));
-     #endif
-     pout[k + 5] = rgb.rgbRed;
-     pout[k + 4] = rgb.rgbGreen;
-     pout[k + 3] = rgb.rgbBlue;
-    }
-    break;
+	   for(j = 0; j < xres - 2; j = j + 2)
+	   {
+		   long u,y1,v,y2;
+		   long k = (i * xres + j) * 2;
+		   if (0x01)
+		   {
+			   u  = pdata[k];
+			   y1  = pdata[k + 1]; 
+			   v = pdata[k + 2];
+			   y2  = pdata[k + 3];
+		   }else{
+			   v = pdata[k];
+			   y1  = pdata[k + 1]; 
+			   u = pdata[k + 2];
+			   y2  = pdata[k + 3];
+		   }
+		   /*refer to http://www.vckbase.com/document/viewdoc/?id=1780 */
+#if OPT
+		   rgb.rgbRed   = BOUND255(((y1<<SBIT) +  B1 * (v - 128))>>SBIT); 
+		   rgb.rgbGreen = BOUND255(((y1<<SBIT) - B2 * (v -128) - B3 * (u - 128))>>SBIT);
+		   rgb.rgbBlue  = BOUND255(((y1<<SBIT) + B4 * (u - 128))>>SBIT);
+#else
+		   rgb.rgbRed   = BOUND255(y1 +  1.370705 * (v - 128)); 
+		   rgb.rgbGreen = BOUND255(y1 - 0.698001 * (v -128) - 0.337633 * (u - 128));
+		   rgb.rgbBlue  = BOUND255(y1 + 1.732446 * (u - 128));
+#endif
+		   rgb.rgbReserved = 0;
+		   k = (yres - i - 1) * l  + j * 3;
+		   pout[k + 2] = rgb.rgbRed;
+		   pout[k + 1] = rgb.rgbGreen;
+		   pout[k] = rgb.rgbBlue;
+#if OPT
+		   rgb.rgbRed   = BOUND255(((y2<<SBIT) +  B1 * (v - 128))>>SBIT); 
+		   rgb.rgbGreen = BOUND255(((y2<<SBIT) - B2 * (v - 128) - B3 * (u - 128))>>SBIT);
+		   rgb.rgbBlue  = BOUND255(((y2<<SBIT) + B4 * (u - 128))>>SBIT);
+#else
+		   rgb.rgbRed   = BOUND255(y2 +  1.370705 * (v - 128)); 
+		   rgb.rgbGreen = BOUND255(y2 - 0.698001 * (v -128) - 0.337633 * (u - 128));
+		   rgb.rgbBlue  = BOUND255(y2 + 1.732446 * (u - 128));
+#endif
+		   pout[k + 5] = rgb.rgbRed;
+		   pout[k + 4] = rgb.rgbGreen;
+		   pout[k + 3] = rgb.rgbBlue;
+	   }
+   break;
 
    case eYUV420:
    {
-    long bias = xres * yres;
-   if(isz - offset < yres * xres * 1.5)
-   {
-       printf("isz = %d, where %d * %d * 1.5, add offset %ld \n", (int)isz, xres, yres, offset);
-       printf("file size or offset wrong\n");
-       exit(-2);
-   }
-   if(cflag)
-   {
-     temp = (unsigned char *)malloc(file_stat.st_size);
-     conv_mx25_yuv(pdata,xres,yres,temp);
-     pdata = temp;
-     //printf("temp size is %ld\n", file_stat.st_size);
-   }
-   /*http://www.fourcc.org/yuv.php#IYUV*/
-   /*2x2 pixel for one time*/
-    for(i = 0 ; i < yres - 1; i += 2)
-     for(j = 0; j < xres - 1; j += 2)
-     {
-     unsigned char y0,y1,y2,y3;
-     long u,v;
-     long k = 0;
-     long ky = i * xres + j;
-     long ku = ((i * xres)>>2) + (j>>1) + bias;/*u plane*/
-     long kv = ((i * xres)>>2) + (j>>1) + bias + (bias>>2);/*v plane*/   
-     #if 0 
-     printf("\r processing %d pixel , line %d, x %d\n",ky,i,j);
-     printf("\r bias %d, kv %d,ku %d\n",bias, kv,ku );
-     #endif
-     y0 = pdata[ky];
-     u = pdata[ku];
-     v = pdata[kv];
-     y1 = pdata[ky + 1];
-     ky  = (i + 1) * xres + j;
-     y2 = pdata[ky];
-     y3 = pdata[ky +1];
-     
-     rgb.rgbRed   = BOUND255((A1 * (y0 - 16) + A2 * (v - 128))>>SBIT); 
-     rgb.rgbGreen = BOUND255((A1 * (y0 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255((A1 * (y0 - 16) + A5 * (u - 128))>>SBIT);
-     rgb.rgbReserved = 0;
-     k = i * l  + j * 3;
-     pout[k + 2] = rgb.rgbRed;
-     pout[k + 1] = rgb.rgbGreen;
-     pout[k]     = rgb.rgbBlue;
-     rgb.rgbRed   = BOUND255((A1 * (y1 - 16) + A2 * (v - 128))>>SBIT); 
-     rgb.rgbGreen = BOUND255((A1 * (y1 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255((A1 * (y1 - 16) + A5 * (u - 128))>>SBIT);
-     pout[k + 5] = rgb.rgbRed;
-     pout[k + 4] = rgb.rgbGreen;
-     pout[k + 3] = rgb.rgbBlue;
-    
-     k = (i + 1) * l  + j * 3;
+	   long bias = xres * yres;
+	   if(isz - offset < yres * xres * 1.5)
+	   {
+		   printf("isz = %d, where %d * %d * 1.5, add offset %ld \n", (int)isz, xres, yres, offset);
+		   printf("file size or offset wrong\n");
+		   exit(-2);
+	   }
+	   if(cflag)
+	   {
+		   temp = (unsigned char *)malloc(file_stat.st_size);
+		   conv_mx25_yuv(pdata,xres,yres,temp);
+		   pdata = temp;
+		   //printf("temp size is %ld\n", file_stat.st_size);
+	   }
+	   /*http://www.fourcc.org/yuv.php#IYUV*/
+	   /*2x2 pixel for one time*/
+	   for(i = 0 ; i < yres - 1; i += 2)
+		   for(j = 0; j < xres - 1; j += 2)
+		   {
+			   unsigned char y0,y1,y2,y3;
+			   long u,v;
+			   long k = 0;
+			   long ky = i * xres + j;
+			   long ku = ((i * xres)>>2) + (j>>1) + bias;/*u plane*/
+			   long kv = ((i * xres)>>2) + (j>>1) + bias + (bias>>2);/*v plane*/   
+#if 0 
+			   printf("\r processing %d pixel , line %d, x %d\n",ky,i,j);
+			   printf("\r bias %d, kv %d,ku %d\n",bias, kv,ku );
+#endif
+			   y0 = pdata[ky];
+			   u = pdata[ku];
+			   v = pdata[kv];
+			   y1 = pdata[ky + 1];
+			   ky  = (i + 1) * xres + j;
+			   y2 = pdata[ky];
+			   y3 = pdata[ky +1];
 
-     rgb.rgbRed   = BOUND255((A1 * (y2 - 16) + A2 * (v - 128))>>SBIT); 
-     rgb.rgbGreen = BOUND255((A1 * (y2 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
-     rgb.rgbBlue  = BOUND255((A1 * (y2 - 16) + A5 * (u - 128))>>SBIT);
-     pout[k + 2] = rgb.rgbRed;
-     pout[k + 1] = rgb.rgbGreen;
-     pout[k] = rgb.rgbBlue;
-    
-     rgb.rgbRed   =  BOUND255((A1 * (y3 - 16) + A2 * (v - 128))>>SBIT); 
-     rgb.rgbGreen =  BOUND255((A1 * (y3 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
-     rgb.rgbBlue  =  BOUND255((A1 * (y3 - 16) + A5 * (u - 128))>>SBIT);
-     pout[k + 5] = rgb.rgbRed;
-     pout[k + 4] = rgb.rgbGreen;
-     pout[k + 3] = rgb.rgbBlue;
-     }
+			   rgb.rgbRed   = BOUND255((A1 * (y0 - 16) + A2 * (v - 128))>>SBIT); 
+			   rgb.rgbGreen = BOUND255((A1 * (y0 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
+			   rgb.rgbBlue  = BOUND255((A1 * (y0 - 16) + A5 * (u - 128))>>SBIT);
+			   rgb.rgbReserved = 0;
+			   k = i * l  + j * 3;
+			   pout[k + 2] = rgb.rgbRed;
+			   pout[k + 1] = rgb.rgbGreen;
+			   pout[k]     = rgb.rgbBlue;
+			   rgb.rgbRed   = BOUND255((A1 * (y1 - 16) + A2 * (v - 128))>>SBIT); 
+			   rgb.rgbGreen = BOUND255((A1 * (y1 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
+			   rgb.rgbBlue  = BOUND255((A1 * (y1 - 16) + A5 * (u - 128))>>SBIT);
+			   pout[k + 5] = rgb.rgbRed;
+			   pout[k + 4] = rgb.rgbGreen;
+			   pout[k + 3] = rgb.rgbBlue;
+
+			   k = (i + 1) * l  + j * 3;
+
+			   rgb.rgbRed   = BOUND255((A1 * (y2 - 16) + A2 * (v - 128))>>SBIT); 
+			   rgb.rgbGreen = BOUND255((A1 * (y2 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
+			   rgb.rgbBlue  = BOUND255((A1 * (y2 - 16) + A5 * (u - 128))>>SBIT);
+			   pout[k + 2] = rgb.rgbRed;
+			   pout[k + 1] = rgb.rgbGreen;
+			   pout[k] = rgb.rgbBlue;
+
+			   rgb.rgbRed   =  BOUND255((A1 * (y3 - 16) + A2 * (v - 128))>>SBIT); 
+			   rgb.rgbGreen =  BOUND255((A1 * (y3 - 16) - A3 * (v - 128) - A4 * (u - 128))>>SBIT);
+			   rgb.rgbBlue  =  BOUND255((A1 * (y3 - 16) + A5 * (u - 128))>>SBIT);
+			   pout[k + 5] = rgb.rgbRed;
+			   pout[k + 4] = rgb.rgbGreen;
+			   pout[k + 3] = rgb.rgbBlue;
+		   }
    }
-    break;
+   break;
    case eBMP24: 
-    pdata = (unsigned char *)start_fp + 54;
-    for(i = 0 ; i < yres; i++)
-     for(j = 0; j < xres; j++)
-     {
-       long k = i * l  + j * 3;
-       if(oenc ==  eRGB565)
-       {/*rgb565*/
-         unsigned char r,g,b;
-         long k2 = (i * xres + j) * 2;
-	 r = pdata[k + 2];
-	 g = pdata[k + 1];
-	 b = pdata[k];
-	 pout[k2 + 1] = (r&0xf8) + ((g&0xe0)>>5);
-	 pout[k2] = ((g&0x1c)<<3) + ((b&0xf8)>>3);
-	 /*
-	 printf("r = %u, g = %u, b= %u \n",r,g,b);
-	 printf("lb = %u, hb = %u\n",pout[k2],pout[k2 + 1]);
-	 getchar();
-	 */
-       }else if(oenc ==  eYUV422P){
-       /*yuv422*/
-         unsigned char r,g,b;
-	 long ubias = xres * yres;
-	 int vbias = ubias + (ubias>>1);
-         long k2 = i * xres + j;
-	 r = pdata[k + 2];
-	 g = pdata[k + 1];
-         b = pdata[k];
-	 pout[k2] =  (unsigned char)(0.257 * r + 0.504 * g + 0.098 * b + 16);/*y*/
-	 if(k2&0x01)
-	 {
-	  int ko = (k2>>1);
-	  pout[ko + ubias] = (unsigned char)(-0.148 * r - 0.291 * g + 0.439 * b + 128);/*u*/
-	  pout[ko + vbias] = (unsigned char)(0.439 * r - 0.368 * g - 0.071 * b + 128);/*v*/
-	 }
-       }else if(oenc == eYUV420){
-       /*yuv420*/
-         unsigned char r,g,b;
-	 long ubias = xres * yres;
-	 int vbias = ubias + (ubias>>2);
-         long k2 = i * xres + j;
-	 r = pdata[k + 2];
-	 g = pdata[k + 1];
-         b = pdata[k];
-	 pout[k2] =  (unsigned char)(0.257 * r + 0.504 * g + 0.098 * b + 16);/*y*/
-	 if(k2&0x01)
-	 {
-	  if(i&0x01)
-	  {/* odd line*/
-	   int ko = (((i>>1) * xres + j)>>1);
-	   pout[ko + ubias] = (unsigned char)(-0.148 * r - 0.291 * g + 0.439 * b + 128);/*u*/
-	   pout[ko + vbias] = (unsigned char)(0.439 * r - 0.368 * g - 0.071 * b + 128);/*v*/
-	  }else{
-	  /*even line skip*/
-	  }
-	 }
-       }else if(oenc == eRGB24){ 
-       /*rgb24*/
-       pout[k + 2] = pdata[k];
-       pout[k + 1] = pdata[k + 1];
-       pout[k] = pdata[k + 2];
-       }else if(oenc == eRGBA32){
-       /*rgba32*/
-       long k2 = (i * xres + j) * 4;
-       pout[k2] = pdata[k];
-       pout[k2 + 1] = pdata[k + 1];
-       pout[k2 + 2] = pdata[k + 2];
-       pout[k2 + 3] = 0; /*alpha=0*/
-       }else if(oenc == eRGB555){
-         unsigned char r,g,b;
-         long k2 = (i * xres + j) * 2;
-				 r = pdata[k + 2];
-				 g = pdata[k + 1];b = pdata[k];
-				 pout[k2 + 1] = ((r&0xf8)>>1) + ((g&0xc0)>>6);
-				 pout[k2] = ((g&0x38)<<3) + ((b&0xf8)>>3);
-			}else{
-        printf("unsupported format");
-	goto END;
-       }
-     }
-    break;
+   pdata = (unsigned char *)start_fp + 54;
+   for(i = 0 ; i < yres; i++)
+	   for(j = 0; j < xres; j++)
+	   {
+		   long k = i * l  + j * 3;
+		   if(oenc ==  eRGB565)
+		   {/*rgb565*/
+			   unsigned char r,g,b;
+			   long k2 = (i * xres + j) * 2;
+			   r = pdata[k + 2];
+			   g = pdata[k + 1];
+			   b = pdata[k];
+			   pout[k2 + 1] = (r&0xf8) + ((g&0xe0)>>5);
+			   pout[k2] = ((g&0x1c)<<3) + ((b&0xf8)>>3);
+			   /*
+				  printf("r = %u, g = %u, b= %u \n",r,g,b);
+				  printf("lb = %u, hb = %u\n",pout[k2],pout[k2 + 1]);
+				  getchar();
+				*/
+		   }else if(oenc ==  eYUV422P){
+			   /*yuv422*/
+			   unsigned char r,g,b;
+			   long ubias = xres * yres;
+			   int vbias = ubias + (ubias>>1);
+			   long k2 = i * xres + j;
+			   r = pdata[k + 2];
+			   g = pdata[k + 1];
+			   b = pdata[k];
+			   pout[k2] =  (unsigned char)(0.257 * r + 0.504 * g + 0.098 * b + 16);/*y*/
+			   if(k2&0x01)
+			   {
+				   int ko = (k2>>1);
+				   pout[ko + ubias] = (unsigned char)(-0.148 * r - 0.291 * g + 0.439 * b + 128);/*u*/
+				   pout[ko + vbias] = (unsigned char)(0.439 * r - 0.368 * g - 0.071 * b + 128);/*v*/
+			   }
+		   }else if(oenc == eYUV420){
+			   /*yuv420*/
+			   unsigned char r,g,b;
+			   long ubias = xres * yres;
+			   int vbias = ubias + (ubias>>2);
+			   long k2 = i * xres + j;
+			   r = pdata[k + 2];
+			   g = pdata[k + 1];
+			   b = pdata[k];
+			   pout[k2] =  (unsigned char)(0.257 * r + 0.504 * g + 0.098 * b + 16);/*y*/
+			   if(k2&0x01)
+			   {
+				   if(i&0x01)
+				   {/* odd line*/
+					   int ko = (((i>>1) * xres + j)>>1);
+					   pout[ko + ubias] = (unsigned char)(-0.148 * r - 0.291 * g + 0.439 * b + 128);/*u*/
+					   pout[ko + vbias] = (unsigned char)(0.439 * r - 0.368 * g - 0.071 * b + 128);/*v*/
+				   }else{
+					   /*even line skip*/
+				   }
+			   }
+		   }else if(oenc == eRGB24){ 
+			   /*rgb24*/
+			   pout[k + 2] = pdata[k];
+			   pout[k + 1] = pdata[k + 1];
+			   pout[k] = pdata[k + 2];
+		   }else if(oenc == eRGBA32){
+			   /*rgba32*/
+			   long k2 = (i * xres + j) * 4;
+			   pout[k2] = pdata[k];
+			   pout[k2 + 1] = pdata[k + 1];
+			   pout[k2 + 2] = pdata[k + 2];
+			   pout[k2 + 3] = 0; /*alpha=0*/
+		   }else if(oenc == eRGB555){
+			   unsigned char r,g,b;
+			   long k2 = (i * xres + j) * 2;
+			   r = pdata[k + 2];
+			   g = pdata[k + 1];b = pdata[k];
+			   pout[k2 + 1] = ((r&0xf8)>>1) + ((g&0xc0)>>6);
+			   pout[k2] = ((g&0x38)<<3) + ((b&0xf8)>>3);
+		   }else{
+			   printf("unsupported format");
+			   goto END;
+		   }
+	   }
+   break;
    default:
-     printf("unsupported format %d \n", fmt);
-     break;
+   printf("unsupported format %d \n", fmt);
+   break;
   }
- ret = 0;
- END:
- if(temp != NULL){
-    free(temp);
-    temp = NULL;
- }
- munmap(p_ft, l * yres + 54);
- return ret;
+  ret = 0;
+END:
+  if(temp != NULL){
+	  free(temp);
+	  temp = NULL;
+  }
+  munmap(p_ft, l * yres + 54);
+  return ret;
 }
 
 int main(int argc,char ** argv)
 {
-  int ret = 1;
-  if( parse_input(argc,argv))
-    return 1;
-  if(0 == process_img()){
+	int ret = 1;
+	if( parse_input(argc,argv))
+		return 1;
+	if(0 == process_img()){
 		printf("\nwe done!\n");
 		ret = 0;
 	}else
 		printf("\nwe failed\n");
-  return ret;
+	return ret;
 }
 
 
