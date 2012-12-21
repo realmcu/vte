@@ -1,4 +1,5 @@
 TARGET = memory_stress
+SCRIPT = sanity.sh
 
 SRCS = mmap001.c 
 OBJS = $(patsubst %.c,%.o,$(SRCS))
@@ -13,6 +14,7 @@ clean:
 
 install:
 	ln -f $(TARGET) ../../../bin/
+	ln -f $(SCRIPT) ../../../bin/
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $@
