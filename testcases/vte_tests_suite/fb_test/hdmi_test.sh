@@ -36,7 +36,7 @@ setup()
     export TST_COUNT=0   # Set up is initialized as test 0
 
     platfm.sh || platid=$?
-    if [ $platid -eq 53 ]; then
+    if [ $platid -eq 53 ] || [ $platid -eq 60 ]; then
         cable_dir="/sys/devices/platform/sii902x.0"
     else
         cable_dir="/sys/devices/platform/mxc_hdmi"
@@ -84,6 +84,7 @@ hdmi_playback_asInputMode()
         echo "Already set HDMI mode to $mode, begin playback on HDMI"
         echo 0 > /sys/class/graphics/fb0/blank
         sleep 1
+		dd if=/dev/urandom of=/dev/fb0 bs=1024 count=1024
         /unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_HP51_bwp_1280x720.h264 -f 2"
         /unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_DAKEAI1080.avi -f 2"
         echo "========display normally? Input y or n"
