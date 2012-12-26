@@ -811,14 +811,14 @@ int main(int argc, char **argv)
 {
 	int i = 0;
 	char index[3] = "";
-	char v4l_device[32] = "/dev/video";
+	char v4l_device[32] = "/dev/video0";
 	struct pxp_control *pxp;
 	struct v4l2_capability cap;
 
 	if (!(pxp = pxp_init(argc, argv)))
 		return 1;
 
-#if 1
+#if 0
         if ((pxp->vfd = open(pxp->vdevfile, O_RDWR, 0)) < 0) {
 		perror("video device open failed");
 		return 1;
@@ -826,9 +826,9 @@ int main(int argc, char **argv)
 	}
 #else
 	while(i < MAX_V4L2_DEVICE_NR) {
-		sprintf(index, "%d", i);
+		sprintf(v4l_device, "/dev/video%d", i);
 		strcat(v4l_device, index);
-		printf("index = %d\n", i);
+		printf("try %s \n", v4l_device);
 		if ((pxp->vfd  = open(v4l_device, O_RDWR, 0)) < 0)
 		{
 			i++;
@@ -838,8 +838,8 @@ int main(int argc, char **argv)
 			i++;
 			continue;
 		}
-		if (cap.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
-			printf("Find v4l2 capture deice %s\n.", v4l_device);
+		if (cap.capabilities & V4L2_CAP_VIDEO_OUTPUT) {
+			printf("Find v4l2 output deice %s\n.", v4l_device);
 			break;
 		}
 		i++;
