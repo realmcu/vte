@@ -1,18 +1,18 @@
 #!/bin/sh -x
-###################################################################################################
+################################################################################
 #
 #    @file   vpu_performance.sh
 #
 #    @brief  shell script for testcase design for VPU app
 #
-###################################################################################################
+################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author                          Date          Number    Description of Changes
-#-------------------------   ------------    ----------  -------------------------------------------
+#-------------------------   ------------    ----------  -----------------------
 #<Hake Huang>/-----             <2011/09/08>     N/A          Initial version
 # 
-###################################################################################################
+################################################################################
 
 
 
@@ -39,15 +39,21 @@ trap "cleanup" 0
 #TODO add setup scripts
 if [ -e /dev/mxc_vpu ]
 then
-RC=0
+    RC=0
 fi
 
 #setup the fb on
 echo 0 > /sys/class/graphics/fb0/blank
 echo -e "\033[9;0]" > /dev/tty0
 
-mkdir /mnt/temp
-mount -t tmpfs tmpfs /mnt/temp || RC=1
+mkdir -p /mnt/temp
+mem_total=`cat /proc/meminfo|grep MemTotal |awk '{ print $2 }'`
+if [ $mem_total -lt 500000 ]; then
+    echo "mount USB disk for temp stream storage for memory is too small"
+    mount /dev/sda1 /mnt/temp || RC=1
+else
+    mount -t tmpfs tmpfs /mnt/temp || RC=1
+fi
 
 sleep 1
 return $RC
@@ -61,12 +67,12 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-RC=0
+    RC=0
 
-#TODO add cleanup code here
+    #TODO add cleanup code here
 
-umount /mnt/temp
-return $RC
+    umount /mnt/temp
+    return $RC
 }
 
 # Function:     test_case_01
@@ -149,10 +155,10 @@ return $RC
 
 test_case_03()
 {
-#TODO give TCID
+    #TODO give TCID
 	TCID="vpu_VDOA_Dec test"
-#TODO give TST_COUNT
-	TST_COUNT=1
+    #TODO give TST_COUNT
+	TST_COUNT=3
 	RC=0
 	tst_resm TINFO "test $TCID"
 #	stream_path=/mnt/nfs/test_stream/video
@@ -185,8 +191,8 @@ test_case_03()
 	  echo 3 > /proc/sys/vm/drop_caches
 	  echo 1 > /proc/sys/vm/compact_memory
 	  sleep 10
-		echo "end of decoding $filename"
-		echo "================================"
+      echo "end of decoding $filename"
+	  echo "================================"
 	done
 	return $RC
 }
