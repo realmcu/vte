@@ -36,6 +36,7 @@ TARGETS+= audio_dac_IMX6Q-Sabre-SD.cfg audio_dac_IMX6-SABREAUTO.cfg
 TARGETS+= audio_dac_IMX6-SABRELITE.cfg audio_dac_IMX6Sololite-ARM2.cfg
 TARGETS+= audio_dac_IMX6ARM2.cfg audio_dac_IMX6DL-ARM2.cfg 
 TARGETS+= audio_dac_IMX6SL-EVK.cfg audio_dac_IMX6DL-SABREAUTO.cfg
+TARGETS+= audio_dac_IMX53EVK.cfg audio_dac_IMX53SMD.cfg audio_dac_IMX53LOCO.cfg
 TARGETS+= audio_dac_IMX28EVK.cfg
 
 all:
