@@ -68,22 +68,20 @@ setup()
 
     if [ ! -e /unit_tests/mxc_asrc_test.out ]
     then
-        tst_resm TBROK "Test #1: ASRC utilities are not ready, \
-        pls check..."
+        tst_resm TBROK "ASRC utilities are not ready, pls check..."
         RC=65
         return $RC
     fi
 
-    [ ! -z $STREAM_PATH ] || {
-        tst_resm TBROK "Test #1: STREAM_PATH not set, pls check!" 
+    [ ! -z "$STREAM_PATH" ] || {
+        tst_resm TBROK "STREAM_PATH not set, pls check!" 
         RC=66
         return $RC
     } 
 
     if [ ! -e $SRC_FILE ]
     then
-        tst_resm TBROK "Test #1: source audio stream is not ready, \
-             pls check..."
+        tst_resm TBROK "source audio stream is not ready, pls check..."
         RC=66
         return $RC
     fi
@@ -120,22 +118,22 @@ asrc_convert()
     /unit_tests/mxc_asrc_test.out $@ /dev/target.wav ||RC=$?
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: convert error, please check..."
+        tst_resm TFAIL "convert error, please check..."
         return $RC
     fi
 
-    tst_resm TINFO "Test #1: play the dest audio stream, please check the \
-    HEADPHONE, hear if there is voice."
+    tst_resm TINFO "play the dest audio stream, please check the \
+HEADPHONE, hear if there is voice."
     aplay -N -M /dev/target.wav 2> play.info || RC=$?
     if [ $RC -ne 0 ]
     then
-        tst_resm TFAIL "Test #1: converted stream play error, please check..."
+        tst_resm TFAIL "converted stream play error, please check..."
         return $RC
     fi
 
     grep $SAM_FREQ play.info > /dev/null || RC=$?
     [ $RC -eq 0 ] || {
-        tet_resm TFAIL "Test #1: wrong sampling rate in coverted stream"
+        tet_resm TFAIL "wrong sampling rate in coverted stream"
     }
 
     tst_resm TPASS "Playback finished."
