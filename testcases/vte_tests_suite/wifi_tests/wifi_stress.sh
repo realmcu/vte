@@ -28,7 +28,7 @@ setup()
     iwconfig wlan0 essid FSLLBGAP_001
     ifconfig wlan0 up
     udhcpc -i wlan0 || dhclient wlan0 || return 1
-    route add -host 10.192.225.222 dev wlan0
+    route add -host $WSERVERIP netmask 255.255.255.0 dev wlan0
     sleep 5
     export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
 
@@ -45,6 +45,7 @@ cleanup()
 {
 RC=0
 
+route del -host $WSERVERIP
 #TODO add cleanup code here
 
 return $RC
@@ -65,8 +66,8 @@ RC=0
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
 #TODO add function test script here
-tcp_stream_2nd_script 10.192.225.222 CPU || RC=$(expr $RC + 1)
-udp_stream_2nd_script 10.192.225.222 CPU || RC=$(expr $RC + 1)
+tcp_stream_2nd_script $WSERVERIP CPU || RC=$(expr $RC + 1)
+udp_stream_2nd_script $WSERVERIP CPU || RC=$(expr $RC + 1)
 
 
 RC=$?
@@ -89,6 +90,10 @@ if [ $# -lt 1 ]
 then
 usage
 exit 1 
+fi
+
+if [ -z $WSERVERIP ]; then
+WSERVERIP=10.192.225.222
 fi
 
 setup || exit $RC
