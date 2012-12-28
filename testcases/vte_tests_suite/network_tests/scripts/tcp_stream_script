@@ -11,19 +11,23 @@
 # usage: tcp_stream_script hostname [CPU]
 #
 
+if [ $# -gt 2 ]; then
+  echo "try again, correctly -> tcp_stream_script hostname [CPU]"
+  exit 1
+fi
+
 if [ $# -eq 0 ]; then
   echo "try again, correctly -> tcp_stream_script hostname [CPU]"
   exit 1
 fi
 
-if [ ! -z "$LOCALIP" ]; then
-PLOCAL="-L $LOCALIP"
-fi
-
 # where the programs are
 #NETHOME=/usr/local/netperf
 #NETHOME="/opt/netperf"
-NETHOME=$(dirname $(which netperf))/
+NETHOME="$(dirname $(which netperf))"
+
+#run netserver locally
+netserver
 
 # at what port will netserver be waiting? If you decide to run
 # netserver at a different port than the default of 12865, then set
@@ -45,10 +49,6 @@ SOCKET_SIZES="128K 57344 32768 8192"
 # The send sizes that we will be using
 SEND_SIZES="4096 8192 32768"
 
-
-#run netserver localy
-netserver
-
 # if there are two parms, parm one it the hostname and parm two will
 # be a CPU indicator. actually, anything as a second parm will cause
 # the CPU to be measured, but we will "advertise" it should be "CPU"
@@ -57,13 +57,6 @@ if [ $# -eq 2 ]; then
   REM_HOST=$1
   LOC_CPU="-c"
   REM_CPU="-C"
-fi
-
-if [ $# -eq 3 ]; then
-  REM_HOST=$1
-  LOC_CPU="-c"
-  REM_CPU="-C"
-	PLOCAL="-L $3"
 fi
 
 if [ $# -eq 1 ]; then
@@ -75,12 +68,12 @@ fi
 # them in during the real tests. So, we execute the new CPU "tests"
 # of netperf and put the values into shell vars.
 case $LOC_CPU in
-\-c) LOC_RATE=100;;
+\-c) LOC_RATE=`$NETHOME/netperf $PORT -t LOC_CPU`;;
 *) LOC_RATE=""
 esac
 
 case $REM_CPU in
-\-C) REM_RATE=`${NETHOME}netperf $PORT -t REM_CPU -H $REM_HOST`;;
+\-C) REM_RATE=`$NETHOME/netperf $PORT -t REM_CPU -H $REM_HOST`;;
 *) REM_RATE=""
 esac
 
@@ -95,22 +88,19 @@ for SOCKET_SIZE in $SOCKET_SIZES
     echo ------------------------------------
     echo
     # we echo the command line for cut and paste 
-    echo ${NETHOME}netperf $PORT $PLOCAL -l $TEST_TIME -H $REM_HOST -t TCP_STREAM\
-         $LOC_CPU $LOC_RATE $REM_CPU $REM_RATE $STATS_STUFF --\
+    echo $NETHOME/netperf $PORT -l $TEST_TIME -H $REM_HOST -t TCP_STREAM \
+         $LOC_CPU $LOC_RATE $REM_CPU $REM_RATE $STATS_STUFF -- \
          -m $SEND_SIZE -s $SOCKET_SIZE -S $SOCKET_SIZE
 
     echo
     # since we have the confidence interval stuff, we do not
     # need to repeat a test multiple times from the shell
-    ${NETHOME}netperf $PORT $PLOCAL -l $TEST_TIME -H $REM_HOST -t TCP_STREAM\
-    $LOC_CPU $LOC_RATE $REM_CPU $REM_RATE $STATS_STUFF --\
+    $NETHOME/netperf $PORT -l $TEST_TIME -H $REM_HOST -t TCP_STREAM \
+    $LOC_CPU $LOC_RATE $REM_CPU $REM_RATE $STATS_STUFF -- \
     -m $SEND_SIZE -s $SOCKET_SIZE -S $SOCKET_SIZE
 
     done
   done
-echo If you wish to submit these results to the netperf database at
-echo http://www.cup.hp.com/netperf/NetperfPage.html, please submit each
-echo datapoint individually. Individual datapoints are separated by
-echo lines of dashes. 
 
+#killall netserver
 killall netserver
