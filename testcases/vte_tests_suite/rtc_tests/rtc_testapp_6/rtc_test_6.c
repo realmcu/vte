@@ -1,5 +1,5 @@
-/***
-**Copyright (C) 2008-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+/*
+**Copyright (C) 2008-2012 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -21,6 +21,7 @@ Author              Date          Number    Description of Changes
 
 Blake            12/29/2008                   Initial version
 Spring Zhang     01/19/2010                  Add standby/mem options 
+Spring Zhang     12/31/2012                  Make C style of standby/mem
 ===============================================================================
 Portability:  ARM GCC
 =============================================================================*/
@@ -351,7 +352,11 @@ int VT_rtc_test6(char* sleep_mode, int seconds)
         int rv = TFAIL;
         int retval, irqcount = 0;
         unsigned long data = 0;
-        char sleep_string[128];
+        int modes_len = 64;
+        char supported_modes[modes_len];
+        int fd = 0;
+        int n = 0;
+        char pwr_handler[] = "/sys/power/state";
 
         struct rtc_time rtc_tm = {0,0,0,0,0,0};
 
@@ -418,12 +423,29 @@ int VT_rtc_test6(char* sleep_mode, int seconds)
                 return TFAIL;
         }
 
-        tst_resm(TINFO, "  Waiting %d seconds for alarm......." ,seconds);
+        tst_resm(TINFO, "  Waiting %d seconds for alarm.......", seconds);
 
-        strcpy(sleep_string, "echo -n ");
-        strcat(sleep_string, sleep_mode);
-        strcat(sleep_string, " > /sys/power/state");
-        system(sleep_string);
+        if ((fd=open(pwr_handler, O_RDONLY)) > 0) {
+            if ((n=read(fd, supported_modes, modes_len)) > 0){
+                if (!strstr(supported_modes, sleep_mode)){
+                    tst_resm(TFAIL, "low power mode not supported: %s \n", sleep_mode);
+                    close(fd);
+                    return TFAIL;
+                }
+            }
+            close(fd);
+        }
+
+        if ((fd=open(pwr_handler, O_WRONLY)) > 0) {
+            n = write(fd, sleep_mode, strlen(sleep_mode));
+            if (n != strlen(sleep_mode)){
+                tst_resm(TINFO, "Didn't write mode completely: %s\n", sleep_mode);
+            }
+            close(fd);
+        } else{
+            tst_resm(TFAIL, "Can't open %s \n", pwr_handler);
+            return TFAIL;
+        }
 
         /* This blocks until the alarm ring causes an interrupt */
         retval = read( file_desc, &data, sizeof(unsigned long) );
