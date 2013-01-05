@@ -498,17 +498,6 @@ extern "C" {
 			    (gV4LTestConfig.mRotationMode))
 				return TFAIL;
 		}
-		if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
-			tst_resm(TWARN,
-				 "ERROR init_overlay() : set format failed with code %d",
-				 errno);
-			return TFAIL;
-		}
-		if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
-			tst_resm(TWARN,
-				 "ERROR init_overlay() : get format failed");
-			return TFAIL;
-		}
 		if (gV4LTestConfig.mCaseNum == PRP_VF) {
 			int fg = 0;
 			int cnt = 0;
@@ -545,6 +534,17 @@ extern "C" {
 			 	cnt++;
 			 	outputs.index = cnt;
 			}
+		}
+        if (ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0) {
+		    tst_resm(TWARN,
+		    "ERROR init_overlay() : set format failed with code %d",
+		    errno);
+		    return TFAIL;
+		}
+		if (ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0) {
+		    tst_resm(TWARN,
+		    "ERROR init_overlay() : get format failed");
+		    return TFAIL;
 		}
 
 		/*
