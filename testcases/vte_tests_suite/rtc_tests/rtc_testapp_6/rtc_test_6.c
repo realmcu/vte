@@ -356,7 +356,7 @@ int VT_rtc_test6(char* sleep_mode, int seconds)
         char supported_modes[modes_len];
         int fd = 0;
         int n = 0;
-        char pwr_handler[] = "/sys/power/state";
+        const char* pwr_handler = "/sys/power/state";
 
         struct rtc_time rtc_tm = {0,0,0,0,0,0};
 
