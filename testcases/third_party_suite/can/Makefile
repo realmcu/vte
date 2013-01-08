@@ -1,6 +1,6 @@
 SUBDIRS = cansocket
 
-CFLAGS    = -O2 -Wall -Wno-parentheses \
+CFLAGS   += -O2 -Wall -Wno-parentheses \
 	-fno-strict-aliasing \
 	-DETH_P_CAN=0x000C \
 	-DPF_CAN=29 \
