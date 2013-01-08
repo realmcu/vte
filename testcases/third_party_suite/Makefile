@@ -54,6 +54,7 @@ SUBDIRS-$(CONFIG_TP_HOST_TOOLS)  += host_tools
 SUBDIRS-$(CONFIG_TP_IOZONE)      += iozone 
 SUBDIRS-$(CONFIG_TP_I2C)         += i2c-tools
 SUBDIRS-$(CONFIG_TP_IPERF)       += iperf
+SUBDIRS-$(CONFIG_TP_KEXEC)       += kexec
 SUBDIRS-$(CONFIG_TP_LMBENCH)     += lmbench
 SUBDIRS-$(CONFIG_TP_LINARO_PM)   += linaro-pm-qa
 SUBDIRS-$(CONFIG_TP_NETWORK)     += network 
