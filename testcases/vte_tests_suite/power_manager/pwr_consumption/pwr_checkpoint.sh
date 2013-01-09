@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011,2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 # Spring Zhang           May.06,2011       n/a      Format output
 # Spring Zhang           Jun.16,2011       n/a      Add DVFS clock check
 # Spring Zhang           Aug.09,2011       n/a      Add MX53 QS Ripley support
+# Spring Zhang           Jan.09,2013       n/a      Add MX6 busfreq support
 
 # Note:
 # You can generate usage and clk config file by:
@@ -32,7 +33,14 @@
 
 setup()
 {
-	#general setting
+    #prepare offline scripts
+    NFS_BIN_DIR=$LTPROOT/testcases/bin
+    PWD=`pwd`
+    cp $NFS_BIN_DIR/platfm.sh $PWD
+    cp $NFS_BIN_DIR/clocks.sh $PWD
+    umount /mnt/nfs
+
+    #general setting
     PLATFM_STRING=`platfm.sh`
     if dmesg | grep 34708; then
         # Ripley MC34708: GP-SW1, LP-SW2
@@ -43,11 +51,16 @@ setup()
         VDDGP=/sys/class/regulator/regulator.10/microvolts
         VCC=/sys/class/regulator/regulator.11/microvolts
     fi
-	CPU_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+	CPU_FREQ_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+	CPU_GOV_CTRL=/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	CUR_FREQ_GETTER=/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
 	DVFSCORE_DIR=/sys/devices/platform/mxc_dvfs_core.0
 	DVFSPER_DIR=/sys/devices/platform/mxc_dvfs_per.0
-	BUSFREQ_DIR=/sys/devices/platform/busfreq.0
+    if echo $platfm |grep 6; then
+        BUSFREQ_DIR=/sys/devices/platform/imx_busfreq.0
+    else
+        BUSFREQ_DIR=/sys/devices/platform/busfreq.0
+    fi
 	CLK_GETTER=/proc/cpu/clocks
 	#display setting
 	fb0=/sys/class/graphics/fb0/blank
@@ -60,6 +73,13 @@ setup()
     col_usage=3
     col_freq=5
 	
+    #mount debugfs on MX6
+    if echo $platfm |grep 6; then
+        if ! mount|grep -sq '/sys/kernel/debug'; then
+            mount -t debugfs none /sys/kernel/debug
+        fi
+    fi
+
 	#platform related
 	if [ $platfm -eq 53 ]; then
 		echo
@@ -71,8 +91,10 @@ setup()
 cleanup()
 {
     #TODO: restore old value
-    RC=0
-    return $RC
+    if echo $platfm |grep 6; then
+        sleep 1
+        udhcpc -i eth0 || dhclient eth0
+    fi
 }
 
 usage()
@@ -84,6 +106,7 @@ usage()
         idle_mode: useridle, sysidle
         config_file: the checking point config file
     usage3: ./${0##*/} dvfs
+        check if there's clocks difference before and after enter/exit dvfs(5x)/busfreq(6x)
 EOF
 }
 
@@ -91,24 +114,55 @@ EOF
 # $1-platform code
 sys_idle()
 {
-	echo 1 > $fb0
     ifconfig eth0 down
-    for i in 1 2 3 4 5; do
+    for i in 0 1 2 3 4; do
+        echo 1 > /sys/class/graphics/fb$i/blank
         ifconfig eth$i down 2> /dev/null
     done
-	enable_dvfs_$platfm
+	echo 1 > $fb0
+    if [ $platfm -eq 53 ] || [ $platfm -eq 51 ]; then
+        enable_dvfs_$platfm
+    fi
 }
 
 # @params:
 # $1-platform code
 user_idle()
 {
-	echo 0 > $fb0
     ifconfig eth0 down
-    for i in 1 2 3 4 5; do
+    for i in 0 1 2 3 4; do
+        echo 1 > /sys/class/graphics/fb$i/blank
         ifconfig eth$i down 2> /dev/null
     done
-	enable_dvfs_$platfm
+	echo 0 > $fb0
+    if [ $platfm -eq 53 ] || [ $platfm -eq 51 ]; then
+        enable_dvfs_$platfm
+    fi
+}
+
+enter_busfreq()
+{
+    sys_idle
+    echo 1 > $BUSFREQ_DIR/enable 
+
+    ahb_path=`find /sys/kernel/debug/clock -name "ahb_clk"`
+    # Clock determination for entered low busfreq mode
+    sleep 10
+    k=0
+    ahb_rate=`cat $ahb_path/rate`
+    while [ $ahb_rate -gt 24000000 ]; do
+        k=`expr $k + 1`
+        echo "Waiting for enter low busfreq mode $k times"
+        sleep 10
+        ahb_rate=`cat $ahb_path/rate`
+    done
+
+    echo "Enter low busfreq mode success after waiting $k times"
+}
+
+exit_busfreq()
+{
+    echo 0 > $fb0
 }
 
 enable_dvfs_53()
@@ -117,16 +171,17 @@ enable_dvfs_53()
     echo 1 > $BUSFREQ_DIR/enable 
 }
 
-enable_dvfs_51()
-{
-    echo 1 > $DVFSCORE_DIR/enable
-    echo 1 > $DVFSPER_DIR/enable 
-}
-
 disable_dvfs_53()
 {
     echo 0 > $DVFSCORE_DIR/enable
     echo 0 > $BUSFREQ_DIR/enable 
+}
+
+
+enable_dvfs_51()
+{
+    echo 1 > $DVFSCORE_DIR/enable
+    echo 1 > $DVFSPER_DIR/enable 
 }
 
 disable_dvfs_51()
@@ -235,7 +290,7 @@ check_voltage()
         fi
 		wp=`echo $line | awk '{ print $1 }'`
 		vol=`echo $line | awk '{ print $2 }'`
-		echo $wp > $CPU_CTRL
+		echo $wp > $CPU_FREQ_CTRL
 		cur_vol=`cat $VDDGP`
 		if [ "$vol" != "$cur_vol" ]; then
 			echo "FATAL ERROR WP-$wp: voltage different, current vol is $cur_vol, reference is $vol"
@@ -276,6 +331,33 @@ check_dvfs()
     diff clk_before_op clk_after_op ||RC=$?
 
     rm clk_before_op clk_after_op
+
+    return $RC
+}
+
+#Check clocks before and after low busfreq on and off
+#only available on MX6
+check_busfreq()
+{
+    RC=0
+
+    sys_idle
+    echo 0 > $fb0
+    clocks.sh > clk_before_op
+
+    enter_busfreq
+    exit_busfreq
+
+    sleep 2
+    clocks.sh > clk_after_op
+
+    echo "Compare clocks before and after DVFS on and off"
+
+    diff clk_before_op clk_after_op ||RC=$?
+
+    rm clk_before_op clk_after_op
+
+    echo "Please ignore usecount but pay attention to clock freq change, if freq doesn't change, it PASS"
 
     return $RC
 }
@@ -333,7 +415,14 @@ case $check_type in
         echo "TPASS: the voltage aligns"
 	;;
     "dvfs")
-        check_dvfs || exit $RC
+        if [ $platfm -eq 53 ] || [ $platfm -eq 51 ]; then
+            check_dvfs || exit $RC
+        elif [ $platfm -eq 63 ] || [ $platfm -eq 61 ] || [ $platfm -eq 60 ]; then
+            check_busfreq || exit $RC
+        fi
+    ;;
+    "busfreq")
+        check_busfreq || exit $RC
     ;;
 	*)
         usage
