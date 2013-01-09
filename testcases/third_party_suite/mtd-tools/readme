@@ -1,0 +1,9 @@
+1. build manually
+export CFLAGS
+2. 
+make NFSROOT=<path to your target rootfs>
+2. install
+make install
+
+the executable is at bin/
+
