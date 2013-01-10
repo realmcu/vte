@@ -52,7 +52,7 @@ setup()
     RC=0
 
     trap "cleanup" 0 3
-    modprobe galcore
+    #modprobe galcore
     return $RC
 }
 
@@ -67,9 +67,9 @@ cleanup()
     RC=0
 
     #TODO add cleanup code here
-    if [ -z "$NOCLEANUP" ];then
-        modprobe -r galcore
-    fi
+    #if [ -z "$NOCLEANUP" ];then
+    #    modprobe -r galcore
+    #fi
 
 	if [ -n "$trip_hot_old" ]; then
 	 	echo $trip_hot_old > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
@@ -402,7 +402,7 @@ APP_SUB_DIR=
 setup || exit $RC
 #judge rootfs type
 rt="Ubuntu"
-cat /etc/issue | grep Ubuntu || rt="others"
+cat /etc/issue | grep Linaro || rt="others"
 
 if [ $rt = "Ubuntu" ];then
     APP_SUB_DIR="ubuntu_11.10/test"
