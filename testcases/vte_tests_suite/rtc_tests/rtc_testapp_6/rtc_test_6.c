@@ -310,6 +310,7 @@ int VT_rtc_test6_cleanup(void)
         int ret = 0;
         int i;
 
+#if 0
         for( i = 0; i < RTC_TOTAL_STATES; ++i )
         {
                 if( saved_states[i] != 0 )
@@ -317,7 +318,7 @@ int VT_rtc_test6_cleanup(void)
                         restore_rtc_state( i );
                 }
         }
-
+#endif
         /* close RTC driver file descriptor */
         ret = close(file_desc);
 
