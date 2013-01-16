@@ -1,4 +1,4 @@
-#imx5x vte default config setting
+#imx6x vte default config setting
 
 #define platform
 export CONFIG_VTE_IMX6=y
@@ -96,7 +96,7 @@ export CONFIG_VTE_CRYPTO=y
 export CONFIG_MEM_TEST=y
 
 #open source module config
-export CONFIG_OM_NAND=y
+#export CONFIG_OM_NAND=y
 export CONFIG_OM_RAMDISK=y
 export CONFIG_OM_SCULL=y
 export CONFIG_OM_CRYPTO=y
@@ -122,7 +122,7 @@ export CONFIG_VTE_MMC_LOCK=y
 #CONFIG_VTE_RNGA=y
 #CONFIG_VTE_TS_APP1=y
 export CONFIG_VTE_TVOUT_APP=y
-#CONFIG_VTE_V4L_IPU_PF=y
+CONFIG_VTE_V4L_IPU_PF=y
 export CONFIG_VTE_V4L_CAPTURE=y
 export CONFIG_VTE_V4L_OUTPUT=y
 export CONFIG_VTE_V4L_BASIC=y

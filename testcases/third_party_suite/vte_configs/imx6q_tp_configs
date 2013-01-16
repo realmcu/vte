@@ -1,4 +1,4 @@
-#imx5 opensource test tools
+#imx6 opensource test tools
 
 export CONFIG_TP_IMX6=y
 
