@@ -1,5 +1,5 @@
 /***
-**Copyright (C) 2012 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright (C) 2012 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -19,6 +19,8 @@ Description of the file
 Author (core ID)      Date         CR Number    Description of Changes
 -------------------   ----------   ----------   ------------------------------
 Andy Tian             10/18/2012    NA           Issue version
+Andy Tian             01/17/2012    NA           Do cleanup when open
+                                                 device failed
 =============================================================================*/
 
 #ifdef __cplusplus
@@ -52,7 +54,7 @@ extern "C" {
 /* Extern Global Variables */
        
 /* Global Variables */
-	char *TCID = "v4l_g_modes";			/* test program identifier.          */
+	char *TCID = "v4l_modes";			/* test program identifier.          */
 	int TST_TOTAL = 1;					/* total number of tests in this file.   */
     int fd_v4l = 0; 					
 	int *modes_res=NULL;				/* store the all possible modes with resolution infor */
@@ -110,7 +112,7 @@ void help(void) {
 		    ("Usage : -C Do modes check.\n If some modes can not supported, \
 			 case failed and print out the unsupported modes\n"); 
 		printf
-		    ("For example v4l_g_modes -D /dev/video0 -f 15.\n \
+		    ("For example v4l_modes -D /dev/video0 -f 15.\n \
 			 This command returns ov5642 capture supported modes for 15 fps.\n"); 
 }
 
@@ -163,8 +165,9 @@ int main(int argc, char **argv)
 
 	if ((fd_v4l = open(g_v4l_device, O_RDWR, 0)) < 0)
 	{
-			printf("Unable to open %s\n", g_v4l_device);
-			return -1;
+		printf("Unable to open %s\n", g_v4l_device);
+		tst_brkm(TBROK, cleanup, "%s",
+			 "Please load the right camera module");
 	}
 
 	/* get the all possible mode numbers */
