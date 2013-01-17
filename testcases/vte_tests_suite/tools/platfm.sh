@@ -287,57 +287,57 @@ determine_platform()
         p=IMX6-SABRELITE
     fi
 
-    if [ $p = "IMX31-3STACK" ]
+    if [ "$p" = "IMX31-3STACK" ]
     then
         #echo "Platform MX31"
         RC=31
-	elif [ $p = "IMX25-3STACK"  ]
+	elif [ "$p" = "IMX25-3STACK"  ]
 	then
 		RC=25
-    elif [ $p = "IMX35-3STACK" ]
+    elif [ "$p" = "IMX35-3STACK" ]
     then
         #echo  "Platform MX35" 
         RC=35
-    elif [ $p = "IMX37-3STACK" ]
+    elif [ "$p" = "IMX37-3STACK" ]
     then
         #echo  "Platform MX37" 
         RC=37
-		elif [ $p = "IMX23EVK" ]
+		elif [ "$p" = "IMX23EVK" ]
 		then
 		    RC=23
-    elif [ $p = "IMX51-3STACK" ]
+    elif [ "$p" = "IMX51-3STACK" ]
     then
         #echo  "Platform MX51" 
         RC=51
-    elif [ $p = "IMX51-BABBAGE" ]
+    elif [ "$p" = "IMX51-BABBAGE" ]
     then
         #echo  "Platform MX51 Babbage" 
         RC=41
-    elif [ $p = "IMX53EVK" ] || [ $p = "IMX53LOCO" ] || [ $p = "IMX53SMD" ]
+    elif [ "$p" = "IMX53EVK" ] || [ "$p" = "IMX53LOCO" ] || [ "$p" = "IMX53SMD" ]
     then
         #echo  "Platform MX53 EVK" 
         RC=53
-     elif [ $p = "SMTP378X" ]
+     elif [ "$p" = "SMTP378X" ]
     then
         #echo  "Platform SMTP378X" 
         let RC=378%256
-    elif [ $p = "IMX28EVK" ]
+    elif [ "$p" = "IMX28EVK" ]
     then
         #echo  "Platform MX28 EVK" 
         RC=28
-    elif [ $p = "IMX50ARM2" ]
+    elif [ "$p" = "IMX50ARM2" ]
     then
         RC=50
-    elif [ $p = "IMX50RDP" ] || [ $p = "IMX50-RDP3" ]
+    elif [ "$p" = "IMX50RDP" ] || [ "$p" = "IMX50-RDP3" ]
     then
         RC=50
-    elif [ $p = "IMX6-SABREAUTO" ] || [ $p = "IMX6-SABRELITE" ] || [ $p = "IMX6ARM2"  ] || [ $p = "IMX6Q-Sabre-SD" ]
+    elif [ "$p" = "IMX6-SABREAUTO" ] || [ "$p" = "IMX6-SABRELITE" ] || [ "$p" = "IMX6ARM2"  ] || [ "$p" = "IMX6Q-Sabre-SD" ]
     then
         RC=63
-    elif [ $p = "IMX6DL-ARM2" ] || [ $p = "IMX6Solo-SABREAUTO"  ] || [ $p = "IMX6DL-Sabre-SD"  ] || [ "$p" = "IMX6DL-SABREAUTO" ]
+    elif [ "$p" = "IMX6DL-ARM2" ] || [ "$p" = "IMX6Solo-SABREAUTO"  ] || [ "$p" = "IMX6DL-Sabre-SD"  ] || [ "$p" = "IMX6DL-SABREAUTO" ]
     then
         RC=61
-	elif [ $p = "IMX6Sololite-ARM2" ] || [ $p = "IMX6SL-EVK"  ]
+	elif [ "$p" = "IMX6Sololite-ARM2" ] || [ "$p" = "IMX6SL-EVK"  ]
 	then
 		RC=60
     else
