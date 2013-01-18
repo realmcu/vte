@@ -93,6 +93,9 @@ usage()
    echo "1: display mode stress test"
    echo "2: audio mode stress test"
    echo "3: HDMI video and audio test under 1080p resolution"
+   echo "4: default video stress test"
+   echo "5: default audio stress test"
+   echo "6: default video and audio stress test"
 }
 test_case_01()
 {
@@ -231,6 +234,103 @@ RC=0
 return $RC
 }
 
+test_case_04()
+{
+#TODO give TCID 
+TCID="default video stress test"
+#TODO give TST_COUNT
+TST_COUNT=4
+RC=4
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0 
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+i=0
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
+b_stream=H264_HP51_bwp_1280x720.h264
+cp $STREAM_PATH/video/$stream_name /mnt/temp
+cp $STREAM_PATH/video/$b_stream /mnt/temp
+loops=300
+while [ $i -lt $loops ]
+do
+	i=`expr $i + 1`
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30" || exit 41
+	/unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_HP51_bwp_1280x720.h264 -f 2" || exit 42
+  echo "times: $i"
+  sleep 4
+done
+RC=0
+return $RC
+}
+
+test_case_05()
+{
+#TODO give TCID 
+TCID="default audio stress test"
+#TODO give TST_COUNT
+TST_COUNT=5
+RC=5
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0 
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+i=0
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+FILES="audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
+for fname in $FILES
+do
+cp $STREAM_PATH/alsa_stream_music/$fname /mnt/temp
+done
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+loops=300
+while [ $i -lt $loops ]
+do
+	i=`expr $i + 1`
+  aplay -Dplughw:$num -M /mnt/temp/*.wav || exit 51
+  echo "times: $i"
+  sleep 4
+done
+RC=0
+return $RC
+}
+test_case_06()
+{
+#TODO give TCID 
+TCID="default video and audio stress test"
+#TODO give TST_COUNT
+TST_COUNT=6
+RC=6
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0 
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+i=0
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
+cp $STREAM_PATH/video/$stream_name /mnt/temp
+cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+loops=300
+while [ $i -lt $loops ]
+do
+	i=`expr $i + 1`
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30" & 
+  pid_video=$!
+  aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || exit 61
+  wait $pid_video || exit 62
+  echo "times: $i"
+  sleep 4
+done
+RC=0
+return $RC
+}
 # Function:     main
 #
 # Description:  - Execute all tests, exit with test status.
@@ -248,6 +348,15 @@ case "$1" in
   ;;
 3)
   test_case_03 || exit 3
+  ;;
+4)
+  test_case_04 || exit 4
+  ;;
+5)
+  test_case_05 || exit 5
+  ;;
+6)
+  test_case_06 || exit 6
   ;;
 *)
   usage
