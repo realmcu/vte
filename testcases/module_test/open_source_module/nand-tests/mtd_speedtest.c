@@ -336,9 +336,9 @@ static int __init mtd_speedtest_init(void)
 	}
 
 	if (mtd->writesize == 1) {
-		printk(PRINT_PREF "not NAND flash, assume page size is 512 "
+		printk(PRINT_PREF "not NAND flash, assume page size is 16 "
 		       "bytes.\n");
-		pgsize = 512;
+		pgsize = 16;
 	} else
 		pgsize = mtd->writesize;
 
