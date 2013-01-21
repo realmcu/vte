@@ -108,7 +108,11 @@ hdmi_playback_asInputMode()
 hdmi_playback_modeSwitch()
 {
     mode_errorNO=0
-    for i in $(cat /sys/class/graphics/fb0/modes)
+    modes=`cat /sys/class/graphics/fb0/modes`
+    if [ $def = 'true' ]; then
+    modes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60 U:640x480p-60 V:1280x1024p-60 V:1024x768p-60"
+    fi
+    for i in $modes
     do
         hdmi_playback_asInputMode $i
         if [ $? -ne 0 ];then
@@ -122,8 +126,12 @@ hdmi_playback_modeSwitch()
 
 hdmi_audio_playback_modeSwitch()
 {
-    num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`    
-    for i in $(cat /sys/class/graphics/fb0/modes)
+    num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
+    modes=`cat /sys/class/graphics/fb0/modes`
+    if [ $def = 'true' ]; then
+    modes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60"
+    fi
+    for i in $modes
     do
     echo $i > /sys/class/graphics/fb0/mode
     real_mode=$(cat /sys/class/graphics/fb0/mode)
@@ -166,6 +174,9 @@ hdmi_audio_playback_multichannel()
 RC=0    # Return value for setup, and test functions.
 
 setup || exit $RC
+if [ "$2" = "default" ];then
+def=true
+fi
 if [ "$1" = "all" ]; then
     hdmi_playback_modeSwitch || exit $?
 elif [ "$1" = "audiomode" ]; then

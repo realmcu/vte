@@ -69,8 +69,9 @@ setup()
 	else
 		modes=`cat /sys/class/graphics/${hdmi_fb}/modes`
 	fi
-
-    return $RC
+  defvideomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60 U:640x480p-60 V:1280x1024p-60 V:1024x768p-60" 
+  defaudiomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60" 
+  return $RC
 }
 
 # Function:     cleanup
@@ -96,6 +97,9 @@ usage()
    echo "4: default video stress test"
    echo "5: default audio stress test"
    echo "6: default video and audio stress test"
+   echo "7: default modes switch video stress test"
+   echo "8: default modes switch audio stress test"
+   echo "9: default modes switch audio and video stress test"
 }
 test_case_01()
 {
@@ -253,7 +257,7 @@ stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.
 b_stream=H264_HP51_bwp_1280x720.h264
 cp $STREAM_PATH/video/$stream_name /mnt/temp
 cp $STREAM_PATH/video/$b_stream /mnt/temp
-loops=300
+loops=2
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
@@ -287,7 +291,7 @@ do
 cp $STREAM_PATH/alsa_stream_music/$fname /mnt/temp
 done
 num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
-loops=300
+loops=2
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
@@ -317,7 +321,7 @@ stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.
 cp $STREAM_PATH/video/$stream_name /mnt/temp
 cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
 num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
-loops=300
+loops=2
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
@@ -328,6 +332,127 @@ do
   echo "times: $i"
   sleep 4
 done
+RC=0
+return $RC
+}
+test_case_07()
+{
+#TODO give TCID 
+TCID="Display mode stress test"
+#TODO give TST_COUNT
+TST_COUNT=7
+RC=7
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0 
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+i=0
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
+cp $STREAM_PATH/video/$stream_name /mnt/temp
+loops=300
+while [ $i -lt $loops ]
+do
+	i=`expr $i + 1`
+	for mode in $defvideomodes; do
+		echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+    echo q| fbv $LTPROOT/testcases/bin/butterfly.png -d /dev/${hdmi_fb}
+		/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30"|| exit 71
+    cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
+		if [ "$mode" != "$cur_mode" ]; then
+			echo "Error happens during set mode: $mode"
+			exit 72
+		fi
+      echo "times: $i"
+      sleep 4
+	done
+done
+RC=0
+return $RC
+}
+
+test_case_08()
+{
+#TODO give TCID 
+TCID="Audio mode stress test"
+#TODO give TST_COUNT
+TST_COUNT=8
+RC=8
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+mkdir -p /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 2
+FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
+for fname in $FILES
+do
+cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
+done
+num=`aplay -l |grep -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+
+i=0
+loops=300
+while [ $i -lt $loops ]
+do
+    i=`expr $i + 1`
+	for mode in $defaudiomodes; do
+		 echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 81
+     cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
+		 if [ "$mode" != "$cur_mode" ]; then
+			  echo "Error happens during set mode: $mode"
+			  exit 82
+		 fi
+        echo "times: $i"
+        sleep 4
+	done
+done
+umount /mnt/temp
+RC=0
+return $RC
+}
+test_case_09()
+{
+#TODO give TCID 
+TCID="HDMI video and audio test under 1080p resolution"
+#TODO give TST_COUNT
+TST_COUNT=9
+RC=9
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+#1080P video playback 
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+a_stream=ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 3
+FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
+for fname in $FILES
+do
+cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
+done
+cp $STREAM_PATH/video/$a_stream /mnt/temp
+
+#audio + video playback
+loops=300
+i=0
+while [ $i -lt $loops ]; do
+    i=`expr $i + 1`
+   	for mode in $defaudiomodes; do
+	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" &
+   	pid_video=$!
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
+	  wait $pid_video || exit 91
+	  done
+done
+
 RC=0
 return $RC
 }
@@ -357,6 +482,15 @@ case "$1" in
   ;;
 6)
   test_case_06 || exit 6
+  ;;
+7)
+  test_case_07 || exit 7
+  ;;
+8)
+  test_case_08 || exit 8
+  ;;
+9)
+  test_case_09 || exit 9
   ;;
 *)
   usage
