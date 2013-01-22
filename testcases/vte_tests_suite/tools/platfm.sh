@@ -287,6 +287,12 @@ determine_platform()
         p=IMX6-SABRELITE
     fi
 
+    find=`cat /proc/cpuinfo | grep "Hardware" | grep "Device Tree" | wc -l`;
+    if [ $find -eq 1 ]
+    then
+        p=IMX6Q-Sabre-SD
+    fi
+
     if [ "$p" = "IMX31-3STACK" ]
     then
         #echo "Platform MX31"
@@ -495,6 +501,35 @@ CPU revision    : 10
 Hardware        : Freescale i.MX 6Quad/DualLite/Solo Sabre Auto Board
 Revision        : 61211
 Serial          : 656421d4d72d785a
+
+----MX6 board with device tree -201301
+root@freescale ~$ cat /proc/cpuinfo 
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 790.52
+
+processor       : 1
+BogoMIPS        : 790.52
+
+processor       : 2
+BogoMIPS        : 790.52
+
+processor       : 3
+BogoMIPS        : 790.52
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3 tls 
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX6 (Device Tree)
+Revision        : 0000
+Serial          : 0000000000000000
+
+# cat /proc/device-tree/model
+Freescale i.MX6Q SABRE Smart Device Board
 
 
 EOF
