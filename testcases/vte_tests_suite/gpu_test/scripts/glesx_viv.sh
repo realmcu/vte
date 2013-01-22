@@ -50,7 +50,6 @@ setup()
     export TCID="setup"
     export TST_COUNT=0
     RC=0
-
     trap "cleanup" 0 3
     #modprobe galcore
     return $RC
@@ -407,6 +406,7 @@ cat /etc/issue | grep Linaro || rt="others"
 if [ $rt = "Ubuntu" ];then
     APP_SUB_DIR="ubuntu_11.10/test"
     export DISPLAY=:0.0
+    export XAUTHORITY=/home/linaro/.Xauthority 
 else
     #judge the rootfs
     platfm.sh

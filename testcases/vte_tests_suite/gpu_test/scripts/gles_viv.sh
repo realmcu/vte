@@ -426,6 +426,7 @@ cat /etc/issue | grep Ubuntu || rt="others"
 if [ $rt = "Ubuntu" ];then
     APP_SUB_DIR="ubuntu_11.10/test"
     export DISPLAY=:0.0
+    export XAUTHORITY=/home/linaro/.Xauthority 
 else
     #judge the rootfs
     platfm.sh
