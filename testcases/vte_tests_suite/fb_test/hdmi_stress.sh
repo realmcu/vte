@@ -100,6 +100,8 @@ usage()
    echo "7: default modes switch video stress test"
    echo "8: default modes switch audio stress test"
    echo "9: default modes switch audio and video stress test"
+   echo "10: RGB YCbCr switch test"
+   echo "11: RGB YCbCr switch default test"
 }
 test_case_01()
 {
@@ -151,7 +153,8 @@ echo -e "\033[9;0]" > /dev/tty0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 mkdir -p /mnt/temp
-mount -t tmpfs tmpfs /mnt/temp || exit 2
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
 FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
 for fname in $FILES
 do
@@ -176,7 +179,6 @@ do
         sleep 4
 	done
 done
-umount /mnt/temp
 RC=0
 return $RC
 }
@@ -213,7 +215,7 @@ num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
 a_stream=ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 mkdir -p /mnt/temp
 umount /mnt/temp
-mount -t tmpfs tmpfs /mnt/temp || exit 3
+mount -t tmpfs tmpfs /mnt/temp || exit 1
 FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
 for fname in $FILES
 do
@@ -257,7 +259,7 @@ stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.
 b_stream=H264_HP51_bwp_1280x720.h264
 cp $STREAM_PATH/video/$stream_name /mnt/temp
 cp $STREAM_PATH/video/$b_stream /mnt/temp
-loops=2
+loops=300
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
@@ -291,7 +293,7 @@ do
 cp $STREAM_PATH/alsa_stream_music/$fname /mnt/temp
 done
 num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
-loops=2
+loops=300
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
@@ -321,7 +323,7 @@ stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.
 cp $STREAM_PATH/video/$stream_name /mnt/temp
 cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
 num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
-loops=2
+loops=300
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
@@ -385,7 +387,8 @@ echo -e "\033[9;0]" > /dev/tty0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 mkdir -p /mnt/temp
-mount -t tmpfs tmpfs /mnt/temp || exit 2
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
 FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
 for fname in $FILES
 do
@@ -410,7 +413,6 @@ do
         sleep 4
 	done
 done
-umount /mnt/temp
 RC=0
 return $RC
 }
@@ -430,7 +432,7 @@ num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
 a_stream=ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 mkdir -p /mnt/temp
 umount /mnt/temp
-mount -t tmpfs tmpfs /mnt/temp || exit 3
+mount -t tmpfs tmpfs /mnt/temp || exit 1
 FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
 for fname in $FILES
 do
@@ -444,6 +446,7 @@ i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
    	for mode in $defaudiomodes; do
+   	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
 	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" &
    	pid_video=$!
     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
@@ -452,7 +455,92 @@ while [ $i -lt $loops ]; do
 	  wait $pid_video || exit 91
 	  done
 done
+RC=0
+return $RC
+}
+test_case_10()
+{
+#TODO give TCID 
+TCID="HDMI video and audio test under 1080p resolution"
+#TODO give TST_COUNT
+TST_COUNT=10
+RC=10
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+#1080P video playback 
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
+cp $STREAM_PATH/video/H264_DAKEAI1080.avi /mnt/temp
 
+#audio + video playback
+loops=300
+i=0
+while [ $i -lt $loops ]; do
+    i=`expr $i + 1`
+    mod=$(expr $i % 2)
+    if [ $mod -eq 0 ]; then
+    echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    else
+    echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    fi
+    cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
+   	for mode in $modes; do
+   	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+   	cat /sys/class/graphics/${hdmi_fb}/mode
+	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
+   	pid_video=$!
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 100
+	  wait $pid_video || exit 101
+	  done
+done
+RC=0
+return $RC
+}
+test_case_11()
+{
+#TODO give TCID 
+TCID="HDMI video and audio test under 1080p resolution"
+#TODO give TST_COUNT
+TST_COUNT=11
+RC=11
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+#1080P video playback 
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
+cp $STREAM_PATH/video/H264_DAKEAI1080.avi /mnt/temp
+
+#audio + video playback
+loops=300
+i=0
+while [ $i -lt $loops ]; do
+    i=`expr $i + 1`
+    mo=$(expr $i % 2)
+    if [ $mo = 0 ]; then
+    echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    else
+    echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    fi
+    cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
+   	for mode in $defaudiomodes; do
+   	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+   	cat /sys/class/graphics/${hdmi_fb}/mode
+	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
+   	pid_video=$!
+    aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || exit 110
+	  wait $pid_video || exit 111
+	  done
+done
 RC=0
 return $RC
 }
@@ -491,6 +579,12 @@ case "$1" in
   ;;
 9)
   test_case_09 || exit 9
+  ;;
+10)
+  test_case_10 || exit 10
+  ;;
+11)
+  test_case_11 || exit 11
   ;;
 *)
   usage
