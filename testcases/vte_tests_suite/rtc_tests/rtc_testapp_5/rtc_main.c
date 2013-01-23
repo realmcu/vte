@@ -225,23 +225,27 @@ int main(int argc, char **argv)
                 }
                 else if(!strcmp(test_case,"FASYNC"))
                 {
-                        VT_rv = VT_rtc_test5(2); 
+                        VT_rv = VT_rtc_test5(2);
                 }
                 else if(!strcmp(test_case,"READ_WAIT"))
                 {
-                        VT_rv = VT_rtc_test5(3); 
+                        /* doesn't support on 3.5.7 currently */
+                        tst_resm(TWARN, "The READ_WAIT test case does not support currently");
+                        cleanup();
+                        return VT_rv;
+                        /*VT_rv = VT_rtc_test5(3);*/
                 }
                 else
                 {
                         help();
                         cleanup();
-                        return VT_rv;        
+                        return VT_rv;
                 }
                     
                 if(VT_rv == TPASS)
                         tst_resm(TPASS, "%s test case worked as expected", TCID);
                 else
-                              tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
+                        tst_resm(TFAIL, "%s test case did NOT work as expected", TCID);
         
         /* cleanup allocated test ressources */        
                 cleanup();

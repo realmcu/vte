@@ -52,7 +52,11 @@ extern "C"{
 #include<ctype.h>
 #include<string.h>
 
-#include <linux/mxc_srtc.h>
+/*#include <linux/mxc_srtc.h>*/
+/* for current 3.5.7 kernel have no srtc.h, replace by rtc.h,
+ * affect: RTC_READ_TIME_47BIT and RTC_WAIT_TIME_SET ioctl can't work.
+ * */
+#include <linux/rtc.h>
 
 /* Verification Test Environment Include Files */
 #include "rtc_test_5.h"
@@ -367,6 +371,9 @@ int VT_rtc_test5(int sw_t)
                                 tst_resm( TINFO, "fasync test worked as expected");
                         }
                 break;
+
+/* temp handle for 3.5.7 kernel */
+#if 0
 				case 3:
 				{
 					struct timeval ctime;				    
@@ -436,7 +443,8 @@ int VT_rtc_test5(int sw_t)
 					}
 					break;
 				}
-        }        
+#endif
+        }
 
         rv = is_ok!=0?TPASS:TFAIL;
         return rv;
