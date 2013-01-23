@@ -13,7 +13,7 @@ install:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install ; done
 	-ln -f tst-filter ../../bin/
 	-ln -f tst-rcv-own-msgs ../../bin/
-	-ln -f run_ltp-can_tests.sh ../../bin/
+	-ln -f ./filter-tests/run_ltp-can_tests.sh ../../bin/
 
 
 clean:
