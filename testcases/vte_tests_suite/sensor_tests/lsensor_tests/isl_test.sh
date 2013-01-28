@@ -87,7 +87,9 @@ test_case_01()
     done
 
     if [ $RC -eq 0 ]; then
-        tst_resm TINFO "Test PASS"
+        tst_resm TPASS "Test PASS"
+    else
+        tst_resm TFAIL "Test FAIL"
     fi
 
     return $RC
@@ -116,6 +118,7 @@ test_case_02()
             cat $j >/dev/null || RC=$(echo $RC $j)
         fi
     done
+
     if [ "$RC" = "1" ];then
         RC=0
     fi
@@ -124,7 +127,9 @@ test_case_02()
     done
 
     if [ $RC -eq 0 ]; then
-        tst_resm TINFO "Test PASS"
+        tst_resm TPASS "Test PASS"
+    else
+        tst_resm TFAIL "Test FAIL"
     fi
 
     return $RC
@@ -132,7 +137,7 @@ test_case_02()
 
 usage()
 {
-    echo "1 isl basic control reg access test"
+    echo "1: isl basic control reg access test"
 }
 
 setup || exit $RC
