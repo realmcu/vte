@@ -241,7 +241,6 @@ test_case_03()
     echo "==========================="
     echo es20 conformance
     echo "==========================="
-    RC=$(echo $RC es20_conformance)
     if [ -e es20_conform/GTF_ES/glsl/GTF/GTF ]; then
         cd es20_conform/GTF_ES/glsl
         ./GTF/GTF -width=64 -height=64 -noimagefileio \
