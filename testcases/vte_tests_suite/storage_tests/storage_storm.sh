@@ -79,7 +79,7 @@ RC=1
 trap "cleanup" 0
 
 soc=$(platfm.sh)
-if [ $soc = "IMX6-SABREAUTO" ] || [ $soc = "IMX6ARM2" ]; then
+if [ "$soc" = "IMX6-SABREAUTO" ] || [ "$soc" = "IMX6ARM2" ]; then
     #enable ata module
     modprobe ahci_platform
     sleep 3
@@ -202,7 +202,7 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-if [ $soc = "IMX6-SABREAUTO" ] || [ $soc = "IMX6ARM2" ]; then
+if [ "$soc" = "IMX6-SABREAUTO" ] || [ "$soc" = "IMX6ARM2" ]; then
     #enable ata module
     modprobe -r ahci_platform
     sleep 3
