@@ -41,8 +41,8 @@ setup()
 
     #TODO add setup scripts
     #find the dbugfs
-    mountpt=$(mount | grep debugfs)
-    if [ -z "$mountpt" ]; then
+    mount_pt=$(mount | grep debugfs)
+    if [ -z "$mount_pt" ]; then
         mount -t debugfs nodev /sys/kernel/debug || return $?
         mount_pt=/sys/kernel/debug
     else
