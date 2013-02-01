@@ -226,6 +226,29 @@ test_case_04()
 
     return $RC
 }
+# Function:     test_case_05
+# Description   - 2D performance est
+test_case_05()
+{
+    #TODO give TCID
+    TCID="gpu_2d_performance"
+    #TODO give TST_COUNT
+    TST_COUNT=5
+    RC=0
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo 2dperformance
+    echo "==========================="
+    ./2dperf
+    RC=$?
+    if [ $RC -eq 0 ]; then
+         echo "TEST PASS"
+    else
+         echo "TEST FAIL"
+    fi
+    return $RC
+}
+
 usage()
 {
     echo "$0 [case ID]"
@@ -233,6 +256,7 @@ usage()
     echo "2: concurrent test"
     echo "3: conformance test"
     echo "4: pm test"
+	echo "5: 2dperf test"
 }
 
 # main function
@@ -303,6 +327,10 @@ case "$1" in
 4)
     test_case_04 || exit $RC
     ;;
+5)
+    test_case_05 || exit $RC
+    ;;
+
 *)
     usage
     ;;
