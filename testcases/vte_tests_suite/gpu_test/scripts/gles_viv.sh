@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# Copyright (C) 2011,2012 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #Hake Huang/-----             20110817     N/A          Initial version
 #Andy Tian                    05/15/2012       N/A      add wait for background
 #Andy Tian                    12/14/2012       N/A      add GPU thermal test
+#Shelly Cheng                 01/02/2013       N/A      add more test demo
 # 
 ################################################################################
 
@@ -391,6 +392,88 @@ test_case_06()
     return $RC
 
 }
+# Function:     test_case_07
+# Description   - Test gpu bench
+#
+test_case_07()
+{
+	    #TODO give TCID
+		TCID="gpu_bench_test"
+		#TODO give TST_COUNT
+		TST_COUNT=7
+		RC=0
+        cd ${TEST_DIR}/${APP_SUB_DIR}
+	    echo "==========================="
+		echo gpubench
+	    echo "==========================="
+	    ./gpuBench
+        RC=$?
+		if [ $RC -eq 0 ]; then
+          echo "TEST PASS"
+        else
+          echo "TEST FAIL"
+        fi
+        return $RC	
+}
+# Function:     test_case_08
+# Description   - Test sample test
+#
+test_case_08()
+{
+	    #TODO give TCID
+		TCID="sample_test"
+		#TODO give TST_COUNT
+		TST_COUNT=8
+		RC=0
+		cd ${TEST_DIR}/${APP_SUB_DIR}
+		echo "==========================="
+		echo sample test
+		echo "==========================="
+		tmpdir=$(mktemp -d)
+	    mkdir $tmpdir
+	    mkfifo $tmpdir/sample_fifo
+	    sh -c "cat $tmpdir/sample_fifo | ./sample_test" &
+	    sleep 100
+	    echo y > $tmpdir/sample_fifo
+	    rm -rf $tmpdir
+		RC=$?
+		if [ $RC -eq 0 ]; then
+			echo "TEST PASS"
+		else
+			echo "TEST FAIL"
+	    fi
+        return $RC
+}
+# Function:     test_case_09
+# Description   - cube test
+#
+test_case_09()
+{
+	#TODO give TCID
+	TCID="cube_test"
+    #TODO give TST_COUNT
+	TST_COUNT=9
+	RC=0
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo cube test
+	echo "==========================="
+	tmpdir=$(mktemp -d)
+	mkdir $tmpdir
+	mkfifo $tmpdir/cube_fifo
+	sh -c "cat $tmpdir/cube_fifo | ./cube" &
+	sleep 100
+	echo y > $tmpdir/cube_fifo
+	rm -rf $tmpdir
+	RC=$?
+	if [ $RC -eq 0 ]; then
+	   echo "TEST PASS"
+    else
+       echo "TEST FAIL"
+    fi
+    return $RC
+}
+
 usage()
 {
     echo "$0 [case ID]"
@@ -400,6 +483,9 @@ usage()
     echo "4: pm test"
     echo "5: performance test"
     echo "6: Thermal control test"
+    echo "7: gpuBench"
+	echo "8: sample test"
+	echo "9: cube test"
 }
 
 # main function
@@ -470,6 +556,15 @@ case "$1" in
     ;;
 6)
     test_case_06 || exit $RC
+    ;;
+7)
+    test_case_07 || exit $RC
+    ;;
+8)
+    test_case_08 || exit $RC
+    ;;
+9)
+    test_case_09 || exit $RC
     ;;
 *)
     usage
