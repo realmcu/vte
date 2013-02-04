@@ -36,6 +36,11 @@
 #include <mach/hardware.h>
 #include <linux/slab.h>
 
+#ifdef CONFIG_OF
+#include <linux/of.h>
+#include <linux/of_address.h>
+#endif
+
 #define IMX2_WDT_WCR            0x00            /* Control Register */
 #define IMX2_WDT_WCR_WT         (0xFF << 8)     /* -> Watchdog Timeout Field */
 #define IMX2_WDT_WCR_WRE        (1 << 3)        /* -> WDOG Reset Enable */
@@ -64,11 +69,11 @@ module_param(timer_margin, uint, 0);
 MODULE_PARM_DESC(timer_margin, "initial watchdog timeout (in seconds)");
 
 struct IMX2_wdt_data_t{
-void __iomem *base;
-struct clk *clk;
-struct timer_list *timer;
-int enable;
-unsigned long status;
+    void __iomem *base;
+    struct clk *clk;
+    struct timer_list *timer;
+    int enable;
+    unsigned long status;
 } imx2_wdt;
 
 static inline void imx2_wdt_setup(void)
@@ -195,6 +200,9 @@ static struct platform_device * wdt_device;
 static int wdt_probe(struct platform_device * pdev)
 {
 	struct timer_list *timer;
+#ifdef CONFIG_OF
+    struct device_node *np;
+#else
 	static struct resource imx2_wdt_resources[] = {
         {
                 .start = MX6Q_WDOG1_BASE_ADDR,
@@ -202,6 +210,7 @@ static int wdt_probe(struct platform_device * pdev)
                 .flags = IORESOURCE_MEM,
         },
 	};
+#endif
 
 	if ((timer_margin < TIMER_MARGIN_MIN) ||
 	    (timer_margin > TIMER_MARGIN_MAX) ||
@@ -215,7 +224,14 @@ static int wdt_probe(struct platform_device * pdev)
  	if (test_and_set_bit(IMX2_WDT_STATUS_OPEN, &imx2_wdt.status))
 	         return -EBUSY;
 
+#ifdef CONFIG_OF
+    np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-wdt");
+    imx2_wdt.base = of_iomap(np, 0);
+    WARN_ON(!imx2_wdt.base);
+#else
 	imx2_wdt.base = ioremap(imx2_wdt_resources[0].start,SZ_16K);
+#endif
+
 	pr_info("probe IMX2 WatchDog test Driver \n");
 
     timer = kmalloc(sizeof(*timer), GFP_KERNEL);
@@ -238,13 +254,13 @@ static int wdt_probe(struct platform_device * pdev)
 static int __init imx2_wdt_test_init(void)
 {
 	int ret;
-		
+
 	wdt_device = platform_device_register_simple("imx2_wdt", -1, NULL, 0);
-     if (IS_ERR(wdt_device)) {
-                printk(KERN_ERR "wdt_test: platform_device_register failed.\n");
-                ret = PTR_ERR(wdt_device);
-                goto out;
-     }
+    if (IS_ERR(wdt_device)) {
+        printk(KERN_ERR "wdt_test: platform_device_register failed.\n");
+        ret = PTR_ERR(wdt_device);
+        goto out;
+    }
 
 	return platform_driver_probe(&wdt_driver, wdt_probe);
 out:
