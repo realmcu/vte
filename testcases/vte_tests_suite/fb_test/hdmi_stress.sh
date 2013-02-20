@@ -70,7 +70,7 @@ setup()
 		modes=`cat /sys/class/graphics/${hdmi_fb}/modes`
 	fi
   defvideomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60 U:640x480p-60 V:1280x1024p-60 V:1024x768p-60" 
-  defaudiomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60" 
+  defaudiomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60 U:640x480p-60" 
   return $RC
 }
 
@@ -102,11 +102,12 @@ usage()
    echo "9: default modes switch audio and video stress test"
    echo "10: RGB YCbCr switch test"
    echo "11: RGB YCbCr switch default test"
+   echo "12: Normal modes switch audio and video stress test"
 }
 test_case_01()
 {
 #TODO give TCID 
-TCID="Display mode stress test"
+TCID="Display_mode_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=1
 RC=1
@@ -127,11 +128,11 @@ do
 	for mode in $modes; do
 		echo $mode > /sys/class/graphics/${hdmi_fb}/mode
         echo q| fbv $LTPROOT/testcases/bin/butterfly.png -d /dev/${hdmi_fb}
-		/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30"|| exit 1
+		/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30"|| return $RC
         cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
 		if [ "$mode" != "$cur_mode" ]; then
 			echo "Error happens during set mode: $mode"
-			exit 1
+			return $RC
 		fi
         echo "times: $i"
         sleep 4
@@ -144,7 +145,7 @@ return $RC
 test_case_02()
 {
 #TODO give TCID 
-TCID="Audio mode stress test"
+TCID="Audio_mode_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=2
 RC=2
@@ -169,11 +170,11 @@ do
     i=`expr $i + 1`
 	for mode in $modes; do
 		echo $mode > /sys/class/graphics/${hdmi_fb}/mode
-        aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 2
+        aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=21; return $RC; }
         cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
 		if [ "$mode" != "$cur_mode" ]; then
 			echo "Error happens during set mode: $mode"
-			exit 2
+			return $RC;
 		fi
         echo "times: $i"
         sleep 4
@@ -186,7 +187,7 @@ return $RC
 test_case_03()
 {
 #TODO give TCID 
-TCID="HDMI video and audio test under 1080p resolution"
+TCID="HDMI_video_audio_test_1080p resolution"
 #TODO give TST_COUNT
 TST_COUNT=3
 RC=3
@@ -204,7 +205,7 @@ if [ $? -ne 0 ]; then
 	if [ $? -ne 0 ]; then
 		#1080p mode is not supported by display, exit
 		echo "1080p mode is not supported by this display, case can not run."
-		exit 3
+		return $RC
 	else
 		echo ${mode_1080} > /sys/class/graphics/${hdmi_fb}/mode
 	fi
@@ -229,10 +230,10 @@ i=0
 while [ $i -lt $loops ]; do
 	/unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" &
 	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 3
-	wait $pid_video || exit 3
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || return $RC
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || return $RC
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || return $RC
+	wait $pid_video || return $RC
 	let i=i+1
 done
 
@@ -243,7 +244,7 @@ return $RC
 test_case_04()
 {
 #TODO give TCID 
-TCID="default video stress test"
+TCID="default_video_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=4
 RC=4
@@ -263,8 +264,8 @@ loops=300
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
-	/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30" || exit 41
-	/unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_HP51_bwp_1280x720.h264 -f 2" || exit 42
+	/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30" || { RC=41; return $RC; }
+	/unit_tests/mxc_vpu_test.out -D "-i ${STREAM_PATH}/video/H264_HP51_bwp_1280x720.h264 -f 2" || { RC=42; return $RC; }
   echo "times: $i"
   sleep 4
 done
@@ -275,7 +276,7 @@ return $RC
 test_case_05()
 {
 #TODO give TCID 
-TCID="default audio stress test"
+TCID="default_audio_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=5
 RC=5
@@ -297,7 +298,7 @@ loops=300
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
-  aplay -Dplughw:$num -M /mnt/temp/*.wav || exit 51
+  aplay -Dplughw:$num -M /mnt/temp/*.wav || return $RC
   echo "times: $i"
   sleep 4
 done
@@ -307,7 +308,7 @@ return $RC
 test_case_06()
 {
 #TODO give TCID 
-TCID="default video and audio stress test"
+TCID="default_video_audio_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=6
 RC=6
@@ -329,8 +330,8 @@ do
 	i=`expr $i + 1`
 	/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30" & 
   pid_video=$!
-  aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || exit 61
-  wait $pid_video || exit 62
+  aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || { RC=61; return $RC; }
+  wait $pid_video || { RC=62; return $RC; }
   echo "times: $i"
   sleep 4
 done
@@ -340,7 +341,7 @@ return $RC
 test_case_07()
 {
 #TODO give TCID 
-TCID="Display mode stress test"
+TCID="default_modes_switch_video_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=7
 RC=7
@@ -352,20 +353,20 @@ i=0
 mkdir -p /mnt/temp
 umount /mnt/temp
 mount -t tmpfs tmpfs /mnt/temp || exit 1
-stream_name=Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp
+stream_name=ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 cp $STREAM_PATH/video/$stream_name /mnt/temp
-loops=300
+loops=20
 while [ $i -lt $loops ]
 do
 	i=`expr $i + 1`
 	for mode in $defvideomodes; do
 		echo $mode > /sys/class/graphics/${hdmi_fb}/mode
     echo q| fbv $LTPROOT/testcases/bin/butterfly.png -d /dev/${hdmi_fb}
-		/unit_tests/mxc_vpu_test.out -D "-f 0 -i /mnt/temp/$stream_name -x $out_video -a 30"|| exit 71
+		/unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/$stream_name -x $out_video -a 30"|| { RC=71; return $RC; }
     cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
 		if [ "$mode" != "$cur_mode" ]; then
 			echo "Error happens during set mode: $mode"
-			exit 72
+			return $RC
 		fi
       echo "times: $i"
       sleep 4
@@ -378,7 +379,7 @@ return $RC
 test_case_08()
 {
 #TODO give TCID 
-TCID="Audio mode stress test"
+TCID="default_modes_switch_audio_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=8
 RC=8
@@ -397,17 +398,17 @@ done
 num=`aplay -l |grep -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
 
 i=0
-loops=300
+loops=20
 while [ $i -lt $loops ]
 do
     i=`expr $i + 1`
 	for mode in $defaudiomodes; do
 		 echo $mode > /sys/class/graphics/${hdmi_fb}/mode
-     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 81
+     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=81; return $RC; }
      cur_mode=`cat /sys/class/graphics/${hdmi_fb}/mode`
 		 if [ "$mode" != "$cur_mode" ]; then
 			  echo "Error happens during set mode: $mode"
-			  exit 82
+			  return $RC
 		 fi
         echo "times: $i"
         sleep 4
@@ -419,7 +420,7 @@ return $RC
 test_case_09()
 {
 #TODO give TCID 
-TCID="HDMI video and audio test under 1080p resolution"
+TCID="default_modes_switch_audio_video_stress_test"
 #TODO give TST_COUNT
 TST_COUNT=9
 RC=9
@@ -441,7 +442,7 @@ done
 cp $STREAM_PATH/video/$a_stream /mnt/temp
 
 #audio + video playback
-loops=300
+loops=20
 i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
@@ -449,10 +450,8 @@ while [ $i -lt $loops ]; do
    	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
 	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" &
    	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 90
-	  wait $pid_video || exit 91
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=91; return $RC; }
+	  wait $pid_video || { RC=92; return $RC; }
 	  done
 done
 RC=0
@@ -461,7 +460,7 @@ return $RC
 test_case_10()
 {
 #TODO give TCID 
-TCID="HDMI video and audio test under 1080p resolution"
+TCID="RGB_and_YCbCr_switch_test"
 #TODO give TST_COUNT
 TST_COUNT=10
 RC=10
@@ -478,7 +477,7 @@ cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
 cp $STREAM_PATH/video/H264_DAKEAI1080.avi /mnt/temp
 
 #audio + video playback
-loops=300
+loops=20
 i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
@@ -494,17 +493,18 @@ while [ $i -lt $loops ]; do
    	cat /sys/class/graphics/${hdmi_fb}/mode
 	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
    	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || exit 100
-	  wait $pid_video || exit 101
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=100; return $RC; }
+	  wait $pid_video || { RC=101; return $RC; }
 	  done
 done
 RC=0
 return $RC
 }
+
 test_case_11()
 {
 #TODO give TCID 
-TCID="HDMI video and audio test under 1080p resolution"
+TCID="RGB_and_YCbCr_switch_default_modes_test"
 #TODO give TST_COUNT
 TST_COUNT=11
 RC=11
@@ -521,7 +521,7 @@ cp $STREAM_PATH/alsa_stream/audio44k16S.wav /mnt/temp
 cp $STREAM_PATH/video/H264_DAKEAI1080.avi /mnt/temp
 
 #audio + video playback
-loops=300
+loops=20
 i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
@@ -537,8 +537,48 @@ while [ $i -lt $loops ]; do
    	cat /sys/class/graphics/${hdmi_fb}/mode
 	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
    	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || exit 110
-	  wait $pid_video || exit 111
+    aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || { RC=110; return $RC }
+	  wait $pid_video || { RC=111; return $RC; }
+	  done
+done
+RC=0
+return $RC
+}
+test_case_12()
+{
+#TODO give TCID 
+TCID="Normal_modes_switch_audio_video_stress_test"
+#TODO give TST_COUNT
+TST_COUNT=12
+RC=12
+echo 0 > /sys/class/graphics/${hdmi_fb}/blank
+echo -e "\033[9;0]" > /dev/tty0
+#print test info
+tst_resm TINFO "test $TST_COUNT: $TCID "
+#1080P video playback 
+num=`aplay -l |grep -m 1 -i "hdmi" |awk '{ print $2 }'|sed 's/://'`
+a_stream=ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
+mkdir -p /mnt/temp
+umount /mnt/temp
+mount -t tmpfs tmpfs /mnt/temp || exit 1
+FILES="audio192k16S.wav audio176k16S.wav audio96k16S.wav audio88k16S.wav audio48k16S.wav audio44k16S.wav audio32k16S.wav audio11k16S.wav"
+for fname in $FILES
+do
+cp $STREAM_PATH/alsa_stream/$fname /mnt/temp
+done
+cp $STREAM_PATH/video/$a_stream /mnt/temp
+
+#audio + video playback
+loops=20
+i=0
+while [ $i -lt $loops ]; do
+    i=`expr $i + 1`
+   	for mode in $modes; do
+   	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/${a_stream} -x $out_video -a 30" &
+   	pid_video=$!
+    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=120; return $RC; }
+	  wait $pid_video || { RC=121; return $RC; }
 	  done
 done
 RC=0
@@ -554,37 +594,40 @@ Platfm=63
 setup || exit $RC
 case "$1" in
 1)
-  test_case_01 || exit 1
+  test_case_01 || exit $RC
   ;;
 2)
-  test_case_02 || exit 2
+  test_case_02 || exit $RC
   ;;
 3)
-  test_case_03 || exit 3
+  test_case_03 || exit $RC
   ;;
 4)
-  test_case_04 || exit 4
+  test_case_04 || exit $RC
   ;;
 5)
-  test_case_05 || exit 5
+  test_case_05 || exit $RC
   ;;
 6)
-  test_case_06 || exit 6
+  test_case_06 || exit $RC
   ;;
 7)
-  test_case_07 || exit 7
+  test_case_07 || exit $RC
   ;;
 8)
-  test_case_08 || exit 8
+  test_case_08 || exit $RC
   ;;
 9)
-  test_case_09 || exit 9
+  test_case_09 || exit $RC
   ;;
 10)
-  test_case_10 || exit 10
+  test_case_10 || exit $RC
   ;;
 11)
-  test_case_11 || exit 11
+  test_case_11 || exit $RC
+  ;;
+12)
+  test_case_12 || exit $RC
   ;;
 *)
   usage
