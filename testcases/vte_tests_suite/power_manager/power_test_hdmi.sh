@@ -31,10 +31,22 @@ setup()
     fi
 
     num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
-
+		#find the fb device related with hdmi
+		dev_names=`cat /sys/class/graphics/fb*/fsl_disp_dev_property`
+		i=0
+		for name in $dev_names; do
+		if [ "$name" = "hdmi" ]; then
+			hdmi_fb="fb$i"
+			let out_video=17+i
+			break
+		fi
+		let i=i+1
+		done
     tmpdir=`mktemp -d -p /tmp`
-	alsa_stream="audio44k24S-S24_LE_long.wav"
+		alsa_stream="audio44k24S-S24_LE_long.wav"
+		video_stream="ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264"
     cp /mnt/nfs/test_stream/alsa_stream_music/${alsa_stream} $tmpdir || RC=1
+    cp $STREAM_PATH/video/$video_stream $tmpdir || RC=1
     return $RC
 }
 
@@ -69,11 +81,12 @@ test_case_01()
     #TODO add function test scripte here
     echo 0 > /sys/class/graphics/fb0/blank
     echo -e "\033[9;0]" > /dev/tty0
-	while [ true ]; do
+		while [ true ]; do
+	      /unit_tests/mxc_vpu_test.out -D "-f 2 -i $tmpdir/${video_stream} -x $out_video -a 30" &
         aplay -Dplughw:$num -M $tmpdir/${alsa_stream}
-	done &
-	bpid=$!
-
+		done &
+		bpid=$!
+		sleep 10
     tloops=20000
     count=0
     while [ $count -lt $tloops ]
