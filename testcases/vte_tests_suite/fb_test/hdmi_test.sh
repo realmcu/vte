@@ -65,6 +65,7 @@ setup()
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
+    umount /mnt/temp
     RC=0
 }
 
@@ -150,20 +151,26 @@ hdmi_audio_playback_modeSwitch()
 hdmi_audio_playback_multichannel()
 {
     export TST_COUNT=3   # Set up is initialized as test 0
-
+    RC=4
     tst_resm TINFO "Test HDMI multi channel"
     for i in "0 1 2 3 4"; do
         echo 0 > /sys/class/graphic/fb${i}/blank
     done
-	echo -e "\033[9;0]" > /dev/tty0
+	  echo -e "\033[9;0]" > /dev/tty0
     num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
+    mkdir -p /mnt/temp
+    umount /mnt/temp
+    mount -t tmpfs tmpfs /mnt/temp || exit 1
     stream_path=$STREAM_PATH/esai_stream/
-    FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav  sine-6ch48k16bit.wav  sine-6ch44k16bit.wav sine-6ch32k16bit.wav sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav"    
-    
-    tst_resm TINFO "Use plughw to playback" 
+    FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav sine-6ch48k16bit.wav sine-6ch44k16bit.wav sine-6ch32k16bit.wav \
+              sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav \
+              32k24bit-six-S24_LE.wav 44k24bit-six-S24_LE.wav 48k24bit-six-S24_LE.wav 88k24bit-six-S24_LE.wav 96k24bit-six-S24_LE.wav sine-8ch192k24bit.wav sine-8ch48k24bit.wav"    
     for i in $FILELIST; do
-        dac_test1.sh ${stream_path}/$i -s hdmi || RC=$?
-    done
+        cp $stream_path/$i /mnt/temp
+    done    
+    tst_resm TINFO "Use plughw to playback" 
+        aplay -Dplughw:$num -M /mnt/temp/*.wav || return $RC
+    RC=0
     return $RC
 }
 
@@ -178,11 +185,11 @@ if [ "$2" = "default" ];then
 def=true
 fi
 if [ "$1" = "all" ]; then
-    hdmi_playback_modeSwitch || exit $?
+    hdmi_playback_modeSwitch || exit $RC
 elif [ "$1" = "audiomode" ]; then
-    hdmi_audio_playback_modeSwitch || exit $?
+    hdmi_audio_playback_modeSwitch || exit $RC
 elif [ "$1" = "audiochannel" ]; then
-    hdmi_audio_playback_multichannel || exit $?
+    hdmi_audio_playback_multichannel || exit $RC
 else
     hdmi_playback_asInputMode $1 || exit $RC
 fi
