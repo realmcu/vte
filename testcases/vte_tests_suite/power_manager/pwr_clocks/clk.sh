@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 ##############################################################################
 #Copyright (C) 2012 Freescale Semiconductor, Inc.
 #All Rights Reserved.
@@ -169,31 +169,51 @@ test_case_03()
 
     sleep 1
 
-    #now check the clocks
-    get_clk_cnt ipu
-	ipuct=$?
-    # ldb usecount can't use the routine
-    ldbct_list=$(find ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v "axi_clk/usecount" | grep -v "pll3_pfd_540M/usecount")
-    ldbct=$(cat $ldbct_list |grep -v 0)
+    platfm.sh
+	soc=$?
+	if [ $soc -eq 63 ] || [ $soc -eq 61 ] ; then
+		#now check the clocks
+    	get_clk_cnt ipu
+		ipuct=$?
+    	# ldb usecount can't use the routine
+    	ldbct_list=$(find ${mount_pt}/clock/osc_clk/pll3_usb_otg_main_clk/pll3_pfd_540M/*/usecount | grep -v "axi_clk/usecount" | grep -v "pll3_pfd_540M/usecount")
+    	ldbct=$(cat $ldbct_list |grep -v 0)
+    	hdmi_cnt=0
+    	if ! cat /proc/cmdline |grep -i hdmi; then
+        	get_clk_cnt hdmi
+        	hdmi_cnt=$?
+    	fi
 
-    hdmi_cnt=0
-    if ! cat /proc/cmdline |grep -i hdmi; then
-        get_clk_cnt hdmi
-        hdmi_cnt=$?
-    fi
+    	if [ $ipuct -gt 0 ] || [ -n "$ldbct" ] || [ $hdmi_cnt -gt 0 ]; then
+        	RC=3
+    	else
+        	RC=0
+    	fi
+	elif [ $soc -eq 60 ]; then
+		pxp=$(find /sys/kernel/debug -name pxp*)
+		pxp_use=$(cat ${pxp}/usecount)
+		epdc=$(find /sys/kernel/debug -name epdc*)
+		epdc_use=$(cat ${epdc}/usecount)
+		elcdif=$(find /sys/kernel/debug -name elcdif*)
+		elcdif_use=$(cat ${elcdif}/usecount)
 
-    echo 0 > /sys/class/graphics/fb0/blank
+        if [ $pxp_use -gt 0 ] || [ $epdc_use -gt 0 ] || [ $elcdif_use -gt 0 ]; then
+			RC=3
+		else
+			RC=0
+		fi
+	else
+		echo "not support platfrom"
+		RC=1
+	fi
+    
+	echo 0 > /sys/class/graphics/fb0/blank
     echo 0 > /sys/class/graphics/fb1/blank
     echo 0 > /sys/class/graphics/fb2/blank
     #for MX6Q
     echo 0 > /sys/class/graphics/fb3/blank
     echo 0 > /sys/class/graphics/fb4/blank
 
-    if [ $ipuct -gt 0 ] || [ -n "$ldbct" ] || [ $hdmi_cnt -gt 0 ]; then
-        RC=3
-    else
-        RC=0
-    fi
 
     return $RC
 }
