@@ -90,6 +90,37 @@ BOOL get_ipu_channel()
  return TRUE;
 }
 
+/* MXCFB_CSC_UPDATE test  */
+BOOL csc_test()
+{
+ struct mxcfb_csc_matrix csc = {
+	 1,1,1,
+	 0,0,0,
+	 0,0,0,
+	 0,0,0,
+	 0,0,0,
+	 }; 
+ tst_resm(TINFO, "draw a write screen in bg ground");
+ if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,255,255,255))
+ {
+   tst_resm(TINFO, "fail to draw patter on bg");
+   return FALSE;
+ }
+ sleep(6);
+ tst_resm(TINFO, "draw a write screen in bg ground");
+ if( TPASS != draw_pattern(fb_fd,fb_mem_ptr,255,255,255))
+ {
+   tst_resm(TINFO, "fail to draw patter on bg");
+   return FALSE;
+ }
+
+ CALL_IOCTL(ioctl(fb_fd_fg, MXCFB_CSC_UPDATE, &csc));
+
+ tst_resm(TINFO, "now the foreground is red");
+ return TRUE;
+}
+
+
 /*
  * Draw test
  */
@@ -534,143 +565,152 @@ int VT_fb_test()
          rv = TFAIL; 
          tst_resm(TFAIL, "get ipu channel FAIL");
 	}else
-         tst_resm(TPASS, "ipu get channel ok");
-	  break;
+		tst_resm(TPASS, "ipu get channel ok");
+	break;
+  case 8:
+	tst_resm(TINFO,"csc upate ioctl test");
+	if(!csc_test())
+	{
+		rv = TFAIL; 
+		tst_resm(TFAIL, "csc update FAIL");
+	}else
+		tst_resm(TPASS, "csc update ok");
+	break;
   default:
-       break;
+	break;
  }
- 
+
  return rv;
 }
 
 
 int draw_pattern(int fd ,unsigned char * pfb, int r, int g, int b)
 {
-    struct pixel       px;       /* Store basic screen info and current pixel color      */
-    int                size;     /* Screen size in pixels                                */
-    int                i;
-    unsigned char      *fb_wr_ptr = pfb; /* Pointer to the current pixel location */
-    int                act_mode;
-    int                rv = TPASS;
-    struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information              */
-    struct fb_var_screeninfo mode_info;
+	struct pixel       px;       /* Store basic screen info and current pixel color      */
+	int                size;     /* Screen size in pixels                                */
+	int                i;
+	unsigned char      *fb_wr_ptr = pfb; /* Pointer to the current pixel location */
+	int                act_mode;
+	int                rv = TPASS;
+	struct fb_fix_screeninfo fx_fb_info;       /* Framebuffer constant information              */
+	struct fb_var_screeninfo mode_info;
 
-    /* Print some fb information */
-    if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
-    {
-       perror("ioctl");
-       rv = TFAIL;
-       return rv;
-    }
+	/* Print some fb information */
+	if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
+	{
+		perror("ioctl");
+		rv = TFAIL;
+		return rv;
+	}
 
-    /* Change activation flag and apply it */
-    act_mode = mode_info.activate;
-    mode_info.activate = FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
-    if (ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info))
-    {
-       perror("ioctl");
-       rv = TFAIL;
-       return rv;
-    }
+	/* Change activation flag and apply it */
+	act_mode = mode_info.activate;
+	mode_info.activate = FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
+	if (ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info))
+	{
+		perror("ioctl");
+		rv = TFAIL;
+		return rv;
+	}
 
-    
-    CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
-    /* Fill in the px struct */
-    px.bpp = mode_info.bits_per_pixel / 8;
-    px.xres = mode_info.xres;
-    px.yres = mode_info.yres;
-    px.r_field.offset = mode_info.red.offset;
-    px.r_field.length = mode_info.red.length;
-    px.g_field.offset = mode_info.green.offset;
-    px.g_field.length = mode_info.green.length;
-    px.b_field.offset = mode_info.blue.offset;
-    px.b_field.length = mode_info.blue.length;
-    px.trans = 0x00;
-    px.line_length = fx_fb_info.line_length / px.bpp; 
-  
- 		if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
-    {
-       perror("ioctl");
-       rv = TFAIL;
-       return rv;
-    }
-    px.yres = mode_info.yres_virtual; 
-    size = px.line_length * px.yres;
 
-    /* Clear screen and fill it with some pattern */
-    px.r_color = r;
-    px.g_color = g;
-    px.b_color = b; /* Set color values */
-    for (i = 0; i < size; i++)
-        fb_wr_ptr = draw_px(fb_wr_ptr, &px);
+	CALL_IOCTL(ioctl(fd, FBIOGET_FSCREENINFO, &fx_fb_info));
+	/* Fill in the px struct */
+	px.bpp = mode_info.bits_per_pixel / 8;
+	px.xres = mode_info.xres;
+	px.yres = mode_info.yres;
+	px.r_field.offset = mode_info.red.offset;
+	px.r_field.length = mode_info.red.length;
+	px.g_field.offset = mode_info.green.offset;
+	px.g_field.length = mode_info.green.length;
+	px.b_field.offset = mode_info.blue.offset;
+	px.b_field.length = mode_info.blue.length;
+	px.trans = 0x00;
+	px.line_length = fx_fb_info.line_length / px.bpp; 
 
-     /* Restore activation flag */
-    #if 1
-    mode_info.activate = act_mode;
-    ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
-    #endif
-    return rv;
+	if ((ioctl(fd, FBIOGET_VSCREENINFO, &mode_info)) < 0)
+	{
+		perror("ioctl");
+		rv = TFAIL;
+		return rv;
+	}
+	px.yres = mode_info.yres_virtual; 
+	size = px.line_length * px.yres;
+
+	/* Clear screen and fill it with some pattern */
+	px.r_color = r;
+	px.g_color = g;
+	px.b_color = b; /* Set color values */
+	for (i = 0; i < size; i++)
+		fb_wr_ptr = draw_px(fb_wr_ptr, &px);
+
+	/* Restore activation flag */
+#if 1
+	mode_info.activate = act_mode;
+	ioctl(fd, FBIOPUT_VSCREENINFO, &mode_info);
+#endif
+	return rv;
 }
 
 /*===== draw_px =====*/
 /**
-@brief  Computes byte values from given color values depending on color depth and draws one pixel
+  @brief  Computes byte values from given color values depending on color depth and draws one pixel
 
-@param  Input:  where - pointer to the pixel that will be drawn
-                p     - pointer to struct pixel that contains color values and screen color info
-        Output: None
-  
+  @param  Input:  where - pointer to the pixel that will be drawn
+  p     - pointer to struct pixel that contains color values and screen color info
+Output: None
+
 @return pointer to the next pixel that will be drawn
-*/
+ */
 unsigned char *draw_px(unsigned char *where, struct pixel *p)
 {
-        __u32 value;
-        
-        if (!where)
-        {
-                tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");
-                return where;
-        }
-        if (!p)
-        {
-                tst_resm(TFAIL, "p isn't a valid pointer to 'struct pixel' ");
-                return where;
-        }
-        
-        /* Convert pixel color represented by 3 bytes to appropriate color depth */
-        value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
-        value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
-        value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
-        
-/*        if ( p->t_field.length != 0)
-        {
-               value |= (p->trans * (1 << p->t_field.length) / (1 << 8) ) << p->t_field.offset;
-        }*/
-        switch (p->bpp * 8)
-        {
-        case 12 ... 16:
-                *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1);
-                break;
-                
-        case 24:
-                *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1);
-                *where++ = *((unsigned char *)&value + 2);
-                break;
-                
-        case 32:
-                *where++ = *((unsigned char *)&value);
-                *where++ = *((unsigned char *)&value + 1); 
-                *where++ = *((unsigned char *)&value + 2);
-                *where++ = *((unsigned char *)&value + 3);
-                break;
-                
-        default:
-                break;
-        }
-        
-        return where;
+	__u32 value;
+
+	if (!where)
+	{
+		tst_resm(TFAIL, "where isn't a valid pointer to 'unsigned char' ");
+		return where;
+	}
+	if (!p)
+	{
+		tst_resm(TFAIL, "p isn't a valid pointer to 'struct pixel' ");
+		return where;
+	}
+
+	/* Convert pixel color represented by 3 bytes to appropriate color depth */
+	value = (p->r_color * (1 << p->r_field.length) / (1 << 8) ) << p->r_field.offset;
+	value |= (p->g_color * (1 << p->g_field.length) / (1 << 8) ) << p->g_field.offset;
+	value |= (p->b_color * (1 << p->b_field.length) / (1 << 8) ) << p->b_field.offset;
+
+	/*        if ( p->t_field.length != 0)
+			  {
+			  value |= (p->trans * (1 << p->t_field.length) / (1 << 8) ) << p->t_field.offset;
+			  }*/
+	switch (p->bpp * 8)
+	{
+		case 12 ... 16:
+			*where++ = *((unsigned char *)&value);
+			*where++ = *((unsigned char *)&value + 1);
+			break;
+
+		case 24:
+			*where++ = *((unsigned char *)&value);
+			*where++ = *((unsigned char *)&value + 1);
+			*where++ = *((unsigned char *)&value + 2);
+			break;
+
+		case 32:
+			*where++ = *((unsigned char *)&value);
+			*where++ = *((unsigned char *)&value + 1); 
+			*where++ = *((unsigned char *)&value + 2);
+			*where++ = *((unsigned char *)&value + 3);
+			break;
+
+		default:
+			break;
+	}
+
+	return where;
 }
 
 #ifdef __cplusplus
