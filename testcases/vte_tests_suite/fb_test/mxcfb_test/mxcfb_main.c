@@ -223,5 +223,7 @@ void help(void)
         printf("ID: 4 pan test \n");
         printf("ID: 5 overlay position  test \n");
         printf("ID: 6 draw color test \n");
+        printf("ID: 7 get ipu channel test \n");
+        printf("ID: 8 csc update test \n");
         return;
 }
