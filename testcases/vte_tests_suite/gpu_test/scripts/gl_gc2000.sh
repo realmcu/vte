@@ -160,7 +160,7 @@ then
 fi
 
 TEST_DIR=/mnt/nfs/util/Graphics/
-APP_SUB_DIR="ubuntu_11.10/fsl_imx_linux"
+APP_SUB_DIR="ubuntu_11.10/test"
 export DISPLAY=:0.0
 export XAUTHORITY=/home/linaro/.Xauthority
 setup || exit $RC
