@@ -23,12 +23,12 @@ setup()
     sleep 5
     iwconfig wlan0 mode managed || return 1
     sleep 2
-    iwlist wlan0 scanning | grep FSLLBGAP_001
-    iwconfig wlan0 key bbd9837522
-    iwconfig wlan0 essid FSLLBGAP_001
+    iwlist wlan0 scanning | grep MAD-wifi 
+    iwconfig wlan0 key 00112233445566778899123456 
+    iwconfig wlan0 essid MAD-wifi 
     ifconfig wlan0 up
     udhcpc -i wlan0 || dhclient wlan0 || return 1
-    route add -host $WSERVERIP netmask 255.255.255.0 dev wlan0
+    route add -host $WSERVERIP dev wlan0
     sleep 5
     export LOCALIP=$(ifconfig wlan0 | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}')
 
