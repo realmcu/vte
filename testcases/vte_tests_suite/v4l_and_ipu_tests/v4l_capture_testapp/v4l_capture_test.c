@@ -69,8 +69,14 @@ extern "C" {
 #define IPU_PIX_FMT_RGB565  ipu_fourcc('R','G','B','P')	/*!< 16  RGB-5-6-5     */
 #define IPU_PIX_FMT_BGR24   ipu_fourcc('B','G','R','3')	/*!< 24  BGR-8-8-8     */
 #define IPU_PIX_FMT_BGR32   ipu_fourcc('B','G','R','4')	/*!< 32  BGR-8-8-8-8   */
+	/*======================== LOCAL MACROS =====================================*/
+//#define mxc91131evb_CSI_STRIPS_FIX      1
+#define PIX_FMT_NUM                     10
+#define CLEAR(x)                        memset(&x, 0, sizeof(x));
+#define MXCFB_MEM_ADDRESS               0x83F00000
+#define MAX_STR_LEN 50
 /*======================== LOCAL CONSTANTS ==================================*/
-	const char gaPixFormat[PIX_FMT_NUM][PIX_FMT_NUM] = {
+const char gaPixFormat[PIX_FMT_NUM][PIX_FMT_NUM] = {
 		"RGB565",
 		"BGR24",
 		"RGB24",
@@ -94,12 +100,6 @@ extern "C" {
 		V4L2_PIX_FMT_YUYV,
 		V4L2_PIX_FMT_UYVY
 	};
-/*======================== LOCAL MACROS =====================================*/
-//#define mxc91131evb_CSI_STRIPS_FIX      1
-#define PIX_FMT_NUM                     10
-#define CLEAR(x)                        memset(&x, 0, sizeof(x));
-#define MXCFB_MEM_ADDRESS               0x83F00000
-#define MAX_STR_LEN 50
 
 /*======================== LOCAL TYPEDEFS (STRUCTURES, UNIONS, ENUMS) =======*/
 	typedef struct {
