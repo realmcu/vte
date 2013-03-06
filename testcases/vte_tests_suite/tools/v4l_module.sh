@@ -71,31 +71,14 @@ check_platform_camera()
 
 v4l_setup()
 {
-	check_platform_camera || RC=1
-
-	if [ $RC -ne 0 ]; then
-  		echo "can not find support ovCameras for this platform"
-  		exit 1
-	fi
-
-   if [ -z "$camera_module" ]; then
-     echo "no camera module supported"
-	 return 1
-   fi
    #turn on the display
    echo 0 > /sys/class/graphics/fb0/blank
    sleep 1
 
-   set -x
    #keep cursor on
    echo -e "\033[9;0]" > /dev/tty0
-   for cm in $camera_module; do
-   	modprobe $cm
-   done
-   sleep 1
    modprobe mxc_v4l2_capture || return 1
    sleep 1
-   set +x
 
    retry=5
    while [ ! -e /dev/video0 ]; do
@@ -113,21 +96,6 @@ v4l_setup()
 v4l_cleanup()
 {
 	CAMERA=
-	
-	check_platform_camera || RC=1
-
-	if [ $RC -ne 0 ]; then
-  		echo "can not find support ovCameras for this platform"
-  		exit 1
-    fi
-
-    rmodule mxc_v4l2_capture
-    sleep 2
-    set -x
-    for cm in $camera_module; do
-        rmodule $cm
-    done
-    set +x
 }
 
 
