@@ -21,7 +21,7 @@ setup()
 	fi
     modprobe ar6000
     sleep 5
-    iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep FSLLBGAP_001 && iwconfig wlan0 key bbd9837522 && iwconfig wlan0 essid FSLLBGAP_001
+    iwconfig wlan0 mode managed && sleep 10 && iwlist wlan0 scanning | grep MAD-wifi && iwconfig wlan0 key 00112233445566778899123456 && iwconfig wlan0 essid MAD-wifi
     if [ $? -ne 0 ];then
         RC=1
     else
@@ -39,6 +39,8 @@ setup()
 cleanup()
 {
     echo "CLEANUP "
+    route del -host $SERVERIP dev wlan0
+    route del default dev wlan0
     modprobe -r ar6000
 }
 
