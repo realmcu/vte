@@ -45,7 +45,9 @@ cleanup()
 {
 RC=0
 
-route del -host $WSERVERIP
+route del -host $WSERVERIP dev wlan0
+route del default dev wlan0
+modprobe -r ar6000
 #TODO add cleanup code here
 
 return $RC
