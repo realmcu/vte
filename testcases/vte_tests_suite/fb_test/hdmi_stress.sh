@@ -537,7 +537,7 @@ while [ $i -lt $loops ]; do
    	cat /sys/class/graphics/${hdmi_fb}/mode
 	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
    	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || { RC=110; return $RC }
+    aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || { RC=110; return $RC; }
 	  wait $pid_video || { RC=111; return $RC; }
 	  done
 done
