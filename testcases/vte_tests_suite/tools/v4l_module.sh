@@ -32,35 +32,31 @@ check_platform_camera()
 		camera_all=$(echo $i | cut -d ':' -f 2)
 		camera=$(echo $camera_all | cut -d '_' -f 1)
 		appends=$(echo $camera_all | grep '_' | cut -d '_' -f 2)
-		if [ "$appends" ]; then
-			apd=_${appends}
-		fi
-		if [ $find -eq 1  ]; then
-			rmodule ${camera}_camera${apd}
+		if [ "$camera" = ov564x ];then
+			camera_module=ov5640_camera
 			continue
-		fi
-		if [ ! -z "$CAMERA"  ];then
-			if [ "$CAMERA" = ${camera}${apd} ]; then
-				camera_module=${camera}_camera${apd}
-				rmodule ${camera}_camera${apd}
-				find=1
-			else
-				camera_module=
-				rmodule ${camera}_camera${apd}
-			fi
-		elif [ "$DUAL" = "2"  ];then
-				camera_module=$(echo $camera_module  ${camera}_camera${apd})
-				rmodule ${camera}_camera${apd}
-
 		else
-			rmodule ${camera}_camera${apd}
-			sleep 1
-			camera_module=$(echo $camera_module  ${camera}_camera${apd})
+			if [ "$appends" ]; then
+				apd=_${appends}
+			fi
+			if [ $find -eq 1  ]; then
+				continue
+			fi
+			if [ ! -z "$CAMERA"  ];then
+				if [ "$CAMERA" = ${camera}${apd} ]; then
+					camera_module=$(echo $camera_module  ${camera}_camera${apd})
+					find=1
+				fi
+			elif [ "$DUAL" = "2"  ];then
+					camera_module=$(echo $camera_module  ${camera}_camera${apd})
+
+			else
+				sleep 1
+				camera_module=$(echo $camera_module  ${camera}_camera${apd})
+			fi
 		fi
 	done
  done
-
- rmodule mxc_v4l2_capture || return 1
 
  if [ -z "$camera_module" ]; then
 	return 1
@@ -77,7 +73,12 @@ v4l_setup()
 
    #keep cursor on
    echo -e "\033[9;0]" > /dev/tty0
+   check_platform_camera
+   for cm in $camera_module; do
+        modprobe $cm
+   done
    modprobe mxc_v4l2_capture || return 1
+   
    sleep 1
 
    retry=5
@@ -96,6 +97,20 @@ v4l_setup()
 v4l_cleanup()
 {
 	CAMERA=
+	check_platform_camera || RC=1
+
+	if [ $RC -ne 0 ]; then
+		echo "can not find support ovCameras for this platform"
+		exit 1
+	fi
+
+	set -x
+	for cm in $camera_module; do
+		rmodule $cm
+	done
+	sleep 2
+	rmodule mxc_v4l2_capture || return 1
+	set +x
 }
 
 
@@ -113,10 +128,8 @@ if [ -z "$CAMERA" ]; then
 		pt=$(platfm.sh)
 		case "$pt" in
 		'IMX6DL-Sabre-SD'):
-  		CAMERA=ov5642
 		;;
 		'IMX6Q-Sabre-SD') :
-  		CAMERA=ov5642
 		;;
 		'*') :
   		CAMERA=ov5640
