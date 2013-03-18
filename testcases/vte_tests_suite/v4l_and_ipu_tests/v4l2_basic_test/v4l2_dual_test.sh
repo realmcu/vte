@@ -96,7 +96,7 @@ test_case_01()
 	do
 		for n in $MODES564230FPS
 		do
-		    echo "--------------current 5642 mode is: $n"
+		    echo "--------------current 5640_parallel mode is: $n"
 			echo "--------------current 5640 mode is: $m"
 			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2  & 
 			pid=$!
@@ -130,7 +130,7 @@ test_case_02()
 	do
 		for n in $MODES564215FPS
 		do
-			echo "--------------current 5642 mode is: $n"
+			echo "--------------current 5640_parallel mode is: $n"
 			echo "--------------current 5640 mode is: $m"
 			${TSTCMD} -T 100 -C 2 -s CSI_MEM -D /dev/video0 -O YUV420 -M $n -u /dev/fb2 -r 15  & 
 			pid=$!
