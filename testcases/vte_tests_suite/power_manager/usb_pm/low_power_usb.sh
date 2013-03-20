@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (C) 2010, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2010, 2012, 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -20,6 +20,8 @@
 #Author                          Date          Number    Description of Changes
 #-----------------           ------------    ----------  -------------------------------
 #Andy Tian                   2012/06/19        NA        Add port skip for auto suspend
+#Andy Tian                   2013/03/20        NA        Enable wakeup only for supported
+#														 usb devices
 #-----------------           ------------    ----------  -------------------------------
 # 
 
@@ -59,9 +61,12 @@ enable_usb_wakeup()
  usb_ehci_ctrls=$(ls ${SYS_USB_DEV}/configuration)
  for i in $usb_ehci_ctrls
  do
-	  ctrl=$(dirname $i)/power/wakeup
-    echo enabled > $ctrl
-    echo "echo enabled > $ctrl"
+	 ctrl=$(dirname $i)/power/wakeup
+	if [ -e "$ctrl" ]; then
+       	echo auto > $ctrl
+   		echo "echo auto > $ctrl"
+		sleep 2
+	fi
  done
 }
 
@@ -76,9 +81,11 @@ auto_usb_dev()
 			fi
       if [ -z "$is_skip" ]; then
 	  	ctrl=$(dirname $i)/power/control
-      echo auto > $ctrl
-      echo "echo auto > $ctrl"
+		if [ -e "$ctrl" ]; then
+        	echo auto > $ctrl
+      		echo "echo auto > $ctrl"
 			sleep 2
+		fi
       fi
   done
 }
@@ -96,7 +103,7 @@ auto_usb_dev
 
 sleep 5
 
-usb_clk_list=$(cat /proc/cpu/clocks | grep usb | cut -c 46-47 | awk {'print $1'})
+#usb_clk_list=$(cat /proc/cpu/clocks | grep usb | cut -c 46-47 | awk {'print $1'})
 
 RT=0
 for i in $usb_clk_list
