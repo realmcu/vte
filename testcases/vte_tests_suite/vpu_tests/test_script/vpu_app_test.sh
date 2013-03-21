@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/sh -x
 ################################################################################
-#Copyright (C) 2009, 2012 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009, 2012, 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -24,6 +24,7 @@
 #														  larger or equal 720p
 #Andy Tian                    05/16/2012         N/A      add encode size list if camera used.
 #Shelly Cheng                 08/14/2012         N/A      MX6 ARD board no support camera.
+#Andy Tian                    03/21/2013         N/A      Get camera supported mode for VPU encode case.
 # 
 ################################################################################
 
@@ -497,10 +498,6 @@ fi
 srcfile=
 FORMAT=
 SIZELIST="176x144 320x240 640x480 720x480 720x576 1024x768 1280x720 1920x1080"
-#add encode size list for ov5640_mipi fps 30
-EN_SIZELIST="176x144 320x240 640x480 720x480 720x576 1280x720 1920x1080"
-#For ov5642, it only support below 6 resolution for fps 30
-SIZELIST_5642="176x144 320x240 640x480 720x480 720x576 1280x720"
 ROTATION="0 90 180 270"
 #ROTATION="0"
 MIRROR="0 1 2 3"
@@ -522,9 +519,17 @@ fi
 TSTCMD="/unit_tests/mxc_vpu_test.out"
 
 setup || exit $RC
-if [ $OV -eq 56 ]; then
-	EN_SIZELIST=$SIZELIST_5642
+
+if [ "$CAMERA" = "ov5640_mipi" ]; then
+    modes=`v4l_modes -R -D /dev/video1`
+elif [ -z $NO_CAMERA ];then
+    modes=`v4l_modes -R`
 fi
+
+for i in $modes; do
+	mode=`echo $i | cut -d: -f2`
+	EN_SIZELIST="$EN_SIZELIST $mode"
+done
 
 case "$1" in
 1)
