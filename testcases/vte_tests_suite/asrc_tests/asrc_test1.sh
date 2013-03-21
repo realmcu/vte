@@ -133,7 +133,7 @@ HEADPHONE, hear if there is voice."
 
     grep $SAM_FREQ play.info > /dev/null || RC=$?
     [ $RC -eq 0 ] || {
-        tet_resm TFAIL "wrong sampling rate in coverted stream"
+        tst_resm TFAIL "wrong sampling rate in coverted stream"
     }
 
     tst_resm TPASS "Playback finished."
