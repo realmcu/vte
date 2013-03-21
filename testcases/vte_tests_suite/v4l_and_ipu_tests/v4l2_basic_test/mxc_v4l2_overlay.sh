@@ -1,5 +1,5 @@
 #!/bin/sh
-#Copyright (C) 2009-2010,2012 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2009-2010,2012,2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -20,6 +20,8 @@
 #Hake Huang/-----             20090217      Initial version
 #Andy Tian                    20120314      Update the support mode of fps 15
 #                                           for ov5642
+#Andy Tian                    20130321      Get the accurate support modes for
+#                                           case 05 and 06
 ################################################################################
 
 
@@ -351,40 +353,13 @@ do
 	 HL=$(expr $FBY - $i)
 	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
    	echo "frame rate 15"
-	if [ $OV -eq 56 ]; then
-		# For ov5642, fps 15, it support mode of 0, 1, 2, 3, 5, 6, 7
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 6 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 15 || return $RC
-        else
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
-         fi
+	for mode in $modes_15fps; do
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m $mode -t 3 -fr 15 || return $RC
+	done
    	 echo "farme rate 30"
-         if [ $OV -eq 56 ]; then
-		# For ov5642, fps 30, it only support mode of 0,1,2,3,4,7 temprorally
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 30 || return $RC
-         else
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
-         fi
+	for mode in $modes_30fps; do
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m $mode -t 3 -fr 15 || return $RC
+	done
         fi
   done
  done
@@ -427,77 +402,38 @@ do
 	 WL=$(expr $FBX - $i)
 	 HL=$(expr $FBY - $i)
 	 if [ $OWD -lt $WL  ] && [ $OHT -lt $HL ]; then
-	if [ $OV -eq 56 ]; then
-		# For ov5642, fps 15, it only support mode of 0, 1, 2, 3, 5, 6, 7
-	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 15 || return $RC
-	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 15 || return $RC
-	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 15 || return $RC
-	   	${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 6 -t 3 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 15 || return $RC
-        else
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 15 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 15 || return $RC
-         fi
-   	 echo "farme rate 30"
-        if [ $OV -eq 56 ]; then
-		# For ov5642, fps 30, it only support mode of 0,1,2,3,4,7 temprorally
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 3 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 7 -t 3 -fr 30 || return $RC
-        else
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 0 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 1 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 2 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 3 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 4 -t 5 -fr 30 || return $RC
-		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m 5 -t 5 -fr 30 || return $RC
-        fi
-   fi
+   	echo "frame rate 15"
+	for mode in $modes_15fps; do
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m $mode -t 3 -fr 15 || return $RC
 	done
+   	 echo "farme rate 30"
+	for mode in $modes_30fps; do
+		${TSTCMD}  -iw 128 -ih 128 -it $i -il $i -ow $OWD -oh $OHT -ol $i -ot $i -r $k -m $mode -t 3 -fr 15 || return $RC
+	done
+	fi
+  done
  done
 done
 RC=0
 return $RC
+
 }
-
-
-usage()
-{
-echo "$0 [case ID]"
-echo "1: output with size change"
-echo "2: output with input size change"
-echo "3: rotation test"
-echo "4: rotation and offset test"
-echo "5: capture resolution test"
-echo "6: gamma test"
-exit 1
-}
-
-# main function
-
-RC=0
-
-
-#TODO check parameter
-if [ $# -ne 1 ]
-then
-    usage
-fi
 
 TARGET=
 TSTCMD=
 RESSIZE=
 
 setup || exit $RC
+
+if [ $1 -gt 4 ]; then
+	if [ "$CAMERA" = "ov5640_mipi" ]; then
+		modes_15fps=`v4l_modes -D /dev/video1 -r 15`
+		modes_30fps=`v4l_modes -D /dev/video1`
+	else
+		modes_15fps=`v4l_modes -r 15`
+		modes_30fps=`v4l_modes`
+	fi
+fi
 
 
 case "$1" in
