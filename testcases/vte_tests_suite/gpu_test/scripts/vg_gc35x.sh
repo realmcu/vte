@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011, 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ test_case_02()
     echo "==========================="
     echo tiger
     echo "==========================="
-    ./tiger -rgba 5650 -frameCount 1000 &
+    ./tiger -rgba 5650 -frameCount 90000 &
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
