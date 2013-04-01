@@ -280,17 +280,24 @@ determine_platform()
         p=IMX6-SABRELITE
     fi
 
-	find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX6 Quad"| wc -l`;
-    if [ $find -eq 1 ]
-    then
-        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-        p=IMX6-SABRELITE
+	find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX6 Quad"| wc -l`;		
+    if [ $find -eq 1 ]		
+    then		
+	find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;		
+	p=IMX6-SABRELITE		
     fi
 
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "Device Tree" | wc -l`;
     if [ $find -eq 1 ]
     then
-        p=IMX6Q-Sabre-SD
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
+	if [ $find -eq 1 ]; then
+		p=IMX6Q-Sabre-SD
+	fi
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
+	if [ $find -eq 1 ]; then
+		p=IMX6DL-Sabre-SD
+	fi
     fi
 
     if [ "$p" = "IMX31-3STACK" ]
@@ -531,7 +538,30 @@ Serial          : 0000000000000000
 # cat /proc/device-tree/model
 Freescale i.MX6Q SABRE Smart Device Board
 
+----MX6 board with device tree -201303
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 790.52
 
+processor       : 1
+BogoMIPS        : 790.52
+
+processor       : 2
+BogoMIPS        : 790.52
+
+processor       : 3
+BogoMIPS        : 790.52
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3 tls
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX6 Quad/DualLite (Device Tree)
+Revision        : 63312
+Serial          : 161609d4d72d7838
 EOF
 }
 
