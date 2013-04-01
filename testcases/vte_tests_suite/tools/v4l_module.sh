@@ -21,18 +21,29 @@ check_platform_camera()
 {
  #only check i2c camera
  find=0
- bus_if=$(ls -d /sys/devices/platform/imx-i2c.*)
+ if [ `uname -r` \< "3.5" ]; then
+	bus_if=$(ls -d /sys/devices/platform/imx-i2c.*)
+ else
+	#on 3.5.7, i2c dir is /sys/class/i2c-dev/i2c-0, i2c-1, i2c-2
+	bus_if=$(ls -d /sys/class/i2c-dev/i2c-*)
+ fi
  #if there are multi camera support then choice the given one or last one
  for j in $bus_if; do
     set -x
-	names=$(find $j -name name | xargs grep ov)
+	if [ `uname -r` \< "3.5" ]; then
+		names=$(find $j -name name | xargs grep ov)
+	else
+		#in case recursive loop
+		names=$(cat $j/device/*/name |grep ov)
+	fi
+
     set +x
 	for i in $names ; do
 		apd=
 		camera_all=$(echo $i | cut -d ':' -f 2)
 		camera=$(echo $camera_all | cut -d '_' -f 1)
 		appends=$(echo $camera_all | grep '_' | cut -d '_' -f 2)
-		if [ "$camera" = ov564x ];then
+		if [ "$camera" = "ov564x" ]; then
 			camera_module=ov5640_camera
 			continue
 		else
@@ -159,8 +170,8 @@ else
   if echo $camera_module | grep ov5642_camera && [ "$1" = "setup" ]
   then
 	  #special for ov5642 which only support some modes on 6q Lite platform
-	  return 56
+	exit 56
   else
-  exit $RC 
+	exit $RC
   fi
 fi
