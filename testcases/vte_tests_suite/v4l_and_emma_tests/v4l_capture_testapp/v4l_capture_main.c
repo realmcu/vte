@@ -185,6 +185,7 @@ int main(int argc, char **argv)
             Wflag = 0, 
             Sflag = 0,
             Bflag = 0,
+			Mflag = 0,
             Tflag = 0,
             oflag = 0,
             Oflag = 0,
@@ -197,6 +198,7 @@ int main(int argc, char **argv)
 
         char *Dopt, 
              *Hopt, 
+			 *Mopt,
              *Wopt, 
              *Topt,
              *oopt,
@@ -212,6 +214,7 @@ int main(int argc, char **argv)
                 { "D:", &Dflag,         &Dopt },        /* Video capturing device               */
                 { "H:", &Hflag,         &Hopt },        /* Capturing height                     */
                 { "W:", &Wflag,         &Wopt },        /* Capturing width                      */
+				{ "M:", &Mflag,         &Mopt },        /* Camera mode */
                 { "S" , &Sflag,         NULL  },        /* Resize test                          */
                 { "B:", &Bflag,         &Bopt },        /* Cropping test                        */
                 { "J:", &Jflag,         &Jopt },        /* Video option                        */
@@ -250,7 +253,9 @@ int main(int argc, char **argv)
         gV4LTestConfig.mCropRect.width = 640;
         gV4LTestConfig.mCropRect.height = 480;
         gV4LTestConfig.mOverlayType = Yflag ? atoi(Yopt) : V4L2_FBUF_FLAG_OVERLAY;
+		gV4LTestConfig.mMode = Mflag?atoi(Mopt): 0;
        
+
         if((gV4LTestConfig.mCaseNum > 4)||(gV4LTestConfig.mCaseNum < 1))
         {
                 tst_resm(TBROK, "Invalid option for -C flag : %d", gV4LTestConfig.mCaseNum);
@@ -343,6 +348,7 @@ int main(int argc, char **argv)
                 tst_resm(TINFO, "Width = %d", gV4LTestConfig.mWidth);
                 tst_resm(TINFO, "Case number = %d", gV4LTestConfig.mCaseNum);
                 tst_resm(TINFO, "Path to output file : %s", gV4LTestConfig.mOutputFile);
+                tst_resm(TINFO, "Camera mode : %s", gV4LTestConfig.mMode);
                
                 if(Bflag)
                         tst_resm(TINFO, 
