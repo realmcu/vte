@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+ * Copyright (C) 2011,2013 Freescale Semiconductor, Inc. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include <linux/init.h>
 #include <linux/list.h>
 #include <linux/types.h>
-#include <linux/kernel.h> 
+#include <linux/kernel.h>
 #include <linux/interrupt.h>
 #include <linux/moduleparam.h>
 #include <linux/io.h>
@@ -29,6 +29,11 @@
 #include <linux/gpio.h>
 #include <asm/atomic.h>
 #include <mach/hardware.h>
+#ifdef CONFIG_OF
+#include <linux/of.h>
+#include <linux/of_address.h>
+#endif
+
 
 #define MX6_ARM2_DISP0_RESET IMX_GPIO_NR(5, 0)
 #define SABRESD_DISP0_RST_B IMX_GPIO_NR(3, 8)
@@ -46,7 +51,7 @@ static long calc_time(unsigned long size)
 	unsigned long us, speed;
 	us = (finish.tv_sec - start.tv_sec) * 1000 * 1000 +
 	     (finish.tv_usec - start.tv_usec);
-	printk("totle time is %ldus\n", us);
+	pr_info("Total time is %ldus\n", us);
 	speed = us / size;
 	return speed;
 }
@@ -56,9 +61,16 @@ static int test_init(void)
 {
 	int count = test_count;
 	unsigned long speed = 0;
-	/*map GPIO3*/
-	void __iomem *reg = ioremap(GPIO3_BASE_ADDR,SZ_32K); 
+	void __iomem *reg;
 	u32 l;
+#ifdef CONFIG_OF
+	struct device_node *np;
+	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-gpio");
+	reg = of_iomap(np, 0);
+#else
+	/*map GPIO3*/
+	reg = ioremap(GPIO3_BASE_ADDR, SZ_32K);
+#endif
 
 	printk(KERN_INFO "gpio test on disp0-reset\n");
 	/*test memory io*/
@@ -84,7 +96,7 @@ static int test_init(void)
 
 static void test_exit(void)
 {
-    return;     
+	return;
 }
 
 MODULE_LICENSE("GPL");

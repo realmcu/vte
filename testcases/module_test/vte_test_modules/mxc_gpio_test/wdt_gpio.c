@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Freescale Semiconductor, Inc. All Rights Reserved.
+ * Copyright (C) 2012,2013 Freescale Semiconductor, Inc. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #include <linux/init.h>
 #include <linux/list.h>
 #include <linux/types.h>
-#include <linux/kernel.h> 
+#include <linux/kernel.h>
 #include <linux/interrupt.h>
 #include <linux/moduleparam.h>
 #include <linux/io.h>
@@ -32,10 +32,14 @@
 #include <asm/atomic.h>
 #include <mach/hardware.h>
 
+#ifdef CONFIG_OF
+#include <linux/of.h>
+#include <linux/of_address.h>
+#endif
+
 #define  GPIO_PSR 8
 #define  GPIO_DIR 4
 #define  GPIO_DR  0
-
 
 static unsigned test_count = 10000;
 module_param(test_count,uint,0);
@@ -51,11 +55,19 @@ static int test_init(void)
 	unsigned long IOMUXC_IOMUXC_SW_MUX_CTL_PAD_WDOG_B = 0x02a0;
 	unsigned long IOMUXC_IOMUXC_SW_PAD_CTL_PAD_WDOG_B = 0x05a8;
 	u32 l;
+#ifdef CONFIG_OF
+	struct device_node *np;
+	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-gpio");
+	regA = of_iomap(np, 0);
+	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-iomuxc");
+	regB = of_iomap(np, 0);
+#else
 	/*map GPIO3*/
-	regA = ioremap(GPIO3_BASE_ADDR,SZ_32K); 
-	regB = ioremap(MX6Q_IOMUXC_BASE_ADDR,SZ_32K); 
+	regA = ioremap(GPIO3_BASE_ADDR, SZ_32K);
+	regB = ioremap(MX6Q_IOMUXC_BASE_ADDR, SZ_32K);
+#endif
 
-	printk(KERN_INFO "gpio tet sequence on GPIO3 18 bit\n");
+	pr_info("gpio test sequence on GPIO3 18 bit\n");
 	while(count--){
 		l = 0x000005;
 		__raw_writel(l ,regB + IOMUXC_IOMUXC_SW_MUX_CTL_PAD_WDOG_B);
@@ -88,7 +100,7 @@ static void test_exit(void)
 	if (regB)
 		iounmap(regB);
 
-    return;     
+	return;
 }
 
 MODULE_LICENSE("GPL");
