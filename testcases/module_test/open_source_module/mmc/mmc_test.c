@@ -14,6 +14,8 @@
 #include <linux/mmc/host.h>
 #include <linux/mmc/mmc.h>
 #include <linux/slab.h>
+#include <linux/stat.h>
+#include <linux/module.h>
 
 #include <linux/scatterlist.h>
 
