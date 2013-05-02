@@ -27,6 +27,7 @@
 #include <linux/slab.h>
 #include <linux/sched.h>
 #include <linux/vmalloc.h>
+#include <mtd/mtd-abi.h>
 
 #define PRINT_PREF KERN_INFO "mtd_stresstest: "
 
@@ -112,7 +113,7 @@ static int erase_eraseblock(int ebnum)
 	ei.addr = addr;
 	ei.len  = mtd->erasesize;
 
-	err = mtd->erase(mtd, &ei);
+	err = mtd_erase(mtd, &ei);
 	if (unlikely(err)) {
 		printk(PRINT_PREF "error %d while erasing EB %d\n", err, ebnum);
 		return err;
@@ -132,7 +133,7 @@ static int is_block_bad(int ebnum)
 	loff_t addr = ebnum * mtd->erasesize;
 	int ret;
 
-	ret = mtd->block_isbad(mtd, addr);
+	ret = mtd_block_isbad(mtd, addr);
 	if (ret)
 		printk(PRINT_PREF "block %d is bad\n", ebnum);
 	return ret;
@@ -153,7 +154,7 @@ static int do_read(void)
 			len = mtd->erasesize - offs;
 	}
 	addr = eb * mtd->erasesize + offs;
-	err = mtd->read(mtd, addr, len, &read, readbuf);
+	err = mtd_read(mtd, addr, len, &read, readbuf);
 	if (err == -EUCLEAN)
 		err = 0;
 	if (unlikely(err || read != len)) {
@@ -192,7 +193,7 @@ static int do_write(void)
 		}
 	}
 	addr = eb * mtd->erasesize + offs;
-	err = mtd->write(mtd, addr, len, &written, writebuf);
+	err = mtd_write(mtd, addr, len, &written, writebuf);
 	if (unlikely(err || written != len)) {
 		printk(PRINT_PREF "error: write failed at 0x%llx\n",
 		       (long long)addr);
@@ -228,7 +229,7 @@ static int scan_for_bad_eraseblocks(void)
 	}
 
 	/* NOR flash does not implement block_isbad */
-	if (mtd->block_isbad == NULL)
+	if (mtd_block_isbad == NULL)
 		return 0;
 
 	printk(PRINT_PREF "scanning for bad eraseblocks\n");

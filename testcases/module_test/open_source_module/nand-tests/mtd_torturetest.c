@@ -30,6 +30,7 @@
 #include <linux/mtd/mtd.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
+#include <mtd/mtd-abi.h>
 
 #define PRINT_PREF KERN_INFO "mtd_torturetest: "
 #define RETRIES 3
@@ -105,7 +106,7 @@ static inline int erase_eraseblock(int ebnum)
 	ei.addr = addr;
 	ei.len  = mtd->erasesize;
 
-	err = mtd->erase(mtd, &ei);
+	err = mtd_erase(mtd, &ei);
 	if (err) {
 		printk(PRINT_PREF "error %d while erasing EB %d\n", err, ebnum);
 		return err;
@@ -137,7 +138,7 @@ static inline int check_eraseblock(int ebnum, unsigned char *buf)
 	}
 
 retry:
-	err = mtd->read(mtd, addr, len, &read, check_buf);
+	err = mtd_read(mtd, addr, len, &read, check_buf);
 	if (err == -EUCLEAN)
 		printk(PRINT_PREF "single bit flip occurred at EB %d "
 		       "MTD reported that it was fixed.\n", ebnum);
@@ -189,7 +190,7 @@ static inline int write_pattern(int ebnum, void *buf)
 		addr = (ebnum + 1) * mtd->erasesize - pgcnt * pgsize;
 		len = pgcnt * pgsize;
 	}
-	err = mtd->write(mtd, addr, len, &written, buf);
+	err = mtd_write(mtd, addr, len, &written, buf);
 	if (err) {
 		printk(PRINT_PREF "error %d while writing EB %d, written %zd"
 		      " bytes\n", err, ebnum, written);
@@ -283,9 +284,9 @@ static int __init tort_init(void)
 	 * Check if there is a bad eraseblock among those we are going to test.
 	 */
 	memset(&bad_ebs[0], 0, sizeof(int) * ebcnt);
-	if (mtd->block_isbad) {
+	if (mtd_block_isbad) {
 		for (i = eb; i < eb + ebcnt; i++) {
-			err = mtd->block_isbad(mtd,
+			err = mtd_block_isbad(mtd,
 					       (loff_t)i * mtd->erasesize);
 
 			if (err < 0) {

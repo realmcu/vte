@@ -26,6 +26,7 @@
 #include <linux/mtd/mtd.h>
 #include <linux/slab.h>
 #include <linux/sched.h>
+#include <mtd/mtd-abi.h>
 
 #define PRINT_PREF KERN_INFO "mtd_speedtest: "
 
@@ -74,7 +75,7 @@ static int erase_eraseblock(int ebnum)
 	ei.addr = addr;
 	ei.len  = mtd->erasesize;
 
-	err = mtd->erase(mtd, &ei);
+	err = mtd_erase(mtd, &ei);
 	if (err) {
 		printk(PRINT_PREF "error %d while erasing EB %d\n", err, ebnum);
 		return err;
@@ -111,7 +112,7 @@ static int write_eraseblock(int ebnum)
 	int err = 0;
 	loff_t addr = ebnum * mtd->erasesize;
 
-	err = mtd->write(mtd, addr, mtd->erasesize, &written, iobuf);
+	err = mtd_write(mtd, addr, mtd->erasesize, &written, iobuf);
 	if (err || written != mtd->erasesize) {
 		printk(PRINT_PREF "error: write failed at %#llx\n", addr);
 		if (!err)
@@ -129,7 +130,7 @@ static int write_eraseblock_by_page(int ebnum)
 	void *buf = iobuf;
 
 	for (i = 0; i < pgcnt; i++) {
-		err = mtd->write(mtd, addr, pgsize, &written, buf);
+		err = mtd_write(mtd, addr, pgsize, &written, buf);
 		if (err || written != pgsize) {
 			printk(PRINT_PREF "error: write failed at %#llx\n",
 			       addr);
@@ -152,7 +153,7 @@ static int write_eraseblock_by_2pages(int ebnum)
 	void *buf = iobuf;
 
 	for (i = 0; i < n; i++) {
-		err = mtd->write(mtd, addr, sz, &written, buf);
+		err = mtd_write(mtd, addr, sz, &written, buf);
 		if (err || written != sz) {
 			printk(PRINT_PREF "error: write failed at %#llx\n",
 			       addr);
@@ -164,7 +165,7 @@ static int write_eraseblock_by_2pages(int ebnum)
 		buf += sz;
 	}
 	if (pgcnt % 2) {
-		err = mtd->write(mtd, addr, pgsize, &written, buf);
+		err = mtd_write(mtd, addr, pgsize, &written, buf);
 		if (err || written != pgsize) {
 			printk(PRINT_PREF "error: write failed at %#llx\n",
 			       addr);
@@ -182,7 +183,7 @@ static int read_eraseblock(int ebnum)
 	int err = 0;
 	loff_t addr = ebnum * mtd->erasesize;
 
-	err = mtd->read(mtd, addr, mtd->erasesize, &read, iobuf);
+	err = mtd_read(mtd, addr, mtd->erasesize, &read, iobuf);
 	/* Ignore corrected ECC errors */
 	if (err == -EUCLEAN)
 		err = 0;
@@ -203,7 +204,7 @@ static int read_eraseblock_by_page(int ebnum)
 	void *buf = iobuf;
 
 	for (i = 0; i < pgcnt; i++) {
-		err = mtd->read(mtd, addr, pgsize, &read, buf);
+		err = mtd_read(mtd, addr, pgsize, &read, buf);
 		/* Ignore corrected ECC errors */
 		if (err == -EUCLEAN)
 			err = 0;
@@ -229,7 +230,7 @@ static int read_eraseblock_by_2pages(int ebnum)
 	void *buf = iobuf;
 
 	for (i = 0; i < n; i++) {
-		err = mtd->read(mtd, addr, sz, &read, buf);
+		err = mtd_read(mtd, addr, sz, &read, buf);
 		/* Ignore corrected ECC errors */
 		if (err == -EUCLEAN)
 			err = 0;
@@ -244,7 +245,7 @@ static int read_eraseblock_by_2pages(int ebnum)
 		buf += sz;
 	}
 	if (pgcnt % 2) {
-		err = mtd->read(mtd, addr, pgsize, &read, buf);
+		err = mtd_read(mtd, addr, pgsize, &read, buf);
 		/* Ignore corrected ECC errors */
 		if (err == -EUCLEAN)
 			err = 0;
@@ -264,7 +265,7 @@ static int is_block_bad(int ebnum)
 	loff_t addr = ebnum * mtd->erasesize;
 	int ret;
 
-	ret = mtd->block_isbad(mtd, addr);
+	ret = mtd_block_isbad(mtd, addr);
 	if (ret)
 		printk(PRINT_PREF "block %d is bad\n", ebnum);
 	return ret;
@@ -302,7 +303,7 @@ static int scan_for_bad_eraseblocks(void)
 	}
 
 	/* NOR flash does not implement block_isbad */
-	if (mtd->block_isbad == NULL)
+	if (mtd_block_isbad == NULL)
 		goto out;
 
 	printk(PRINT_PREF "scanning for bad eraseblocks\n");
