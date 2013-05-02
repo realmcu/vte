@@ -1,7 +1,8 @@
 #!/bin/sh
 #refer http://www.kernel.org/doc/Documentation/power/basic-pm-debugging.txt
 
-loops=500
+#do not edit it
+loops=10
 
 setup()
 {
