@@ -2,6 +2,7 @@ ifndef KERNEL_PATH
 	KERNEL_PATH=$(KLINUX_BLTDIR)
 endif
 
+obj-m =  mtd_nandbiterrs.o
 obj-m += mtd_nandecctest.o  
 obj-m += mtd_oobtest.o
 obj-m += mtd_pagetest.o  
@@ -10,7 +11,6 @@ obj-m += mtd_speedtest.o
 obj-m += mtd_stresstest.o  
 obj-m += mtd_subpagetest.o  
 obj-m += mtd_torturetest.o
-
 
 modules:
 	make -C $(KERNEL_PATH) SUBDIRS=$$PWD ARCH=$(ARCH_CPU) modules
