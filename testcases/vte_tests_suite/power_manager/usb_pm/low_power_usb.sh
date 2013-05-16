@@ -21,9 +21,8 @@
 #-----------------           ------------    ----------  -------------------------------
 #Andy Tian                   2012/06/19        NA        Add port skip for auto suspend
 #Andy Tian                   2013/03/20        NA        Enable wakeup only for supported
-#														 usb devices
-#-----------------           ------------    ----------  -------------------------------
-# 
+#Andy Tian                   2013/04/23        NA        Fix a bug when enable device remote wakeup
+#--------           ------------    ----------  -------------------------------
 
 #control interface for usb host controler
 FSL_EHCI_INTERFACE="fsl-ehci*"
@@ -63,8 +62,8 @@ enable_usb_wakeup()
  do
 	 ctrl=$(dirname $i)/power/wakeup
 	if [ -e "$ctrl" ]; then
-       	echo auto > $ctrl
-   		echo "echo auto > $ctrl"
+       	echo enabled > $ctrl
+   		echo "echo enabled > $ctrl"
 		sleep 2
 	fi
  done

@@ -116,16 +116,15 @@ setup()
     cp dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt /tmp
     cd
     export PATH=$PATH:/tmp
-    umount /mnt/nfs
 
     modprobe ar6000
     if ifconfig -a |grep wlan0; then
         sleep 2
         iwconfig wlan0 mode managed || return 1
         sleep 2
-        iwlist wlan0 scanning | grep FSLLBGAP_001
-        iwconfig wlan0 key bbd9837522
-        iwconfig wlan0 essid FSLLBGAP_001
+        iwlist wlan0 scanning | grep MAD-wifi
+        iwconfig wlan0 key 00112233445566778899123456
+        iwconfig wlan0 essid MAD-wifi
         ifconfig wlan0 up
         udhcpc -i wlan0 || dhclient wlan0 || return 1
         route add -host 10.192.225.222 dev wlan0

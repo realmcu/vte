@@ -1,6 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash
 ##############################################################################
-#Copyright (C) 2011,2012 Freescale Semiconductor, Inc.
+#Copyright (C) 2011-2013 Freescale Semiconductor, Inc.
 #All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -90,7 +90,7 @@ cleanup()
         echo $old_freq > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
     fi
 
-	if [ $caseID -eq 7 ]; then
+	if [ $caseID -eq 7  -o $caseID -eq 8 ]; then
 		clean_bus_mode
 	fi
     return $RC
@@ -438,15 +438,6 @@ pre_bus_mode()
 	cp $a_stream_path /tmp/test_video.h264
 	cp /mnt/nfs/util/Graphics/imx61_rootfs/test/simple_draw /tmp/
 	sync
-	nfs_list=`mount | awk '/:\// {print $3}'`
-	for dir in ${nfs_list}; do
-	umount $dir
-	if [ $? -ne 0 ];then
-		echo "Can not umount the nfs mount point $dir"
-		echo "Need copy `basename $0` to local and run it locally"
-		exit 1
-	fi
-	done
 	
 }
 
@@ -762,7 +753,7 @@ case "$1" in
     test_case_07 || exit $RC
     ;;
 8)
-    test_case_08 || exit $RC
+    test_case_08 || { echo "Test Fail!"; exit $RC; }
     ;;
 *)
     usage

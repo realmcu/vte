@@ -1,5 +1,5 @@
 #!/bin/bash -x
-#Copyright (C) 2005-2010 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2010, 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -24,9 +24,9 @@ install_debian_package()
     for i in $list
     do
         dpkg --force-architecture --root $ROOTFS -i $i
-        ipkg=$(echo $i | cut -d _ -f 1)
+        ipkg=$(echo $i | cut -d _ -f 1 | cut -d/ -f2)
         iver=$(echo $i | cut -d _ -f 2 | cut -d - -f 1)
-        iiver=$(dpkg --list || grep $ipkg || awk '{print $3}')
+        iiver=$(dpkg --list | grep -m 1 " $ipkg" | awk '{print $3}')
         if [ ! $iiver = $iver ]; then
             RC=$(echo $RC $i)
         fi

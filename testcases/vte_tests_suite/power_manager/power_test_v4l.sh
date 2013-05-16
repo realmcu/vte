@@ -15,7 +15,8 @@ setup()
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
-
+	plt=$(platfm.sh)
+    RC=0
     return $RC
 }
 
@@ -46,7 +47,11 @@ test_case_01()
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
     #TODO add function test scripte here
-    v4l_capture_testapp -T 100 &
+    if [ $plt = "IMX6SL-EVK" ]; then
+    v4l2_capture_emma -C 2 -T 1000 &
+	else
+	v4l_capture_testapp -T 100 &
+	fi
 
     echo "core test"
     i=0
@@ -89,7 +94,11 @@ test_case_02()
     while [ $count -lt $tloops ]
     do
 
-        v4l_capture_testapp -T 300 -M 5 &
+    if [ $plt = "IMX6SL-EVK" ]; then
+    v4l2_capture_emma -C 2 -T 1000 &
+	else
+	v4l_capture_testapp -T 100 &
+	fi
 
         i=0
         loops=100
@@ -149,6 +158,7 @@ test_case_03()
 
 }
 
+plt=63
 setup || exit 1
 
 case "$1" in

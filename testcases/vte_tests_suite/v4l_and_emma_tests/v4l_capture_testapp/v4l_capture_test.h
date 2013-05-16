@@ -85,6 +85,7 @@ typedef struct
         char * mOutputFile;
         int mWidth;
         int mHeight;
+		int mMode;
         int mCount;
         int mCaseNum;
         int mRotationMode; 

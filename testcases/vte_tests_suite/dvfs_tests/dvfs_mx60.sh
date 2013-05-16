@@ -578,9 +578,9 @@ medium_mode_audio()
 	mount /dev/sda1 /mnt/sda1 || return 1
     bonnie\+\+ -d /mnt/sda1 -u 0:0 -s 80 -r 40 &
 	pid=$!
-	aplay /tmp/audio44k16S_long.wav || return 1
+	aplay /tmp/audio_test.wav || return 1
 	/tmp/rtc_testapp_6 -m mem -T 100 || return 1
-	aplay /tmp/audio44k16S_long.wav || return 1
+	aplay /tmp/audio_test.wav || return 1
 	wait $pid || return 1
 	umount /mnt/sda1
 	return 0
