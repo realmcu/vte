@@ -84,7 +84,7 @@
 #define TRUNC_LEN1	256	/* truncation length */
 #define TRUNC_LEN2	512	/* truncation length */
 
-TCID_DEFINE(ftruncate02);	/* Test program identifier.    */
+TCID_DEFINE(ftruncate02);
 int TST_TOTAL = 1;		/* Total number of test conditions */
 int fd;				/* file descriptor of testfile */
 char tst_buff[BUF_SIZE];	/* buffer to hold testfile contents */
@@ -103,7 +103,6 @@ int main(int ac, char **av)
 	int read_len = 0;	/* total no. of bytes read from testfile */
 	int err_flag = 0;	/* error indicator flag */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -114,7 +113,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call ftruncate(2) to truncate a test file to a
@@ -123,8 +122,9 @@ int main(int ac, char **av)
 		TEST(ftruncate(fd, TRUNC_LEN1));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "ftruncate(%s) to size %d failed",
-				 TESTFILE, TRUNC_LEN1);
+			tst_resm(TFAIL | TTERRNO,
+				 "ftruncate(%s) to size %d failed", TESTFILE,
+				 TRUNC_LEN1);
 			continue;
 		}
 		/*
@@ -301,7 +301,7 @@ void cleanup()
 
 	/* Close the testfile after writing data into it */
 	if (close(fd) == -1)
-		tst_brkm(TFAIL|TERRNO, NULL, "close(%s) failed", TESTFILE);
+		tst_brkm(TFAIL | TERRNO, NULL, "close(%s) failed", TESTFILE);
 
 	tst_rmdir();
 

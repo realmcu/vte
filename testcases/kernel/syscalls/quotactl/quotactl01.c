@@ -51,29 +51,25 @@
 #if defined(HAVE_QUOTAV2) || defined(HAVE_QUOTAV1)
 #if defined(HAVE_QUOTAV2)
 #define _LINUX_QUOTA_VERSION 2
-#else	/* HAVE_QUOTAV1 */
+#else /* HAVE_QUOTAV1 */
 #define _LINUX_QUOTA_VERSION 1
 #endif
 #include <sys/quota.h>
-#else	/* ! (HAVE_QUOTAV2 || HAVE_QUOTAV1) */
+#else /* ! (HAVE_QUOTAV2 || HAVE_QUOTAV1) */
 /* Not HAVE_QUOTAV2 */
 #define BROKEN_QUOTACTL 1
 #endif
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "quotactl01";		/* Test program identifier.		*/
-int  testno;
-int  TST_TOTAL = 1;			/* total number of tests in this file.	*/
+char *TCID = "quotactl01";
+int testno;
+int TST_TOTAL = 1;
 
 #define QUOTACTL(cmd, addr) \
-	syscall(__NR_quotactl, QCMD(cmd, USRQUOTA), block_dev, id, \
+	ltp_syscall(__NR_quotactl, QCMD(cmd, USRQUOTA), block_dev, id, \
 					(caddr_t) addr)
 #ifndef BROKEN_QUOTACTL
 
@@ -114,7 +110,8 @@ extern void cleanup()
 	if (block_dev) {
 		if (quota_started == 1 && QUOTACTL(Q_QUOTAOFF, &dq)) {
 			tst_brkm(TBROK | TERRNO, NULL,
-				"failed to disable the quota on %s", block_dev);
+				 "failed to disable the quota on %s",
+				 block_dev);
 		}
 	}
 
@@ -138,18 +135,19 @@ extern void cleanup()
 /*		On success - returns 0.					      */
 /*									      */
 /******************************************************************************/
-void setup() {
+void setup()
+{
 
 	/* Capture signals if any */
 	/* Create temporary directories */
 
 	if (geteuid() != 0) {
 		tst_brkm(TCONF, NULL,
-			"You must be root in order to execute this test");
+			 "You must be root in order to execute this test");
 	}
 	if ((quota_loc = malloc(FILENAME_MAX)) == NULL) {
 		tst_brkm(TCONF | TERRNO, NULL,
-			"couldn't allocate memory for the quota loc buffer");
+			 "couldn't allocate memory for the quota loc buffer");
 	}
 
 	TEST_PAUSE;
@@ -161,16 +159,16 @@ void setup() {
 
 		if (errno == ENOENT) {
 			tst_brkm(TCONF, cleanup,
-				"quota file - %s - doesn't exist (is the name "
-				"correct?)", quota_loc);
+				 "quota file - %s - doesn't exist (is the name "
+				 "correct?)", quota_loc);
 		} else {
 			/* Provide a terse explanation for why the command
 			 * failed.. */
 			tst_brkm(TCONF | TERRNO, cleanup,
-				"failed to enable quotas on block device: %s; "
-				"1. Ensure that the device is mounted with the "
-				"quota option. 2. Check the filesystem status "
-				"with `quotacheck %s'", block_dev, block_dev);
+				 "failed to enable quotas on block device: %s; "
+				 "1. Ensure that the device is mounted with the "
+				 "quota option. 2. Check the filesystem status "
+				 "with `quotacheck %s'", block_dev, block_dev);
 		}
 	} else {
 		quota_started = 1;
@@ -189,8 +187,8 @@ void setup() {
 */
 
 #ifdef BROKEN_QUOTACTL
-int
-main(void) {
+int main(void)
+{
 	tst_resm(TBROK, "This system doesn't support quota v2");
 	tst_exit();
 }
@@ -207,26 +205,24 @@ int cmd[] = {
 	Q_SYNC
 };
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 
 	static int block_dev_FLAG = 0, mountpoint_FLAG = 0, quota_file_FLAG = 0;
 	option_t opts[] = {
-		{ .option = "b:", .flag = &block_dev_FLAG, .arg = &block_dev },
-		{ .option = "m:", .flag = &mountpoint_FLAG, .arg = &mountpoint },
-		{ .option = "q:", .flag = &quota_file_FLAG, .arg = &quota_file },
-		{ .option = '\0' }
+		{.option = "b:",.flag = &block_dev_FLAG,.arg = &block_dev},
+		{.option = "m:",.flag = &mountpoint_FLAG,.arg = &mountpoint},
+		{.option = "q:",.flag = &quota_file_FLAG,.arg = &quota_file},
+		{.option = '\0'}
 	};
 
 	int newtid = -1;
-	int result;
 	int ret;
 	int i;
 	int lc;
 	char *msg;
 
-	if ((msg = parse_opts(ac, av, (option_t*) opts, NULL)) != (char*)NULL) {
+	if ((msg = parse_opts(ac, av, (option_t *) opts, NULL)) != (char *)NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
@@ -234,23 +230,24 @@ main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
-			for (i = 0; i <= sizeof(cmd)/sizeof(cmd[0]); i++) {
+			for (i = 0; i <= sizeof(cmd) / sizeof(cmd[0]); i++) {
 
 				ret = QUOTACTL(cmd[i], &dq);
 				if (ret != 0) {
 					tst_resm(TFAIL | TERRNO,
-						"cmd=0x%x failed", cmd[i]);
+						 "cmd=0x%x failed", cmd[i]);
 				} else {
-					tst_resm(TPASS, "quotactl call succeeded");
+					tst_resm(TPASS,
+						 "quotactl call succeeded");
 				}
 
 			}
 
-			TEST(result = syscall(__NR_set_tid_address, &newtid));
+			TEST(ltp_syscall(__NR_set_tid_address, &newtid));
 
 			if (TEST_RETURN == getpid()) {
 				cleanup();

@@ -104,8 +104,8 @@ void setup();
 void cleanup();
 void trapper();
 
-char *TCID = "alarm03";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "alarm03";
+int TST_TOTAL = 1;
 
 int main(int ac, char **av)
 {
@@ -120,7 +120,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call alarm(2)
@@ -129,7 +129,7 @@ int main(int ac, char **av)
 
 		switch (FORK_OR_VFORK()) {
 		case -1:
-			tst_brkm(TBROK|TERRNO, cleanup, "fork() failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "fork() failed");
 			break;
 
 		case 0:
@@ -138,19 +138,19 @@ int main(int ac, char **av)
 			if (TEST_RETURN != 0) {
 				retval = 1;
 				printf("%d: alarm(100), fork, alarm(0) child's "
-				    "alarm returned %ld\n",
-				    getpid(), TEST_RETURN);
+				       "alarm returned %ld\n",
+				       getpid(), TEST_RETURN);
 			} else if (STD_FUNCTIONAL_TEST) {
 				printf("%d: alarm(100), fork, alarm(0) child's "
-				    "alarm returned %ld\n",
-				    getpid(), TEST_RETURN);
+				       "alarm returned %ld\n",
+				       getpid(), TEST_RETURN);
 			}
 
 			exit(retval);
 			break;
 
 		default:
-			Tst_count++;
+			tst_count++;
 			TEST(alarm(0));
 /* The timer may be rounded up to the next nearest second, this is OK */
 			if (TEST_RETURN <= 0 || TEST_RETURN > 101) {
@@ -164,7 +164,8 @@ int main(int ac, char **av)
 					 TEST_RETURN);
 			}
 			if (wait(&status) == -1)
-				tst_brkm(TBROK|TERRNO, cleanup, "wait failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "wait failed");
 			if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
 				tst_resm(TFAIL, "see failures reported above");
 

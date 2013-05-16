@@ -94,7 +94,7 @@ static void cleanup(void);
 static int setup_test(int, int);
 static int cleanup_test(int);
 
-char *TCID = "umount02";	/* Test program identifier.    */
+char *TCID = "umount02";
 
 #define DEFAULT_FSTYPE "ext2"
 #define FSTYPE_LEN	20
@@ -130,7 +130,6 @@ static struct test_case_t {
 	"Pathname too long", ENAMETOOLONG, "ENAMETOOLONG"}
 };
 
-/* Total number of test cases. */
 int TST_TOTAL = sizeof(testcases) / sizeof(testcases[0]);
 
 static int exp_enos[] = { EBUSY, EINVAL, EFAULT, ENAMETOOLONG, ENOENT, 0 };
@@ -169,9 +168,10 @@ int main(int ac, char **av)
 	if (Tflag == 1) {
 		strncpy(Type, fstype,
 			(FSTYPE_LEN <
-			 (strlen(fstype)+1)) ? FSTYPE_LEN : (strlen(fstype)+1));
+			 (strlen(fstype) + 1)) ? FSTYPE_LEN : (strlen(fstype) +
+							       1));
 	} else {
-		strncpy(Type, DEFAULT_FSTYPE, strlen(DEFAULT_FSTYPE)+1);
+		strncpy(Type, DEFAULT_FSTYPE, strlen(DEFAULT_FSTYPE) + 1);
 	}
 
 	if (STD_COPIES != 1) {
@@ -185,7 +185,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -247,9 +247,9 @@ int setup_test(int i, int cnt)
 	switch (i) {
 	case 0:
 		/* Setup for umount(2) returning errno EBUSY. */
-		if (access(Device,F_OK)) {
+		if (access(Device, F_OK)) {
 			tst_brkm(TBROK, cleanup,
-				"Device %s does not exist", Device);
+				 "Device %s does not exist", Device);
 			return 1;
 		}
 
@@ -357,7 +357,6 @@ void setup()
 			 strerror(errno));
 	}
 
-	/* set up expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
 	TEST_PAUSE;

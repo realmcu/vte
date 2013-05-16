@@ -19,21 +19,21 @@ void handler(int signo)
 	printf("Caught SIGCHLD\n");
 }
 
-int main()
+int main(void)
 {
 
-        /* Make sure this flag is supported. */
-        #ifndef SA_NOCLDWAIT
-          fprintf(stderr,"SA_NOCLWAIT flag is not available for testing\n");
-          return PTS_UNSUPPORTED;
-        #endif
+	/* Make sure this flag is supported. */
+#ifndef SA_NOCLDWAIT
+	fprintf(stderr, "SA_NOCLWAIT flag is not available for testing\n");
+	return PTS_UNSUPPORTED;
+#endif
 
 	struct sigaction act;
 
 	act.sa_handler = handler;
 	act.sa_flags = SA_NOCLDWAIT;
 	sigemptyset(&act.sa_mask);
-	sigaction(SIGCHLD,  &act, 0);
+	sigaction(SIGCHLD, &act, 0);
 
 	if (fork() == 0) {
 		/* child */

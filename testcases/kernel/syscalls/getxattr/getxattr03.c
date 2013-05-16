@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(getxattr(TESTFILE, XATTR_TEST_KEY, NULL, 0));
 
@@ -98,13 +98,13 @@ static void setup(void)
 	close(fd);
 
 	if (setxattr(TESTFILE, XATTR_TEST_KEY, XATTR_TEST_VALUE,
-	    XATTR_TEST_VALUE_SIZE, XATTR_CREATE) == -1) {
+		     XATTR_TEST_VALUE_SIZE, XATTR_CREATE) == -1) {
 		if (errno == ENOTSUP)
 			tst_brkm(TCONF, cleanup, "No xattr support in fs or "
-			    "fs mounted without user_xattr option");
+				 "fs mounted without user_xattr option");
 		else
 			tst_brkm(TBROK | TERRNO, cleanup, "setxattr %s failed",
-			    TESTFILE);
+				 TESTFILE);
 	}
 
 	TEST_PAUSE;

@@ -23,7 +23,7 @@
 #include <string.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 
 	pthread_spinlock_t spinlock;
@@ -32,15 +32,14 @@ int main()
 	/* attemp to lock an uninitalized spin lock */
 
 	rc = pthread_spin_trylock(&spinlock);
-	if (rc == EINVAL)
-	{
+	if (rc == EINVAL) {
 		printf("Correctly got EINVAL at pthread_spin_trylock()\n");
 		printf("Test PASSED\n");
-	}
-	else
-	{
-		printf("Expected EINVAL, but get return code: %d,%s\n", rc, strerror(rc));
-		printf("Test PASSED: *Note: Returned incorrect value, but standard says 'may' fail\n");
+	} else {
+		printf("Expected EINVAL, but get return code: %d,%s\n", rc,
+		       strerror(rc));
+		printf
+		    ("Test PASSED: *Note: Returned incorrect value, but standard says 'may' fail\n");
 	}
 
 	return PTS_PASS;

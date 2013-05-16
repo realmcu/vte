@@ -79,13 +79,13 @@
 #define FILE_MODE       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 #define MAX_SIZE	256
 
-char *TCID = "readlink01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "readlink01";
+int TST_TOTAL = 1;
 
 int exp_val;			/* strlen of testfile */
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();
+void cleanup();
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -96,7 +96,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -104,7 +103,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call readlink(2) to read the contents of
@@ -172,7 +171,7 @@ void setup()
 		tst_brkm(TBROK, cleanup, "getpwname(nobody_uid) failed ");
 	}
 	if (seteuid(ltpuser->pw_uid) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup, "seteuid to nobody failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "seteuid to nobody failed");
 	}
 
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -182,19 +181,19 @@ void setup()
 	tst_tmpdir();
 
 	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
+		tst_brkm(TBROK | TERRNO, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, %#o) failed",
 			 TESTFILE, FILE_MODE);
 	}
 
 	if (close(fd) == -1) {
-		tst_resm(TWARN|TERRNO, "close(%s) failed", TESTFILE);
+		tst_resm(TWARN | TERRNO, "close(%s) failed", TESTFILE);
 	}
 
 	/* Create a symlink of testfile under temporary directory */
 	if (symlink(TESTFILE, SYMFILE) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "symlink(%s, %s) failed",
-		    TESTFILE, SYMFILE);
+		tst_brkm(TBROK | TERRNO, cleanup, "symlink(%s, %s) failed",
+			 TESTFILE, SYMFILE);
 	}
 
 	/* Get the strlen of testfile */

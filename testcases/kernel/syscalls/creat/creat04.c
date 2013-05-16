@@ -78,8 +78,9 @@ struct passwd *ltpuser1;
 struct test_case_t {
 	char *fname;
 } TC[] = {
-	{ fname},
-	{ fname1}
+	{
+	fname}, {
+	fname1}
 };
 
 int main(int ac, char **av)
@@ -100,11 +101,11 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "fork() #1 failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "fork() #1 failed");
 		}
 
 		if (pid == 0) {	/* first child */
@@ -126,7 +127,7 @@ int main(int ac, char **av)
 		}
 
 		if ((pid1 = FORK_OR_VFORK()) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "fork() #2 failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "fork() #2 failed");
 		}
 
 		if (pid1 == 0) {	/* second child */
@@ -158,7 +159,8 @@ int main(int ac, char **av)
 
 				if (TEST_ERRNO != EACCES) {
 					retval = 1;
-					tst_resm(TFAIL|TTERRNO, "Expected EACCES");
+					tst_resm(TFAIL | TTERRNO,
+						 "Expected EACCES");
 				} else {
 					tst_resm(TPASS, "call failed with "
 						 "EACCES as expected");
@@ -185,7 +187,7 @@ int main(int ac, char **av)
 	cleanup();
 
 	tst_exit();
- }
+}
 
 /*
  * setup() - performs all ONE TIME setup for this test.

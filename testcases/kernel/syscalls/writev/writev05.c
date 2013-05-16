@@ -97,18 +97,17 @@ int main(int argc, char **argv)
 
 	int nbytes;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	setup();		/* set "tstdir", and "testfile" vars */
 
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		buf_list[0] = buf1;
 		buf_list[1] = buf2;
@@ -119,13 +118,13 @@ int main(int argc, char **argv)
 			perror("signal");
 			tst_resm(TFAIL, "signal() SIGTERM FAILED");
 			cleanup();
-		 }
+		}
 
 		if (signal(SIGPIPE, sighandler) == SIG_ERR) {
 			perror("signal");
 			tst_resm(TFAIL, "signal() SIGPIPE FAILED");
 			cleanup();
-		 }
+		}
 
 		/* Fill the buf_list[0] and buf_list[1] with 0 zeros */
 		memset(buf_list[0], 0, K_1);
@@ -135,24 +134,24 @@ int main(int argc, char **argv)
 			tst_resm(TFAIL, "open(2) failed: fname = %s, "
 				 "errno = %d", f_name, errno);
 			cleanup();
-		 } else {
+		} else {
 			if ((nbytes = write(fd[0], buf_list[1], K_1)) != K_1) {
 				tst_resm(TFAIL, "write(2) failed: nbytes "
 					 "= %d, errno = %d", nbytes, errno);
 				cleanup();
-			 }
+			}
 		}
 
 		if (close(fd[0]) < 0) {
 			tst_resm(TFAIL, "close failed: errno = %d", errno);
 			cleanup();
-		 }
+		}
 
 		if ((fd[0] = open(f_name, O_RDWR, 0666)) < 0) {
 			tst_resm(TFAIL, "open failed: fname = %s, errno = %d",
 				 f_name, errno);
 			cleanup();
-		 }
+		}
 
 		/*
 		 * In this block we are trying to call writev() with invalid
@@ -220,7 +219,6 @@ void setup(void)
 
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified.
@@ -288,7 +286,7 @@ void sighandler(int sig)
 		tst_resm(TFAIL, "unlink Failed--file = %s, errno = %d",
 			 f_name, errno);
 		cleanup();
-	 }
+	}
 	exit(sig);
 }
 

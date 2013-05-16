@@ -112,7 +112,7 @@ int TST_TOTAL = 6;
 int TST_TOTAL = 4;
 #endif
 
-char *TCID = "rmdir05";		/* Test program identifier.    */
+char *TCID = "rmdir05";
 struct stat stat_buf;		/* Stat buffer used for verification. */
 char dir_name[256];		/* Array to hold directory name. */
 
@@ -126,8 +126,7 @@ int main(int argc, char **argv)
     /***************************************************************
      * parse standard options
      ***************************************************************/
-	if ((msg =
-	     parse_opts(argc, argv, NULL, NULL)) != NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	}
@@ -142,7 +141,7 @@ int main(int argc, char **argv)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST CASE: 1

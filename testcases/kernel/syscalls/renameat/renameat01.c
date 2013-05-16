@@ -69,8 +69,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "renameat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "renameat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256];
 char dpathname[256];
 char testfile[256];
@@ -87,7 +87,7 @@ int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
 int myrenameat(int olddirfd, const char *oldfilename, int newdirfd,
 	       const char *newfilename)
 {
-	return syscall(__NR_renameat, olddirfd, oldfilename, newdirfd,
+	return ltp_syscall(__NR_renameat, olddirfd, oldfilename, newdirfd,
 		       newfilename);
 }
 
@@ -99,7 +99,8 @@ int main(int ac, char **av)
 
 	/* Disable test if the version of the kernel is less than 2.6.16 */
 	if ((tst_kvercmp(2, 6, 16)) < 0) {
-		tst_brkm(TCONF, NULL, "This test can only run on kernels that are 2.6.16 and higher");
+		tst_brkm(TCONF, NULL,
+			 "This test can only run on kernels that are 2.6.16 and higher");
 	}
 
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
@@ -110,7 +111,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call renameat
@@ -125,12 +126,12 @@ int main(int ac, char **av)
 
 				if (STD_FUNCTIONAL_TEST) {
 					/* No Verification test, yet... */
-					tst_resm(TPASS|TTERRNO,
-					    "renameat failed as expected");
+					tst_resm(TPASS | TTERRNO,
+						 "renameat failed as expected");
 				}
 			} else {
-				tst_resm(TFAIL|TTERRNO,
-				    "renameat failed unexpectedly");
+				tst_resm(TFAIL | TTERRNO,
+					 "renameat failed unexpectedly");
 			}
 		}
 

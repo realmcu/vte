@@ -78,7 +78,7 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "ustat02";		/* Test program identifier.    */
+char *TCID = "ustat02";
 
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
 
@@ -96,7 +96,7 @@ static struct test_case_t {
 #endif
 };
 
-int TST_TOTAL = sizeof(testcase) / sizeof(*testcase);	/* Total number of test cases. */
+int TST_TOTAL = sizeof(testcase) / sizeof(*testcase);
 
 dev_t dev_num[2];
 struct ustat *ubuf;
@@ -115,7 +115,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			if (i == 0) {
@@ -124,9 +124,10 @@ int main(int ac, char **av)
 				TEST(ustat(dev_num[i], (struct ustat *)-1));
 			}
 
-			if ((TEST_RETURN == -1) && (TEST_ERRNO == testcase[i].
-						    exp_errno)) {
-				tst_resm(TPASS, "ustat(2) expected failure;"
+			if ((TEST_RETURN == -1)
+			    && (TEST_ERRNO == testcase[i].exp_errno)) {
+				tst_resm(TPASS,
+					 "ustat(2) expected failure;"
 					 " Got errno - %s : %s",
 					 testcase[i].exp_errval,
 					 testcase[i].err_desc);

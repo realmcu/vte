@@ -83,8 +83,8 @@ void cleanup(void);
 
 int exp_enos[] = { EWOULDBLOCK, EAGAIN, 0 };
 
-char *TCID = "flock04";		/* Test program identifier */
-int TST_TOTAL = 2;		/* Total number of test cases */
+char *TCID = "flock04";
+int TST_TOTAL = 2;
 char filename[100];
 int fd, fd1, status;
 
@@ -101,14 +101,15 @@ int main(int argc, char **argv)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(flock(fd, LOCK_SH));
 		if (TEST_RETURN == 0) {
 
 			pid = FORK_OR_VFORK();
 			if (pid == -1)
-				tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "fork failed");
 			if (pid == 0) {
 				fd1 = open(filename, O_RDONLY);
 				retval = flock(fd1, LOCK_SH | LOCK_NB);
@@ -121,18 +122,18 @@ int main(int argc, char **argv)
 						 "flock() PASSED in acquiring shared lock on "
 						 "Share Locked file");
 				exit(0);
-			} else
-				if (wait(&status) == -1)
-					tst_brkm(TBROK|TERRNO, cleanup,
-					    "wait failed");
+			} else if (wait(&status) == -1)
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "wait failed");
 
 			pid = FORK_OR_VFORK();
 			if (pid == -1)
-				tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "fork failed");
 
 			if (pid == 0) {
 				fd1 = open(filename, O_RDWR);
-				retval = flock(fd1, LOCK_EX|LOCK_NB);
+				retval = flock(fd1, LOCK_EX | LOCK_NB);
 				if (retval == -1) {
 					tst_resm(TPASS,
 						 "flock() failed to acquire exclusive lock on existing "
@@ -143,12 +144,11 @@ int main(int argc, char **argv)
 						 "Share Locked file");
 				}
 				exit(0);
-			} else
-				if (wait(&status) == -1)
-					tst_resm(TBROK|TERRNO, "wait failed");
+			} else if (wait(&status) == -1)
+				tst_resm(TBROK | TERRNO, "wait failed");
 			TEST(flock(fd, LOCK_UN));
 		} else
-			tst_resm(TFAIL|TERRNO, "flock failed");
+			tst_resm(TFAIL | TERRNO, "flock failed");
 
 		close(fd);
 		close(fd1);

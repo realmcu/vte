@@ -31,12 +31,12 @@
 
 #define NAMESIZE	50
 
-int main()
+int main(void)
 {
 	mqd_t mqdes;
 	struct sigevent notification;
 
-	mqdes = (mqd_t) -1;
+	mqdes = (mqd_t) - 1;
 
 	notification.sigev_notify = SIGEV_SIGNAL;
 	notification.sigev_signo = SIGUSR1;

@@ -19,22 +19,22 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	timer_t tid;
 	int i;
-	long scTIMER_MAX=0;
+	long scTIMER_MAX = 0;
 
-	scTIMER_MAX=sysconf(_SC_TIMER_MAX);
+	scTIMER_MAX = sysconf(_SC_TIMER_MAX);
 
 	for (i = 0; i < scTIMER_MAX; i++) {
 		if (timer_create(CLOCK_REALTIME, NULL, &tid) == -1) {
 			printf("[%d] timer_create() did not return success: "
-			    "%s\n", i, strerror(errno));
-			exit(PTS_FAIL);
+			       "%s\n", i, strerror(errno));
+			return PTS_FAIL;
 		}
 	}
 
-	printf("Successfully created %d timers\nTest PASSED\n");
-	exit(PTS_PASS);
+	printf("Test PASSED\n");
+	return PTS_PASS;
 }

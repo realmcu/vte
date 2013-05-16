@@ -53,17 +53,15 @@
 #include <sys/socket.h>
 #include <sys/syscall.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 
 #ifndef SOCK_NONBLOCK
-# define SOCK_NONBLOCK O_NONBLOCK
+#define SOCK_NONBLOCK O_NONBLOCK
 #endif
 
 int TST_TOTAL = 2;
-/* Global Variables */
-char *TCID = "socketpair02";	/* test program identifier.              */
+char *TCID = "socketpair02";
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -122,7 +120,7 @@ int main(int argc, char *argv[])
 
 	if ((tst_kvercmp(2, 6, 27)) < 0) {
 		tst_brkm(TCONF, NULL,
-		    "This test can only run on kernels that are 2.6.27 and higher");
+			 "This test can only run on kernels that are 2.6.27 and higher");
 	}
 	setup();
 
@@ -136,8 +134,8 @@ int main(int argc, char *argv[])
 		}
 		if (fl & O_NONBLOCK) {
 			tst_brkm(TFAIL, cleanup,
-			    "socketpair(0) set non-blocking mode for fds[%d]",
-			    i);
+				 "socketpair(0) set non-blocking mode for fds[%d]",
+				 i);
 		}
 		close(fds[i]);
 	}
@@ -152,8 +150,8 @@ int main(int argc, char *argv[])
 		}
 		if ((fl & O_NONBLOCK) == 0) {
 			tst_brkm(TFAIL, cleanup,
-			    "socketpair(SOCK_NONBLOCK) didn't set non-blocking "
-			    "mode for fds[%d]", i);
+				 "socketpair(SOCK_NONBLOCK) didn't set non-blocking "
+				 "mode for fds[%d]", i);
 		}
 		close(fds[i]);
 	}

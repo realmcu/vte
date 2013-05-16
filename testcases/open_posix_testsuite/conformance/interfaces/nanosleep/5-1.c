@@ -12,13 +12,13 @@
 #include <time.h>
 #include "posixtest.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct timespec tssleepfor, tsstorage;
 	int sleepnsec = -1;
 
-	tssleepfor.tv_sec=0;
-	tssleepfor.tv_nsec=sleepnsec;
+	tssleepfor.tv_sec = 0;
+	tssleepfor.tv_nsec = sleepnsec;
 	if (nanosleep(&tssleepfor, &tsstorage) == -1) {
 		printf("Test PASSED\n");
 		return PTS_PASS;

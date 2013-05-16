@@ -67,7 +67,7 @@ int main(int ac, char **av)
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		tst_resm(TINFO, "Forking as many kids as possible");
 		forks = 0;
@@ -104,8 +104,7 @@ int main(int ac, char **av)
 		 */
 		sleep(3);
 		kill(0, SIGQUIT);
-		while (wait(&waitstatus) > 0)
-			;
+		while (wait(&waitstatus) > 0) ;
 
 	}
 
@@ -125,8 +124,7 @@ static void cleanup()
 
 	/* collect our kids */
 	kill(0, SIGQUIT);
-	while (wait(&waitstatus) > 0)
-		;
+	while (wait(&waitstatus) > 0) ;
 	TEST_CLEANUP;
 }
 

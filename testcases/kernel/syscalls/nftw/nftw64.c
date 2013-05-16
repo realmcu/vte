@@ -43,8 +43,8 @@ int local_flag = PASSED;
 int block_number;
 
 FILE *temp;
-char *TCID = "nftw6401";	/* Test program identifier.    */
-int TST_TOTAL = 10;		/* Total number of test cases. */
+char *TCID = "nftw6401";
+int TST_TOTAL = 10;
 
 struct passwd *ltpuser;		/* password struct for ltpuser */
 /**************/
@@ -247,8 +247,7 @@ struct list mnem[] = {
 int npathdats, ngoods, nbads, nmnem;
 
 /*--------------------------------------------------------------*/
-int
-main(void)
+int main(void)
 {
 	setup();		/* temp file is now open        */
 

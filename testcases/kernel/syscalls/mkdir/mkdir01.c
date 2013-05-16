@@ -116,8 +116,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "mkdir01";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "mkdir01";
+int TST_TOTAL = 2;
 
 int exp_enos[] = { EFAULT, 0 };	/* List must end with 0 */
 
@@ -138,7 +138,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST CASE: 1

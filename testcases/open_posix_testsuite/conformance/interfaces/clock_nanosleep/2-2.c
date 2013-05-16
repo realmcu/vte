@@ -28,10 +28,12 @@
 
 void handler(int signo)
 {
+	(void) signo;
+
 	printf("In handler\n");
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct timespec tssleep, tsbefore, tsafter;
 	int pid, sleepuntilsec;
@@ -48,8 +50,8 @@ int main(int argc, char *argv[])
 		/* child here */
 		int flags = 0;
 
-		act.sa_handler=handler;
-		act.sa_flags=0;
+		act.sa_handler = handler;
+		act.sa_flags = 0;
 		if (sigemptyset(&act.sa_mask) != 0) {
 			perror("sigemptyset() did not return success\n");
 			return PTS_UNRESOLVED;
@@ -59,8 +61,8 @@ int main(int argc, char *argv[])
 			return PTS_UNRESOLVED;
 		}
 
-		tssleep.tv_sec=sleepuntilsec;
-		tssleep.tv_nsec=tsbefore.tv_nsec;
+		tssleep.tv_sec = sleepuntilsec;
+		tssleep.tv_nsec = tsbefore.tv_nsec;
 
 		flags |= TIMER_ABSTIME;
 		clock_nanosleep(CLOCK_REALTIME, flags, &tssleep, NULL);
@@ -94,8 +96,7 @@ int main(int argc, char *argv[])
 			return PTS_PASS;
 		} else {
 			printf("Slept for too long: %d >= %d\n",
-					(int) tsafter.tv_sec,
-					sleepuntilsec);
+			       (int)tsafter.tv_sec, sleepuntilsec);
 			printf("Test FAILED\n");
 			return PTS_FAIL;
 		}

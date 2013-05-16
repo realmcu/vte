@@ -103,8 +103,8 @@ static void setup();
 static void cleanup();
 static void test_nonlinear(int fd);
 
-char *TCID = "remap_file_pages01";	/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "remap_file_pages01";
+int TST_TOTAL = 2;
 
 static char *cache_contents;
 int fd1, fd2;			/* File descriptors used at the test */
@@ -132,7 +132,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		test_nonlinear(fd1);
 		tst_resm(TPASS, "Non-Linear shm file OK");
@@ -168,8 +168,7 @@ static void test_nonlinear(int fd)
 	}
 
 	data = mmap((void *)WINDOW_START,
-		    window_sz,
-		    PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		    window_sz, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 	if (data == MAP_FAILED) {
 		tst_resm(TFAIL, "mmap Error, errno=%d : %s", errno,
@@ -177,13 +176,13 @@ static void test_nonlinear(int fd)
 		cleanup(NULL);
 	}
 
-      again:
+again:
 	for (i = 0; i < window_pages; i += 2) {
 		char *page = data + i * page_sz;
 
 		if (remap_file_pages(page, page_sz * 2, 0,
 				     (window_pages - i - 2), 0) == -1) {
-			tst_resm(TFAIL|TERRNO,
+			tst_resm(TFAIL | TERRNO,
 				 "remap_file_pages error for page=%p, page_sz=%zu, window_pages=%zu",
 				 page, (page_sz * 2), (window_pages - i - 2));
 			cleanup(data);

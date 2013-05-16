@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "sbrk01";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "sbrk01";
+int TST_TOTAL = 2;
 
 int Increment;			/* Amount to make change size by */
 
@@ -152,7 +152,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST CASE:

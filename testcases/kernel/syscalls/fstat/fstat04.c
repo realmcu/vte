@@ -82,8 +82,8 @@
 #define BUF_SIZE	256
 #define MASK		0777
 
-char *TCID = "fstat04";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fstat04";
+int TST_TOTAL = 1;
 uid_t user_id;			/* user id/group id of test process */
 gid_t group_id;
 int fildes;			/* File descriptor of testfile */
@@ -91,8 +91,8 @@ int fildes;			/* File descriptor of testfile */
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();
+void cleanup();
 
 int main(int ac, char **av)
 {
@@ -100,7 +100,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -108,7 +107,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call fstat(2) to get the status of
@@ -118,7 +117,7 @@ int main(int ac, char **av)
 		TEST(fstat(fildes, &stat_buf));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "fstat failed");
+			tst_resm(TFAIL | TTERRNO, "fstat failed");
 			continue;
 		}
 		/*
@@ -134,7 +133,8 @@ int main(int ac, char **av)
 			    stat_buf.st_gid != group_id ||
 			    stat_buf.st_size != FILE_SIZE ||
 			    (stat_buf.st_mode & MASK) != FILE_MODE) {
-				tst_resm(TFAIL, "fstat functionality incorrect");
+				tst_resm(TFAIL,
+					 "fstat functionality incorrect");
 			} else
 				tst_resm(TPASS, "fstat functionality correct");
 		} else
@@ -163,9 +163,9 @@ void setup()
 
 	ltpuser = getpwnam(nobody_uid);
 	if (ltpuser == NULL)
-		tst_brkm(TBROK|TERRNO, NULL, "getpwnam failed");
+		tst_brkm(TBROK | TERRNO, NULL, "getpwnam failed");
 	if (setuid(ltpuser->pw_uid) == -1)
-		tst_brkm(TBROK|TERRNO, NULL, "setuid failed");
+		tst_brkm(TBROK | TERRNO, NULL, "setuid failed");
 
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
@@ -175,13 +175,13 @@ void setup()
 
 	fildes = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE);
 	if (fildes == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open failed");
 
-	memset(tst_buff, 'a', BUF_SIZE-1);
+	memset(tst_buff, 'a', BUF_SIZE - 1);
 
 	while (write_len < FILE_SIZE) {
 		if ((wbytes = write(fildes, tst_buff, sizeof(tst_buff))) <= 0)
-			tst_brkm(TBROK|TERRNO, cleanup, "write failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "write failed");
 		else
 			write_len += wbytes;
 	}
@@ -196,7 +196,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 	if (close(fildes) == -1)
-		tst_resm(TWARN|TERRNO, "close failed");
+		tst_resm(TWARN | TERRNO, "close failed");
 
 	tst_rmdir();
 

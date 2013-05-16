@@ -69,8 +69,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "msync05";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "msync05";
+int TST_TOTAL = 1;
 
 void *addr;			/* addr of memory mapped region */
 size_t page_sz;			/* system page size */
@@ -95,7 +95,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(msync(addr, page_sz, MS_SYNC));
 
@@ -104,7 +104,7 @@ int main(int ac, char **av)
 		else if (TEST_ERRNO == ENOMEM)
 			tst_resm(TPASS, "msync failed as expected with ENOMEM");
 		else
-			tst_resm(TFAIL|TTERRNO, "msync failed unexpectedly");
+			tst_resm(TFAIL | TTERRNO, "msync failed unexpectedly");
 	}
 
 	cleanup();
@@ -118,7 +118,7 @@ void setup()
 	TEST_PAUSE;
 
 	if ((page_sz = getpagesize()) == -1)
-		tst_brkm(TBROK|TERRNO, NULL, "getpagesize failed");
+		tst_brkm(TBROK | TERRNO, NULL, "getpagesize failed");
 
 	addr = get_high_address();
 }

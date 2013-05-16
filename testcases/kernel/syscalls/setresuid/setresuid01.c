@@ -112,11 +112,10 @@ struct test_data_t {
 &root_pw_uid, &neg_one, &root_pw_uid, &root, &root, &root,
 		    "After setresuid(root, -1, -1),"},};
 
-/* Total number of test cases. */
 int TST_TOTAL = sizeof(test_data) / sizeof(test_data[0]);
 
-void setup(void);		/* Setup function for the test */
-void cleanup(void);		/* Cleanup function for the test */
+void setup(void);
+void cleanup(void);
 
 void
 uid_verify(struct passwd *ru, struct passwd *eu, struct passwd *su, char *when);
@@ -129,15 +128,15 @@ int main(int ac, char **av)
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	 }
+	}
 
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			/* Set the real, effective or user id */
@@ -184,17 +183,17 @@ void setup(void)
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
 		tst_exit();
-	 }
+	}
 
 	if (getpwnam("nobody") == NULL) {
 		tst_brkm(TBROK, NULL, "nobody must be a valid user.");
 		tst_exit();
-	 }
+	}
 
 	if (getpwnam("bin") == NULL) {
 		tst_brkm(TBROK, NULL, "bin must be a valid user.");
 		tst_exit();
-	 }
+	}
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -227,7 +226,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
- }
+}
 
 void
 uid_verify(struct passwd *ru, struct passwd *eu, struct passwd *su, char *when)
@@ -235,7 +234,7 @@ uid_verify(struct passwd *ru, struct passwd *eu, struct passwd *su, char *when)
 	uid_t cur_ru, cur_eu, cur_su;
 	if (getresuid(&cur_ru, &cur_eu, &cur_su) != 0) {
 		tst_brkm(TBROK, cleanup, "Set getresuid() failed");
-	 }
+	}
 	if ((cur_ru != ru->pw_uid) || (cur_eu != eu->pw_uid) || (cur_su !=
 								 su->pw_uid)) {
 		tst_resm(TFAIL, "ERROR: %s real uid = %d; effective uid = %d; "

@@ -75,7 +75,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "socketcall03";	/* Test program identifier.    */
+char *TCID = "socketcall03";
 
 #ifdef __NR_socketcall
 
@@ -85,7 +85,7 @@ void setup();
 void cleanup();
 void setup1(void);
 
-int TST_TOTAL = 1;		/* Total number of test cases. */
+int TST_TOTAL = 1;
 int s;
 unsigned long args[3];
 struct sockaddr_in si;
@@ -115,7 +115,7 @@ int main(int ac, char **av)
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TC.setupfunc();
 
@@ -124,9 +124,8 @@ int main(int ac, char **av)
 		/* check return code */
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TERRNO, "socketcall() Failed "
-				 " with return=%ld",
-				 TEST_RETURN);
+			tst_resm(TFAIL | TERRNO, "socketcall() Failed "
+				 " with return=%ld", TEST_RETURN);
 		} else {
 			tst_resm(TPASS, "socketcall() passed "
 				 "for %s with return=%ld ",
@@ -178,7 +177,7 @@ void cleanup()
 
 #else
 
-int TST_TOTAL = 0;		/* Total number of test cases. */
+int TST_TOTAL = 0;
 
 int main()
 {

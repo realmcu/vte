@@ -17,9 +17,9 @@
 #include <stdio.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
-	if (mq_close((mqd_t)-1) != -1) {
+	if (mq_close((mqd_t) - 1) != -1) {
 		printf("mq_close() did not return -1 on invalid descriptor\n");
 		printf("Test FAILED\n");
 		return PTS_FAIL;

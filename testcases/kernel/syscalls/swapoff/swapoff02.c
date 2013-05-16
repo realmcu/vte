@@ -95,8 +95,8 @@ static int setup01();
 static int cleanup01();
 static int setup02();
 
-char *TCID = "swapoff02";	/* Test program identifier.    */
-int TST_TOTAL = 3;		/* Total number of test cases. */
+char *TCID = "swapoff02";
+int TST_TOTAL = 3;
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 int need_swapfile_cleanup = 0;	/* attempt to swapoff in cleanup */
@@ -131,7 +131,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -141,7 +141,8 @@ int main(int ac, char **av)
 					 " Skipping test", i);
 				continue;
 			} else {
-				TEST(syscall(__NR_swapoff, testcase[i].path));
+				TEST(ltp_syscall(__NR_swapoff,
+					testcase[i].path));
 			}
 
 			if (testcase[i].cleanfunc &&
@@ -151,9 +152,10 @@ int main(int ac, char **av)
 			}
 
 			/* check return code */
-			if ((TEST_RETURN == -1) && (TEST_ERRNO == testcase[i].
-						    exp_errno)) {
-				tst_resm(TPASS, "swapoff(2) expected failure;"
+			if ((TEST_RETURN == -1)
+			    && (TEST_ERRNO == testcase[i].exp_errno)) {
+				tst_resm(TPASS,
+					 "swapoff(2) expected failure;"
 					 " Got errno - %s : %s",
 					 testcase[i].exp_errval,
 					 testcase[i].err_desc);
@@ -166,7 +168,9 @@ int main(int ac, char **av)
 					 testcase[i].exp_errval, TEST_ERRNO);
 
 				if ((TEST_RETURN == 0) && (i == 2)) {
-					if (syscall(__NR_swapon, "./swapfile01", 0) != 0) {
+					if (ltp_syscall
+					    (__NR_swapon, "./swapfile01",
+					     0) != 0) {
 						tst_brkm(TBROK, cleanup,
 							 " Failed to turn on"
 							 " swap file");
@@ -272,7 +276,7 @@ void setup()
 		tst_brkm(TBROK, cleanup, "Failed to make swapfile");
 	}
 
-	if (syscall(__NR_swapon, "./swapfile01", 0) != 0) {
+	if (ltp_syscall(__NR_swapon, "./swapfile01", 0) != 0) {
 		tst_brkm(TBROK, cleanup, "Failed to turn on the swap file."
 			 " skipping  the test iteration");
 	}
@@ -293,8 +297,10 @@ void cleanup()
 	 */
 	TEST_CLEANUP;
 
-	if (need_swapfile_cleanup && (syscall(__NR_swapoff, "./swapfile01") != 0)) {
-		tst_resm(TWARN, " Failed to turn off swap file. System reboot"
+	if (need_swapfile_cleanup
+	    && (ltp_syscall(__NR_swapoff, "./swapfile01") != 0)) {
+		tst_resm(TWARN,
+			 " Failed to turn off swap file. System reboot"
 			 " after execution of LTP test suite is"
 			 " recommended.");
 	}

@@ -55,7 +55,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "connect01";	/* Test program identifier.    */
+char *TCID = "connect01";
 int testno;
 
 int s, s2;			/* socket descriptor */
@@ -110,12 +110,11 @@ struct test_case_t {		/* test case structure */
 		    "invalid address family"}
 ,};
 
-int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. */
+int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);
 
 int exp_enos[] = { EBADF, EFAULT, EINVAL, ENOTSOCK, EISCONN, ECONNREFUSED,
 	EAFNOSUPPORT, 0
 };
-
 
 #ifdef UCLINUX
 static char *argv0;
@@ -126,7 +125,6 @@ int main(int argc, char *argv[])
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -143,7 +141,7 @@ int main(int argc, char *argv[])
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			tdat[testno].setup();
 
@@ -169,7 +167,7 @@ int main(int argc, char *argv[])
 	cleanup();
 
 	tst_exit();
- }
+}
 
 pid_t pid;
 
@@ -212,7 +210,7 @@ void setup0(void)
 	if (tdat[testno].experrno == EBADF)
 		s = 400;	/* anything not an open file */
 	else if ((s = open("/dev/null", O_WRONLY)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open(/dev/null) failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open(/dev/null) failed");
 
 }
 
@@ -225,7 +223,7 @@ void setup1(void)
 {
 	s = socket(tdat[testno].domain, tdat[testno].type, tdat[testno].proto);
 	if (s < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "socket() failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "socket() failed");
 }
 
 void cleanup1(void)
@@ -238,7 +236,8 @@ void setup2(void)
 {
 	setup1();		/* get a socket in s */
 	if (connect(s, (const struct sockaddr *)&sin1, sizeof(sin1)) < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "socket setup failed connect test %d", testno);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "socket setup failed connect test %d", testno);
 }
 
 pid_t start_server(struct sockaddr_in *sin0)
@@ -248,15 +247,15 @@ pid_t start_server(struct sockaddr_in *sin0)
 
 	sfd = socket(PF_INET, SOCK_STREAM, 0);
 	if (sfd < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server socket failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server socket failed");
 		return -1;
 	}
 	if (bind(sfd, (struct sockaddr *)&sin1, sizeof(sin1)) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server bind failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server bind failed");
 		return -1;
 	}
 	if (listen(sfd, 10) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server listen failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server listen failed");
 		return -1;
 	}
 	switch ((pid = FORK_OR_VFORK())) {
@@ -268,7 +267,7 @@ pid_t start_server(struct sockaddr_in *sin0)
 #endif
 		break;
 	case -1:
-		tst_brkm(TBROK|TERRNO, cleanup, "server fork failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server fork failed");
 		/* fall through */
 	default:		/* parent */
 		(void)close(sfd);

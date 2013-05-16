@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-TCID_DEFINE(getuid01);          /* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+TCID_DEFINE(getuid01);
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -140,16 +140,14 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(GETUID());
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "getuid failed");
-		else
-			if (STD_FUNCTIONAL_TEST)
-				tst_resm(TPASS, "getuid returned %ld",
-					 TEST_RETURN);
+			tst_resm(TFAIL | TTERRNO, "getuid failed");
+		else if (STD_FUNCTIONAL_TEST)
+			tst_resm(TPASS, "getuid returned %ld", TEST_RETURN);
 
 	}
 

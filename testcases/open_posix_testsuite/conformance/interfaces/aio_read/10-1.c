@@ -35,7 +35,7 @@
 
 #define TNAME "aio_read/10-1.c"
 
-int main()
+int main(void)
 {
 #define BUF_SIZE 111
 	char buf[BUF_SIZE];
@@ -61,9 +61,10 @@ int main()
 		exit(PTS_FAIL);
 	}
 
-	while (aio_error(&aiocb) == EINPROGRESS);
-	ret = aio_error(&aiocb);
-
+	do {
+		usleep(10000);
+		ret = aio_error(&aiocb);
+	} while (ret == EINPROGRESS);
 	if (ret != EBADF) {
 		printf(TNAME " errno is not EBADF %s\n", strerror(errno));
 		exit(PTS_FAIL);

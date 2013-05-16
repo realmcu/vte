@@ -77,7 +77,7 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sysfs05";		/* Test program identifier.    */
+char *TCID = "sysfs05";
 static int option[3] = { 1, 4, 1 };	/* valid and invalid option */
 static char *fsname[] = { "ext0", " ext2", (char *)-1 };
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
@@ -92,6 +92,7 @@ static struct test_case_t {
 	"Invalid filesystem name", EINVAL, "EINVAL "}, {
 	"Address is out of your address space", EFAULT, "EFAULT "}
 };
+
 int TST_TOTAL = sizeof(testcase) / sizeof(*testcase);
 
 int main(int ac, char **av)
@@ -110,7 +111,7 @@ int main(int ac, char **av)
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
-			Tst_count = 0;
+			tst_count = 0;
 			TEST(syscall(__NR_sysfs, option[i], fsname[i]));
 
 			/* check return code */

@@ -85,7 +85,7 @@ static void setup(void);
 static void cleanup(void);
 static void cleanup1(void);
 
-char *TCID = "umount03";	/* Test program identifier.    */
+char *TCID = "umount03";
 
 #define DEFAULT_FSTYPE "ext2"
 #define FSTYPE_LEN	20
@@ -105,7 +105,6 @@ static struct test_case_t {
 } testcases = {
 "User not Super User/root", EPERM, "EPERM"};
 
-/* Total number of test cases. */
 int TST_TOTAL = 1;
 
 static int exp_enos[] = { EPERM, 0 };
@@ -147,9 +146,10 @@ int main(int ac, char **av)
 	if (Tflag == 1) {
 		strncpy(Type, fstype,
 			(FSTYPE_LEN <
-			 (strlen(fstype)+1)) ? FSTYPE_LEN : (strlen(fstype)+1));
+			 (strlen(fstype) + 1)) ? FSTYPE_LEN : (strlen(fstype) +
+							       1));
 	} else {
-		strncpy(Type, DEFAULT_FSTYPE, strlen(DEFAULT_FSTYPE)+1);
+		strncpy(Type, DEFAULT_FSTYPE, strlen(DEFAULT_FSTYPE) + 1);
 	}
 
 	if (STD_COPIES != 1) {
@@ -163,7 +163,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		switch (fork()) {
 
@@ -264,12 +264,10 @@ void setup()
 		tst_brkm(TBROK, cleanup1, "setuid failed to set the effective"
 			 " uid to %d", ltpuser->pw_uid);
 	}
-	/* set up expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
-	if (access(device,F_OK)) {
-		tst_brkm(TBROK, cleanup1,
-			"Device '%s' does not exist", device);
+	if (access(device, F_OK)) {
+		tst_brkm(TBROK, cleanup1, "Device '%s' does not exist", device);
 	}
 
 	TEST(mount(device, mntpoint, Type, 0, NULL));

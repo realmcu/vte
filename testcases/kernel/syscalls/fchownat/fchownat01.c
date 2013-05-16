@@ -65,8 +65,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "fchownat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "fchownat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256];
 char testfile[256];
 char testfile2[256];
@@ -76,13 +76,14 @@ int fds[TEST_CASES];
 char *filenames[TEST_CASES];
 int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, EINVAL, 0 };
 int flags[TEST_CASES] = { 0, 0, 0, 0, 9999, 0 };
+
 uid_t uid;
 gid_t gid;
 
 int myfchownat(int dirfd, const char *filename, uid_t owner, gid_t group,
 	       int flags)
 {
-	return syscall(__NR_fchownat, dirfd, filename, owner, group, flags);
+	return ltp_syscall(__NR_fchownat, dirfd, filename, owner, group, flags);
 }
 
 int main(int ac, char **av)
@@ -115,7 +116,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call fchownat

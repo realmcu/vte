@@ -32,56 +32,26 @@
 /* We are testing conformance to IEEE Std 1003.1, 2003 Edition */
 #define _POSIX_C_SOURCE 200112L
 
-/********************************************************************************************/
-/****************************** standard includes *****************************************/
-/********************************************************************************************/
 #include <pthread.h>
- #include <stdarg.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include <sys/wait.h>
- #include <errno.h>
+#include <errno.h>
 
 #include <dirent.h>
 
-/********************************************************************************************/
-/******************************   Test framework   *****************************************/
-/********************************************************************************************/
 #include "../testfrmw/testfrmw.h"
- #include "../testfrmw/testfrmw.c"
-/* This header is responsible for defining the following macros:
- * UNRESOLVED(ret, descr);
- *    where descr is a description of the error and ret is an int (error code for example)
- * FAILED(descr);
- *    where descr is a short text saying why the test has failed.
- * PASSED();
- *    No parameter.
- *
- * Both three macros shall terminate the calling process.
- * The testcase shall not terminate in any other maneer.
- *
- * The other file defines the functions
- * void output_init()
- * void output(char * string, ...)
- *
- * Those may be used to output information.
- */
+#include "../testfrmw/testfrmw.c"
 
-/********************************************************************************************/
-/********************************** Configuration ******************************************/
-/********************************************************************************************/
 #ifndef VERBOSE
 #define VERBOSE 1
 #endif
 
-/********************************************************************************************/
-/***********************************    Test case   *****************************************/
-/********************************************************************************************/
-
-int count(DIR * thedir)
+static int count(DIR * thedir)
 {
 	int counter = 0;
 
@@ -91,8 +61,7 @@ int count(DIR * thedir)
 
 	/* Count the directory entries */
 
-	do
-	{
+	do {
 		dp = readdir(thedir);
 
 		if (dp != NULL)
@@ -103,8 +72,7 @@ int count(DIR * thedir)
 	return counter;
 }
 
-/* The main test function. */
-int main(int argc, char * argv[])
+int main(void)
 {
 	int ret, status;
 	pid_t child, ctl;
@@ -114,14 +82,12 @@ int main(int argc, char * argv[])
 	/* the '.' directory pointers */
 	DIR *dotdir;
 
-	/* Initialize output */
 	output_init();
 
 	/* Open the directory */
 	dotdir = opendir(".");
 
-	if (dotdir == NULL)
-	{
+	if (dotdir == NULL) {
 		UNRESOLVED(errno, "opendir failed");
 	}
 
@@ -137,14 +103,12 @@ int main(int argc, char * argv[])
 	/* Create the child */
 	child = fork();
 
-	if (child == -1)
-	{
+	if (child == -1) {
 		UNRESOLVED(errno, "Failed to fork");
 	}
 
 	/* child */
-	if (child == 0)
-	{
+	if (child == 0) {
 		/* Count in child process */
 		counted = count(dotdir);
 
@@ -155,8 +119,7 @@ int main(int argc, char * argv[])
 
 		ret = closedir(dotdir);
 
-		if (ret != 0)
-		{
+		if (ret != 0) {
 			UNRESOLVED(errno, "Failed to close dir in child");
 		}
 
@@ -167,25 +130,21 @@ int main(int argc, char * argv[])
 	/* Parent joins the child */
 	ctl = waitpid(child, &status, 0);
 
-	if (ctl != child)
-	{
+	if (ctl != child) {
 		UNRESOLVED(errno, "Waitpid returned the wrong PID");
 	}
 
-	if (!WIFEXITED(status) || (WEXITSTATUS(status) != PTS_PASS))
-	{
+	if (!WIFEXITED(status) || (WEXITSTATUS(status) != PTS_PASS)) {
 		FAILED("Child exited abnormally -- dir stream not copied?");
 	}
 
 	/* close the directory stream */
 	ret = closedir(dotdir);
 
-	if (ret != 0)
-	{
+	if (ret != 0) {
 		UNRESOLVED(errno, "Failed to closedir in parent");
 	}
 
-	/* Test passed */
 #if VERBOSE > 0
 	output("Test passed\n");
 

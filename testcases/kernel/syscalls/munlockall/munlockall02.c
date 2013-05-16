@@ -75,8 +75,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "munlockall02";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "munlockall02";
+int TST_TOTAL = 1;
 static int exp_enos[] = { EPERM, 0 };
 
 static char nobody_uid[] = "nobody";
@@ -99,7 +99,7 @@ int main(int ac, char **av)
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(munlockall());
 

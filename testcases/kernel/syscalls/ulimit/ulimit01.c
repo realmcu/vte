@@ -119,8 +119,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "ulimit01";	/* Test program identifier.    */
-int TST_TOTAL = 6;		/* Total number of test cases. */
+char *TCID = "ulimit01";
+int TST_TOTAL = 6;
 
 int cmd;
 long limit;			/* saved limit */
@@ -178,7 +178,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -194,12 +194,12 @@ int main(int ac, char **av)
 			if (TEST_RETURN == -1) {
 				if (Scenarios[i].exp_fail) {
 					if (STD_FUNCTIONAL_TEST) {
-						tst_resm(TPASS|TTERRNO,
+						tst_resm(TPASS | TTERRNO,
 							 "ulimit(%d, %ld) Failed expectedly",
 							 cmd, limit);
 					}
 				} else {
-					tst_resm(TFAIL|TTERRNO,
+					tst_resm(TFAIL | TTERRNO,
 						 "ulimit(%d, %ld) Failed",
 						 cmd, limit);
 				}
@@ -223,15 +223,13 @@ int main(int ac, char **av)
 					     tmp++) {
 						if (Scenarios[tmp].nlim_flag ==
 						    1) {
-							Scenarios[tmp].
-							    newlimit =
-							    TEST_RETURN;
+							Scenarios[tmp].newlimit
+							    = TEST_RETURN;
 						}
 						if (Scenarios[tmp].nlim_flag ==
 						    2) {
-							Scenarios[tmp].
-							    newlimit =
-							    TEST_RETURN - 1;
+							Scenarios[tmp].newlimit
+							    = TEST_RETURN - 1;
 						}
 					}
 				}

@@ -86,8 +86,8 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "swapoff01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "swapoff01";
+int TST_TOTAL = 1;
 
 int main(int ac, char **av)
 {
@@ -102,15 +102,15 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
-		if (syscall(__NR_swapon, "./swapfile01", 0) != 0) {
+		if (ltp_syscall(__NR_swapon, "./swapfile01", 0) != 0) {
 			tst_resm(TWARN, "Failed to turn on the swap file"
 				 ", skipping test iteration");
 			continue;
 		}
 
-		TEST(syscall(__NR_swapoff, "./swapfile01"));
+		TEST(ltp_syscall(__NR_swapoff, "./swapfile01"));
 
 		/* check return code */
 		if (TEST_RETURN == -1) {

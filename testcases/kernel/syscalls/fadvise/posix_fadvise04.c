@@ -53,7 +53,7 @@
 void setup();
 void cleanup();
 
-TCID_DEFINE(posix_fadvise04);	/* Test program identifier.    */
+TCID_DEFINE(posix_fadvise04);
 
 #define GIVEN_IN_SETUP 42	/* No mean. Just used as padding.
 				   This is overwritten by setup(). */
@@ -113,7 +113,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {

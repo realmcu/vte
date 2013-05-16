@@ -29,7 +29,7 @@ void handler(int signo)
 	handler_called = 1;
 }
 
-int main()
+int main(void)
 {
 	struct sigaction act;
 	struct sigaction oact;
@@ -37,13 +37,13 @@ int main()
 	act.sa_handler = handler;
 	act.sa_flags = 0;
 	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGQUIT,  &act, 0) == -1) {
+	if (sigaction(SIGQUIT, &act, 0) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
 	}
 
-	if (sigaction(SIGQUIT,  0, &oact) == -1) {
+	if (sigaction(SIGQUIT, 0, &oact) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;

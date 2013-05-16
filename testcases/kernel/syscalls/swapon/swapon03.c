@@ -82,10 +82,11 @@ int clean_swap();
 int check_and_swapoff(char *filename);
 int create_swapfile(char *swapfile, int bs, int count);
 
-char *TCID = "swapon03";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "swapon03";
+int TST_TOTAL = 1;
 
 static int exp_enos[] = { EPERM, 0 };
+
 static int swapfiles;		/* Number of swapfiles turned on */
 
 struct utsname uval;
@@ -123,7 +124,7 @@ int main(int ac, char **av)
 	 * check looping state if -i option given
 	 ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* do the test setup */
 		if (setup_swap() < 0) {
@@ -133,33 +134,36 @@ int main(int ac, char **av)
 		}
 
 		/* Call swapon sys call for the first time */
-		TEST(syscall(__NR_swapon, swap_testfiles[0].filename, 0));
+		TEST(ltp_syscall(__NR_swapon, swap_testfiles[0].filename, 0));
 
 		/* Check return code */
 		if ((TEST_RETURN == -1) && (TEST_ERRNO == expected_errno)) {
 			tst_resm(TPASS, "swapon(2) got expected failure (%d),",
-				expected_errno);
+				 expected_errno);
 		} else if (TEST_RETURN < 0) {
-			tst_resm(TFAIL|TTERRNO,
-				"swapon(2) failed to produce expected error "
-				"(%d). System reboot recommended.",
-				expected_errno);
+			tst_resm(TFAIL | TTERRNO,
+				 "swapon(2) failed to produce expected error "
+				 "(%d). System reboot recommended.",
+				 expected_errno);
 		} else {
 			/* Probably the system supports MAX_SWAPFILES > 30,
 			 * let's try with MAX_SWAPFILES == 32 */
 
 			/* Call swapon sys call once again for 32
 			 * now we can't receive an error */
-			TEST(syscall(__NR_swapon, swap_testfiles[1].filename, 0));
+			TEST(ltp_syscall
+			     (__NR_swapon, swap_testfiles[1].filename, 0));
 
 			/* Check return code (now we're expecting success) */
 			if (TEST_RETURN < 0) {
-				tst_resm(TFAIL|TTERRNO,
+				tst_resm(TFAIL | TTERRNO,
 					 "swapon(2) got an unexpected failure");
 			} else {
 				/* Call swapon sys call once again for 33
 				 * now we have to receive an error */
-				TEST(syscall(__NR_swapon, swap_testfiles[2].filename, 0));
+				TEST(ltp_syscall
+				     (__NR_swapon, swap_testfiles[2].filename,
+				      0));
 
 				/* Check return code (should be an error) */
 				if ((TEST_RETURN == -1)
@@ -213,19 +217,19 @@ int setup_swap()
 	swapfiles = 0;
 
 	if (seteuid(0) < 0) {
-		tst_brkm(TFAIL|TERRNO, cleanup, "Failed to call seteuid");
+		tst_brkm(TFAIL | TERRNO, cleanup, "Failed to call seteuid");
 	}
 
 	/* This includes the first (header) line */
 	if ((fd = open("/proc/swaps", O_RDONLY)) == -1) {
-		tst_brkm(TFAIL|TERRNO, cleanup,
+		tst_brkm(TFAIL | TERRNO, cleanup,
 			 "Failed to find out existing number of swap files");
 	}
 	do {
 		char *p = buf;
 		res = read(fd, buf, BUFSIZ);
 		if (res < 0) {
-			tst_brkm(TFAIL|TERRNO, cleanup,
+			tst_brkm(TFAIL | TERRNO, cleanup,
 				 "Failed to find out existing number of swap "
 				 "files");
 		}
@@ -241,7 +245,7 @@ int setup_swap()
 
 	if (swapfiles < 0) {
 		tst_brkm(TFAIL, cleanup,
-			"Failed to find existing number of swapfiles");
+			 "Failed to find existing number of swapfiles");
 	}
 
 	/* Determine how many more files are to be created */
@@ -269,8 +273,8 @@ int setup_swap()
 
 			/* prepare filename for the iteration */
 			if (sprintf(filename, "swapfile%02d", j + 2) < 0) {
-				printf( "sprintf() failed to create "
-					"filename");
+				printf("sprintf() failed to create "
+				       "filename");
 				exit(1);
 			}
 
@@ -281,14 +285,15 @@ int setup_swap()
 			}
 
 			/* turn on the swap file */
-			if ((res = syscall(__NR_swapon, filename, 0)) != 0) {
+			res = ltp_syscall(__NR_swapon, filename, 0);
+			if (res != 0) {
 				if (errno == EPERM) {
-					printf(	"Successfully created %d "
-						"swapfiles\n", j);
+					printf("Successfully created %d "
+					       "swapfiles\n", j);
 					break;
 				} else {
-					printf( "Failed to create "
-						"swapfile: %s\n", filename);
+					printf("Failed to create "
+					       "swapfile: %s\n", filename);
 					exit(1);
 				}
 			}
@@ -323,8 +328,8 @@ int create_swapfile(char *swapfile, int bs, int count)
 
 	/* prepare the path string for dd command */
 	if (snprintf(cmd_buffer, sizeof(cmd_buffer),
-		    "dd if=/dev/zero of=%s bs=%d "
-		    "count=%d > tmpfile 2>&1", swapfile, bs, count) < 0) {
+		     "dd if=/dev/zero of=%s bs=%d "
+		     "count=%d > tmpfile 2>&1", swapfile, bs, count) < 0) {
 		tst_resm(TWARN,
 			 "sprintf() failed to create the command string");
 
@@ -333,13 +338,13 @@ int create_swapfile(char *swapfile, int bs, int count)
 
 	if (system(cmd_buffer) != 0) {
 		tst_resm(TWARN, "dd command failed to create file via "
-				"command: %s", cmd_buffer);
+			 "command: %s", cmd_buffer);
 		return -1;
 	}
 
 	/* make the file swapfile */
 	if (snprintf(cmd_buffer, sizeof(cmd_buffer),
-		    "mkswap %s > tmpfile 2>&1", swapfile) < 0) {
+		     "mkswap %s > tmpfile 2>&1", swapfile) < 0) {
 		tst_resm(TWARN,
 			 "snprintf() failed to create mkswap command string");
 		return -1;
@@ -364,7 +369,7 @@ int clean_swap()
 
 	for (j = 0; j < swapfiles; j++) {
 		if (snprintf(filename, sizeof(filename),
-			    "swapfile%02d", j+2) < 0) {
+			     "swapfile%02d", j + 2) < 0) {
 			tst_resm(TWARN, "sprintf() failed to create filename");
 			tst_resm(TWARN, "Failed to turn off swap files. System"
 				 " reboot after execution of LTP test"
@@ -399,7 +404,7 @@ int check_and_swapoff(char *filename)
 	int rc = -1;
 
 	if (snprintf(cmd_buffer, sizeof(cmd_buffer),
-		    "grep -q '%s.*file' /proc/swaps", filename) < 0) {
+		     "grep -q '%s.*file' /proc/swaps", filename) < 0) {
 		tst_resm(TWARN,
 			 "sprintf() failed to create the command string");
 	} else {
@@ -409,12 +414,12 @@ int check_and_swapoff(char *filename)
 		if (system(cmd_buffer) == 0) {
 
 			/* now we need to swapoff the file */
-			if (syscall(__NR_swapoff, filename) != 0) {
+			if (ltp_syscall(__NR_swapoff, filename) != 0) {
 
 				tst_resm(TWARN, "Failed to turn off swap "
-						"file. system reboot after "
-						"execution of LTP test suite "
-						"is recommended");
+					 "file. system reboot after "
+					 "execution of LTP test suite "
+					 "is recommended");
 				rc = -1;
 
 			}

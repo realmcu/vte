@@ -80,8 +80,8 @@
 
 #define TEMPFILE	"mmapfile"
 
-char *TCID = "mmap08";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mmap08";
+int TST_TOTAL = 1;
 int exp_enos[] = { EBADF, 0 };
 
 size_t page_sz;			/* system page size */
@@ -96,7 +96,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -107,7 +106,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call mmap to map the temporary file 'TEMPFILE'
@@ -121,7 +120,7 @@ int main(int ac, char **av)
 		/* Check for the return value of mmap() */
 		if (addr != MAP_FAILED) {
 			tst_resm(TFAIL, "mmap() didn't fail (%p != %p)",
-				addr, MAP_FAILED);
+				 addr, MAP_FAILED);
 			/* Unmap the mapped memory */
 			if (munmap(addr, page_sz) != 0) {
 				tst_brkm(TBROK, cleanup, "munmap() failed");
@@ -130,11 +129,10 @@ int main(int ac, char **av)
 		}
 		TEST_ERROR_LOG(TEST_ERRNO);
 		if (TEST_ERRNO == EBADF) {
-			tst_resm(TPASS,
-				"mmap failed with EBADF");
+			tst_resm(TPASS, "mmap failed with EBADF");
 		} else {
-			tst_resm(TFAIL|TERRNO,
-				"mmap failed with an invalid errno");
+			tst_resm(TFAIL | TERRNO,
+				 "mmap failed with an invalid errno");
 		}
 	}
 
@@ -160,12 +158,12 @@ void setup()
 	/* Get the system page size */
 	if ((page_sz = getpagesize()) < 0) {
 		tst_brkm(TFAIL, NULL,
-			"getpagesize() fails to get system page size");
+			 "getpagesize() fails to get system page size");
 	}
 
 	if ((tst_buff = (char *)calloc(page_sz, sizeof(char))) == NULL) {
 		tst_brkm(TFAIL, NULL,
-			"calloc() failed to allocate space for tst_buff");
+			 "calloc() failed to allocate space for tst_buff");
 	}
 
 	/* Fill the test buffer with the known data */

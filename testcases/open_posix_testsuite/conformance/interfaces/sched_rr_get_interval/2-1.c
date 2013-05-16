@@ -16,7 +16,7 @@
 #include "posixtest.h"
 #include <time.h>
 
-int main(int argc, char **argv)
+int main(void)
 {
 	struct timespec interval;
 	int result = -2;
@@ -27,9 +27,7 @@ int main(int argc, char **argv)
 	result = sched_rr_get_interval(0, &interval);
 
 	if (result == 0 &&
-	   interval.tv_sec >= 0 &&
-	   interval.tv_nsec >= 0 &&
-	   errno == 0) {
+	    interval.tv_sec >= 0 && interval.tv_nsec >= 0 && errno == 0) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}

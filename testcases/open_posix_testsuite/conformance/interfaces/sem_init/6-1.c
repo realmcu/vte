@@ -22,21 +22,20 @@
 #define FUNCTION "sem_init"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-int main()
+int main(void)
 {
-	sem_t   mysemp;
+	sem_t mysemp;
 	int counter = SEM_VALUE_MAX;
 
-	if (SEM_VALUE_MAX >= INT_MAX)
-	{
+	if (SEM_VALUE_MAX >= INT_MAX) {
 		puts("Test skipped");
 		return PTS_PASS;
-        }
+	}
 
 	++counter;
-        sem_init (&mysemp, 0, counter);
+	sem_init(&mysemp, 0, counter);
 
-	if (errno == EINVAL)  {
+	if (errno == EINVAL) {
 		puts("TEST PASSED");
 		return PTS_PASS;
 	} else {

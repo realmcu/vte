@@ -67,18 +67,17 @@ int main(int argc, char **argv)
 	int uret = 0, i, mskval = 0000;
 	int failcnt = 0;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	setup();
 
 	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (umask(++mskval), i = 1; mskval < 01000;
 		     uret = umask(++mskval), i++) {
@@ -125,4 +124,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
- }
+}

@@ -130,8 +130,8 @@ void setup();
 void help();
 void cleanup();
 
-char *TCID = "readdir01";	/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "readdir01";
+int TST_TOTAL = 2;
 
 int exp_enos[] = { 0, 0 };
 
@@ -169,7 +169,6 @@ int main(int ac, char **av)
 	char fname[255];
 	DIR *test_dir;
 	struct dirent *dptr;
-
 
     /***************************************************************
      * parse standard options
@@ -209,7 +208,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if (Nfiles)
 			nfiles = Nfiles;

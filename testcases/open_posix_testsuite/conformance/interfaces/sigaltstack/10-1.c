@@ -20,12 +20,12 @@
 
 stack_t alternate_s;
 
-void handler(int signo)
+void handler()
 {
 	printf("Just a dummy handler\n");
 }
 
-int main()
+int main(void)
 {
 
 	struct sigaction act;
@@ -33,20 +33,22 @@ int main()
 	act.sa_handler = handler;
 	sigemptyset(&act.sa_mask);
 
-	if (sigaction(SIGUSR1,  &act, 0) == -1) {
-		perror("Unexpected error while attempting to setup test pre-conditions");
+	if (sigaction(SIGUSR1, &act, 0) == -1) {
+		perror
+		    ("Unexpected error while attempting to setup test pre-conditions");
 		return PTS_UNRESOLVED;
 	}
 
-	if ((alternate_s.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
-		perror("Unexpected error while attempting to setup test pre-conditions");
+	if ((alternate_s.ss_sp = malloc(SIGSTKSZ)) == NULL) {
+		perror
+		    ("Unexpected error while attempting to setup test pre-conditions");
 		return PTS_UNRESOLVED;
 	}
 
 	alternate_s.ss_flags = 0;
 	alternate_s.ss_size = SIGSTKSZ;
 
-	if (sigaltstack(&alternate_s, (stack_t *)0) != 0) {
+	if (sigaltstack(&alternate_s, (stack_t *) 0) != 0) {
 		printf("Test FAILED: sigaltstack didn't return 0.\n");
 		return PTS_FAIL;
 	}

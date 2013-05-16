@@ -77,8 +77,8 @@
 #define	NICEINC		-12
 #define TEMPFILE	"temp_file"
 
-char *TCID = "nice01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "nice01";
+int TST_TOTAL = 1;
 
 int Org_nice;			/* original priority of the test process */
 FILE *fp;
@@ -93,7 +93,6 @@ int main(int ac, char **av)
 	int New_nice;		/* priority of process after nice() */
 	int rval;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -101,7 +100,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call nice(2) with an 'incr' parameter set

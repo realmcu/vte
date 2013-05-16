@@ -79,8 +79,8 @@ static void help(void);
 static void setup(void);
 static void cleanup(void);
 
-char *TCID = "umount01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "umount01";
+int TST_TOTAL = 1;
 
 #define DEFAULT_FSTYPE	"ext2"
 #define DIR_MODE	S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
@@ -144,7 +144,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* Call mount(2) */
 		TEST(mount(device, mntpoint, Fstype, 0, NULL));

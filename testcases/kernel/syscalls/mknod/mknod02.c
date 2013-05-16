@@ -91,8 +91,8 @@
 struct stat buf;		/* struct. to hold stat(2) o/p contents */
 struct passwd *user1;		/* struct. to hold getpwnam(3) o/p contents */
 
-char *TCID = "mknod02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mknod02";
+int TST_TOTAL = 1;
 char node_name[PATH_MAX];	/* buffer to hold node name created */
 
 gid_t group1_gid, group2_gid, mygid;	/* user and process group id's */
@@ -108,7 +108,6 @@ int main(int ac, char **av)
 	int fflag;		/* functionality flag variable */
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -119,7 +118,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 *  Attempt to create a filesystem node with group-id bit set
@@ -241,7 +240,8 @@ void setup()
 	/* Get the uid/gid of ltpuser */
 	if ((user1 = getpwnam(LTPUSER)) == NULL) {
 		tst_brkm(TBROK | TERRNO, cleanup,
-			"Couldn't determine if %s was in /etc/passwd", LTPUSER);
+			 "Couldn't determine if %s was in /etc/passwd",
+			 LTPUSER);
 	}
 	user1_uid = user1->pw_uid;
 	group1_gid = user1->pw_gid;

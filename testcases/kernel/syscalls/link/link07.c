@@ -98,10 +98,11 @@
 void setup();
 void cleanup();
 
-char *TCID = "link07";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "link07";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { EACCES, 0 };
+
 char *file1, *file2;		/* oldpath and newpath */
 
 /***********************************************************************
@@ -132,7 +133,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		test_desc = "EACCES";
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 *  Call link(2)
@@ -219,15 +220,15 @@ void setup()
 	file2 = NEW_TEST_FILE2;
 
 	if ((nobody_pwd = getpwnam("nobody")) == NULL) {
-		tst_brkm(TCONF|TERRNO, cleanup,
-			"couldn't determine login information for nobody");
+		tst_brkm(TCONF | TERRNO, cleanup,
+			 "couldn't determine login information for nobody");
 	}
 
 	/* set effective user ID to "nobody"'s UID using seteuid */
 	if (seteuid(nobody_pwd->pw_uid) != 0) {
-		tst_brkm(TCONF|TERRNO, cleanup,
-			"seteuid to %d for %s failed",
-			nobody_pwd->pw_uid, nobody_pwd->pw_name);
+		tst_brkm(TCONF | TERRNO, cleanup,
+			 "seteuid to %d for %s failed",
+			 nobody_pwd->pw_uid, nobody_pwd->pw_name);
 	}
 
 }
@@ -240,7 +241,7 @@ void cleanup()
 {
 	/* set back effective user ID to ROOT_USER using seteuid */
 	if (seteuid(ROOT_USER) != 0) {
-		tst_resm(TFAIL|TERRNO, "seteuid(%d) failed", ROOT_USER);
+		tst_resm(TFAIL | TERRNO, "seteuid(%d) failed", ROOT_USER);
 	}
 
 	/*

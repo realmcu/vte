@@ -16,13 +16,13 @@
 #include "posixtest.h"
 
 typedef struct my_data {
-    pthread_mutex_t     mutex;   /* Protects access to value */
-    int                 value;   /* Access protected by mutex */
+	pthread_mutex_t mutex;	/* Protects access to value */
+	int value;		/* Access protected by mutex */
 } my_data_t;
 
-my_data_t data = {PTHREAD_MUTEX_INITIALIZER, 0};
+my_data_t data = { PTHREAD_MUTEX_INITIALIZER, 0 };
 
-int main()
+int main(void)
 {
 	printf("Test PASSED\n");
 	return PTS_PASS;

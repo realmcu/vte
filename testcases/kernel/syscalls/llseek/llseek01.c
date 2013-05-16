@@ -67,7 +67,7 @@
  */
 
 #ifndef _GNU_SOURCE
-# define _GNU_SOURCE
+#define _GNU_SOURCE
 #endif
 
 #include <unistd.h>
@@ -89,8 +89,8 @@
 #define TEMP_FILE	"tmp_file"
 #define FILE_MODE	0644
 
-char *TCID = "llseek01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "llseek01";
+int TST_TOTAL = 1;
 char write_buff[BUFSIZ];	/* buffer to hold data */
 int fildes;			/* file handle for temp file */
 
@@ -114,14 +114,14 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * set file size limit, seek to a file using llseek.
 		 */
 		TEST(lseek64(fildes, (loff_t) (80 * BUFSIZ), SEEK_SET));
 
-		if (TEST_RETURN == (loff_t) -1) {
+		if (TEST_RETURN == (loff_t) - 1) {
 			tst_resm(TFAIL, "llseek on (%s) Failed, errno=%d : %s",
 				 TEMP_FILE, TEST_ERRNO, strerror(TEST_ERRNO));
 			continue;
@@ -130,8 +130,8 @@ int main(int ac, char **av)
 		if (STD_FUNCTIONAL_TEST) {
 			if (TEST_RETURN != (loff_t) (80 * BUFSIZ)) {
 				tst_resm(TFAIL, "llseek() returned incorrect "
-					 "value %"PRId64", expected %d",
-					 (int64_t)offset, BUFSIZ);
+					 "value %" PRId64 ", expected %d",
+					 (int64_t) offset, BUFSIZ);
 				continue;
 			}
 
@@ -189,6 +189,8 @@ void setup()
 	TEST_PAUSE;
 
 	act.sa_handler = SIG_IGN;
+	act.sa_flags = 0;
+	sigemptyset(&act.sa_mask);
 	if (sigaction(SIGXFSZ, &act, NULL) == -1) {
 		tst_brkm(TFAIL, NULL, "sigaction() Failed to ignore SIGXFSZ");
 		tst_exit();

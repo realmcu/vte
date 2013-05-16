@@ -61,21 +61,22 @@ static int vmsplice_test(void);
 void setup();
 void cleanup();
 
-char *TCID = "vmsplice01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "vmsplice01";
+int TST_TOTAL = 1;
 char testfile[256];
 
 static long mysplice(int fd_in, loff_t * off_in,
 		     int fd_out, loff_t * off_out,
 		     size_t len, unsigned int flags)
 {
-	return syscall(__NR_splice, fd_in, off_in, fd_out, off_out, len, flags);
+	return ltp_syscall(__NR_splice, fd_in, off_in, fd_out, off_out,
+		len, flags);
 }
 
 static long myvmsplice(int fd, struct iovec *v, unsigned long nregs,
 		       unsigned int flags)
 {
-	return syscall(__NR_vmsplice, fd, v, nregs, flags);
+	return ltp_syscall(__NR_vmsplice, fd, v, nregs, flags);
 }
 
 static void setup_every_copy()
@@ -113,7 +114,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call vmsplice_test

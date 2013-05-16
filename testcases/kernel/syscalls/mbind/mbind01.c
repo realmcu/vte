@@ -66,14 +66,14 @@
 #include "numa_helper.h"
 
 char *TCID = "mbind01";
-int  TST_TOTAL = 2;
+int TST_TOTAL = 2;
 
 #if HAVE_NUMA_H && HAVE_LINUX_MEMPOLICY_H && HAVE_NUMAIF_H && \
 	HAVE_MPOL_CONSTANTS
 
 #define MEM_LENGTH	      (4 * 1024 * 1024)
 
-static int  testno;
+static int testno;
 
 enum test_type {
 	NORMAL,
@@ -105,77 +105,77 @@ struct test_case {
  *		(only we can do is simulate 1-node NUMA)
  */
 static struct test_case tcase[] = {
-	{ /* case00 */
-		.policy		= MPOL_DEFAULT,
-		.from_node	= NONE,
-		.ret		= 0,
-		.err		= 0,
-	},
-	{ /* case01 */
-		.policy		= MPOL_DEFAULT,
-		.from_node	= SELF, /* target exists */
-		.ret		= -1,
-		.err		= EINVAL,
-	},
-	{ /* case02 */
-		.policy		= MPOL_BIND,
-		.from_node	= NONE, /* no target */
-		.ret		= -1,
-		.err		= EINVAL,
-	},
-	{ /* case03 */
-		.policy		= MPOL_BIND,
-		.from_node	= SELF,
-		.ret		= 0,
-		.err		= 0,
-	},
-	{ /* case04 */
-		.policy		= MPOL_INTERLEAVE,
-		.from_node	= NONE, /* no target */
-		.ret		= -1,
-		.err		= EINVAL,
-	},
-	{ /* case05 */
-		.policy		= MPOL_INTERLEAVE,
-		.from_node	= SELF,
-		.ret		= 0,
-		.err		= 0,
-	},
-	{ /* case06 */
-		.policy		= MPOL_PREFERRED,
-		.from_node	= NONE,
-		.ret		= 0,
-		.err		= 0,
-	},
-	{ /* case07 */
-		.policy		= MPOL_PREFERRED,
-		.from_node	= SELF,
-		.ret		= 0,
-		.err		= 0,
-	},
-	{ /* case08 */
-		.policy		= -1, /* unknown policy */
-		.from_node	= NONE,
-		.ret		= -1,
-		.err		= EINVAL,
-	},
-	{ /* case09 */
-		.policy		= MPOL_DEFAULT,
-		.from_node	= NONE,
-		.flags		= -1, /* invalid flags */
-		.ret		= -1,
-		.err		= EINVAL,
-	},
-	{ /* case10 */
-		.ttype		= INVALID_POINTER,
-		.policy		= MPOL_PREFERRED,
-		.from_node	= SELF,
-		.ret		= -1,
-		.err		= EFAULT,
-	},
+	{			/* case00 */
+	 .policy = MPOL_DEFAULT,
+	 .from_node = NONE,
+	 .ret = 0,
+	 .err = 0,
+	 },
+	{			/* case01 */
+	 .policy = MPOL_DEFAULT,
+	 .from_node = SELF,	/* target exists */
+	 .ret = -1,
+	 .err = EINVAL,
+	 },
+	{			/* case02 */
+	 .policy = MPOL_BIND,
+	 .from_node = NONE,	/* no target */
+	 .ret = -1,
+	 .err = EINVAL,
+	 },
+	{			/* case03 */
+	 .policy = MPOL_BIND,
+	 .from_node = SELF,
+	 .ret = 0,
+	 .err = 0,
+	 },
+	{			/* case04 */
+	 .policy = MPOL_INTERLEAVE,
+	 .from_node = NONE,	/* no target */
+	 .ret = -1,
+	 .err = EINVAL,
+	 },
+	{			/* case05 */
+	 .policy = MPOL_INTERLEAVE,
+	 .from_node = SELF,
+	 .ret = 0,
+	 .err = 0,
+	 },
+	{			/* case06 */
+	 .policy = MPOL_PREFERRED,
+	 .from_node = NONE,
+	 .ret = 0,
+	 .err = 0,
+	 },
+	{			/* case07 */
+	 .policy = MPOL_PREFERRED,
+	 .from_node = SELF,
+	 .ret = 0,
+	 .err = 0,
+	 },
+	{			/* case08 */
+	 .policy = -1,		/* unknown policy */
+	 .from_node = NONE,
+	 .ret = -1,
+	 .err = EINVAL,
+	 },
+	{			/* case09 */
+	 .policy = MPOL_DEFAULT,
+	 .from_node = NONE,
+	 .flags = -1,		/* invalid flags */
+	 .ret = -1,
+	 .err = EINVAL,
+	 },
+	{			/* case10 */
+	 .ttype = INVALID_POINTER,
+	 .policy = MPOL_PREFERRED,
+	 .from_node = SELF,
+	 .ret = -1,
+	 .err = EFAULT,
+	 },
 };
 
-static int  do_test(struct test_case *tc);
+static int do_test(struct test_case *tc);
 static void setup(void);
 static void cleanup(void);
 
@@ -192,12 +192,12 @@ int main(int argc, char **argv)
 	testno = (int)(sizeof(tcase) / sizeof(tcase[0]));
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (i = 0; i < testno; i++) {
 			tst_resm(TINFO, "(case%02d) START", i);
 			ret = do_test(&tcase[i]);
-			tst_resm((ret == 0 ? TPASS : TFAIL|TERRNO),
-				    "(case%02d) END", i);
+			tst_resm((ret == 0 ? TPASS : TFAIL | TERRNO),
+				 "(case%02d) END", i);
 		}
 	}
 	cleanup();
@@ -222,7 +222,7 @@ static int do_test(struct test_case *tc)
 
 	ret = get_allowed_nodes(NH_MEMS, 1, &test_node);
 	if (ret < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "get_allowed_nodes: %d", ret);
+		tst_brkm(TBROK | TERRNO, cleanup, "get_allowed_nodes: %d", ret);
 
 #if !defined(LIBNUMA_API_VERSION) || LIBNUMA_API_VERSION < 2
 	nodemask = malloc(sizeof(nodemask_t));
@@ -233,29 +233,28 @@ static int do_test(struct test_case *tc)
 #else
 	numa_bitmask_setbit(nodemask, test_node);
 #endif
-	p = mmap(NULL, len, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
-		    0, 0);
+	p = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+		 0, 0);
 	if (p == MAP_FAILED)
-		tst_brkm(TBROK|TERRNO, cleanup, "mmap");
+		tst_brkm(TBROK | TERRNO, cleanup, "mmap");
 
 	if (tc->ttype == INVALID_POINTER)
 		invalid_nodemask = (unsigned long *)0xc0000000;
 
 	errno = 0;
 	if (tc->from_node == NONE)
-		TEST(ret = syscall(__NR_mbind, p, len, tc->policy,
-				    NULL, 0, tc->flags));
+		TEST(ret = ltp_syscall(__NR_mbind, p, len, tc->policy,
+				   NULL, 0, tc->flags));
 	else if (tc->ttype == INVALID_POINTER)
-		TEST(ret = syscall(__NR_mbind, p, len, tc->policy,
-				    invalid_nodemask, maxnode, tc->flags));
+		TEST(ret = ltp_syscall(__NR_mbind, p, len, tc->policy,
+				   invalid_nodemask, maxnode, tc->flags));
 	else
 #if !defined(LIBNUMA_API_VERSION) || LIBNUMA_API_VERSION < 2
-		TEST(ret = syscall(__NR_mbind, p, len, tc->policy,
-				    nodemask, maxnode, tc->flags));
+		TEST(ret = ltp_syscall(__NR_mbind, p, len, tc->policy,
+				   nodemask, maxnode, tc->flags));
 #else
-		TEST(ret = syscall(__NR_mbind, p, len, tc->policy,
-				    nodemask->maskp, nodemask->size,
-				    tc->flags));
+		TEST(ret = ltp_syscall(__NR_mbind, p, len, tc->policy,
+				   nodemask->maskp, nodemask->size, tc->flags));
 #endif
 
 	err = TEST_ERRNO;
@@ -264,14 +263,14 @@ static int do_test(struct test_case *tc)
 
 	/* Check policy of the allocated memory */
 #if !defined(LIBNUMA_API_VERSION) || LIBNUMA_API_VERSION < 2
-	TEST(syscall(__NR_get_mempolicy, &policy, getnodemask,
-			    maxnode, p, MPOL_F_ADDR));
+	TEST(ltp_syscall(__NR_get_mempolicy, &policy, getnodemask,
+		     maxnode, p, MPOL_F_ADDR));
 #else
-	TEST(syscall(__NR_get_mempolicy, &policy, getnodemask->maskp,
-			    getnodemask->size, p, MPOL_F_ADDR));
+	TEST(ltp_syscall(__NR_get_mempolicy, &policy, getnodemask->maskp,
+		     getnodemask->size, p, MPOL_F_ADDR));
 #endif
 	if (TEST_RETURN < 0) {
-		tst_resm(TFAIL|TERRNO, "get_mempolicy failed");
+		tst_resm(TFAIL | TERRNO, "get_mempolicy failed");
 		return -1;
 	}
 
@@ -288,9 +287,9 @@ static int do_test(struct test_case *tc)
 	else
 		cmp_ok = ((tc->policy == policy) &&
 #if !defined(LIBNUMA_API_VERSION) || LIBNUMA_API_VERSION < 2
-			    nodemask_equal(nodemask, getnodemask));
+			  nodemask_equal(nodemask, getnodemask));
 #else
-			    numa_bitmask_equal(nodemask, getnodemask));
+			  numa_bitmask_equal(nodemask, getnodemask));
 #endif
 TEST_END:
 	result = ((err != tc->err) || (!cmp_ok));
@@ -301,7 +300,7 @@ TEST_END:
 static void setup(void)
 {
 	/* check syscall availability */
-	syscall(__NR_mbind, NULL, 0, 0, NULL, 0, 0);
+	ltp_syscall(__NR_mbind, NULL, 0, 0, NULL, 0, 0);
 
 	TEST_PAUSE;
 	tst_tmpdir();

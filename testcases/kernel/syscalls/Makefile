@@ -28,7 +28,7 @@ FILTER_OUT_DIRS += epoll
 
 ifeq ($(UCLINUX),1)
 FILTER_OUT_DIRS	+= capget capset chmod chown clone fork getcontext llseek \
-		   nftw profil remap_file_pages
+		   nftw profil remap_file_pages mincore
 endif
 
 include $(top_srcdir)/include/mk/generic_trunk_target.mk

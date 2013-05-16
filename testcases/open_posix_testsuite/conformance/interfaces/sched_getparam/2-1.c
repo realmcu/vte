@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-int main(int argc, char **argv)
+int main(void)
 {
 
 	struct sched_param param0;
@@ -32,8 +32,7 @@ int main(int argc, char **argv)
 	result1 = sched_getparam(getpid(), &param1);
 
 	if (result0 == result1 &&
-	   param0.sched_priority == param1.sched_priority &&
-	   errno == 0) {
+	    param0.sched_priority == param1.sched_priority && errno == 0) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	} else {

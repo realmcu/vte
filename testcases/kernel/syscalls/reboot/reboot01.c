@@ -79,10 +79,11 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "reboot01";	/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "reboot01";
+int TST_TOTAL = 2;
 
 static int flag[2] = { LINUX_REBOOT_CMD_CAD_ON, LINUX_REBOOT_CMD_CAD_OFF };
+
 static const char *option_message[] = { "LINUX_REBOOT_CMD_CAD_ON",
 	"LINUX_REBOOT_CMD_CAD_OFF"
 };
@@ -100,7 +101,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 

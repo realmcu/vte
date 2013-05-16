@@ -25,21 +25,20 @@
 void *a_thread_func()
 {
 	clockid_t cpuclock;
-	struct timespec ts = {.tv_sec = 1, .tv_nsec = 1};
+	struct timespec ts = {.tv_sec = 1,.tv_nsec = 1 };
 	pthread_getcpuclockid(pthread_self(), &cpuclock);
 	clock_gettime(cpuclock, &ts);
 	/* Just test the tv_sec field here. */
-	if (ts.tv_sec != 0)
-	{
+	if (ts.tv_sec != 0) {
 		printf("ts.tv_sec: %ld, ts.tv_nsec: %ld\n",
-			ts.tv_sec, ts.tv_nsec);
+		       ts.tv_sec, ts.tv_nsec);
 		exit(PTS_FAIL);
 	}
 	pthread_exit(0);
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 #if _POSIX_THREAD_CPUTIME == -1
 	printf("_POSIX_THREAD_CPUTIME not supported\n");
@@ -52,8 +51,7 @@ int main()
 		return PTS_UNSUPPORTED;
 	}
 
-	if (pthread_create(&new_th, NULL, a_thread_func, NULL) != 0)
-	{
+	if (pthread_create(&new_th, NULL, a_thread_func, NULL) != 0) {
 		perror("Error creating thread\n");
 		return PTS_UNRESOLVED;
 	}

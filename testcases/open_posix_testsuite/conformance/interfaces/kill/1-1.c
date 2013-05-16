@@ -23,19 +23,21 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-void handler(int signo)
+static void handler(int signo)
 {
+	(void) signo;
+
 	printf("Caught signal being tested!\n");
 	printf("Test PASSED\n");
-	exit(0);
+	_exit(PTS_PASS);
 }
 
-int main()
+int main(void)
 {
 	struct sigaction act;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 	if (sigemptyset(&act.sa_mask) == -1) {
 		perror("Error calling sigemptyset\n");
 		return PTS_UNRESOLVED;

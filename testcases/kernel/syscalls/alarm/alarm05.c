@@ -76,9 +76,9 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "alarm05";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
-int alarms_received = 0;		/* flag to indicate SIGALRM received or not */
+char *TCID = "alarm05";
+int TST_TOTAL = 1;
+int alarms_received = 0;	/* flag to indicate SIGALRM received or not */
 
 void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
@@ -102,7 +102,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Reset alarms_received for every iteration, since it has

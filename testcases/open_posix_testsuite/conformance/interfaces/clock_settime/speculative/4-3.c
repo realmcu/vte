@@ -47,11 +47,13 @@ int caught = 0;
 
 void handler(int signo)
 {
+	(void) signo;
+
 	printf("Caught signal\n");
 	caught++;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	struct sigaction act;
@@ -67,8 +69,8 @@ int main(int argc, char *argv[])
 	ev.sigev_notify = SIGEV_SIGNAL;
 	ev.sigev_signo = SIGTOTEST;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 
 	if (sigemptyset(&act.sa_mask) != 0) {
 		perror("sigemptyset() was not successful\n");
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
 		return PTS_UNRESOLVED;
 	}
 
- 	if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
+	if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
 		perror("timer_create() did not return success\n");
 		return PTS_UNRESOLVED;
 	}
@@ -100,7 +102,7 @@ int main(int argc, char *argv[])
 		return PTS_UNRESOLVED;
 	}
 
-	tpclock.tv_sec = its.it_value.tv_sec + EXPECTEDOVERRUNS*TIMERINTERVAL;
+	tpclock.tv_sec = its.it_value.tv_sec + EXPECTEDOVERRUNS * TIMERINTERVAL;
 	tpclock.tv_nsec = its.it_value.tv_nsec;
 	getBeforeTime(&tpreset);
 	if (clock_settime(CLOCK_REALTIME, &tpclock) != 0) {
@@ -115,7 +117,7 @@ int main(int argc, char *argv[])
 		printf("Overrun count == # of repeating timer expirys\n");
 	} else {
 		printf("Overrun count =%d, not # of repeating timer expirys\n",
-				overruns);
+		       overruns);
 	}
 
 	tpreset.tv_sec += SHORTTIME;

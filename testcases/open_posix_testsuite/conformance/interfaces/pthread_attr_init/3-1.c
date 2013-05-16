@@ -29,31 +29,28 @@ void *a_thread_func(void *attr)
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t new_threads[NUM_THREADS];
 	pthread_attr_t new_attr;
 	int i, ret;
 
 	/* Initialize attribute */
-	if (pthread_attr_init(&new_attr) != 0)
-	{
+	if (pthread_attr_init(&new_attr) != 0) {
 		perror("Cannot initialize attribute object\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Create [NUM_THREADS] number of threads with the same attribute
 	 * object. */
-	for (i=0;i<NUM_THREADS;i++)
-	{
-		ret=pthread_create(&new_threads[i], &new_attr, a_thread_func, NULL);
-		if ((ret != 0) && (ret == EINVAL))
-		{
+	for (i = 0; i < NUM_THREADS; i++) {
+		ret =
+		    pthread_create(&new_threads[i], &new_attr, a_thread_func,
+				   NULL);
+		if ((ret != 0) && (ret == EINVAL)) {
 			printf("Test FAILED\n");
 			return PTS_FAIL;
-		}
-		else if (ret !=0)
-		{
+		} else if (ret != 0) {
 			perror("Error creating thread\n");
 			return PTS_UNRESOLVED;
 		}

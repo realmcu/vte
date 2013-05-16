@@ -79,8 +79,8 @@ void cleanup();
 
 #define PERMS		0777
 
-char *TCID = "mkdir05";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mkdir05";
+int TST_TOTAL = 1;
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -110,7 +110,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST mkdir() base functionality
@@ -132,7 +132,7 @@ int main(int ac, char **av)
 			if (stat(tstdir1, &buf) == -1) {
 				tst_brkm(TBROK, cleanup, "failed to stat the "
 					 "new directory");
-			 }
+			}
 			/* check the owner */
 			if (buf.st_uid != geteuid()) {
 				tst_resm(TFAIL, "mkdir() FAILED to set owner ID"

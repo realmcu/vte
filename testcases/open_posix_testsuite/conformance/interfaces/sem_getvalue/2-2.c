@@ -77,7 +77,7 @@
 /***************************    Test case   ***********************************/
 /******************************************************************************/
 
-void *threaded(void * arg)
+void *threaded(void *arg)
 {
 	int ret;
 
@@ -93,7 +93,7 @@ void *threaded(void * arg)
 }
 
 /* The main test function. */
-int main(int argc, char *argv[])
+int main(void)
 {
 	int ret, val;
 	sem_t sem;
@@ -128,7 +128,8 @@ int main(int argc, char *argv[])
 
 	if ((val != 0) && (val != -1)) {
 		output("Val: %d\n", val);
-		FAILED("Semaphore count is neither 0 nor # of waiting processes");
+		FAILED
+		    ("Semaphore count is neither 0 nor # of waiting processes");
 	}
 
 	/* Post the semaphore */

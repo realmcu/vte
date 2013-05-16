@@ -122,8 +122,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "fcntl08";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fcntl08";
+int TST_TOTAL = 1;
 
 char fname[255];
 int arg, fd;
@@ -140,17 +140,17 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fcntl(fd, F_SETFL, arg));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "fcntl failed");
+			tst_resm(TFAIL | TTERRNO, "fcntl failed");
 		else {
 
 			if (STD_FUNCTIONAL_TEST) {
 				tst_resm(TPASS, "fcntl returned %ld",
-				    TEST_RETURN);
+					 TEST_RETURN);
 			}
 		}
 
@@ -171,7 +171,7 @@ void setup()
 
 	sprintf(fname, "tfile_%d", getpid());
 	if ((fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open failed");
 
 	/* set the flags to be used */
 #ifdef CRAY
@@ -193,7 +193,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 	if (close(fd) == -1)
-		tst_resm(TWARN|TERRNO, "close failed");
+		tst_resm(TWARN | TERRNO, "close failed");
 
 	tst_rmdir();
 

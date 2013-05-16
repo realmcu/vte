@@ -78,9 +78,10 @@
 
 #define INCR_TIME	10	/* increment in the system's current time */
 
-char *TCID = "stime02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "stime02";
+int TST_TOTAL = 1;
 int exp_enos[] = { EPERM, 0 };
+
 time_t curr_time;		/* system's current time in seconds */
 time_t new_time;		/* system's new time */
 time_t tloc;			/* argument var. for time() */
@@ -95,7 +96,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -109,7 +109,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Invoke stime(2) to set the system's time
@@ -131,7 +131,7 @@ int main(int ac, char **av)
 			tst_resm(TFAIL, "stime(2) returned %ld, expected -1, "
 				 "errno:%d", TEST_RETURN, EPERM);
 		}
-		Tst_count++;	/* incr TEST_LOOP counter */
+		tst_count++;	/* incr TEST_LOOP counter */
 	}
 
 	cleanup();
@@ -166,7 +166,7 @@ void setup()
 	if ((curr_time = time(&tloc)) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "time() failed to get current time, errno=%d", errno);
-	 }
+	}
 
 	/* Get the system's new time */
 	new_time = curr_time + INCR_TIME;

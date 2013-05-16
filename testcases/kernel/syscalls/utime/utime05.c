@@ -89,9 +89,10 @@
 #define FILE_MODE	S_IRUSR | S_IRGRP | S_IROTH
 #define NEW_TIME	10000
 
-char *TCID = "utime05";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "utime05";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
+
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -108,7 +109,6 @@ int main(int ac, char **av)
 	time_t modf_time, access_time;
 	/* file modification/access time */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -122,7 +122,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Invoke utime(2) to set TEMP_FILE access and
@@ -149,7 +149,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "stat(2) of "
 						 "%s failed, error:%d",
 						 TEMP_FILE, TEST_ERRNO);
-				 }
+				}
 				modf_time = stat_buf.st_mtime;
 				access_time = stat_buf.st_atime;
 
@@ -168,7 +168,7 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "%s call succeeded", TCID);
 			}
 		}
-		Tst_count++;	/* incr TEST_LOOP counter */
+		tst_count++;	/* incr TEST_LOOP counter */
 	}
 
 	cleanup();

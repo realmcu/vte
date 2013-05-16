@@ -34,12 +34,12 @@ void handler(int signo)
 	exit(0);
 }
 
-int main()
+int main(void)
 {
 	struct sigaction act;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 	if (sigemptyset(&act.sa_mask) == -1) {
 		perror("Error calling sigemptyset\n");
 		return PTS_UNRESOLVED;

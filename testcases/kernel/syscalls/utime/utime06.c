@@ -96,8 +96,8 @@
 #define TEMP_FILE	"tmp_file"
 #define FILE_MODE	S_IRUSR | S_IRGRP | S_IROTH
 
-char *TCID = "utime06";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "utime06";
+int TST_TOTAL = 2;
 time_t curr_time;		/* current time in seconds */
 time_t tloc;			/* argument var. for time() */
 int exp_enos[] = { EACCES, ENOENT, 0 };
@@ -135,7 +135,6 @@ int main(int ac, char **av)
 	int ind;		/* counter to test different test conditions */
 	int pid;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -151,11 +150,11 @@ int main(int ac, char **av)
 
 	if (pid == -1) {
 		tst_brkm(TBROK, cleanup, "fork() failed");
-	 } else if (pid == 0) {
+	} else if (pid == 0) {
 		if ((ltpuser = getpwnam(LTPUSER1)) == NULL) {
 			tst_brkm(TBROK, cleanup, "%s not found in /etc/passwd",
 				 LTPUSER1);
-		 }
+		}
 
 		/* get uid of user */
 		user_uid = ltpuser->pw_uid;
@@ -164,7 +163,7 @@ int main(int ac, char **av)
 
 		for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-			Tst_count = 0;
+			tst_count = 0;
 
 			for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 				file_name = Test_cases[ind].pathname;
@@ -190,18 +189,19 @@ int main(int ac, char **av)
 							 "fails, %s, errno:%d, "
 							 "expected errno:%d",
 							 test_desc, TEST_ERRNO,
-							 Test_cases[ind].
-							 exp_errno);
+							 Test_cases
+							 [ind].exp_errno);
 					}
 				} else {
-					tst_resm(TFAIL, "utime(2) returned %ld, "
+					tst_resm(TFAIL,
+						 "utime(2) returned %ld, "
 						 "expected -1, errno:%d",
 						 TEST_RETURN,
 						 Test_cases[ind].exp_errno);
 				}
 			}
 
-			Tst_count++;	/* incr TEST_LOOP counter */
+			tst_count++;	/* incr TEST_LOOP counter */
 
 		}
 	} else {
@@ -285,7 +285,7 @@ int setup1()
 	if ((ltpuser = getpwnam(LTPUSER2)) == NULL) {
 		tst_brkm(TBROK, cleanup, "%s not found in /etc/passwd",
 			 LTPUSER2);
-	 }
+	}
 
 	/* get uid/gid of user accordingly */
 	user_uid = ltpuser->pw_uid;
@@ -294,7 +294,7 @@ int setup1()
 	if (chown(TEMP_FILE, user_uid, group_gid) < 0) {
 		tst_brkm(TBROK, cleanup, "chown() of %s failed, error %d",
 			 TEMP_FILE, errno);
-	 }
+	}
 
 	return 0;
 }

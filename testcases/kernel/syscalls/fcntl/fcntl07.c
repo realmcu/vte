@@ -150,8 +150,8 @@ void setup();
 void cleanup();
 void help();
 
-char *TCID = "fcntl07";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "fcntl07";
+int TST_TOTAL = 2;
 
 int fflag, Tflag;		/* binary flags: opt or not */
 char *fopt, *Topt;		/* option arguments */
@@ -213,17 +213,16 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (tcp = testfds, tcd = testfdtypes; *tcp; tcp++, tcd++) {
 
 			TEST(fcntl(**tcp, F_SETFD, FD_CLOEXEC));
 
 			if (TEST_RETURN == -1) {
-				tst_resm(TFAIL|TTERRNO,
+				tst_resm(TFAIL | TTERRNO,
 					 "fcntl(%s[%d], F_SETFD, FD_CLOEXEC) "
-					 "failed",
-					 *tcd, **tcp);
+					 "failed", *tcd, **tcp);
 			} else {
 
 				if (STD_FUNCTIONAL_TEST) {
@@ -277,7 +276,7 @@ void setup(char *path)
 
 	tst_tmpdir();
 
-	file_fd = SAFE_OPEN(cleanup, File1, O_CREAT|O_RDWR, 0666);
+	file_fd = SAFE_OPEN(cleanup, File1, O_CREAT | O_RDWR, 0666);
 	SAFE_PIPE(cleanup, pipe_fds);
 }
 

@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
 	int lc, i;
 	char *msg;
 
-	/*parse standard options */
 	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -94,7 +93,7 @@ int main(int argc, char *argv[])
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			TEST(ustat(dev_num, ubuf));

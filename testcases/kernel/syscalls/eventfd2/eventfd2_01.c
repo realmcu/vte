@@ -59,23 +59,19 @@
 #include <sys/syscall.h>
 #include <errno.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
 #ifndef O_CLOEXEC
-# define O_CLOEXEC 02000000
+#define O_CLOEXEC 02000000
 #endif
 
 #define EFD_CLOEXEC O_CLOEXEC
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "eventfd2_01";	/* test program identifier.              */
+char *TCID = "eventfd2_01";
 int testno;
-int TST_TOTAL = 1;		/* total number of tests in this file.   */
+int TST_TOTAL = 1;
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -134,11 +130,11 @@ int main(int argc, char *argv[])
 
 	if ((tst_kvercmp(2, 6, 27)) < 0) {
 		tst_brkm(TCONF, NULL,
-		    "This test can only run on kernels that are 2.6.27 and higher");
+			 "This test can only run on kernels that are 2.6.27 and higher");
 	}
 	setup();
 
-	fd = syscall(__NR_eventfd2, 1, 0);
+	fd = ltp_syscall(__NR_eventfd2, 1, 0);
 	if (fd == -1) {
 		tst_brkm(TFAIL, cleanup, "eventfd2(0) failed");
 	}
@@ -151,7 +147,7 @@ int main(int argc, char *argv[])
 	}
 	close(fd);
 
-	fd = syscall(__NR_eventfd2, 1, EFD_CLOEXEC);
+	fd = ltp_syscall(__NR_eventfd2, 1, EFD_CLOEXEC);
 	if (fd == -1) {
 		tst_brkm(TFAIL, cleanup, "eventfd2(EFD_CLOEXEC) failed");
 	}

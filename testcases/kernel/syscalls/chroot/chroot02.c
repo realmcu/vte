@@ -77,8 +77,8 @@ int main(int ac, char **av)
 
 	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "Could not fork");
@@ -127,7 +127,7 @@ void setup()
 	tst_tmpdir();
 	if ((fileHandle = creat(TMP_FILENAME, 0777)) == -1)
 		tst_brkm(TBROK, cleanup, "failed to create temporary file "
-		    TMP_FILENAME);
+			 TMP_FILENAME);
 	if (stat(TMP_FILENAME, &buf) != 0)
 		tst_brkm(TBROK, cleanup, TMP_FILENAME " does not exist");
 

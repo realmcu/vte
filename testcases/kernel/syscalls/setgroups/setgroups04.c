@@ -72,7 +72,7 @@
 
 #include "compat_16.h"
 
-TCID_DEFINE(setgroups04);	/* Test program identifier.    */
+TCID_DEFINE(setgroups04);
 int TST_TOTAL = 1;
 
 GID_T groups_list[NGROUPS];	/* Array to hold gids for getgroups() */
@@ -90,7 +90,6 @@ int main(int ac, char **av)
 	int gidsetsize;		/* total no. of groups */
 	char *test_desc;	/* test specific error message */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -102,7 +101,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		gidsetsize = NGROUPS;
 		test_desc = "EFAULT";

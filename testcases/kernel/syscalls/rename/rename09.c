@@ -91,8 +91,8 @@ extern struct passwd *my_getpwnam(char *);
 char user1name[] = "nobody";
 char user2name[] = "bin";
 
-char *TCID = "rename09";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "rename09";
+int TST_TOTAL = 1;
 
 char fdir[255], mdir[255];
 char fname[255], mname[255];
@@ -127,11 +127,11 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if ((pid = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork() #1 failed");
-		 }
+		}
 
 		if (pid == 0) {	/* first child */
 			/* set to nobody */
@@ -143,14 +143,14 @@ int main(int ac, char **av)
 					 nobody->pw_uid, nobody->pw_uid);
 				perror("setreuid");
 				exit(1);
-			 }
+			}
 
 			/* create the a directory with 0700 permits */
 			if (mkdir(fdir, PERMS) == -1) {
 				tst_resm(TWARN, "mkdir(%s, %#o) Failed",
 					 fdir, PERMS);
 				exit(1);
-			 }
+			}
 
 			/* create "old" file under it */
 			do_file_setup(fname);
@@ -167,7 +167,7 @@ int main(int ac, char **av)
 
 		if ((pid1 = FORK_OR_VFORK()) == -1) {
 			tst_brkm(TBROK, cleanup, "fork() #2 failed");
-		 }
+		}
 
 		if (pid1 == 0) {	/* second child */
 			/* set to bin */
@@ -175,14 +175,14 @@ int main(int ac, char **av)
 				tst_resm(TWARN, "seteuid() failed");
 				perror("setreuid");
 				exit(1);
-			 }
+			}
 
 			/* create "new" directory */
 			if (mkdir(mdir, PERMS) == -1) {
 				tst_resm(TWARN, "mkdir(%s, %#o) failed",
 					 mdir, PERMS);
 				exit(1);
-			 }
+			}
 
 			/* create the new file */
 			do_file_setup(mname);
@@ -199,7 +199,7 @@ int main(int ac, char **av)
 			if (TEST_ERRNO != EACCES) {
 				tst_resm(TFAIL, "Expected EACCES got %d",
 					 TEST_ERRNO);
-			 } else {
+			} else {
 				tst_resm(TPASS, "rename() returned EACCES");
 			}
 
@@ -249,7 +249,7 @@ void setup()
 	/* must run as root */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must run test as root");
-	 }
+	}
 
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 

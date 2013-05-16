@@ -93,7 +93,7 @@ void do_file_setup(char *);
 
 #define PERMS		0777
 
-char *TCID = "rmdir02";		/* Test program identifier.    */
+char *TCID = "rmdir02";
 
 int exp_enos[] = { ENOTEMPTY, EBUSY, ENAMETOOLONG, ENOENT, ENOTDIR, EFAULT, 0 };
 
@@ -133,6 +133,7 @@ struct test_case_t {
 	{
 	NULL, EFAULT, NULL}
 };
+
 int TST_TOTAL = (sizeof(TC) / sizeof(*TC));
 
 int main(int ac, char **av)
@@ -161,7 +162,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* save current working directory */
 		getcwd(cwd, 255);
@@ -228,7 +229,7 @@ void set_condition(int num)
 		if (mkdir(tstdir1, PERMS) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir1, PERMS);
-		 }
+		}
 
 		/* create a file under tstdir1 */
 		do_file_setup(tstfile);
@@ -249,7 +250,7 @@ void set_condition(int num)
 		/* create a file */
 		if ((fd = creat(tstfile, PERMS)) == -1) {
 			tst_brkm(TBROK, cleanup, "creat() failed");
-		 }
+		}
 		close(fd);
 		break;
 	default:

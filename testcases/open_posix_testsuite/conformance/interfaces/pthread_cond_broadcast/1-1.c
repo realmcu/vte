@@ -22,7 +22,7 @@
 
 struct testdata {
 	pthread_mutex_t mutex;
-	pthread_cond_t  cond;
+	pthread_cond_t cond;
 } td;
 
 static int start_num;
@@ -62,10 +62,10 @@ static void *thr_func(void *arg)
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	int i, rc;
-	pthread_t  thread[THREAD_NUM];
+	pthread_t thread[THREAD_NUM];
 
 	if (pthread_mutex_init(&td.mutex, NULL) != 0) {
 		fprintf(stderr, "Fail to initialize mutex\n");

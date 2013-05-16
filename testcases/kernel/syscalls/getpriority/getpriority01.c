@@ -76,8 +76,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "getpriority01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "getpriority01";
+int TST_TOTAL = 1;
 
 void setup();			/* setup function for the test */
 void cleanup();			/* cleanup function for the test */
@@ -93,7 +93,6 @@ int main(int ac, char **av)
 
 	TST_TOTAL = sizeof(prio_which) / sizeof(int);
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -104,7 +103,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; ind < TST_TOTAL; ind++) {
 			which = prio_which[ind];

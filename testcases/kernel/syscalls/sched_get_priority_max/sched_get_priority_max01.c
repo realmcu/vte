@@ -71,7 +71,7 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sched_get_priority_max01";	/* Test program identifier.    */
+char *TCID = "sched_get_priority_max01";
 
 static struct test_case_t {
 	char *desc;
@@ -99,7 +99,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; ind < TST_TOTAL; ind++) {
 			/*
@@ -111,7 +111,7 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "%s Passed",
 					 test_cases[ind].desc);
 			} else {
-				tst_resm(TFAIL|TTERRNO, "%s Failed,"
+				tst_resm(TFAIL | TTERRNO, "%s Failed,"
 					 "sched_get_priority_max() returned %ld",
 					 test_cases[ind].desc, TEST_RETURN);
 			}

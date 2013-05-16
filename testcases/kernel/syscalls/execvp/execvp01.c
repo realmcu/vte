@@ -123,10 +123,10 @@
 void setup();
 void cleanup();
 
-char *TCID = "execvp01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "execvp01";
+int TST_TOTAL = 1;
 
-int exp_enos[] = { 0, 0 };	/* Zero terminated list of expected errnos */
+int exp_enos[] = { 0, 0 };
 
 pid_t pid;			/* process id from fork */
 int status;			/* status returned from waitpid */
@@ -137,7 +137,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -147,7 +146,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		switch (pid = FORK_OR_VFORK()) {
 		case 0:	/* CHILD - Call execvp(2) */

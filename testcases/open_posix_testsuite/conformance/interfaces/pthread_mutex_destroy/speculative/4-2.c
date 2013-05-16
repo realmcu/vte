@@ -26,10 +26,10 @@
 #define FUNCTION "pthread_mutex_destroy"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-int main()
+int main(void)
 {
-	pthread_mutex_t     mutex = PTHREAD_MUTEX_INITIALIZER;
-	int                 rc = 0;
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+	int rc = 0;
 
 	/* Lock the mutex */
 	rc = pthread_mutex_lock(&mutex);
@@ -42,7 +42,7 @@ int main()
 	rc = pthread_mutex_destroy(&mutex);
 	if (rc != EBUSY) {
 		printf(ERROR_PREFIX "Test PASS: Expected %d(EBUSY) got %d, "
-			"though the standard states 'may' fail\n", EBUSY, rc);
+		       "though the standard states 'may' fail\n", EBUSY, rc);
 		exit(PTS_PASS);
 	}
 	printf("Test PASSED\n");

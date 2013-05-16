@@ -71,7 +71,7 @@
  */
 
 #ifndef _GNU_SOURCE
-# define _GNU_SOURCE
+#define _GNU_SOURCE
 #endif
 
 #include <stdio.h>
@@ -94,8 +94,8 @@
 #define TESTDIR		"testdir"
 
 int fd;				/* file descriptor for test directory */
-char *TCID = "fchmod05";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fchmod05";
+int TST_TOTAL = 1;
 
 void setup();			/* Main setup function for test */
 void cleanup();			/* Main cleanup function for test */
@@ -107,7 +107,6 @@ int main(int ac, char **av)
 	char *msg;
 	mode_t dir_mode;	/* mode permissions set on test directory */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -118,7 +117,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call fchmod(2) with mode argument
@@ -153,7 +152,8 @@ int main(int ac, char **av)
 					 TESTDIR, dir_mode, PERMS & ~S_ISGID);
 			} else {
 				tst_resm(TPASS, "Functionality of fchmod(%d, "
-					 "%#o) successful", fd, PERMS & ~S_ISGID);
+					 "%#o) successful", fd,
+					 PERMS & ~S_ISGID);
 			}
 		} else {
 			tst_resm(TPASS, "call succeeded");
@@ -211,17 +211,18 @@ void setup()
 	}
 
 	if (setgroups(1, &nobody_u->pw_gid) == -1)
-		tst_brkm(TBROK, cleanup, "Couldn't change supplementary group Id: %s",
-				strerror(errno));
+		tst_brkm(TBROK, cleanup,
+			 "Couldn't change supplementary group Id: %s",
+			 strerror(errno));
 
 	if (chown(TESTDIR, nobody_u->pw_uid, bin_group->gr_gid) == -1)
 		tst_brkm(TBROK, cleanup, "Couldn't change owner of testdir: %s",
-				strerror(errno));
+			 strerror(errno));
 
 	/* change to nobody:nobody */
 	if (setegid(nobody_u->pw_gid) == -1 || seteuid(nobody_u->pw_uid) == -1)
 		tst_brkm(TBROK, cleanup, "Couldn't switch to nobody:nobody: %s",
-				strerror(errno));
+			 strerror(errno));
 
 	/* Open the test directory for reading */
 	fd = open(TESTDIR, O_RDONLY);

@@ -33,22 +33,25 @@
 #include "posixtest.h"
 
 static pthread_spinlock_t spinlock;
-volatile static int thread_state;
+static volatile int thread_state;
 
 #define NOT_CREATED_THREAD 1
 #define ENTERED_THREAD 2
 #define EXITING_THREAD 3
 
-static void* fn_chld(void *arg)
+static void *fn_chld(void *arg)
 {
 	int rc = 0;
 	thread_state = ENTERED_THREAD;
 
+	(void) arg;
+
 	printf("thread: attempt spin lock\n");
 	rc = pthread_spin_lock(&spinlock);
-	if (rc != 0)
-	{
-		printf("Test FAILED: thread failed to get spin lock error code:%d\n" , rc);
+	if (rc != 0) {
+		printf
+		    ("Test FAILED: thread failed to get spin lock error code:%d\n",
+		     rc);
 		exit(PTS_FAIL);
 	}
 	printf("thread: acquired spin lock\n");
@@ -56,8 +59,7 @@ static void* fn_chld(void *arg)
 	sleep(1);
 
 	printf("thread: unlock spin lock\n");
-	if (pthread_spin_unlock(&spinlock))
-	{
+	if (pthread_spin_unlock(&spinlock)) {
 		printf("Test FAILED: Error at pthread_spin_unlock()\n");
 		exit(PTS_FAIL);
 	}
@@ -67,14 +69,13 @@ static void* fn_chld(void *arg)
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	int cnt = 0;
 
 	pthread_t child_thread;
 
-	if (pthread_spin_init(&spinlock, PTHREAD_PROCESS_PRIVATE) != 0)
-	{
+	if (pthread_spin_init(&spinlock, PTHREAD_PROCESS_PRIVATE) != 0) {
 		printf("main: Error at pthread_spin_init()\n");
 		return PTS_UNRESOLVED;
 	}
@@ -82,70 +83,61 @@ int main()
 	printf("main: attempt spin lock\n");
 
 	/* We should get the lock */
-	if (pthread_spin_lock(&spinlock) != 0)
-	{
-		printf("Error: main cannot get spin lock when no one owns the lock\n");
+	if (pthread_spin_lock(&spinlock) != 0) {
+		printf
+		    ("Error: main cannot get spin lock when no one owns the lock\n");
 		return PTS_UNRESOLVED;
 	}
 	printf("main: acquired spin lock\n");
 
 	thread_state = NOT_CREATED_THREAD;
 	printf("main: create thread\n");
-	if (pthread_create(&child_thread, NULL, fn_chld, NULL) != 0)
-	{
+	if (pthread_create(&child_thread, NULL, fn_chld, NULL) != 0) {
 		printf("main: Error creating child thread\n");
 		return PTS_UNRESOLVED;
 	}
 
 	cnt = 0;
 	/* Expect the child thread to spin on spin lock */
-	do{
+	do {
 		sleep(1);
-	}while (thread_state != EXITING_THREAD && cnt++ < 3);
+	} while (thread_state != EXITING_THREAD && cnt++ < 3);
 
-	if (thread_state == EXITING_THREAD)
-	{
-		printf("Test FAILED: child thread did not spin on spin lock when other thread holds the lock\n");
+	if (thread_state == EXITING_THREAD) {
+		printf
+		    ("Test FAILED: child thread did not spin on spin lock when other thread holds the lock\n");
 		return PTS_FAIL;
-	}
-	else if (thread_state != ENTERED_THREAD)
-	{
+	} else if (thread_state != ENTERED_THREAD) {
 		printf("main: Unexpected thread state %d\n", thread_state);
 		return PTS_UNRESOLVED;
 	}
 
 	printf("main: unlock spin lock\n");
-	if (pthread_spin_unlock(&spinlock) != 0)
-	{
+	if (pthread_spin_unlock(&spinlock) != 0) {
 		printf("Test FAILED: main: Error at pthread_spin_unlock()\n");
 		return PTS_FAIL;
 	}
 
 	/* We expected the child get the spin lock and exit */
 	cnt = 0;
-	do{
+	do {
 		sleep(1);
-	}while (thread_state != EXITING_THREAD && cnt++ < 3);
+	} while (thread_state != EXITING_THREAD && cnt++ < 3);
 
-	if (thread_state == ENTERED_THREAD)
-	{
+	if (thread_state == ENTERED_THREAD) {
 		printf("Test FAILED: child thread did not get spin lock\n");
 		return PTS_FAIL;
-	}
-	else if (thread_state != EXITING_THREAD)
-	{
+	} else if (thread_state != EXITING_THREAD) {
 		printf("main: Unexpected thread state %d\n", thread_state);
 		return PTS_UNRESOLVED;
 	}
 
-	if (pthread_join(child_thread, NULL) != 0)
-	{
+	if (pthread_join(child_thread, NULL) != 0) {
 		printf("main: Error at pthread_join()\n");
 		return PTS_UNRESOLVED;
 	}
 
-	if (pthread_spin_destroy(&spinlock) != 0)
-	{
+	if (pthread_spin_destroy(&spinlock) != 0) {
 		printf("Error at pthread_spin_destroy()");
 		return PTS_UNRESOLVED;
 	}

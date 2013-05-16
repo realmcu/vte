@@ -15,16 +15,15 @@
 #include <signal.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
-
 	sigset_t set;
-	sigaddset (&set, SIGABRT);
+	sigaddset(&set, SIGABRT);
 
 	if (sigprocmask(SIG_SETMASK, &set, NULL) != 0) {
 		perror("sigprocmask failed -- returned -- test aborted");
 		return PTS_FAIL;
 	}
-	printf("sigignore passed\n");
+	printf("Test PASSED\n");
 	return PTS_PASS;
 }

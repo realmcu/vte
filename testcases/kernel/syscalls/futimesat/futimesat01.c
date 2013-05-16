@@ -65,8 +65,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "futimesat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "futimesat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256];
 char testfile[256];
 char testfile2[256];
@@ -75,11 +75,12 @@ int dirfd, fd, ret;
 int fds[TEST_CASES];
 char *filenames[TEST_CASES];
 int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
+
 struct timeval times[2];
 
 int myfutimesat(int dirfd, const char *filename, struct timeval *times)
 {
-	return syscall(__NR_futimesat, dirfd, filename, times);
+	return ltp_syscall(__NR_futimesat, dirfd, filename, times);
 }
 
 int main(int ac, char **av)
@@ -88,13 +89,12 @@ int main(int ac, char **av)
 	char *msg;
 	int i;
 
-       /* Disable test if the version of the kernel is less than 2.6.16 */
-        if ((tst_kvercmp(2,6,16)) < 0)
-          {
-             tst_resm(TWARN, "This test can only run on kernels that are ");
-             tst_resm(TWARN, "2.6.16 and higher");
-             exit(0);
-          }
+	/* Disable test if the version of the kernel is less than 2.6.16 */
+	if ((tst_kvercmp(2, 6, 16)) < 0) {
+		tst_resm(TWARN, "This test can only run on kernels that are ");
+		tst_resm(TWARN, "2.6.16 and higher");
+		exit(0);
+	}
 
 	/***************************************************************
 	 * parse standard options
@@ -113,7 +113,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call futimesat

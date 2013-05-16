@@ -1,106 +1,77 @@
 /*
+ * Copyright (c) International Business Machines  Corp., 2001
+ *	         written by Wayne Boyer
+ * Copyright (c) 2013 Markos Chandras
+ * Copyright (c) 2013 Cyril Hrubis <chrubis@suse.cz>
  *
- *   Copyright (c) International Business Machines  Corp., 2001
+ * This program is free software;  you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   This program is free software;  you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY;  without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
+ * the GNU General Public License for more details.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY;  without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
- *   the GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program;  if not, write to the Free Software
- *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program;  if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-/*
- * NAME
- *	getdents02.c
- *
- * DESCRIPTION
- *	getdents02 - check that we get a failure with a bad file descriptor
- *
- * ALGORITHM
- *	loop if that option was specified
- *	issue the system call using a bad file descriptor
- *	check the errno value
- *	  issue a PASS message if we get EBADF - errno 9
- *	otherwise, the tests fails
- *	  issue a FAIL message
- *	  break any remaining tests
- *	  call cleanup
- *
- * USAGE:  <for command-line>
- *  getdents02 [-c n] [-e] [-i n] [-I x] [-P x] [-t]
- *     where,  -c n : Run n copies concurrently.
- *             -e   : Turn on errno logging.
- *	       -i n : Execute test n times.
- *	       -I x : Execute test for x seconds.
- *	       -P x : Pause for x seconds between iterations.
- *	       -t   : Turn on syscall timing.
- *
- * HISTORY
- *	03/2001 - Written by Wayne Boyer
- *
- * RESTRICTIONS
- *	none
- */
+#include <stdio.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-#include "getdents.h"
 #include "test.h"
 #include "usctest.h"
+#include "getdents.h"
 
-#include <errno.h>
-#include <fcntl.h>
-#include <linux/types.h>
-#include <dirent.h>
-#include <linux/unistd.h>
-#include <unistd.h>
-
-void cleanup(void);
-void setup(void);
+static void cleanup(void);
+static void setup(void);
 
 char *TCID = "getdents02";
 int TST_TOTAL = 1;
 
-int exp_enos[] = { EBADF, 0 };	/* 0 terminated list of expected errnos */
+static int exp_enos[] = { EBADF, 0 };
+
+static int longsyscall;
+
+option_t options[] = {
+		/* -l long option. Tests getdents64 */
+		{"l", &longsyscall, NULL},
+		{NULL, NULL, NULL}
+};
+
+static void help(void)
+{
+	printf("  -l      Test the getdents64 system call\n");
+}
 
 int main(int ac, char **av)
 {
 	int lc;
 	char *msg;
-	int rval, fd;
-	int count;
-	size_t size = 0;
-	char *dir_name = NULL;
-	struct dirent *dirp;
+	int rval;
+	struct linux_dirent64 dirp64;
+	struct linux_dirent dirp;
 
-	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
+	if ((msg = parse_opts(ac, av, options, &help)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		int fd = -5;
 
-		if ((dir_name = getcwd(dir_name, size)) == NULL)
-			tst_brkm(TBROK, cleanup, "Can not get current "
-				 "directory name");
+		tst_count = 0;
 
-		if ((dirp = malloc(sizeof(struct dirent))) == NULL)
-			tst_brkm(TBROK, cleanup, "malloc failed");
-
-		count = (int)sizeof(struct dirent);
-
-		/* set up a bad file descriptor */
-
-		fd = -5;
-
-		rval = getdents(fd, dirp, count);
+		if (longsyscall)
+			rval = getdents64(fd, &dirp64, sizeof(dirp64));
+		else
+			rval = getdents(fd, &dirp, sizeof(dirp));
 
 		/*
 		 * Hopefully we get an error due to the bad file descriptor.
@@ -111,30 +82,27 @@ int main(int ac, char **av)
 			switch (errno) {
 			case EBADF:
 				tst_resm(TPASS,
-				    "failed as expected with EBADF");
-				break;
+					 "failed as expected with EBADF");
+			break;
+			case ENOSYS:
+				tst_resm(TCONF, "syscall not implemented");
+			break;
 			default:
-				tst_resm(TFAIL|TERRNO,
-				    "getdents failed unexpectedly");
-				break;
+				tst_resm(TFAIL | TERRNO,
+					 "getdents failed unexpectedly");
+			break;
 			}
-		} else
+		} else {
 			tst_resm(TFAIL, "call succeeded unexpectedly");
-
-		free(dir_name);
-		dir_name = NULL;
-
-		free(dirp);
+		}
 	}
 
 	cleanup();
-
 	tst_exit();
 }
 
-void setup(void)
+static void setup(void)
 {
-
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	tst_tmpdir();
@@ -144,9 +112,8 @@ void setup(void)
 	TEST_PAUSE;
 }
 
-void cleanup(void)
+static void cleanup(void)
 {
-
 	TEST_CLEANUP;
 
 	tst_rmdir();

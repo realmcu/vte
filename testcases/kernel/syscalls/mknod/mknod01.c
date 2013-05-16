@@ -122,8 +122,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "mknod01";		/* Test program identifier.    */
-int TST_TOTAL;			/* Total number of test cases. */
+char *TCID = "mknod01";
+int TST_TOTAL;
 
 char Path[1024];		/* path to create */
 int i;
@@ -174,7 +174,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST CASES:

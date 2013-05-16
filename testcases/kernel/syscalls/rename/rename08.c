@@ -77,7 +77,7 @@ void setup();
 void cleanup();
 extern void do_file_setup(char *);
 
-char *TCID = "rename08";	/* Test program identifier.    */
+char *TCID = "rename08";
 
 int exp_enos[] = { EFAULT, 0 };	/* List must end with 0 */
 
@@ -103,6 +103,7 @@ struct test_case_t {
 	{
 	NULL, NULL, EFAULT}
 };
+
 int TST_TOTAL = (sizeof(TC) / sizeof(*TC));
 
 int main(int ac, char **av)
@@ -127,7 +128,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {

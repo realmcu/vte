@@ -51,8 +51,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "creat03";		/* Test program identifier */
-int TST_TOTAL = 1;		/* Total number of test cases */
+char *TCID = "creat03";
+int TST_TOTAL = 1;
 
 char pfilname[40] = "";
 #define FMODE	0444
@@ -74,7 +74,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(creat(pfilname, FMODE));
 
@@ -101,7 +101,8 @@ int main(int ac, char **av)
 		close(TEST_RETURN);
 		/* clean up things in case we are looping */
 		if (unlink(pfilname) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "couldn't remove file");
+			tst_brkm(TBROK | TERRNO, cleanup,
+				 "couldn't remove file");
 		}
 	}
 	cleanup();

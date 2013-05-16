@@ -18,24 +18,18 @@
 #include <errno.h>
 #include "posixtest.h"
 
-void handler(int signo)
-{
-	printf("Caught signal being tested!\n");
-	printf("Test PASSED\n");
-	exit(0);
-}
-
-int main()
+int main(void)
 {
 	int pgrp;
 
- 	if ((pgrp = getpgrp()) == -1) {
+	if ((pgrp = getpgrp()) == -1) {
 		printf("Could not get process group number\n");
 		return PTS_UNRESOLVED;
 	}
 
- 	if (killpg(pgrp, -1) != -1) {
-		printf("Test FAILED: killpg did not return -1 even though it was passed an invalid signal number.");
+	if (killpg(pgrp, -1) != -1) {
+		printf
+		    ("Test FAILED: killpg did not return -1 even though it was passed an invalid signal number.");
 		return PTS_FAIL;
 	}
 

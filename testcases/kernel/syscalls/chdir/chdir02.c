@@ -118,8 +118,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "chdir02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "chdir02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -139,13 +139,13 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(chdir(dirs[lc % 2]));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "chdir(%s) failed",
-			    dirs[lc % 2]);
+			tst_resm(TFAIL | TTERRNO, "chdir(%s) failed",
+				 dirs[lc % 2]);
 		} else {
 
 			if (STD_FUNCTIONAL_TEST) {

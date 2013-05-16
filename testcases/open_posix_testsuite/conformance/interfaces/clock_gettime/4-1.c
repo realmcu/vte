@@ -21,13 +21,13 @@
 #define LARGENUMBER 900000
 void dosomething()
 {
-        int i;
-        for (i=0; i < LARGENUMBER; i++) {
-                clock();
-        }
+	int i;
+	for (i = 0; i < LARGENUMBER; i++) {
+		clock();
+	}
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 #if _POSIX_CPUTIME == -1
 	printf("_POSIX_CPUTIME unsupported\n");
@@ -68,14 +68,12 @@ int main(int argc, char *argv[])
 	}
 
 	if ((ts1.tv_sec <= ts2.tv_sec) &&
-		(ts2.tv_sec <= ts3.tv_sec) &&
-		(ts3.tv_sec <= ts4.tv_sec)) {
+	    (ts2.tv_sec <= ts3.tv_sec) && (ts3.tv_sec <= ts4.tv_sec)) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	} else {
 		printf("Test FAILED - ts1=%ld,ts2=%ld,ts3=%ld,ts4=%ld\n",
-				ts1.tv_sec, ts2.tv_sec, ts3.tv_sec,
-				ts4.tv_sec);
+		       ts1.tv_sec, ts2.tv_sec, ts3.tv_sec, ts4.tv_sec);
 		return PTS_FAIL;
 	}
 

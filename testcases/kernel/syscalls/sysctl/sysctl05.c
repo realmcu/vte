@@ -56,6 +56,10 @@
 #include <errno.h>
 
 char *TCID = "sysctl05";
+
+/* This is an older/deprecated syscall that newer arches are omitting */
+#ifdef __NR_sysctl
+
 int TST_TOTAL = 2;
 
 int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
@@ -116,8 +120,8 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -137,15 +141,16 @@ int main(int ac, char **av)
 			TEST_ERROR_LOG(TEST_ERRNO);
 
 			if (TEST_ERRNO == ENOSYS) {
-				tst_resm(TCONF, "You may need to make CONFIG_SYSCTL_SYSCALL=y"
-						" to your kernel config.");
+				tst_resm(TCONF,
+					 "You may need to make CONFIG_SYSCTL_SYSCALL=y"
+					 " to your kernel config.");
 			} else if (TEST_ERRNO != testcases[i].exp_errno) {
 				tst_resm(TFAIL, "sysctl(2) returned unexpected "
 					 "errno, expected: %d, got: %d",
 					 testcases[i].exp_errno, errno);
 			} else {
 				tst_resm(TPASS, "sysctl(2) set errno correctly "
-						"to %d", testcases[i].exp_errno);
+					 "to %d", testcases[i].exp_errno);
 			}
 
 			if (testcases[i].cleanup) {
@@ -192,3 +197,14 @@ void cleanup()
 	TEST_CLEANUP;
 
 }
+
+#else
+int TST_TOTAL = 0;
+
+int main()
+{
+
+	tst_resm(TCONF, "This test needs a kernel that has sysctl syscall.");
+	tst_exit();
+}
+#endif

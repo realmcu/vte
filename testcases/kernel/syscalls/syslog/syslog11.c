@@ -74,7 +74,6 @@
 
 #define UNEXP_RET_VAL	-1
 
-
 struct test_case_t {		/* test case structure */
 	int type;		/* 1st arg. */
 	char *buf;		/* 2nd arg. */
@@ -121,15 +120,14 @@ int main(int argc, char **argv)
 	int lc;
 	char *msg;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
@@ -199,7 +197,7 @@ void setup(void)
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
-	 }
+	}
 
 	/* Check for nobody_uid user id */
 	if ((ltpuser = getpwnam("nobody")) == NULL) {
@@ -227,4 +225,4 @@ void cleanup(void)
 
 	TEST_CLEANUP;
 
- }
+}

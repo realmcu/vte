@@ -78,8 +78,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "munlock02";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "munlock02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { ENOMEM, 0 };
 
@@ -113,7 +113,7 @@ int main(int ac, char **av)
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 		for (i = 0; i < TST_TOTAL; i++) {
 #ifdef __ia64__
 			TC[0].len = 8 * getpagesize();
@@ -173,8 +173,9 @@ void setup()
 
 	/* check return code */
 	if (TEST_RETURN == -1) {
-		tst_brkm(TFAIL|TTERRNO, cleanup, "mlock(%p, %d) Failed with return=%ld",
-			 address, TC[0].len, TEST_RETURN);
+		tst_brkm(TFAIL | TTERRNO, cleanup,
+			 "mlock(%p, %d) Failed with return=%ld", address,
+			 TC[0].len, TEST_RETURN);
 	}
 	TC[0].addr = address;
 	/*

@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "chmod02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "chmod02";
+int TST_TOTAL = 1;
 
 char fname[255];
 char *buf = "file contents\n";
@@ -145,7 +145,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; ind < TST_TOTAL; ind++) {
 			mode = Modes[ind];
@@ -153,9 +153,8 @@ int main(int ac, char **av)
 			TEST(chmod(fname, mode));
 
 			if (TEST_RETURN == -1) {
-				tst_resm(TFAIL|TTERRNO,
-					 "chmod(%s, %#o) failed",
-					 fname, mode);
+				tst_resm(TFAIL | TTERRNO,
+					 "chmod(%s, %#o) failed", fname, mode);
 			} else {
 
 				if (STD_FUNCTIONAL_TEST) {
@@ -163,7 +162,7 @@ int main(int ac, char **av)
 						 "chmod(%s, %#o) returned %ld",
 						 fname, mode, TEST_RETURN);
 				} else
-					Tst_count++;
+					tst_count++;
 			}
 		}
 
@@ -186,17 +185,13 @@ void setup()
 
 	strcat(fname, "tfile");
 	if ((fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
-			 "open(%s, O_RDWR|O_CREAT,0700) failed",
-			 fname);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "open(%s, O_RDWR|O_CREAT,0700) failed", fname);
 	} else if (write(fd, &buf, strlen(buf)) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
-			 "write(%s, &buf, strlen(buf)) failed",
-			 fname);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "write(%s, &buf, strlen(buf)) failed", fname);
 	} else if (close(fd) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
-			 "close(%s) failed",
-			 fname);
+		tst_brkm(TBROK | TERRNO, cleanup, "close(%s) failed", fname);
 	}
 }
 

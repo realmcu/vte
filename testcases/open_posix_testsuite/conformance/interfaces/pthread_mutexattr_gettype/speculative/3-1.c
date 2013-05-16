@@ -26,7 +26,7 @@
 #include "posixtest.h"
 #include <errno.h>
 
-int main()
+int main(void)
 {
 	pthread_mutexattr_t mta;
 	int type, ret;
@@ -34,15 +34,18 @@ int main()
 	/* Make 'attr' invalid by not initializing it and using memset. */
 	memset(&mta, 0, sizeof(mta));
 
-	 /* Pass an invalid 'attr'.  */
-	ret=pthread_mutexattr_gettype(&mta, &type);
+	/* Pass an invalid 'attr'.  */
+	ret = pthread_mutexattr_gettype(&mta, &type);
 
-	if (ret != EINVAL)
-	{
-		printf("Test FAILED: Incorrect return code.  Expected EINVAL, but got: %d\n", ret);
+	switch (ret) {
+	case 0:
+		printf("UNTESTED: The call didn't fail.\n");
+		return PTS_UNTESTED;
+	case EINVAL:
+		printf("Test PASSED\n");
+		return PTS_PASS;
+	default:
+		printf("Test FAILED: Expected EINVAL, but got: %d\n", ret);
 		return PTS_FAIL;
 	}
-
-	printf("Test PASSED\n");
-	return PTS_PASS;
 }

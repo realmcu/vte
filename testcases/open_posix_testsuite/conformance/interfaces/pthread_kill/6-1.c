@@ -21,42 +21,38 @@
 #include <string.h>
 #include "posixtest.h"
 
-void * thread_function(void *arg)
+void *thread_function(void *arg)
 {
 	/* Does nothing */
-	pthread_exit((void*)0);
+	pthread_exit((void *)0);
 
 	/* To please some compilers */
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t child_thread;
 	pthread_t invalid_tid;
 
 	int rc;
 
-	rc = pthread_create(&child_thread, NULL,
-		thread_function, NULL);
-	if (rc != 0)
-	{
+	rc = pthread_create(&child_thread, NULL, thread_function, NULL);
+	if (rc != 0) {
 		printf("Error at pthread_create()\n");
 		return PTS_UNRESOLVED;
 	}
 
 	rc = pthread_join(child_thread, NULL);
-	if (rc != 0)
-	{
+	if (rc != 0) {
 		printf("Error at pthread_join()\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Now the child_thread exited, it is an invalid tid */
-	memcpy(&invalid_tid, &child_thread,
-			sizeof(pthread_t));
+	memcpy(&invalid_tid, &child_thread, sizeof(pthread_t));
 
- 	if (pthread_kill(invalid_tid, 0) == ESRCH) {
+	if (pthread_kill(invalid_tid, 0) == ESRCH) {
 		printf("pthread_kill() returns ESRCH.\n");
 		return PTS_PASS;
 	}

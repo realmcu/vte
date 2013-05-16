@@ -80,7 +80,7 @@ int main(int ac, char **av)
 	setup();		/* global setup */
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fchdir(bad_fd));
 
@@ -90,8 +90,8 @@ int main(int ac, char **av)
 		if (TEST_ERRNO == EBADF)
 			tst_resm(TPASS, "failed as expected with EBADF");
 		else
-			tst_brkm(TFAIL|TTERRNO, cleanup,
-			    "call failed unexpectedly");
+			tst_brkm(TFAIL | TTERRNO, cleanup,
+				 "call failed unexpectedly");
 	}
 
 	cleanup();

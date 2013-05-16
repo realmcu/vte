@@ -70,8 +70,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "nanosleep03";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "nanosleep03";
+int TST_TOTAL = 1;
 
 struct timespec timereq;	/* time struct. buffer for nanosleep() */
 struct timespec timerem;	/* time struct. buffer for nanosleep() */
@@ -90,7 +90,6 @@ int main(int ac, char **av)
 	pid_t cpid;		/* Child process id */
 	int status;		/* child exit status */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
@@ -105,7 +104,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Creat a child process and suspend its
@@ -140,10 +139,10 @@ int main(int ac, char **av)
 		wait(&status);
 		if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
 			tst_resm(TPASS, "nanosleep() failed, interrupted"
-					" by signal (%d) as expected", EINTR);
+				 " by signal (%d) as expected", EINTR);
 		} else {
 			tst_resm(TFAIL, "child process exited abnormally; "
-					"status = %d", status);
+				 "status = %d", status);
 		}
 	}
 
@@ -173,13 +172,13 @@ void do_child()
 		/* Check for expected errno is set */
 		if (TEST_ERRNO != EINTR) {
 			tst_resm(TFAIL | TTERRNO,
-				"nanosleep() failed; expected errno: %d",
-				EINTR);
+				 "nanosleep() failed; expected errno: %d",
+				 EINTR);
 			exit(1);
 		}
 	} else {
 		tst_resm(TFAIL, "nanosleep() returns %ld, "
-				"expected -1, errno:%d", TEST_RETURN, EINTR);
+			 "expected -1, errno:%d", TEST_RETURN, EINTR);
 		exit(1);
 	}
 

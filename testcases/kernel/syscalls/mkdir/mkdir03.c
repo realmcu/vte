@@ -84,7 +84,7 @@ void setup5();
 
 #define NAMELEN		50
 
-char *TCID = "mkdir03";		/* Test program identifier.    */
+char *TCID = "mkdir03";
 int fileHandle, fileHandle2 = 0;
 
 char tstdir3[NAMELEN];
@@ -154,7 +154,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -250,7 +250,7 @@ void setup5()
 	/* create a file */
 	if ((fileHandle2 = creat(tstfile5, PERMS)) == -1) {
 		tst_brkm(TBROK, cleanup, "creat a file failed");
-	 }
+	}
 }
 
 /*

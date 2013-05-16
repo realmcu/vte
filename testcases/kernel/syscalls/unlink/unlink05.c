@@ -121,8 +121,8 @@ void setup();
 void cleanup();
 void create_file();
 
-char *TCID = "unlink05";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "unlink05";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -153,7 +153,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 *  Call unlink(2)
@@ -171,8 +171,8 @@ int main(int ac, char **av)
 	     ***************************************************************/
 			if (STD_FUNCTIONAL_TEST) {
 				/* No Verification test, yet... */
-				tst_resm(TPASS, "unlink(%s) returned %ld", fname,
-					 TEST_RETURN);
+				tst_resm(TPASS, "unlink(%s) returned %ld",
+					 fname, TEST_RETURN);
 			}
 			/* recreate file for next loop */
 			create_file();

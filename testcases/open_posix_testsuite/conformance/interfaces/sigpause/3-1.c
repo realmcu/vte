@@ -50,11 +50,11 @@ static void *a_thread_func()
 	if (return_value == -1) {
 		if (errno == EINTR) {
 			printf("Test PASSED: sigpause returned -1 "
-					"and set errno to EINTR\n");
+			       "and set errno to EINTR\n");
 			result = 0;
 		} else {
 			printf("Test FAILED: sigpause did not "
-					"set errno to EINTR\n");
+			       "set errno to EINTR\n");
 			result = 1;
 		}
 	} else {
@@ -70,7 +70,7 @@ static void *a_thread_func()
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t new_th;
 

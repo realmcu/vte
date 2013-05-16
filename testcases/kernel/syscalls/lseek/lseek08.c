@@ -82,8 +82,8 @@
 #define TEMP_FILE	"tmp_file"
 #define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-char *TCID = "lseek08";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "lseek08";
+int TST_TOTAL = 1;
 int fildes;			/* file handle for temp file */
 size_t file_size;		/* size of the temporary file */
 
@@ -96,7 +96,6 @@ int main(int ac, char **av)
 	char *msg;
 	char read_buf[1];	/* data read from temp. file */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -104,7 +103,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Invoke lseek(2) to move the read/write file
@@ -113,8 +112,8 @@ int main(int ac, char **av)
 		TEST(lseek(fildes, 0, SEEK_END));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO,
-			    "lseek of %s failed", TEMP_FILE);
+			tst_resm(TFAIL | TTERRNO,
+				 "lseek of %s failed", TEMP_FILE);
 			continue;
 		}
 		/*
@@ -178,20 +177,20 @@ void setup()
 
 	/* Creat/open a temporary file under above directory */
 	if ((fildes = open(TEMP_FILE, O_RDWR | O_CREAT, FILE_MODE)) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
+		tst_brkm(TBROK | TERRNO, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, %#o) failed",
 			 TEMP_FILE, FILE_MODE);
 	}
 
 	/* Write data into temporary file */
 	if (write(fildes, write_buf, strlen(write_buf)) <= 0) {
-		tst_brkm(TBROK|TERRNO, cleanup,
+		tst_brkm(TBROK | TERRNO, cleanup,
 			 "writing to %s failed", TEMP_FILE);
 	}
 
 	/* Get the size of the file using fstat */
 	if (fstat(fildes, &stat_buf) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup,
+		tst_brkm(TBROK | TERRNO, cleanup,
 			 "fstat of %s failed", TEMP_FILE);
 	}
 

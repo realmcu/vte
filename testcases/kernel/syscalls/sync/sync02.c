@@ -81,8 +81,8 @@
 #define TEMP_FILE	"temp_file"
 #define FILE_MODE       S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-char *TCID = "sync02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sync02";
+int TST_TOTAL = 1;
 char write_buffer[BUFSIZ];	/* buffer used to write data to file */
 int fildes;			/* file descriptor for temporary file */
 
@@ -95,7 +95,6 @@ int main(int ac, char **av)
 	char *msg;
 	char read_buffer[BUFSIZ];	/* buffer used to read data from file */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -103,7 +102,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call sync(2) to commit buffer data to disk.
@@ -124,7 +123,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "lseek() "
 						 "failed on %s, error=%d",
 						 TEMP_FILE, errno);
-				 }
+				}
 
 				/* Read the contents of file */
 				if (read(fildes, read_buffer,
@@ -142,12 +141,12 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup,
 						 "read() Fails on %s, error=%d",
 						 TEMP_FILE, errno);
-				 }
+				}
 			} else {
 				tst_resm(TPASS, "call succeeded");
 			}
 		}
-		Tst_count++;	/* incr. TEST_LOOP counter */
+		tst_count++;	/* incr. TEST_LOOP counter */
 	}
 
 	cleanup();
@@ -184,7 +183,7 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR | O_CREAT, %#o) Failed, errno=%d :%s",
 			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	 }
+	}
 
 	/* Write the buffer data into file */
 	if (write(fildes, write_buffer, strlen(write_buffer) + 1) !=
@@ -192,7 +191,7 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "write() failed to write buffer data to %s",
 			 TEMP_FILE);
-	 }
+	}
 
 }
 

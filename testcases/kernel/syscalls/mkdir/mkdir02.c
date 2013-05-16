@@ -83,8 +83,8 @@ extern struct passwd *my_getpwnam(char *);
 
 #define PERMS		0777
 
-char *TCID = "mkdir02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mkdir02";
+int TST_TOTAL = 1;
 
 char tstdir1[100];
 char tstdir2[100];
@@ -119,7 +119,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* check the inherited group ID */
 
@@ -295,7 +295,7 @@ int main(int ac, char **av)
 			tst_resm(TFAIL, "Test to attempt to make a directory"
 				 " inherits group ID FAILED");
 			cleanup();
-		 }
+		}
 
 	}
 

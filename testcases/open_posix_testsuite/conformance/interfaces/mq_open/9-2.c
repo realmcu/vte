@@ -36,10 +36,11 @@
 
 void handler(int signo)
 {
+	(void) signo;
 	return;
 }
 
-int main()
+int main(void)
 {
 	char qname[NAMESIZE];
 	const char *msgptr = MSGSTR;
@@ -75,7 +76,7 @@ int main()
 		attr.mq_maxmsg = BUFFER;
 		rdwrqueuechild = mq_open(qname, O_RDWR,
 					 S_IRUSR | S_IWUSR, &attr);
-		if (rdwrqueuechild == (mqd_t) -1) {
+		if (rdwrqueuechild == (mqd_t) - 1) {
 			perror("mq_open() read only failed");
 			return CHILDFAIL;
 		}
@@ -117,7 +118,7 @@ int main()
 		attr.mq_maxmsg = BUFFER;
 		rdwrqueue = mq_open(qname, O_CREAT | O_RDWR,
 				    S_IRUSR | S_IWUSR, &attr);
-		if (rdwrqueue == (mqd_t) -1) {
+		if (rdwrqueue == (mqd_t) - 1) {
 			perror("mq_open() did not return success");
 			printf("Test UNRESOLVED\n");
 			/* kill child and exit */

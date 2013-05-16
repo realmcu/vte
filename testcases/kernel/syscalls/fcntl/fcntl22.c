@@ -119,8 +119,8 @@ int main(int ac, char **av)
 		test_desc = "EAGAIN";
 #endif
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/* duplicate process */
 		if ((child_pid = FORK_OR_VFORK()) == 0) {
@@ -195,8 +195,7 @@ void setup()
 
 	/* lock file */
 	if (fcntl(file, F_SETLK, &fl) < 0) {
-		tst_resm(TFAIL|TERRNO, "fcntl on file %d failed",
-			 file);
+		tst_resm(TFAIL | TERRNO, "fcntl on file %d failed", file);
 	}
 
 }

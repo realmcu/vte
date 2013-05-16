@@ -68,7 +68,7 @@
  *
  ****************************************************************/
 
-char *TCID = "ioperm02";	/* Test program identifier.    */
+char *TCID = "ioperm02";
 
 #if defined __i386__ || defined(__x86_64__)
 
@@ -121,7 +121,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -237,7 +237,6 @@ void setup()
 		test_cases[1].from = IO_BITMAP_BITS_16 - NUM_BYTES;
 	}
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	TEST_PAUSE;
@@ -260,7 +259,7 @@ void cleanup()
 #include "test.h"
 #include "usctest.h"
 
-int TST_TOTAL = 0;		/* Total number of test cases. */
+int TST_TOTAL = 0;
 
 int main()
 {

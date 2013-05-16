@@ -126,8 +126,8 @@ void cleanup();
 
 extern char *get_high_address();
 
-char *TCID = "unlink07";	/* Test program identifier.    */
-int TST_TOTAL = 6;		/* Total number of test cases. */
+char *TCID = "unlink07";
+int TST_TOTAL = 6;
 
 int exp_enos[] = { 0, 0 };
 
@@ -199,7 +199,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 
@@ -227,10 +227,10 @@ int main(int ac, char **av)
 						tst_resm(TFAIL,
 							 "unlink(<%s>) Failed, errno=%d, expected errno:%d",
 							 desc, TEST_ERRNO,
-							 Test_cases[ind].
-							 exp_errno);
+							 Test_cases
+							 [ind].exp_errno);
 				} else
-					Tst_count++;
+					tst_count++;
 			} else {
 				tst_resm(TFAIL,
 					 "unlink(<%s>) returned %ld, expected -1, errno:%d",

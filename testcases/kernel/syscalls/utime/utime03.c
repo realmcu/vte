@@ -96,8 +96,8 @@
 #define LTPUSER1	"nobody"
 #define LTPUSER2	"bin"
 
-char *TCID = "utime03";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "utime03";
+int TST_TOTAL = 1;
 time_t curr_time;		/* current time in seconds */
 time_t tloc;			/* argument var. for time() */
 int exp_enos[] = { 0 };
@@ -119,7 +119,6 @@ int main(int ac, char **av)
 	time_t pres_time;	/* file modification/access/present time */
 	pid_t pid;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -136,10 +135,10 @@ int main(int ac, char **av)
 			 "Cannot do utime on a file located on an NFS filesystem");
 	}
 
-        if (tst_is_cwd_v9fs()) {
-                tst_brkm(TCONF, cleanup,
-                         "Cannot do utime on a file located on an 9P filesystem");
-        }
+	if (tst_is_cwd_v9fs()) {
+		tst_brkm(TCONF, cleanup,
+			 "Cannot do utime on a file located on an 9P filesystem");
+	}
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
@@ -161,7 +160,7 @@ int main(int ac, char **av)
 
 		for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-			Tst_count = 0;
+			tst_count = 0;
 
 			/*
 			 * Invoke utime(2) to set TEMP_FILE access and
@@ -198,7 +197,7 @@ int main(int ac, char **av)
 							 "present time after "
 							 "utime, error=%d",
 							 errno);
-					 }
+					}
 
 					/*
 					 * Get the modification and access
@@ -210,7 +209,7 @@ int main(int ac, char **av)
 							 "stat(2) of %s failed, "
 							 "error:%d", TEMP_FILE,
 							 TEST_ERRNO);
-					 }
+					}
 					modf_time = stat_buf.st_mtime;
 					access_time = stat_buf.st_atime;
 
@@ -233,7 +232,7 @@ int main(int ac, char **av)
 						 TCID);
 				}
 			}
-			Tst_count++;	/* incr. TEST_LOOP counter */
+			tst_count++;	/* incr. TEST_LOOP counter */
 		}
 	} else {
 		waitpid(pid, &status, 0);
@@ -291,14 +290,14 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "creat(%s, %#o) Failed, errno=%d :%s",
 			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	 }
+	}
 
 	/* Close the temporary file created */
 	if (close(fildes) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s:",
 			 TEMP_FILE, errno, strerror(errno));
-	 }
+	}
 
 	/*
 	 * Make sure that specified Mode permissions set as
@@ -308,7 +307,7 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "chmod(%s) Failed, errno=%d : %s:",
 			 TEMP_FILE, errno, strerror(errno));
-	 }
+	}
 
 	if (chmod(tmpd, 0711) != 0) {
 		tst_brkm(TBROK, cleanup, "chmod() failed");
@@ -317,7 +316,7 @@ void setup()
 	if ((ltpuser = getpwnam(LTPUSER2)) == NULL) {
 		tst_brkm(TBROK, cleanup, "%s not found in /etc/passwd",
 			 LTPUSER2);
-	 }
+	}
 
 	/* get uid/gid of user accordingly */
 	user_uid = ltpuser->pw_uid;
@@ -330,13 +329,13 @@ void setup()
 	if (chown(TEMP_FILE, user_uid, group_gid) < 0) {
 		tst_brkm(TBROK, cleanup, "chown() of %s failed, error %d",
 			 TEMP_FILE, errno);
-	 }
+	}
 
 	/* Get the current time */
 	if ((curr_time = time(&tloc)) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "time() failed to get current time, errno=%d", errno);
-	 }
+	}
 
 	/*
 	 * Sleep for a second so that mod time and access times will be

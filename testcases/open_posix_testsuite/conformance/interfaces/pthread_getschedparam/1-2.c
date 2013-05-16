@@ -55,14 +55,14 @@ void *thread_func(void)
 
 	if (sparam.sched_priority != priority) {
 		printf("Failed:  priorities: %u != %u\n",
-					sparam.sched_priority, priority);
+		       sparam.sched_priority, priority);
 		exit(PTS_FAIL);
 	}
 
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t new_th;
 	int rc;

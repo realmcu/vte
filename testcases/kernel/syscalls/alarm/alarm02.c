@@ -97,8 +97,8 @@ void setup();
 void cleanup();
 void alarm_received();
 
-char *TCID = "alarm02";		/* Test program identifier.    */
-int TST_TOTAL = 3;		/* Total number of test cases. */
+char *TCID = "alarm02";
+int TST_TOTAL = 3;
 
 int received_alarm = 0;		/* Indicates a SIGALRM was received */
 
@@ -122,7 +122,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -133,21 +133,21 @@ int main(int ac, char **av)
 			alarm(0);
 			if (TEST_RETURN != 0)
 				tst_resm(TFAIL,
-				    "alarm(%lu) returned %ld, when %u was "
-				    "expected for value %s",
-				    sec[i], TEST_RETURN, exp[i], buf[i]);
+					 "alarm(%lu) returned %ld, when %u was "
+					 "expected for value %s",
+					 sec[i], TEST_RETURN, exp[i], buf[i]);
 			else if (STD_FUNCTIONAL_TEST) {
 				if (received_alarm == 1) {
 					tst_resm(TFAIL,
-					    "alarm(%lu) returned %ldu but an "
-					    "alarm signal was received for "
-					    "value %s",
-					    sec[i], TEST_RETURN, buf[i]);
+						 "alarm(%lu) returned %ldu but an "
+						 "alarm signal was received for "
+						 "value %s",
+						 sec[i], TEST_RETURN, buf[i]);
 				} else {
 					tst_resm(TPASS,
-					    "alarm(%lu) returned %ld as "
-					    "expected for value %s",
-					    sec[i], TEST_RETURN, buf[i]);
+						 "alarm(%lu) returned %ld as "
+						 "expected for value %s",
+						 sec[i], TEST_RETURN, buf[i]);
 				}
 
 			}

@@ -85,8 +85,8 @@ int setup_test(int);
 void cleanup_test(int);
 void cleanup();
 
-char *TCID = "mlockall02";	/* Test program identifier.    */
-int TST_TOTAL = 3;		/* Total number of test cases. */
+char *TCID = "mlockall02";
+int TST_TOTAL = 3;
 
 int exp_enos[] = { ENOMEM, EPERM, EINVAL, 0 };
 
@@ -118,7 +118,7 @@ int main(int ac, char **av)
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 

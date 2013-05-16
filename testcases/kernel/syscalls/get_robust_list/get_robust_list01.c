@@ -54,8 +54,8 @@
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
-char *TCID = "get_robust_list01";	/* test program identifier.              */
-int TST_TOTAL = 5;		/* total number of tests in this file.   */
+char *TCID = "get_robust_list01";
+int TST_TOTAL = 5;
 
 struct robust_list {
 	struct robust_list *next;
@@ -66,7 +66,6 @@ struct robust_list_head {
 	long futex_offset;
 	struct robust_list *list_op_pending;
 };
-
 
 int exp_enos[] = { ESRCH, EPERM, EFAULT, 0 };
 
@@ -79,7 +78,6 @@ int main(int argc, char **argv)
 	char *msg;
 	struct robust_list_head head;
 	size_t len_ptr;		/* size of structure struct robust_list_head */
-	int retval;
 
 	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -89,7 +87,7 @@ int main(int argc, char **argv)
 	len_ptr = sizeof(struct robust_list_head);
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * The get_robust_list function fails with EFAULT if the size of the
@@ -99,87 +97,87 @@ int main(int argc, char **argv)
 		 * argument.
 		 */
 
-		TEST(retval = syscall(__NR_get_robust_list, 0,
+		TEST(ltp_syscall(__NR_get_robust_list, 0,
 				      (struct robust_list_head *)&head,
 				      (size_t *) NULL));
 
 		if (TEST_RETURN == -1) {
 			if (TEST_ERRNO == EFAULT)
 				tst_resm(TPASS,
-				    "get_robust_list failed as expected with "
-				    "EFAULT");
+					 "get_robust_list failed as expected with "
+					 "EFAULT");
 			else
-				tst_resm(TFAIL|TTERRNO,
-				    "get_robust_list failed unexpectedly");
+				tst_resm(TFAIL | TTERRNO,
+					 "get_robust_list failed unexpectedly");
 		} else
 			tst_resm(TFAIL,
-			    "get_robust_list succeeded unexpectedly");
+				 "get_robust_list succeeded unexpectedly");
 
-		TEST(retval = syscall(__NR_get_robust_list, 0,
+		TEST(ltp_syscall(__NR_get_robust_list, 0,
 				      (struct robust_list_head **)NULL,
 				      &len_ptr));
 
 		if (TEST_RETURN) {
 			if (TEST_ERRNO == EFAULT)
 				tst_resm(TPASS,
-				    "get_robust_list failed as expected with "
-				    "EFAULT");
+					 "get_robust_list failed as expected with "
+					 "EFAULT");
 			else
-				tst_resm(TFAIL|TTERRNO,
-				    "get_robust_list failed unexpectedly");
+				tst_resm(TFAIL | TTERRNO,
+					 "get_robust_list failed unexpectedly");
 		} else
 			tst_resm(TFAIL,
-			    "get_robust_list succeeded unexpectedly");
+				 "get_robust_list succeeded unexpectedly");
 
 		/*
 		 * The get_robust_list function fails with ESRCH if it can't
 		 * find the task specified by the pid argument.
 		 */
 
-		TEST(retval = syscall(__NR_get_robust_list, UINT16_MAX,
+		TEST(ltp_syscall(__NR_get_robust_list, UINT16_MAX,
 				      (struct robust_list_head *)&head,
 				      &len_ptr));
 
 		if (TEST_RETURN == -1) {
 			if (TEST_ERRNO == ESRCH)
 				tst_resm(TPASS,
-				    "get_robust_list failed as expected with "
-				    "ESRCH");
+					 "get_robust_list failed as expected with "
+					 "ESRCH");
 			else
-				tst_resm(TFAIL|TTERRNO,
-				    "get_robust_list failed unexpectedly");
+				tst_resm(TFAIL | TTERRNO,
+					 "get_robust_list failed unexpectedly");
 		} else
 			tst_resm(TFAIL,
-			    "get_robust_list succeeded unexpectedly");
+				 "get_robust_list succeeded unexpectedly");
 
-		TEST(retval = syscall(__NR_get_robust_list, 0,
+		TEST(ltp_syscall(__NR_get_robust_list, 0,
 				      (struct robust_list_head **)&head,
 				      &len_ptr));
 
 		if (TEST_RETURN == 0)
 			tst_resm(TPASS, "get_robust_list succeeded");
 		else
-			tst_resm(TFAIL|TTERRNO,
+			tst_resm(TFAIL | TTERRNO,
 				 "get_robust_list failed unexpectedly");
 
 		if (setuid(1) == -1)
-			tst_brkm(TBROK|TERRNO, cleanup, "setuid(1) failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "setuid(1) failed");
 
-		TEST(retval = syscall(__NR_get_robust_list, 1,
+		TEST(ltp_syscall(__NR_get_robust_list, 1,
 				      (struct robust_list_head *)&head,
 				      &len_ptr));
 
 		if (TEST_RETURN == -1) {
 			if (TEST_ERRNO == EPERM)
 				tst_resm(TPASS,
-				    "get_robust_list failed as expected with "
-				    "EPERM");
+					 "get_robust_list failed as expected with "
+					 "EPERM");
 			else
-				tst_resm(TFAIL|TERRNO,
-				    "get_robust_list failed unexpectedly");
+				tst_resm(TFAIL | TERRNO,
+					 "get_robust_list failed unexpectedly");
 		} else
 			tst_resm(TFAIL,
-			    "get_robust_list succeeded unexpectedly");
+				 "get_robust_list succeeded unexpectedly");
 	}
 
 	cleanup();

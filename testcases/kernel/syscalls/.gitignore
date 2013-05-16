@@ -82,7 +82,7 @@
 /creat/creat07
 /creat/creat08
 /creat/creat09
-/creat/test1
+/creat/creat07_child
 /dup/dup01
 /dup/dup02
 /dup/dup03
@@ -472,6 +472,8 @@
 /memcpy/memcpy01
 /memmap/mem03
 /memset/memset01
+/migrate_pages/migrate_pages01
+/migrate_pages/migrate_pages02
 /mincore/mincore01
 /mincore/mincore02
 /mkdir/mkdir01
@@ -541,6 +543,7 @@
 /mremap/mremap02
 /mremap/mremap03
 /mremap/mremap04
+/mremap/mremap05
 /msync/msync01
 /msync/msync02
 /msync/msync03
@@ -575,6 +578,7 @@
 /open/open08
 /open/open09
 /open/open10
+/open/open11
 /openat/openat01
 /pathconf/pathconf01
 /pause/pause01
@@ -717,6 +721,7 @@
 /sendfile/sendfile08
 /sendfile/sendfile08_64
 /sendmsg/sendmsg01
+/sendmsg/sendmsg02
 /sendto/sendto01
 /set_robust_list/set_robust_list01
 /set_thread_area/set_thread_area01
@@ -760,6 +765,8 @@
 /setitimer/setitimer01
 /setitimer/setitimer02
 /setitimer/setitimer03
+/setns/setns01
+/setns/setns02
 /setpgid/setpgid01
 /setpgid/setpgid02
 /setpgid/setpgid03

@@ -34,7 +34,7 @@ void handler(int signo)
 	printf("Caught signal\n");
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	struct sigaction act;
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 	ev.sigev_notify = SIGEV_SIGNAL;
 	ev.sigev_signo = SIGTOTEST;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 
 	its.it_interval.tv_sec = 0;
 	its.it_interval.tv_nsec = 0;

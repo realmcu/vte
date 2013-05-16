@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "fchown01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fchown01";
+int TST_TOTAL = 1;
 
 int fd;				/* file descriptor for fchown */
 
@@ -138,18 +138,16 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fchown(fd, geteuid(), getegid()));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "fchown failed");
-		else
-			if (STD_FUNCTIONAL_TEST)
-				tst_resm(TPASS,
-				    "fchown(fd, geteuid(), getegid()) "
-				    "returned %ld",
-				    TEST_RETURN);
+			tst_resm(TFAIL | TTERRNO, "fchown failed");
+		else if (STD_FUNCTIONAL_TEST)
+			tst_resm(TPASS,
+				 "fchown(fd, geteuid(), getegid()) "
+				 "returned %ld", TEST_RETURN);
 	}
 
 	cleanup();
@@ -169,7 +167,7 @@ void setup()
 
 	sprintf(fname, "./tmpfile.%d", getpid());
 	if ((fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open failed");
 }
 
 void cleanup()

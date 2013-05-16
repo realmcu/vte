@@ -123,10 +123,11 @@
 void setup();
 void cleanup();
 
-char *TCID = "rmdir04";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "rmdir04";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
+
 char *cwd;
 char fname[255];
 
@@ -154,7 +155,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if (mkdir(fname, 0777) == -1) {
 			tst_brkm(TBROK, cleanup,

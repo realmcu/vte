@@ -84,8 +84,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "vfork01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "vfork01";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
 
 /* Variables to hold parent/child eff/real/saved uid/gid values */
@@ -113,7 +113,6 @@ int main(int ac, char **av)
 	pid_t cpid;		/* process id of the child process */
 	int exit_status;	/* exit status of child process */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -127,7 +126,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call vfork(2) to create a child process without
@@ -290,7 +289,7 @@ int main(int ac, char **av)
 					 "Child process exited abnormally");
 			}
 		}
-		Tst_count++;	/* incr. TEST_LOOP counter */
+		tst_count++;	/* incr. TEST_LOOP counter */
 	}
 
 	cleanup();

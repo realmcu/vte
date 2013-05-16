@@ -82,8 +82,8 @@
 
 #define INVAL_FLAGS	9999
 
-char *TCID = "sigaltstack02";	/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "sigaltstack02";
+int TST_TOTAL = 2;
 int exp_enos[] = { EINVAL, ENOMEM, 0 };
 
 stack_t sigstk;			/* signal stack storing struct. */
@@ -117,12 +117,11 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 	int ind;		/* counter to test different test conditions */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
-	 }
+	}
 
 	setup();
 
@@ -131,7 +130,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 			sigstk.ss_size = Test_cases[ind].size;
@@ -159,8 +158,8 @@ int main(int ac, char **av)
 							 "fails, %s, errno:%d, "
 							 "expected errno:%d",
 							 test_desc, TEST_ERRNO,
-							 Test_cases[ind].
-							 exp_errno);
+							 Test_cases
+							 [ind].exp_errno);
 					}
 				} else {
 					tst_resm(TPASS, "Call returned -1 as "
@@ -172,7 +171,7 @@ int main(int ac, char **av)
 					 Test_cases[ind].exp_errno);
 			}
 		}
-		Tst_count++;	/* incr. TEST_LOOP counter */
+		tst_count++;	/* incr. TEST_LOOP counter */
 	}
 
 	cleanup();
@@ -196,7 +195,7 @@ void setup()
 	if ((sigstk.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
 		tst_brkm(TFAIL, cleanup,
 			 "could not allocate memory for the alternate stack");
-	 }
+	}
 }
 
 /*

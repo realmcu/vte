@@ -43,14 +43,14 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "getcontext01";	/* Test program identifier.    */
+char *TCID = "getcontext01";
 
 #if !defined(__UCLIBC__)
 
 void setup();
 void cleanup();
 
-int TST_TOTAL = 1;		/* Total number of test cases. */
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0 };		/* must be a 0 terminated list */
 
@@ -69,12 +69,12 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(getcontext(&ptr));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "getcontext failed");
+			tst_resm(TFAIL | TTERRNO, "getcontext failed");
 		else if (TEST_RETURN >= 0)
 			tst_resm(TPASS, "getcontext passed");
 

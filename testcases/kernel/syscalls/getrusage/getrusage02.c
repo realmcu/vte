@@ -81,7 +81,7 @@ static void setup();
 static void cleanup();
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
 
-char *TCID = "getrusage02";	/* Test program identifier.    */
+char *TCID = "getrusage02";
 
 static struct rusage usage;
 
@@ -90,9 +90,11 @@ struct test_cases_t {
 	struct rusage *usage;
 	int exp_errno;
 } test_cases[] = {
-	{ RUSAGE_BOTH, &usage, EINVAL},
+	{
+	RUSAGE_BOTH, &usage, EINVAL},
 #ifndef UCLINUX
-	{ RUSAGE_SELF, (struct rusage *)-1, EFAULT}
+	{
+	RUSAGE_SELF, (struct rusage *)-1, EFAULT}
 #endif
 };
 
@@ -111,19 +113,18 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
-			TEST(getrusage(test_cases[i].who,
-				       test_cases[i].usage));
+			TEST(getrusage(test_cases[i].who, test_cases[i].usage));
 
 			if (TEST_RETURN == -1 &&
 			    TEST_ERRNO == test_cases[i].exp_errno)
-				tst_resm(TPASS|TTERRNO,
-				    "getrusage failed as expected");
+				tst_resm(TPASS | TTERRNO,
+					 "getrusage failed as expected");
 			else
-				tst_resm(TFAIL|TTERRNO,
-				    "getrusage failed unexpectedly");
+				tst_resm(TFAIL | TTERRNO,
+					 "getrusage failed unexpectedly");
 		}
 	}
 

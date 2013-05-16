@@ -29,15 +29,15 @@ void handler(int signo)
 	printf("Caught signal\n");
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	struct sigaction act;
 	timer_t tid;
 	struct timespec ts;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 	sigemptyset(&act.sa_mask);
 	if (sigaction(SIGTOTEST, &act, 0) == -1) {
 		perror("Error calling sigaction\n");
@@ -51,13 +51,12 @@ int main(int argc, char *argv[])
 		return PTS_FAIL;
 	}
 
-	ts.tv_sec=SLEEPTIME;
-	ts.tv_nsec=0;
+	ts.tv_sec = SLEEPTIME;
+	ts.tv_nsec = 0;
 	if (nanosleep(&ts, NULL) == -1) {
 		perror("nanosleep() interrupted\n");
 		return PTS_FAIL;
 	}
-
 	//Sleep not interrupted
 	printf("Test PASSED\n");
 	return PTS_PASS;

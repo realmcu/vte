@@ -64,8 +64,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "mknodat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "mknodat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256];
 char testfile[256];
 char testfile2[256];
@@ -74,11 +74,12 @@ int dirfd, fd, ret;
 int fds[TEST_CASES];
 char *filenames[TEST_CASES];
 int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
+
 dev_t dev;
 
 int mymknodat(int dirfd, const char *filename, mode_t mode, dev_t dev)
 {
-	return syscall(__NR_mknodat, dirfd, filename, mode, dev);
+	return ltp_syscall(__NR_mknodat, dirfd, filename, mode, dev);
 }
 
 int main(int ac, char **av)
@@ -111,7 +112,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call mknodat

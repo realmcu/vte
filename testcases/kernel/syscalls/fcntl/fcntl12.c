@@ -71,8 +71,8 @@ int main(int ac, char **av)
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 /* //block1: */
 		tst_resm(TINFO, "Enter block 1");
@@ -83,7 +83,7 @@ int main(int ac, char **av)
 		if (pid < 0) {
 			tst_resm(TFAIL, "Fork failed");
 			cleanup();
-		 } else if (pid == 0) {	/* child */
+		} else if (pid == 0) {	/* child */
 			max_files = getdtablesize();
 			for (i = 0; i < max_files; i++) {
 				if ((fd = open(fname, O_CREAT | O_RDONLY,

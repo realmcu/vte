@@ -123,8 +123,8 @@ void setup();
 void create_file();
 void cleanup();
 
-char *TCID = "unlink06";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "unlink06";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -159,7 +159,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		create_file();
 
@@ -179,11 +179,11 @@ int main(int ac, char **av)
 					 "unlink(%s) returned %ld, but access says file still exists.",
 					 Fname, TEST_RETURN);
 			} else {
-				tst_resm(TPASS, "unlink(%s) returned %ld", Fname,
-					 TEST_RETURN);
+				tst_resm(TPASS, "unlink(%s) returned %ld",
+					 Fname, TEST_RETURN);
 			}
 		} else
-			Tst_count++;
+			tst_count++;
 
 	}
 

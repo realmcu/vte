@@ -28,12 +28,13 @@
 
 void handler(int signo)
 {
+	(void) signo;
 #ifdef DEBUG
 	printf("in handler\n");
 #endif
 }
 
-int main()
+int main(void)
 {
 	char qname[NAMESIZE];
 	mqd_t queue;
@@ -44,7 +45,7 @@ int main()
 	sprintf(qname, "/mq_open_20-1_%d", getpid());
 
 	queue = mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
-	if (queue == (mqd_t) -1) {
+	if (queue == (mqd_t) - 1) {
 		perror("mq_open() did not return success");
 		printf("Test FAILED\n");
 		return PTS_FAIL;

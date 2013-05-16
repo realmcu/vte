@@ -22,7 +22,7 @@
 #define TEST "1-1"
 #define FUNCTION "mq_close"
 
-int main()
+int main(void)
 {
 	char qname[50];
 	mqd_t queue;
@@ -30,7 +30,7 @@ int main()
 	sprintf(qname, "/" FUNCTION "_" TEST "_%d", getpid());
 
 	queue = mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
-	if (queue == (mqd_t)-1) {
+	if (queue == (mqd_t) - 1) {
 		perror("mq_open() did not return success");
 		return PTS_UNRESOLVED;
 	}

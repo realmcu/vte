@@ -22,18 +22,20 @@ void myhandler(int signo)
 	printf("handler does nothing useful.\n");
 }
 
-int main()
+int main(void)
 {
 	errno = -1;
 
 	if (signal(-1, myhandler) != SIG_ERR) {
-                printf("Test FAILED: signal() didn't return SIG_ERR even though invalid signal number was passed to it\n");
-               	return PTS_FAIL;
-        }
+		printf
+		    ("Test FAILED: signal() didn't return SIG_ERR even though invalid signal number was passed to it\n");
+		return PTS_FAIL;
+	}
 
 	if (errno <= 0) {
-		printf("Test FAILED: errno wasn't set to a positive number even though invalid signal number was passed to the signal() function\n");
-               	return PTS_FAIL;
-        }
+		printf
+		    ("Test FAILED: errno wasn't set to a positive number even though invalid signal number was passed to the signal() function\n");
+		return PTS_FAIL;
+	}
 	return PTS_PASS;
 }

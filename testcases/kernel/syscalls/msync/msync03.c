@@ -70,8 +70,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "msync03";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "msync03";
+int TST_TOTAL = 1;
 
 void *addr;			/* addr of memory mapped region */
 size_t page_sz;			/* system page size */
@@ -95,7 +95,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(msync(addr, page_sz, MS_ASYNC));
 
@@ -108,7 +108,7 @@ int main(int ac, char **av)
 		if (errno == EINVAL)
 			tst_resm(TPASS, "msync failed with EINVAL as expected");
 		else
-			tst_resm(TFAIL|TERRNO, "msync failed unexpectedly");
+			tst_resm(TFAIL | TERRNO, "msync failed unexpectedly");
 	}
 
 	cleanup();
@@ -124,11 +124,11 @@ void setup()
 	TEST_PAUSE;
 
 	if ((page_sz = getpagesize()) == -1)
-		tst_brkm(TBROK|TERRNO, NULL, "getpagesize failed");
+		tst_brkm(TBROK | TERRNO, NULL, "getpagesize failed");
 
 	getrlimit(RLIMIT_DATA, &brkval);
 
-	addr = (void*) brkval.rlim_max;
+	addr = (void *)brkval.rlim_max;
 }
 
 void cleanup()

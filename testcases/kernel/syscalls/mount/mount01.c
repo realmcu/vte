@@ -79,8 +79,8 @@ static void help(void);
 static void setup(void);
 static void cleanup(void);
 
-char *TCID = "mount01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mount01";
+int TST_TOTAL = 1;
 
 #define DEFAULT_FSTYPE	"ext2"
 #define DIR_MODE	S_IRWXU | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP
@@ -110,21 +110,22 @@ int main(int ac, char **av)
 	/* Check for mandatory option of the testcase */
 	if (!Dflag)
 		tst_brkm(TBROK, NULL,
-		    "you must specify the device used for mounting with the -D "
-		    "option");
+			 "you must specify the device used for mounting with the -D "
+			 "option");
 
 	if (Tflag) {
 		Fstype = malloc(strlen(fstype) + 1);
 		if (Fstype == NULL) {
-			tst_brkm(TBROK|TERRNO, NULL,
-			    "malloc - failed to alloc %zd", strlen(fstype));
+			tst_brkm(TBROK | TERRNO, NULL,
+				 "malloc - failed to alloc %zd",
+				 strlen(fstype));
 		}
 		strncpy(Fstype, fstype, strlen(fstype) + 1);
 	} else {
 		Fstype = malloc(strlen(DEFAULT_FSTYPE) + 1);
 		if (Fstype == NULL) {
 			tst_brkm(TBROK, NULL, "malloc - failed to alloc %zu",
-			    strlen(DEFAULT_FSTYPE));
+				 strlen(DEFAULT_FSTYPE));
 		}
 		strncpy(Fstype, DEFAULT_FSTYPE, strlen(DEFAULT_FSTYPE) + 1);
 	}
@@ -140,20 +141,20 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* Call mount(2) */
 		TEST(mount(device, mntpoint, Fstype, 0, NULL));
 
 		/* check return code */
 		if (TEST_RETURN != 0) {
-			tst_resm(TFAIL|TTERRNO, "mount(2) failed");
+			tst_resm(TFAIL | TTERRNO, "mount(2) failed");
 		} else {
 			tst_resm(TPASS, "mount(2) passed ");
 			TEST(umount(mntpoint));
 			if (TEST_RETURN != 0) {
-				tst_brkm(TBROK|TTERRNO, cleanup,
-				    "umount(2) failed");
+				tst_brkm(TBROK | TTERRNO, cleanup,
+					 "umount(2) failed");
 			}
 		}
 	}
@@ -186,8 +187,8 @@ void setup()
 	(void)sprintf(mntpoint, "mnt_%d", getpid());
 
 	if (mkdir(mntpoint, DIR_MODE) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "mkdir(%s, %#o) failed",
-		    mntpoint, DIR_MODE);
+		tst_brkm(TBROK | TERRNO, cleanup, "mkdir(%s, %#o) failed",
+			 mntpoint, DIR_MODE);
 	}
 
 	TEST_PAUSE;

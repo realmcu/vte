@@ -19,22 +19,22 @@
 #include <errno.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 	pthread_condattr_t condattr;
 	int rc;
 
 	/* Initialize a condition variable attributes object */
-	if ((rc=pthread_condattr_init(&condattr)) != 0)
-	{
-		fprintf(stderr,"Cannot initialize condition variable attributes object\n");
+	if ((rc = pthread_condattr_init(&condattr)) != 0) {
+		fprintf(stderr,
+			"Cannot initialize condition variable attributes object\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Destroy the condition variable attributes object */
-	if (pthread_condattr_destroy(&condattr) != 0)
-	{
-		fprintf(stderr,"Error at pthread_condattr_destroy(), rc=%d\n", rc);
+	if (pthread_condattr_destroy(&condattr) != 0) {
+		fprintf(stderr, "Error at pthread_condattr_destroy(), rc=%d\n",
+			rc);
 		printf("Test FAILED\n");
 		return PTS_FAIL;
 	}

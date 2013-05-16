@@ -73,8 +73,8 @@
 int cflag;			/* flag to indicate child process status */
 pid_t cpid;			/* child process id */
 
-char *TCID = "pause03";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "pause03";
+int TST_TOTAL = 1;
 
 void do_child();		/* Function to run in child process */
 void setup();			/* Main setup function of test */
@@ -88,7 +88,6 @@ int main(int ac, char **av)
 	int status;		/* child process exit status */
 	int ret_val;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
@@ -99,7 +98,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* Creat a new process using fork() */
 		if ((cpid = FORK_OR_VFORK()) == -1) {

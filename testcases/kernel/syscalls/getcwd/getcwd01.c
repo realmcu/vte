@@ -98,14 +98,13 @@ int main(int ac, char **av)
 	}
 	setup();
 
-	/* set up expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
 	/*
 	 * The following loop checks looping state if -i option given
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 			tst_resm(TINFO, "%s", testcases[i].desc);
@@ -141,14 +140,13 @@ int main(int ac, char **av)
 	tst_exit();
 }
 
-void setup_test4()
+void setup_test4(void)
 {
 	chdir("/");
 }
 
-void setup()
+void setup(void)
 {
-
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	TEST_PAUSE;
@@ -157,7 +155,7 @@ void setup()
 	tst_tmpdir();
 }
 
-void cleanup()
+void cleanup(void)
 {
 	/* remove the test directory */
 	tst_rmdir();
@@ -167,5 +165,4 @@ void cleanup()
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
-
 }

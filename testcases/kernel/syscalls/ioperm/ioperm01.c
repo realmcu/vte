@@ -63,7 +63,7 @@
  *
  ****************************************************************/
 
-char *TCID = "ioperm01";	/* Test program identifier.    */
+char *TCID = "ioperm01";
 
 #if defined __i386__ || defined(__x86_64__)
 
@@ -74,7 +74,7 @@ char *TCID = "ioperm01";	/* Test program identifier.    */
 #include "test.h"
 #include "usctest.h"
 
-unsigned long io_addr;			/*kernel version dependant io start address */
+unsigned long io_addr;		/*kernel version dependant io start address */
 #define NUM_BYTES 3		/* number of bytes from start address */
 #define TURN_ON 1
 #define TURN_OFF 0
@@ -85,7 +85,7 @@ unsigned long io_addr;			/*kernel version dependant io start address */
 static void setup();
 static void cleanup();
 
-int TST_TOTAL = 1;		/* Total number of test cases. */
+int TST_TOTAL = 1;
 
 int main(int ac, char **av)
 {
@@ -100,7 +100,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Test the system call.
@@ -133,7 +133,7 @@ void setup()
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
-	 }
+	}
 
 	/*
 	 * The value of IO_BITMAP_BITS (include/asm-i386/processor.h) changed
@@ -180,7 +180,7 @@ void cleanup()
 #include "test.h"
 #include "usctest.h"
 
-int TST_TOTAL = 0;		/* Total number of test cases. */
+int TST_TOTAL = 0;
 
 int main()
 {

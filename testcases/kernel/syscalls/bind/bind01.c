@@ -54,7 +54,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "bind01";		/* Test program identifier.    */
+char *TCID = "bind01";
 int testno;
 
 int s;				/* socket descriptor */
@@ -102,17 +102,15 @@ struct test_case_t {		/* test case structure */
 		    "non-local address"}
 ,};
 
-int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. */
+int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);
 
 int exp_enos[] = { EFAULT, EINVAL, ENOTSOCK, EADDRINUSE, EADDRNOTAVAIL, 0 };
-
 
 int main(int argc, char *argv[])
 {
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, 0, "OPTION PARSING ERROR - %s", msg);
@@ -122,7 +120,7 @@ int main(int argc, char *argv[])
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			tdat[testno].setup();
@@ -191,7 +189,8 @@ void setup0(void)
 {
 	s = socket(tdat[testno].domain, tdat[testno].type, tdat[testno].proto);
 	if (s < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "socket() failed for bind test %d", testno);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "socket() failed for bind test %d", testno);
 }
 
 void cleanup0(void)
@@ -203,7 +202,7 @@ void setup1(void)
 {
 	/* setup for the "not a socket" case */
 	if ((s = open("/dev/null", O_WRONLY)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open(/dev/null) failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open(/dev/null) failed");
 
 }
 

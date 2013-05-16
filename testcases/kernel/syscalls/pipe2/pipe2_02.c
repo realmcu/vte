@@ -58,21 +58,17 @@
 #include <sys/syscall.h>
 #include <errno.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
 #ifndef O_CLOEXEC
-# define O_CLOEXEC 02000000
+#define O_CLOEXEC 02000000
 #endif
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "pipe2_02";	/* test program identifier.              */
+char *TCID = "pipe2_02";
 int testno;
-int TST_TOTAL = 1;		/* total number of tests in this file.   */
+int TST_TOTAL = 1;
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -132,7 +128,6 @@ int main(int argc, char *argv[])
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -146,9 +141,9 @@ int main(int argc, char *argv[])
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
-			if (syscall(__NR_pipe2, fds, 0) == -1) {
+			if (ltp_syscall(__NR_pipe2, fds, 0) == -1) {
 				tst_resm(TFAIL, "pipe2(0) failed");
 				cleanup();
 				tst_exit();
@@ -170,7 +165,7 @@ int main(int argc, char *argv[])
 				close(fds[i]);
 			}
 
-			if (syscall(__NR_pipe2, fds, O_NONBLOCK) == -1) {
+			if (ltp_syscall(__NR_pipe2, fds, O_NONBLOCK) == -1) {
 				tst_resm(TFAIL, "pipe2(O_NONBLOCK) failed");
 				cleanup();
 				tst_exit();

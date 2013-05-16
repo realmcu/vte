@@ -88,8 +88,8 @@
 
 #define TEMPFILE	"mmapfile"
 
-char *TCID = "mmap04";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mmap04";
+int TST_TOTAL = 1;
 size_t page_sz;			/* system page size */
 char *addr;			/* addr of memory mapped region */
 char *dummy;			/* dummy variable to hold temp file contents */
@@ -103,7 +103,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -111,7 +110,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call mmap to map the temporary file 'TEMPFILE'
@@ -123,7 +122,7 @@ int main(int ac, char **av)
 
 		/* Check for the return value of mmap() */
 		if (addr == MAP_FAILED) {
-			tst_resm(TFAIL|TERRNO, "mmap of %s failed", TEMPFILE);
+			tst_resm(TFAIL | TERRNO, "mmap of %s failed", TEMPFILE);
 			continue;
 		}
 
@@ -138,7 +137,7 @@ int main(int ac, char **av)
 			 */
 			if (read(fildes, dummy, page_sz) < 0) {
 				tst_brkm(TFAIL, cleanup, "reading %s failed",
-					TEMPFILE);
+					 TEMPFILE);
 			}
 
 			/*
@@ -147,11 +146,11 @@ int main(int ac, char **av)
 			 */
 			if (memcmp(dummy, addr, page_sz)) {
 				tst_resm(TFAIL,
-					"mapped memory region contains invalid "
-					"data");
+					 "mapped memory region contains invalid "
+					 "data");
 			} else {
 				tst_resm(TPASS,
-					"Functionality of mmap() successful");
+					 "Functionality of mmap() successful");
 			}
 		} else {
 			tst_resm(TPASS, "call succeeded");
@@ -232,7 +231,7 @@ void setup()
 	/* Open the temporary file again for reading */
 	if ((fildes = open(TEMPFILE, O_RDONLY)) < 0) {
 		tst_brkm(TFAIL, cleanup,
-			"opening %s read-only failed", TEMPFILE);
+			 "opening %s read-only failed", TEMPFILE);
 	}
 }
 

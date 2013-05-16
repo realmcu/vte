@@ -79,29 +79,28 @@ char *TCID = "clock_settime02";	/* Test program identifier.    */
 int TST_TOTAL = 1;		/* Total number of test cases. */
 static struct timespec saved;	/* Used to reset the time */
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
 	int lc;
 	char *msg;
 	struct timespec spec;	/* Used to specify time for test */
 
-	if ((msg = parse_opts (ac, av, NULL, NULL)) != NULL)
+	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		spec.tv_sec = 1;
 		spec.tv_nsec = 0;
 
-		TEST(syscall(__NR_clock_settime, CLOCK_REALTIME, &spec));
+		TEST(ltp_syscall(__NR_clock_settime, CLOCK_REALTIME, &spec));
 		tst_resm((TEST_RETURN < 0 ? TFAIL | TTERRNO : TPASS),
-			"clock_settime %s",
-			(TEST_RETURN == 0 ? "passed" : "failed"));
+			 "clock_settime %s",
+			 (TEST_RETURN == 0 ? "passed" : "failed"));
 	}
 
 	cleanup();
@@ -109,8 +108,7 @@ main(int ac, char **av)
 }
 
 /* setup() - performs all ONE TIME setup for this test */
-void
-setup(void)
+void setup(void)
 {
 
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -120,7 +118,7 @@ setup(void)
 		tst_brkm(TBROK, NULL, "Test must be run as root");
 	}
 	/* Save the current time specifications */
-	if (syscall(__NR_clock_gettime, CLOCK_REALTIME, &saved) < 0)
+	if (ltp_syscall(__NR_clock_gettime, CLOCK_REALTIME, &saved) < 0)
 		tst_brkm(TBROK, NULL, "Could not save the current time");
 
 	TEST_PAUSE;
@@ -131,8 +129,7 @@ setup(void)
  * completion or premature exit
  */
 
-void
-cleanup(void)
+void cleanup(void)
 {
 	/* Set the saved time */
 	if (clock_settime(CLOCK_REALTIME, &saved) < 0) {
@@ -141,8 +138,8 @@ cleanup(void)
 	}
 
 	/*
-	* print timing stats if that option was specified.
-	* print errno log if that option was specified.
-	*/
+	 * print timing stats if that option was specified.
+	 * print errno log if that option was specified.
+	 */
 	TEST_CLEANUP;
 }

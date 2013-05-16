@@ -70,8 +70,8 @@ void cleanup();
 
 #define PERMS		0777
 
-char *TCID = "rmdir01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "rmdir01";
+int TST_TOTAL = 1;
 
 char tstdir[100];
 
@@ -98,7 +98,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST rmdir() base functionality
@@ -110,7 +110,7 @@ int main(int ac, char **av)
 		if (mkdir(tstdir, PERMS) == -1) {
 			tst_brkm(TBROK, cleanup, "mkdir(%s, %#o) Failed",
 				 tstdir, PERMS);
-		 }
+		}
 		/* call rmdir using TEST macro */
 
 		TEST(rmdir(tstdir));

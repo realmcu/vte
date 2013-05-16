@@ -120,8 +120,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "creat09";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "creat09";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -142,7 +142,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(creat(fname, 0700));
 
@@ -157,9 +157,11 @@ int main(int ac, char **av)
 
 		/* close and remove file, possibly for next loop */
 		if (close(TEST_RETURN) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "closing %s failed", fname);
+			tst_brkm(TBROK | TERRNO, cleanup, "closing %s failed",
+				 fname);
 		} else if (unlink(fname) == -1) {
-			tst_brkm(TBROK|TERRNO, cleanup, "unlinking %s failed", fname);
+			tst_brkm(TBROK | TERRNO, cleanup, "unlinking %s failed",
+				 fname);
 		}
 
 	}

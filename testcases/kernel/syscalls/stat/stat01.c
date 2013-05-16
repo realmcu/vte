@@ -84,16 +84,17 @@
 #define BUF_SIZE	256
 #define MASK		0777
 
-char *TCID = "stat01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "stat01";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
+
 uid_t user_id;			/* Owner id of the test file */
 gid_t group_id;			/* Group id of the test file */
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();
+void cleanup();
 
 int main(int ac, char **av)
 {
@@ -101,7 +102,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -113,7 +113,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call stat(2) to get the status of
@@ -153,7 +153,7 @@ int main(int ac, char **av)
 				tst_resm(TINFO, "Call succeeded");
 			}
 		}
-		Tst_count++;	/* incr. TEST_LOOP counter */
+		tst_count++;	/* incr. TEST_LOOP counter */
 	}
 
 	cleanup();
@@ -202,7 +202,7 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, %#o) Failed, errno=%d : %s",
 			 TESTFILE, FILE_MODE, errno, strerror(errno));
-	 }
+	}
 
 	/* Fill the test buffer with the known data */
 	for (i = 0; i < BUF_SIZE; i++) {
@@ -215,7 +215,7 @@ void setup()
 			tst_brkm(TBROK, cleanup,
 				 "write(2) on %s Failed, errno=%d : %s",
 				 TESTFILE, errno, strerror(errno));
-		 } else {
+		} else {
 			write_len += wbytes;
 		}
 	}

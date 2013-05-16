@@ -26,18 +26,19 @@
 #include <sys/wait.h>
 #include "posixtest.h"
 
-void myhandler (int signo) {
+void myhandler(int signo)
+{
 	printf("Inside handler\n");
 }
 
-int main()
+int main(void)
 {
 
 	struct sigaction act;
 	sigset_t pendingset, selectset;
 
-	act.sa_flags=0;
-	act.sa_handler=myhandler;
+	act.sa_flags = 0;
+	act.sa_handler = myhandler;
 
 	sigemptyset(&pendingset);
 	sigemptyset(&selectset);

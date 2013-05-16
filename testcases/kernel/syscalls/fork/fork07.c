@@ -96,7 +96,7 @@ int main(int ac, char **av)
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		writ = fopen(fnamebuf, "w");
 		if (writ == NULL)
@@ -210,8 +210,7 @@ static void cleanup()
 	TEST_CLEANUP;
 
 	/* collect our zombies */
-	while (wait(&waitstatus) > 0)
-		;
+	while (wait(&waitstatus) > 0) ;
 
 	unlink(fnamebuf);
 	tst_rmdir();

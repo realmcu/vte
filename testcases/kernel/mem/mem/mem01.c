@@ -139,9 +139,12 @@ size_t get_memsize(void)
  * memory size (MB) to allocate.
  */
 option_t options[] = {
-	{"m:", &m_opt, &m_copt},
-	{"r", &r_opt, NULL},
-	{"v", &v_opt, NULL},
+	{"m:", &m_opt, &m_copt}
+	,
+	{"r", &r_opt, NULL}
+	,
+	{"v", &v_opt, NULL}
+	,
 	{NULL, NULL, NULL}
 };
 
@@ -177,7 +180,7 @@ int main(int argc, char *argv[])
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if (!m_opt) {
 			/* find out by ourselves! */

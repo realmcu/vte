@@ -95,8 +95,8 @@
 #define SYM_FILE2	"sfile_2"
 #define MAX_SIZE	256
 
-char *TCID = "readlink03";	/* Test program identifier.    */
-int TST_TOTAL = 5;		/* Total number of test cases. */
+char *TCID = "readlink03";
+int TST_TOTAL = 5;
 int exp_enos[] = { EACCES, EINVAL, ENAMETOOLONG, ENOENT, 0 };
 
 char nobody_uid[] = "nobody";
@@ -135,8 +135,8 @@ struct test_case_t {		/* test case struct. to hold ref. test cond's */
 	NULL, NULL, 0, 0, no_setup}
 };
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();
+void cleanup();
 
 int main(int ac, char **av)
 {
@@ -162,7 +162,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; Test_cases[i].desc != NULL; i++) {
 			sym_file = Test_cases[i].link;
@@ -199,9 +199,11 @@ int main(int ac, char **av)
 					 "errno=%d, expected errno=%d",
 					 test_desc, TEST_ERRNO,
 					 Test_cases[i].exp_errno);
-				if ((strncmp(test_desc, "Symlink Pathname is empty", 25) == 0) &&
-				     TEST_ERRNO == EINVAL)
-					tst_resm(TWARN, "It may be a Kernel Bug, see the patch:"
+				if ((strncmp
+				     (test_desc, "Symlink Pathname is empty",
+				      25) == 0) && TEST_ERRNO == EINVAL)
+					tst_resm(TWARN,
+						 "It may be a Kernel Bug, see the patch:"
 						 "http://git.kernel.org/linus/1fa1e7f6");
 			}
 		}

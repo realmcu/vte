@@ -59,8 +59,8 @@ static int tee_test(void);
 void setup();
 void cleanup();
 
-char *TCID = "tee01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "tee01";
+int TST_TOTAL = 1;
 char testfile1[256];
 char testfile2[256];
 
@@ -68,12 +68,13 @@ static inline long splice(int fd_in, loff_t * off_in,
 			  int fd_out, loff_t * off_out,
 			  size_t len, unsigned int flags)
 {
-	return syscall(__NR_splice, fd_in, off_in, fd_out, off_out, len, flags);
+	return ltp_syscall(__NR_splice, fd_in, off_in, fd_out, off_out,
+		len, flags);
 }
 
 static inline int tee(int fdin, int fdout, size_t len, unsigned int flags)
 {
-	return syscall(__NR_tee, fdin, fdout, len, flags);
+	return ltp_syscall(__NR_tee, fdin, fdout, len, flags);
 }
 
 int main(int ac, char **av)
@@ -113,7 +114,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call tee_test

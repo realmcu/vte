@@ -45,11 +45,13 @@ int caught = 0;
 
 void handler(int signo)
 {
+	(void) signo;
+
 	printf("Caught signal\n");
 	caught++;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	struct sigaction act;
@@ -65,8 +67,8 @@ int main(int argc, char *argv[])
 	ev.sigev_notify = SIGEV_SIGNAL;
 	ev.sigev_signo = SIGTOTEST;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 
 	if (sigemptyset(&act.sa_mask) != 0) {
 		perror("sigemptyset() was not successful\n");
@@ -83,7 +85,7 @@ int main(int argc, char *argv[])
 		return PTS_UNRESOLVED;
 	}
 
- 	if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
+	if (timer_create(CLOCK_REALTIME, &ev, &tid) != 0) {
 		perror("timer_create() did not return success\n");
 		return PTS_UNRESOLVED;
 	}
@@ -113,7 +115,7 @@ int main(int argc, char *argv[])
 
 	caught = 0;
 
-	sleep(TIMERINTERVAL+ADDITIONALDELTA);
+	sleep(TIMERINTERVAL + ADDITIONALDELTA);
 
 	if (caught == 1) {
 		printf("Caught the first signal\n");
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
 		nocaught = 1;
 	}
 
-	sleep(TIMERINTERVAL+ADDITIONALDELTA);
+	sleep(TIMERINTERVAL + ADDITIONALDELTA);
 
 	if (caught >= 2) {
 		printf("Caught another signal\n");
@@ -132,13 +134,14 @@ int main(int argc, char *argv[])
 	}
 
 	if (nocaught) {
-		printf("Implementation does not repeat signals on clock reset\n");
+		printf
+		    ("Implementation does not repeat signals on clock reset\n");
 	} else {
 		printf("Implementation does repeat signals on clock reset\n");
 	}
 
 	// If we finish, pass
-	tsreset.tv_sec += 2*(TIMERINTERVAL+ADDITIONALDELTA);
+	tsreset.tv_sec += 2 * (TIMERINTERVAL + ADDITIONALDELTA);
 	setBackTime(tsreset);
 	return PTS_PASS;
 }

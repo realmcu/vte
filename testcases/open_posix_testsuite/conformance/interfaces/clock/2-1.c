@@ -21,16 +21,16 @@
 
 #define EXPECTEDVALUE INTMAX_C(1000000)
 
-int main(int argc, char *argv[])
+int main(void)
 {
-	intmax_t clocks_per_sec = (intmax_t)CLOCKS_PER_SEC;
+	intmax_t clocks_per_sec = (intmax_t) CLOCKS_PER_SEC;
 
 	if (EXPECTEDVALUE == CLOCKS_PER_SEC) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	} else {
 		printf("FAIL:  %" PRIdMAX " != %" PRIdMAX "\n",
-				clocks_per_sec, EXPECTEDVALUE);
+		       clocks_per_sec, EXPECTEDVALUE);
 		return PTS_FAIL;
 	}
 

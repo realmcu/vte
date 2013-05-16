@@ -69,7 +69,6 @@
 #include "usctest.h"
 #include <errno.h>
 
-
 char *TCID = "setreuid02";
 uid_t nobody_pw_uid, root_pw_uid, daemon_pw_uid, bin_pw_uid;
 uid_t neg_one = -1;
@@ -102,8 +101,8 @@ struct test_data_t {
 
 int TST_TOTAL = sizeof(test_data) / sizeof(test_data[0]);
 
-void setup(void);		/* Setup function for the test */
-void cleanup(void);		/* Cleanup function for the test */
+void setup(void);
+void cleanup(void);
 void uid_verify(struct passwd *ru, struct passwd *eu, char *when);
 
 int main(int ac, char **av)
@@ -114,15 +113,15 @@ int main(int ac, char **av)
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	 }
+	}
 
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			/* Set the real or effective user id */
@@ -166,12 +165,12 @@ void setup(void)
 	if (getpwnam("nobody") == NULL) {
 		tst_brkm(TBROK, NULL, "nobody must be a valid user.");
 		tst_exit();
-	 }
+	}
 
 	if (getpwnam("daemon") == NULL) {
 		tst_brkm(TBROK, NULL, "daemon must be a valid user.");
 		tst_exit();
-	 }
+	}
 
 	/* Check that the test process id is root  */
 	if (geteuid() != 0) {
@@ -213,7 +212,7 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
- }
+}
 
 void uid_verify(struct passwd *ru, struct passwd *eu, char *when)
 {

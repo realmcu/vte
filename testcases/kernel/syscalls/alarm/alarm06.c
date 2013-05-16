@@ -99,7 +99,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call First alarm() with non-zero time parameter
@@ -150,7 +150,7 @@ void setup()
 
 	/* Set the signal catching function */
 	if (signal(SIGALRM, sigproc) == SIG_ERR)
-		tst_brkm(TFAIL|TERRNO, cleanup, "signal(SIGALRM, ..) failed");
+		tst_brkm(TFAIL | TERRNO, cleanup, "signal(SIGALRM, ..) failed");
 }
 
 void sigproc(int sig)

@@ -43,17 +43,13 @@
 #include <stdlib.h>
 #include <signal.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "ssetmask01";	/* Test program identifier. */
+char *TCID = "ssetmask01";
 int testno;
-int TST_TOTAL = 2;		/* total number of tests in this file.   */
+int TST_TOTAL = 2;
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -120,18 +116,18 @@ int main(int ac, char **av)
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
-			syscall(__NR_ssetmask, SIGALRM);
-			TEST(syscall(__NR_sgetmask));	//call ssetmask()
+			ltp_syscall(__NR_ssetmask, SIGALRM);
+			TEST(ltp_syscall(__NR_sgetmask));
 			if (TEST_RETURN != SIGALRM) {
-				tst_resm(TFAIL|TTERRNO, "sgetmask() failed");
+				tst_resm(TFAIL | TTERRNO, "sgetmask() failed");
 				cleanup();
 				tst_exit();
 			}
-			TEST(syscall(__NR_ssetmask, SIGUSR1));	//call ssetmask()
+			TEST(ltp_syscall(__NR_ssetmask, SIGUSR1));
 			if (TEST_RETURN != SIGALRM) {
-				tst_resm(TFAIL|TTERRNO, "ssetmask() failed");
+				tst_resm(TFAIL | TTERRNO, "ssetmask() failed");
 				cleanup();
 				tst_exit();
 			}

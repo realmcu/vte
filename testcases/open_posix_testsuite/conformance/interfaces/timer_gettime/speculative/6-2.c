@@ -19,7 +19,7 @@
 #include <errno.h>
 #include "posixtest.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	timer_t tid;
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 		return PTS_UNRESOLVED;
 	}
 
-	if (timer_gettime(tid+1, &its) == -1) {
+	if (timer_gettime(tid + 1, &its) == -1) {
 		if (EINVAL == errno) {
 			printf("fcn returned -1 and errno==EINVAL\n");
 			return PTS_PASS;

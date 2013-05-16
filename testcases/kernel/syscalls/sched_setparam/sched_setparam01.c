@@ -70,8 +70,8 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sched_setparam01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sched_setparam01";
+int TST_TOTAL = 1;
 
 static struct sched_param param;
 
@@ -88,7 +88,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call sched_setparam(2) with pid=0 sothat it will
@@ -100,8 +100,9 @@ int main(int ac, char **av)
 			tst_resm(TPASS, "sched_setparam() returned %ld",
 				 TEST_RETURN);
 		} else {
-			tst_resm(TFAIL|TTERRNO, "Test Failed, sched_setparam()"
-				 "returned %ld", TEST_RETURN);
+			tst_resm(TFAIL | TTERRNO,
+				 "Test Failed, sched_setparam()" "returned %ld",
+				 TEST_RETURN);
 		}
 	}
 

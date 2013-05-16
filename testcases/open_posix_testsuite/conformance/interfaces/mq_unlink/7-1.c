@@ -25,7 +25,7 @@
 #define TEST "7-1"
 #define FUNCTION "mq_unlink"
 
-int main()
+int main(void)
 {
 	char mqname[50] = "/something-which-does-not-exit";
 
@@ -33,8 +33,7 @@ int main()
 	if (ENOENT == errno) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	}
-	else {
+	} else {
 		printf("Test FAILED\n");
 		return PTS_FAIL;
 	}

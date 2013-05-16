@@ -72,8 +72,8 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sched_rr_get_interval01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sched_rr_get_interval01";
+int TST_TOTAL = 1;
 
 struct timespec tp;
 
@@ -90,7 +90,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call sched_rr_get_interval(2) with pid=0 so that it will
@@ -103,7 +103,8 @@ int main(int ac, char **av)
 			tst_resm(TPASS, "sched_rr_get_interval() returned %ld",
 				 TEST_RETURN);
 		} else {
-			tst_resm(TFAIL|TTERRNO, "Test Failed, sched_rr_get_interval()"
+			tst_resm(TFAIL | TTERRNO,
+				 "Test Failed, sched_rr_get_interval()"
 				 "returned %ld", TEST_RETURN);
 		}
 	}

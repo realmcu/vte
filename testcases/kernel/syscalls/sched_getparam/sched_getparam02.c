@@ -80,8 +80,8 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sched_getparam02";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sched_getparam02";
+int TST_TOTAL = 1;
 
 static struct sched_param param;
 
@@ -100,7 +100,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		switch (child_pid = FORK_OR_VFORK()) {
 

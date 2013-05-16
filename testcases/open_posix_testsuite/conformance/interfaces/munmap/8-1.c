@@ -28,23 +28,21 @@
 
 #define TNAME "munmap/8-1.c"
 
-int main()
+int main(void)
 {
-  int rc;
-  void *pa;
+	int rc;
+	void *pa;
 
-  /* -1 should be an invalid address */
-  pa = (void*)-1;
-  rc = munmap(pa, 1);
-  if (rc == -1 && errno == EINVAL)
-  {
-  	printf ("Got EINVAL\n");
-  	printf ("Test PASSED\n");
-  	exit(PTS_PASS);
-  }
-  else
-  {
-    printf ("Test FAILED: Expect EINVAL but get: %s\n", strerror(errno));
-    return PTS_FAIL;
-  }
+	/* -1 should be an invalid address */
+	pa = (void *)-1;
+	rc = munmap(pa, 1);
+	if (rc == -1 && errno == EINVAL) {
+		printf("Got EINVAL\n");
+		printf("Test PASSED\n");
+		exit(PTS_PASS);
+	} else {
+		printf("Test FAILED: Expect EINVAL but get: %s\n",
+		       strerror(errno));
+		return PTS_FAIL;
+	}
 }

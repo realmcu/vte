@@ -43,8 +43,8 @@
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
-char *TCID = "utimensat01";	/* Test program identifier.    */
-int TST_TOTAL = 0;		/* Total number of test cases. */
+char *TCID = "utimensat01";
+int TST_TOTAL = 0;
 
 #define cleanup tst_exit
 
@@ -65,14 +65,14 @@ int TST_TOTAL = 0;		/* Total number of test cases. */
 #define errExit(msg)    do { perror(msg); exit(EXIT_failed_syscall); \
                         } while (0)
 
-# define UTIME_NOW      ((1l << 30) - 1l)
-# define UTIME_OMIT     ((1l << 30) - 2l)
+#define UTIME_NOW      ((1l << 30) - 1l)
+#define UTIME_OMIT     ((1l << 30) - 2l)
 
 static inline int
 utimensat_sc(int dirfd, const char *pathname,
 	     const struct timespec times[2], int flags)
 {
-	return syscall(__NR_utimensat, dirfd, pathname, times, flags);
+	return ltp_syscall(__NR_utimensat, dirfd, pathname, times, flags);
 }
 
 static void usageError(char *progName)

@@ -80,9 +80,8 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "nanosleep02";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
-
+char *TCID = "nanosleep02";
+int TST_TOTAL = 1;
 
 struct timespec timereq;	/* time struct. buffer for nanosleep() */
 struct timespec timerem;	/* time struct. buffer for nanosleep() */
@@ -111,7 +110,6 @@ int main(int ac, char **av)
 	pid_t cpid;		/* Child process id */
 	int status;		/* child exit status */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
@@ -123,7 +121,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Creat a child process and suspend its
@@ -159,10 +157,10 @@ int main(int ac, char **av)
 		wait(&status);
 		if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
 			tst_resm(TPASS, "Functionality of nanosleep() is "
-					"correct");
+				 "correct");
 		} else {
 			tst_resm(TFAIL, "child process exited abnormally; "
-					"status = %d", status);
+				 "status = %d", status);
 		}
 	}
 
@@ -246,8 +244,8 @@ void do_child()
 			 */
 			req = timereq.tv_sec * 1000000 + timereq.tv_nsec / 1000;
 			elapsed =
-			    (ntime.tv_sec - otime.tv_sec) * 1000000 + ntime.tv_usec -
-			    otime.tv_usec;
+			    (ntime.tv_sec - otime.tv_sec) * 1000000 +
+			    ntime.tv_usec - otime.tv_usec;
 			if (elapsed - req > USEC_PRECISION) {
 				tst_resm(TWARN,
 					 "This test could fail if the system "
@@ -255,10 +253,10 @@ void do_child()
 					 "of the way it calculates the system "
 					 "call execution time.");
 				tst_resm(TFAIL, "Child execution not suspended "
-						"for %jd seconds %lu "
-						"nanoseconds",
-						(intmax_t)timereq.tv_sec,
-						timereq.tv_nsec);
+					 "for %jd seconds %lu "
+					 "nanoseconds",
+					 (intmax_t) timereq.tv_sec,
+					 timereq.tv_nsec);
 			} else {
 				tst_resm(TINFO, "call succeeded");
 			}

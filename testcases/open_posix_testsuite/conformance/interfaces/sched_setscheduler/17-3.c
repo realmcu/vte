@@ -28,7 +28,8 @@
 
 #if defined(_POSIX_SPORADIC_SERVER)&&(_POSIX_SPORADIC_SERVER != -1)
 
-int main() {
+int main(void)
+{
 	int policy, result;
 	int old_priority, old_policy, new_policy;
 	struct sched_param param;
@@ -67,8 +68,7 @@ int main() {
 		return PTS_UNRESOLVED;
 	}
 
-	if (old_policy == new_policy &&
-	   old_priority == param.sched_priority) {
+	if (old_policy == new_policy && old_priority == param.sched_priority) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}
@@ -83,7 +83,7 @@ int main() {
 
 }
 #else
-int main()
+int main(void)
 {
 	printf("Does not support SS (SPORADIC SERVER)\n");
 	return PTS_UNSUPPORTED;

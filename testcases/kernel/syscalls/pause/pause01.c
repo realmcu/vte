@@ -117,10 +117,11 @@
 void setup();
 void cleanup();
 
-char *TCID = "pause01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "pause01";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { EINTR, 0 };
+
 void go();
 
 int main(int ac, char **av)
@@ -147,7 +148,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		(void)signal(SIGALRM, go);
 		alarm(1);

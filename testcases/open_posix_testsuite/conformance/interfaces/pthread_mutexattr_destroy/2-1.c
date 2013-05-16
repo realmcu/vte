@@ -23,32 +23,27 @@
 #include <errno.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 	pthread_mutexattr_t mta;
 
 	/* Initialize a mutex attributes object */
-	if (pthread_mutexattr_init(&mta) != 0)
-	{
-		fprintf(stderr,"Cannot initialize mutex attributes object\n");
+	if (pthread_mutexattr_init(&mta) != 0) {
+		fprintf(stderr, "Cannot initialize mutex attributes object\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Destroy the mutex attributes object */
-	if (pthread_mutexattr_destroy(&mta) != 0)
-	{
-		fprintf(stderr,"Cannot destroy the mutex attributes object\n");
+	if (pthread_mutexattr_destroy(&mta) != 0) {
+		fprintf(stderr, "Cannot destroy the mutex attributes object\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Initialize the mutex attributes object again.  This shouldn't result in an error. */
-	if (pthread_mutexattr_init(&mta) != 0)
-	{
+	if (pthread_mutexattr_init(&mta) != 0) {
 		printf("Test FAILED\n");
 		return PTS_FAIL;
-	}
-	else
-	{
+	} else {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	}

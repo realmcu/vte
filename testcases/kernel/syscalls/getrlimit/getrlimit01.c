@@ -71,7 +71,6 @@
 #include "test.h"
 #include "usctest.h"
 
-
 static void cleanup(void);
 static void setup(void);
 
@@ -104,7 +103,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;		/* parse_opts() return message */
 
-	/* Parse standard options */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
@@ -115,7 +113,7 @@ int main(int ac, char **av)
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 

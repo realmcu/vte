@@ -81,10 +81,9 @@ int main(int argc, char **argv)
 	char wbuf[17 * PIPE_SIZE_TEST];
 	struct sigaction sigptr;	/* set up signal handler */
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	/* global setup */
 	setup();
@@ -93,21 +92,21 @@ int main(int argc, char **argv)
 	 * The following loop checks looping state if -i option given
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		if (mknod(fifo, S_IFIFO | 0777, 0) < 0) {
 			tst_resm(TBROK, "mknod() failed, errno: %d", errno);
 			cleanup();
-		 }
+		}
 		if (stat(fifo, &buf) != 0) {
 			tst_resm(TBROK, "stat() failed, errno: %d", errno);
 			cleanup();
-		 }
+		}
 		if ((buf.st_mode & S_IFIFO) == 0) {
 			tst_resm(TBROK, "Mode does not indicate fifo file");
 			cleanup();
-		 }
+		}
 #if 0
 		sigset(SIGALRM, alarm_handler);
 #endif
@@ -146,7 +145,7 @@ int main(int argc, char **argv)
 		if (sigsetjmp(jmp, 1)) {
 			tst_resm(TBROK, "setjmp() failed");
 			cleanup();
-		 }
+		}
 		(void)alarm(10);	/* set alarm for 10 seconds */
 		wfd = open(fifo, O_WRONLY | O_NONBLOCK);
 		(void)alarm(0);
@@ -222,7 +221,6 @@ void setup(void)
 
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified
@@ -252,4 +250,4 @@ void cleanup()
 	unlink(fifo);
 	tst_rmdir();
 
- }
+}

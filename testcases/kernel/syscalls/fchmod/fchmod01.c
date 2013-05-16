@@ -117,8 +117,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "fchmod01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fchmod01";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -140,12 +140,12 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fchmod(fd, 0700));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO,
+			tst_resm(TFAIL | TTERRNO,
 				 "fchmod(%s, 0700) failed", fname);
 		else {
 
@@ -174,9 +174,9 @@ void setup()
 
 	sprintf(fname, "tfile_%d", getpid());
 	if ((fd = open(fname, O_RDWR | O_CREAT, 0700)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open failed");
 	else if (write(fd, &buf, strlen(buf)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "write failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "write failed");
 }
 
 /***************************************************************
@@ -188,7 +188,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 	if (close(fd) == -1)
-		tst_brkm(TWARN|TERRNO, cleanup, "close failed");
+		tst_brkm(TWARN | TERRNO, cleanup, "close failed");
 
 	tst_rmdir();
 

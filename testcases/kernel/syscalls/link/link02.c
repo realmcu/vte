@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "link02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "link02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -158,7 +158,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 *  Call link(2)

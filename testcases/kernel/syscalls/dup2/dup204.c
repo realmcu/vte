@@ -55,8 +55,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "dup204";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "dup204";
+int TST_TOTAL = 2;
 
 int fd[2];
 int nfd[2];
@@ -75,7 +75,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -104,7 +104,8 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "call succeeded");
 
 			if (close(TEST_RETURN) == -1)
-				tst_brkm(TBROK|TERRNO, cleanup, "close failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "close failed");
 		}
 	}
 	cleanup();
@@ -123,7 +124,7 @@ void setup()
 	tst_tmpdir();
 
 	if (pipe(fd) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "pipe failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "pipe failed");
 }
 
 void cleanup()

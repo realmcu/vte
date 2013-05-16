@@ -126,8 +126,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "select01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "select01";
+int TST_TOTAL = 1;
 
 int Fd = -1;
 fd_set Readfds;
@@ -160,7 +160,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Assigning the specified seconds within the timeval structure.
@@ -222,7 +222,7 @@ void setup()
 	tst_tmpdir();
 
 	if ((Fd = open(FILENAME, O_CREAT | O_RDWR, 0777)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup,
+		tst_brkm(TBROK | TERRNO, cleanup,
 			 "open(%s, O_CREAT | O_RDWR) failed", FILENAME);
 
 	/*
@@ -248,7 +248,7 @@ void cleanup()
 
 	if (Fd >= 0) {
 		if (close(Fd) == -1)
-			tst_resm(TWARN|TERRNO, "close(%s) failed", FILENAME);
+			tst_resm(TWARN | TERRNO, "close(%s) failed", FILENAME);
 		Fd = -1;
 	}
 

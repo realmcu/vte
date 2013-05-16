@@ -71,8 +71,8 @@ void setup();
 void cleanup();
 extern void do_file_setup(char *);
 
-char *TCID = "rename13";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "rename13";
+int TST_TOTAL = 1;
 
 int fd;
 char fname[255], mname[255];
@@ -101,7 +101,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST rename()works when
@@ -195,7 +195,7 @@ void setup()
 	if (link(fname, mname) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "link from %s to %s failed!", fname, mname);
-	 }
+	}
 }
 
 /*

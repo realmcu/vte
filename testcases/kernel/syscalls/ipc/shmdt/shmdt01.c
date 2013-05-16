@@ -90,8 +90,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/*
 		 * Use TEST macro to make the shmdt() call
@@ -133,7 +133,8 @@ void check_functionality()
 {
 	/* stat the shared memory segment */
 	if (shmctl(shm_id_1, IPC_STAT, &buf) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "could not stat in signal handler");
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "could not stat in signal handler");
 
 	if (buf.shm_nattch != 0) {
 		tst_resm(TFAIL, "# of attaches is incorrect");
@@ -174,7 +175,7 @@ void sighandler(sig)
 		siglongjmp(env, 1);
 	} else
 		tst_brkm(TBROK, cleanup,
-		    "received an unexpected signal: %d", sig);
+			 "received an unexpected signal: %d", sig);
 }
 
 /*

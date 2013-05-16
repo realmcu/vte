@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "lseek01";		/* Test program identifier.    */
-int TST_TOTAL = 3;		/* Total number of test cases. */
+char *TCID = "lseek01";
+int TST_TOTAL = 3;
 
 int exp_enos[] = { 0, 0 };
 
@@ -160,7 +160,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		offset = (lc % 100) * 4096;	/* max size is 100 blocks */
 
@@ -190,7 +190,7 @@ int main(int ac, char **av)
 						 Fname, offset, Whence[ind],
 						 TEST_RETURN);
 				} else
-					Tst_count++;
+					tst_count++;
 			}
 		}
 

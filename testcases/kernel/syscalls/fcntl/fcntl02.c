@@ -122,8 +122,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "fcntl02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fcntl02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -144,20 +144,20 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fcntl(fd, F_DUPFD, 0));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "fcntl(%s, F_DUPFD, 0) failed",
-			    fname);
+			tst_resm(TFAIL | TTERRNO,
+				 "fcntl(%s, F_DUPFD, 0) failed", fname);
 		else {
 			if (STD_FUNCTIONAL_TEST)
 				tst_resm(TPASS,
 					 "fcntl(%s, F_DUPFD, 0) returned %ld",
 					 fname, TEST_RETURN);
 			if (close(TEST_RETURN) == -1)
-				tst_resm(TWARN|TERRNO, "close failed");
+				tst_resm(TWARN | TERRNO, "close failed");
 		}
 
 	}
@@ -186,7 +186,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 	if (close(fd) == -1)
-		tst_resm(TBROK|TERRNO, "close failed");
+		tst_resm(TBROK | TERRNO, "close failed");
 
 	tst_rmdir();
 }

@@ -25,7 +25,7 @@
 #define FUNCTION "mq_close"
 #define ERROR_PREFIX "unexpected error: " FUNCTION " " TEST ": "
 
-int main()
+int main(void)
 {
 	char qname[50];
 	mqd_t queue;
@@ -34,7 +34,7 @@ int main()
 	sprintf(qname, "/" FUNCTION "_" TEST "_%d", getpid());
 
 	queue = mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
-	if (queue == (mqd_t)-1) {
+	if (queue == (mqd_t) - 1) {
 		perror(ERROR_PREFIX "mq_open");
 		return PTS_UNRESOLVED;
 	}

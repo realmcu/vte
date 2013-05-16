@@ -76,7 +76,6 @@
 
 #define RLIMIT_TOO_HIGH 1000
 
-
 char *TCID = "getrlimit02";
 
 static void cleanup(void);
@@ -109,7 +108,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;		/* parse_opts() return message */
 
-	/* Parse standard options */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 		tst_exit();
@@ -120,7 +118,7 @@ int main(int ac, char **av)
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -153,7 +151,6 @@ int main(int ac, char **av)
  */
 void setup()
 {
-	/* set up expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* capture the signals */

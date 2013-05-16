@@ -72,22 +72,21 @@ int main(int argc, char **argv)
 
 	struct passwd *nobody;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		nobody = my_getpwnam(user1name);
 
 		if ((pid = FORK_OR_VFORK()) < 0) {
 			tst_brkm(TFAIL, cleanup, "fork failed");
-		 } else if (pid > 0) {	/* parent */
+		} else if (pid > 0) {	/* parent */
 			waitpid(pid, &status, 0);
 			_exit(0);	/*
 					 * Exit here and let the child clean up.
@@ -102,12 +101,12 @@ int main(int argc, char **argv)
 			if (retval < 0) {
 				perror("setreuid");
 				tst_brkm(TFAIL, cleanup, "setreuid failed");
-			 }
+			}
 			TEST(vhangup());
 			if (TEST_RETURN != -1) {
 				tst_brkm(TFAIL, cleanup, "vhangup() failed to "
 					 "fail");
-			 } else if (TEST_ERRNO == EPERM) {
+			} else if (TEST_ERRNO == EPERM) {
 				TEST_ERROR_LOG(TEST_ERRNO);
 				tst_resm(TPASS, "Got EPERM as expected.");
 			} else {
@@ -128,7 +127,6 @@ int main(int argc, char **argv)
  */
 void setup(void)
 {
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified
@@ -150,4 +148,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
- }
+}

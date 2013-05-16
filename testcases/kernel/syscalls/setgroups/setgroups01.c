@@ -124,8 +124,8 @@
 void setup();
 void cleanup();
 
-TCID_DEFINE(setgroups01);	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+TCID_DEFINE(setgroups01);
+int TST_TOTAL = 1;
 
 int len = NGROUPS, ngrps = 0;
 GID_T list[NGROUPS];
@@ -153,7 +153,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call setgroups(2)
@@ -173,8 +173,8 @@ int main(int ac, char **av)
 			if (STD_FUNCTIONAL_TEST) {
 				/* No Verification test, yet... */
 				tst_resm(TPASS,
-					 "setgroups(%d, list) returned %ld", len,
-					 TEST_RETURN);
+					 "setgroups(%d, list) returned %ld",
+					 len, TEST_RETURN);
 			}
 		}
 

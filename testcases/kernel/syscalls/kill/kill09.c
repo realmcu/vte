@@ -124,8 +124,8 @@ void cleanup();
 void alarm_handler(int sig);
 void do_child();
 
-char *TCID = "kill09";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "kill09";
+int TST_TOTAL = 1;
 
 int fork_pid;
 
@@ -146,10 +146,10 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if ((fork_pid = FORK_OR_VFORK()) == -1)
-			tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "fork failed");
 
 		if (fork_pid == 0) {
 #ifdef UCLINUX
@@ -164,11 +164,12 @@ int main(int ac, char **av)
 
 		TEST(kill(fork_pid, SIGKILL));
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "kill(.., SIGKILL) failed");
+			tst_resm(TFAIL | TTERRNO, "kill(.., SIGKILL) failed");
 		else {
 
 			if (STD_FUNCTIONAL_TEST) {
-				tst_resm(TPASS, "kill(%d, SIGKILL) returned %ld",
+				tst_resm(TPASS,
+					 "kill(%d, SIGKILL) returned %ld",
 					 fork_pid, TEST_RETURN);
 			}
 		}

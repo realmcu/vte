@@ -20,18 +20,20 @@
 #include <time.h>
 #include "posixtest.h"
 
-int main(int argc, char **argv)
+int main(void)
 {
 	int result = -2;
 
 	result = sched_rr_get_interval(0, NULL);
 
 	if (result == -1 && errno == EFAULT) {
-		printf("sched_rr_get_interval() sets errno == EFAULT when interval argument points to NULL\n");
+		printf
+		    ("sched_rr_get_interval() sets errno == EFAULT when interval argument points to NULL\n");
 		return PTS_PASS;
 	}
 	if (result == -1 && errno == EINVAL) {
-		printf("sched_rr_get_interval() sets errno == EINVAL when interval argument points to NULL\n");
+		printf
+		    ("sched_rr_get_interval() sets errno == EINVAL when interval argument points to NULL\n");
 		return PTS_PASS;
 	}
 

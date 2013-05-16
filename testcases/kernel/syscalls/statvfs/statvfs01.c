@@ -48,8 +48,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "statvfs01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "statvfs01";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0 };		/* must be a 0 terminated list */
 
@@ -69,13 +69,13 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(statvfs(TEST_PATH, &buf));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TERRNO, "statvfs(%s, ...) failed",
-			    TEST_PATH);
+			tst_resm(TFAIL | TERRNO, "statvfs(%s, ...) failed",
+				 TEST_PATH);
 		else
 			tst_resm(TPASS, "statvfs(%s, ...) passed", TEST_PATH);
 
@@ -86,9 +86,12 @@ int main(int ac, char **av)
 		 TEST_PATH);
 	tst_resm(TINFO, "file system block size = %lu bytes", buf.f_bsize);
 	tst_resm(TINFO, "file system fragment size = %lu bytes", buf.f_frsize);
-	tst_resm(TINFO, "file system free blocks = %ju", (uintmax_t)buf.f_bfree);
-	tst_resm(TINFO, "file system total inodes = %ju", (uintmax_t)buf.f_files);
-	tst_resm(TINFO, "file system free inodes = %ju", (uintmax_t)buf.f_ffree);
+	tst_resm(TINFO, "file system free blocks = %ju",
+		 (uintmax_t) buf.f_bfree);
+	tst_resm(TINFO, "file system total inodes = %ju",
+		 (uintmax_t) buf.f_files);
+	tst_resm(TINFO, "file system free inodes = %ju",
+		 (uintmax_t) buf.f_ffree);
 	tst_resm(TINFO, "file system id = %lu", buf.f_fsid);
 	tst_resm(TINFO, "file system max filename length = %lu", buf.f_namemax);
 

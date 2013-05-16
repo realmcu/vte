@@ -81,30 +81,30 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		TEST(pipe(fildes));
 
 		if (TEST_RETURN == -1)
-			tst_brkm(TBROK|TTERRNO, cleanup,
-			    "pipe() failed unexpectedly");
+			tst_brkm(TBROK | TTERRNO, cleanup,
+				 "pipe() failed unexpectedly");
 
 		TEST(write(fildes[0], "A", 1));
 		if (TEST_RETURN == -1 && TEST_ERRNO == EBADF)
 			tst_resm(TPASS, "expected failure writing to "
 				 "read end of pipe");
 		else
-			tst_resm(TFAIL|TTERRNO, "success when writing to read "
-				 "end of pipe ret=%ld",
-				 TEST_RETURN);
+			tst_resm(TFAIL | TTERRNO,
+				 "success when writing to read "
+				 "end of pipe ret=%ld", TEST_RETURN);
 
 		TEST(safe_read(fildes[1], rbuf, 1));
 		if (TEST_RETURN == -1 && TEST_ERRNO == EBADF)
 			tst_resm(TPASS, "expected failure reading from "
 				 "write end of pipe");
 		else
-			tst_resm(TFAIL|TTERRNO, "success when reading from "
+			tst_resm(TFAIL | TTERRNO, "success when reading from "
 				 "write end of pipe ret=%ld", TEST_RETURN);
 	}
 	cleanup();

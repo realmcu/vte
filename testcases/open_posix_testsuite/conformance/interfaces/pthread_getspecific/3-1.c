@@ -23,26 +23,25 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 	pthread_key_t key;
-	void* rc;
+	void *rc;
 
-	if (pthread_key_create(&key, NULL) != 0)
-	{
+	if (pthread_key_create(&key, NULL) != 0) {
 		printf("Error: pthread_key_create() failed\n");
 		return PTS_UNRESOLVED;
 	}
 
 	rc = pthread_getspecific(key);
-	if (rc != NULL)
-	{
-		printf("Test FAILED: Did not return correct value, expected NULL, but got %ld\n", (long)rc);
+	if (rc != NULL) {
+		printf
+		    ("Test FAILED: Did not return correct value, expected NULL, but got %ld\n",
+		     (long)rc);
 		return PTS_FAIL;
 	}
 
-	if (pthread_key_delete(key) != 0)
-	{
+	if (pthread_key_delete(key) != 0) {
 		printf("Error: pthread_key_delete() failed\n");
 		return PTS_UNRESOLVED;
 	}

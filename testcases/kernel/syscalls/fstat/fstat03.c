@@ -62,9 +62,10 @@
 #define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 #define TEST_FILE	"testfile"
 
-char *TCID = "fstat03";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fstat03";
+int TST_TOTAL = 1;
 int exp_enos[] = { EBADF, 0 };
+
 int fildes;			/* testfile descriptor */
 
 void setup();			/* Main setup function for the tests */
@@ -76,7 +77,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -94,7 +94,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 		/*
 		 * Call fstat(2) to get the status information
 		 * of a closed testfile pointed to by 'fd'.
@@ -107,12 +107,15 @@ int main(int ac, char **av)
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
 			if (TEST_ERRNO == EBADF) {
-				tst_resm(TPASS, "fstat() fails with expected error EBADF");
+				tst_resm(TPASS,
+					 "fstat() fails with expected error EBADF");
 			} else {
-				tst_resm(TFAIL|TTERRNO, "fstat() did not fail with EBADF");
+				tst_resm(TFAIL | TTERRNO,
+					 "fstat() did not fail with EBADF");
 			}
 		} else {
-			tst_resm(TFAIL, "fstat() returned %ld, expected -1", TEST_RETURN);
+			tst_resm(TFAIL, "fstat() returned %ld, expected -1",
+				 TEST_RETURN);
 		}
 	}
 
@@ -146,11 +149,12 @@ void setup()
 	/* Create a testfile under temporary directory */
 	fildes = open(TEST_FILE, O_RDWR | O_CREAT, 0666);
 	if (fildes == -1)
-		tst_brkm(TBROK|TERRNO, cleanup,
+		tst_brkm(TBROK | TERRNO, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, 0666) failed", TEST_FILE);
 
 	if (close(fildes) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "close(%s) failed", TEST_FILE);
+		tst_brkm(TBROK | TERRNO, cleanup, "close(%s) failed",
+			 TEST_FILE);
 }
 
 /*

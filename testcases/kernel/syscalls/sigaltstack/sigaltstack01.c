@@ -78,9 +78,10 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "sigaltstack01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sigaltstack01";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
+
 void *addr, *main_stk;		/* address of main stack for signal */
 int got_signal = 0;
 pid_t my_pid;			/* test process id */
@@ -98,12 +99,11 @@ int main(int ac, char **av)
 	char *msg;
 	void *alt_stk;		/* address of alternate stack for signal */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
-	 }
+	}
 
 	setup();
 
@@ -112,7 +112,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* Call sigaltstack() to set up an alternate stack */
 		sigstk.ss_size = SIGSTKSZ;
@@ -178,7 +178,7 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "CALL succeeded.");
 			}
 		}
-		Tst_count++;	/* incr. TEST_LOOP counter */
+		tst_count++;	/* incr. TEST_LOOP counter */
 	}
 
 	cleanup();
@@ -209,7 +209,7 @@ void setup()
 	if ((sigaction(SIGUSR1, &act, &oact)) == -1) {
 		tst_brkm(TFAIL, cleanup,
 			 "sigaction() fails in setup, errno=%d", errno);
-	 }
+	}
 
 	/* Send the signal to the test process */
 	kill(my_pid, SIGUSR1);
@@ -224,7 +224,7 @@ void setup()
 	if ((sigstk.ss_sp = (void *)malloc(SIGSTKSZ)) == NULL) {
 		tst_brkm(TFAIL, cleanup,
 			 "could not allocate memory for the alternate stack");
-	 }
+	}
 }
 
 /*

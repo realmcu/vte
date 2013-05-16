@@ -88,8 +88,8 @@
 
 #define TEMPFILE	"mmapfile"
 
-char *TCID = "mmap01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mmap01";
+int TST_TOTAL = 1;
 char *addr;			/* addr of memory mapped region */
 char *dummy;			/* dummy string */
 size_t page_sz;			/* system page size */
@@ -105,7 +105,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -113,7 +112,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call mmap to map the temporary file beyond EOF
@@ -125,7 +124,7 @@ int main(int ac, char **av)
 
 		/* Check for the return value of mmap() */
 		if (addr == MAP_FAILED) {
-			tst_resm(TFAIL|TERRNO, "mmap of %s failed", TEMPFILE);
+			tst_resm(TFAIL | TERRNO, "mmap of %s failed", TEMPFILE);
 			continue;
 		}
 		/*
@@ -140,8 +139,8 @@ int main(int ac, char **av)
 			 */
 			if (memcmp(&addr[file_sz], dummy, page_sz - file_sz)) {
 				tst_brkm(TFAIL, cleanup,
-					"mapped memory area contains invalid "
-					"data");
+					 "mapped memory area contains invalid "
+					 "data");
 			}
 
 			/*
@@ -156,8 +155,8 @@ int main(int ac, char **av)
 			 * with the file.
 			 */
 			if (msync(addr, page_sz, MS_SYNC) != 0) {
-				tst_brkm(TFAIL|TERRNO, cleanup,
-					"failed to synchronize mapped file");
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "failed to synchronize mapped file");
 			}
 
 			/*
@@ -167,10 +166,10 @@ int main(int ac, char **av)
 			 */
 			if (system(cmd_buffer) != 0) {
 				tst_resm(TPASS,
-					"Functionality of mmap() successful");
+					 "Functionality of mmap() successful");
 			} else {
 				tst_resm(TFAIL,
-					"Specified pattern found in file");
+					 "Specified pattern found in file");
 			}
 		} else {
 			tst_resm(TPASS, "call succeeded");
@@ -179,7 +178,7 @@ int main(int ac, char **av)
 		/* Clean up things in case we are looping */
 		/* Unmap the mapped memory */
 		if (munmap(addr, page_sz) != 0) {
-			tst_brkm(TFAIL|TERRNO, NULL, "munmap failed");
+			tst_brkm(TFAIL | TERRNO, NULL, "munmap failed");
 		}
 	}
 
@@ -212,7 +211,7 @@ void setup()
 
 	/* Get the path of temporary file to be created */
 	if (getcwd(Path_name, sizeof(Path_name)) == NULL) {
-		tst_brkm(TFAIL|TERRNO, cleanup,
+		tst_brkm(TFAIL | TERRNO, cleanup,
 			 "getcwd failed to get current working directory");
 	}
 
@@ -228,15 +227,15 @@ void setup()
 
 	/* Get the size of temporary file */
 	if (stat(TEMPFILE, &stat_buf) < 0) {
-		tst_brkm(TFAIL|TERRNO, cleanup, "stat of %s failed",
-			TEMPFILE);
+		tst_brkm(TFAIL | TERRNO, cleanup, "stat of %s failed",
+			 TEMPFILE);
 	}
 	file_sz = stat_buf.st_size;
 
 	/* Get the system page size */
 	if ((page_sz = getpagesize()) < 0) {
 		tst_brkm(TFAIL, cleanup,
-			"getpagesize() fails to get system page size");
+			 "getpagesize() fails to get system page size");
 	}
 
 	/* Allocate and initialize dummy string of system page size bytes */
@@ -254,8 +253,8 @@ void setup()
 	 * page size.
 	 */
 	if ((intptr_t) sbrk(SHMLBA + page_sz) == -1) {
-		tst_brkm(TFAIL|TERRNO, cleanup,
-			"sbrk(SHMLBA + page_sz) failed");
+		tst_brkm(TFAIL | TERRNO, cleanup,
+			 "sbrk(SHMLBA + page_sz) failed");
 	}
 
 	/* Initialize one page region from addr with 'A' */

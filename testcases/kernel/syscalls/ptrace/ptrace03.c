@@ -100,7 +100,7 @@ static void cleanup(void);
 
 static int exp_enos[] = { EPERM, ESRCH, 0 };
 
-char *TCID = "ptrace03";	/* Test program identifier.    */
+char *TCID = "ptrace03";
 
 struct test_case_t {
 	enum __ptrace_request request;
@@ -129,7 +129,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -167,11 +167,12 @@ int main(int ac, char **av)
 				TEST(ptrace(test_cases[i].request,
 					    test_cases[i].pid, NULL, NULL));
 				if ((TEST_RETURN == -1) && (TEST_ERRNO ==
-							    test_cases[i].
-							    exp_errno)) {
+							    test_cases
+							    [i].exp_errno)) {
 					exit(TEST_ERRNO);
 				} else {
-					tst_resm(TWARN|TTERRNO, "ptrace() returned %ld",
+					tst_resm(TWARN | TTERRNO,
+						 "ptrace() returned %ld",
 						 TEST_RETURN);
 					exit(TEST_ERRNO);
 				}

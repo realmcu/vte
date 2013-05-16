@@ -82,8 +82,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/*
 		 * Get the msqid_ds structure values for the queue
@@ -92,7 +92,7 @@ int main(int ac, char **av)
 		TEST(msgctl(msg_q_1, IPC_STAT, &qs_buf));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "msgctl() call failed");
+			tst_resm(TFAIL | TTERRNO, "msgctl() call failed");
 		} else {
 			if (STD_FUNCTIONAL_TEST) {
 				if (qs_buf.msg_qbytes > 0) {

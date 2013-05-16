@@ -17,12 +17,12 @@
 
 #define BOGUSCLOCKID 99999
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct timespec tssleep;
 
-	tssleep.tv_sec=SLEEPSEC;
-	tssleep.tv_nsec=0;
+	tssleep.tv_sec = SLEEPSEC;
+	tssleep.tv_nsec = 0;
 
 	if (clock_nanosleep(BOGUSCLOCKID, 0, &tssleep, NULL) == EINVAL) {
 		printf("Test PASSED\n");

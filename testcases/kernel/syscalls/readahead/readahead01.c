@@ -40,10 +40,10 @@
 #include "linux_syscall_numbers.h"
 
 char *TCID = "readahead01";
-int  TST_TOTAL = 1;
+int TST_TOTAL = 1;
 
 option_t options[] = {
-	{ NULL, NULL, NULL }
+	{NULL, NULL, NULL}
 };
 
 #if defined(__NR_readahead)
@@ -54,28 +54,28 @@ static int check_ret(long expected_ret)
 {
 	if (expected_ret == TEST_RETURN) {
 		tst_resm(TPASS, "expected ret success - "
-			"returned value = %ld", TEST_RETURN);
+			 "returned value = %ld", TEST_RETURN);
 		return 0;
 	}
 	tst_resm(TFAIL, "unexpected failure - "
-			"returned value = %ld, expected: %ld",
-			TEST_RETURN, expected_ret);
+		 "returned value = %ld, expected: %ld",
+		 TEST_RETURN, expected_ret);
 	return 1;
 }
 
 static int check_errno(long expected_errno)
 {
 	if (TEST_ERRNO == expected_errno) {
-		tst_resm(TPASS|TTERRNO, "expected failure");
+		tst_resm(TPASS | TTERRNO, "expected failure");
 		return 0;
 	}
 
 	if (TEST_ERRNO == 0)
 		tst_resm(TFAIL, "call succeeded unexpectedly");
 	else
-		tst_resm(TFAIL|TTERRNO, "unexpected failure - "
-			"expected = %ld : %s, actual",
-			expected_errno, strerror(expected_errno));
+		tst_resm(TFAIL | TTERRNO, "unexpected failure - "
+			 "expected = %ld : %s, actual",
+			 expected_errno, strerror(expected_errno));
 	return 1;
 }
 
@@ -85,19 +85,19 @@ static void test_bad_fd(void)
 	int fd;
 
 	tst_resm(TINFO, "test_bad_fd -1");
-	TEST(syscall(__NR_readahead, -1, 0, getpagesize()));
+	TEST(ltp_syscall(__NR_readahead, -1, 0, getpagesize()));
 	check_ret(-1);
 	check_errno(EBADF);
 
 	tst_resm(TINFO, "test_bad_fd O_WRONLY");
 	fd = mkstemp(tempname);
 	if (fd == -1)
-		tst_resm(TBROK|TERRNO, "mkstemp failed");
+		tst_resm(TBROK | TERRNO, "mkstemp failed");
 	close(fd);
 	fd = open(tempname, O_WRONLY);
 	if (fd == -1)
-		tst_resm(TBROK|TERRNO, "Failed to open testfile");
-	TEST(syscall(__NR_readahead, fd, 0, getpagesize()));
+		tst_resm(TBROK | TERRNO, "Failed to open testfile");
+	TEST(ltp_syscall(__NR_readahead, fd, 0, getpagesize()));
 	check_ret(-1);
 	check_errno(EBADF);
 	close(fd);
@@ -110,8 +110,8 @@ static void test_invalid_fd(void)
 
 	tst_resm(TINFO, "test_invalid_fd pipe");
 	if (pipe(fd) < 0)
-		tst_resm(TBROK|TERRNO, "Failed to create pipe");
-	TEST(syscall(__NR_readahead, fd[0], 0, getpagesize()));
+		tst_resm(TBROK | TERRNO, "Failed to create pipe");
+	TEST(ltp_syscall(__NR_readahead, fd[0], 0, getpagesize()));
 	check_ret(-1);
 	check_errno(EINVAL);
 	close(fd[0]);
@@ -120,8 +120,8 @@ static void test_invalid_fd(void)
 	tst_resm(TINFO, "test_invalid_fd socket");
 	fd[0] = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd[0] < 0)
-		tst_resm(TBROK|TERRNO, "Failed to create socket");
-	TEST(syscall(__NR_readahead, fd[0], 0, getpagesize()));
+		tst_resm(TBROK | TERRNO, "Failed to create socket");
+	TEST(ltp_syscall(__NR_readahead, fd[0], 0, getpagesize()));
 	check_ret(-1);
 	check_errno(EINVAL);
 	close(fd[0]);
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
 	setup();
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 		test_bad_fd();
 		test_invalid_fd();
 	}
@@ -152,7 +152,7 @@ static void setup(void)
 	tst_tmpdir();
 
 	/* check if readahead syscall is supported */
-	syscall(__NR_readahead, 0, 0, 0);
+	ltp_syscall(__NR_readahead, 0, 0, 0);
 
 	TEST_PAUSE;
 }

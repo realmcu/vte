@@ -86,8 +86,8 @@ static void setup();
 static void cleanup();
 static int setup_test();
 
-char *TCID = "reboot02";	/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "reboot02";
+int TST_TOTAL = 2;
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 static int exp_enos[] = { EINVAL, EPERM, 0 };
@@ -117,7 +117,7 @@ int main(int ac, char **av)
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
-			Tst_count = 0;
+			tst_count = 0;
 			if (i == 0) {
 				TEST(reboot(INVALID_PARAMETER));
 			} else {
@@ -138,9 +138,10 @@ int main(int ac, char **av)
 				}
 			}
 			/* check return code */
-			if ((TEST_RETURN == -1) && (TEST_ERRNO == testcase[i].
-						    exp_errno)) {
-				tst_resm(TPASS, "reboot(2) expected failure;"
+			if ((TEST_RETURN == -1)
+			    && (TEST_ERRNO == testcase[i].exp_errno)) {
+				tst_resm(TPASS,
+					 "reboot(2) expected failure;"
 					 " Got errno - %s : %s",
 					 testcase[i].exp_errval,
 					 testcase[i].err_desc);

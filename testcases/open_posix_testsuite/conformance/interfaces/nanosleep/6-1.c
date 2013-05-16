@@ -15,18 +15,19 @@
 
 #define NUMTESTS 7
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct timespec tssleepfor, tsstorage;
-	int sleepnsec[NUMTESTS] = {-1, -5, -1000000000, 1000000000,
-		1000000001, 2000000000, 2000000000 };
+	int sleepnsec[NUMTESTS] = { -1, -5, -1000000000, 1000000000,
+		1000000001, 2000000000, 2000000000
+	};
 	int i;
 	int failure = 0;
 
-	tssleepfor.tv_sec=0;
+	tssleepfor.tv_sec = 0;
 
-	for (i=0; i<NUMTESTS;i++) {
-		tssleepfor.tv_nsec=sleepnsec[i];
+	for (i = 0; i < NUMTESTS; i++) {
+		tssleepfor.tv_nsec = sleepnsec[i];
 		printf("sleep %d\n", sleepnsec[i]);
 		if (nanosleep(&tssleepfor, &tsstorage) == -1) {
 			if (EINVAL != errno) {

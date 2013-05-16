@@ -109,8 +109,8 @@ static int setup03();
 static int cleanup03();
 void handler(int);
 
-char *TCID = "swapon02";	/* Test program identifier.    */
-int TST_TOTAL = 4;		/* Total number of test cases. */
+char *TCID = "swapon02";
+int TST_TOTAL = 4;
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -149,7 +149,7 @@ int main(int ac, char **av)
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (i = 0; i < TST_TOTAL; i++) {
 
 			/* do the setup if the test have one */
@@ -161,7 +161,8 @@ int main(int ac, char **av)
 				continue;
 			} else {
 				/* run the test */
-				TEST(syscall(__NR_swapon,testcase[i].path, 0));
+				TEST(ltp_syscall(__NR_swapon,
+					testcase[i].path, 0));
 			}
 			/* do the clean if the test have one */
 			if (testcase[i].cleanfunc
@@ -189,8 +190,11 @@ int main(int ac, char **av)
 					 testcase[i].exp_errval, TEST_ERRNO);
 				/*If swapfile is turned on, turn it off */
 				if (TEST_RETURN == 0) {
-					if (syscall(__NR_swapoff, testcase[i].path) != 0) {
-						tst_resm(TWARN, "Failed to"
+					if (ltp_syscall
+					    (__NR_swapoff,
+					     testcase[i].path) != 0) {
+						tst_resm(TWARN,
+							 "Failed to"
 							 " turn off swapfile"
 							 " swapfile. System"
 							 " reboot after"
@@ -264,8 +268,8 @@ int setup01()
 int cleanup01()
 {
 	if (seteuid(0) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
-			"seteuid failed to set uid to root");
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "seteuid failed to set uid to root");
 	}
 
 	return 0;
@@ -322,7 +326,8 @@ int setup03()
 	}
 
 	/* turn on the swap file */
-	if ((res = syscall(__NR_swapon, "alreadyused", 0)) != 0) {
+	res = ltp_syscall(__NR_swapon, "alreadyused", 0);
+	if (res != 0) {
 		tst_resm(TWARN, "Failed swapon for file alreadyused"
 			 " returned %d", res);
 		return -1;
@@ -337,7 +342,7 @@ int setup03()
 int cleanup03()
 {
 	/* give swapoff to the test swap file */
-	if (syscall(__NR_swapoff, "alreadyused") != 0) {
+	if (ltp_syscall(__NR_swapoff, "alreadyused") != 0) {
 		tst_resm(TWARN, "Failed to turn off swap files. system"
 			 " reboot after execution of LTP test"
 			 " suite is recommended");

@@ -126,7 +126,7 @@ struct test_case_t {		/* test case struct. to hold ref. test cond's */
 	NULL, NULL, 0, no_setup}
 };
 
-char *TCID = "stat03";		/* Test program identifier.    */
+char *TCID = "stat03";
 int TST_TOTAL = (sizeof(Test_cases) / sizeof(*Test_cases));
 int exp_enos[] = { EACCES,
 #if !defined(UCLINUX)
@@ -149,7 +149,6 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 	int ind;		/* counter to test different test conditions */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -164,7 +163,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 			file_name = Test_cases[ind].pathname;
@@ -203,7 +202,7 @@ int main(int ac, char **av)
 					 Test_cases[ind].exp_errno);
 			}
 		}
-		Tst_count++;	/* incr TEST_LOOP counter */
+		tst_count++;	/* incr TEST_LOOP counter */
 	}
 
 	/*
@@ -296,25 +295,25 @@ int setup1()
 	/* Creat a test directory */
 	if (mkdir(DIR_TEMP, MODE_RWX) < 0) {
 		tst_brkm(TBROK, cleanup, "mkdir(2) of %s failed", DIR_TEMP);
-	 }
+	}
 
 	/* Creat a test file under above test directory */
 	if ((fd = open(TEST_FILE1, O_RDWR | O_CREAT, 0666)) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "open(%s, O_RDWR|O_CREAT, 0666) failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 }
+	}
 	/* Close the test file */
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s",
 			 TEST_FILE1, errno, strerror(errno));
-	 }
+	}
 
 	/* Modify mode permissions on test directory */
 	if (chmod(DIR_TEMP, FILE_MODE) < 0) {
 		tst_brkm(TBROK, cleanup, "chmod(2) of %s failed", DIR_TEMP);
-	 }
+	}
 	return 0;
 }
 
@@ -336,13 +335,13 @@ int setup2()
 		tst_brkm(TBROK, cleanup,
 			 "open(2) on t_file failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 }
+	}
 	/* Close the test file created above */
 	if (close(fd) == -1) {
 		tst_brkm(TBROK, cleanup,
 			 "close(t_file) Failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 }
+	}
 	return 0;
 }
 

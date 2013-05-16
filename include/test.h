@@ -44,6 +44,11 @@
 
 #include "compiler.h"
 
+#include "safe_file_ops.h"
+#include "tst_checkpoint.h"
+#include "tst_process_state.h"
+#include "tst_resource.h"
+
 /* Use low 6 bits to encode test type */
 #define TTYPE_MASK 0x3f
 #define TPASS      0    /* Test passed flag */
@@ -195,7 +200,7 @@ int  tst_environ(void);
 void tst_exit(void) LTP_ATTRIBUTE_NORETURN;
 void tst_flush(void);
 
-extern int Tst_count;
+extern int tst_count;
 
 /* lib/tst_sig.c */
 void tst_sig(int fork_flag, void (*handler)(), void (*cleanup)());
@@ -230,6 +235,10 @@ void tst_rmdir(void);
  * FREE VARIABLE AFTER USE IF IT IS REUSED!
  */
 char *get_tst_tmpdir(void);
+/*
+ * Returns 1 if temp directory was created.
+ */
+int tst_tmpdir_created(void);
 
 /* lib/get_high_address.c */
 char *get_high_address(void);

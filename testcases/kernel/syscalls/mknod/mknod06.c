@@ -118,7 +118,7 @@ struct test_case_t {		/* test case struct. to hold ref. test cond's */
 	NULL, NULL, 0, no_setup}
 };
 
-char *TCID = "mknod06";		/* Test program identifier.    */
+char *TCID = "mknod06";
 int TST_TOTAL = (sizeof(Test_cases) / sizeof(*Test_cases));
 #if !defined(UCLINUX)
 extern char *get_high_address();
@@ -140,7 +140,6 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 	int ind;		/* counter to test different test conditions */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -158,7 +157,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 			node_name = Test_cases[ind].pathname;
@@ -179,7 +178,8 @@ int main(int ac, char **av)
 
 			/* Check return code from mknod(2) */
 			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "mknod() returned %ld, expected "
+				tst_resm(TFAIL,
+					 "mknod() returned %ld, expected "
 					 "-1, errno:%d", TEST_RETURN,
 					 Test_cases[ind].exp_errno);
 				continue;

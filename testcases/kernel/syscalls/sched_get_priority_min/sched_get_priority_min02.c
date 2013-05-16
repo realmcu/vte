@@ -74,7 +74,7 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sched_get_priority_min02";	/* Test program identifier.    */
+char *TCID = "sched_get_priority_min02";
 
 int TST_TOTAL = 1;
 
@@ -91,7 +91,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call sched_get_priority_min(2)
@@ -101,9 +101,9 @@ int main(int ac, char **av)
 		if ((TEST_RETURN == -1) && (TEST_ERRNO == EINVAL)) {
 			tst_resm(TPASS, "Test Passed, Got EINVAL");
 		} else {
-			tst_resm(TFAIL|TTERRNO, "Test Failed, sched_get_priority_min()"
-				 " returned %ld",
-				 TEST_RETURN);
+			tst_resm(TFAIL | TTERRNO,
+				 "Test Failed, sched_get_priority_min()"
+				 " returned %ld", TEST_RETURN);
 		}
 	}
 

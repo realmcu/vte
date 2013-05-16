@@ -26,18 +26,17 @@ void *a_thread_func()
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t new_th;
 	int ret;
 
 	/* Create new thread and check the return value. */
 	ret = pthread_create(&new_th, NULL, a_thread_func, NULL);
-	if (ret != 0)
-	{
+	if (ret != 0) {
 		if ((ret != EINVAL) && (ret != EAGAIN) && (ret != EPERM))
 
-		printf("Test FAILED: Wrong return code: %d\n", ret);
+			printf("Test FAILED: Wrong return code: %d\n", ret);
 		return PTS_FAIL;
 	}
 

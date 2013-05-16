@@ -89,11 +89,12 @@
 #define TEMP_FILE	"tmp_file"
 #define FILE_MODE	S_IRUSR | S_IRGRP | S_IROTH
 
-char *TCID = "utime02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "utime02";
+int TST_TOTAL = 1;
 time_t curr_time;		/* current time in seconds */
 time_t tloc;			/* argument var. for time() */
 int exp_enos[] = { 0 };
+
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -108,7 +109,6 @@ int main(int ac, char **av)
 	time_t modf_time, access_time;
 	time_t pres_time;	/* file modification/access/present time */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -125,17 +125,17 @@ int main(int ac, char **av)
 			 "Cannot do utime on a file located on an NFS filesystem");
 	}
 
-        if (tst_is_cwd_v9fs()) {
-                tst_brkm(TCONF, cleanup,
-                         "Cannot do utime on a file located on an 9P filesystem");
-        }
+	if (tst_is_cwd_v9fs()) {
+		tst_brkm(TCONF, cleanup,
+			 "Cannot do utime on a file located on an 9P filesystem");
+	}
 
 	/* set the expected errnos... */
 	TEST_EXP_ENOS(exp_enos);
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Invoke utime(2) to set TEMP_FILE access and
@@ -169,7 +169,7 @@ int main(int ac, char **av)
 						 "failed to get present time "
 						 "after utime, error=%d",
 						 errno);
-				 }
+				}
 
 				/*
 				 * Get the modification and access times of
@@ -179,7 +179,7 @@ int main(int ac, char **av)
 					tst_brkm(TFAIL, cleanup, "stat(2) of "
 						 "%s failed, errno:%d",
 						 TEMP_FILE, TEST_ERRNO);
-				 }
+				}
 				modf_time = stat_buf.st_mtime;
 				access_time = stat_buf.st_atime;
 
@@ -200,7 +200,7 @@ int main(int ac, char **av)
 				tst_resm(TPASS, "%s call succeeded", TCID);
 			}
 		}
-		Tst_count++;
+		tst_count++;
 	}
 
 	cleanup();
@@ -245,20 +245,20 @@ void setup()
 		tst_brkm(TBROK, cleanup,
 			 "creat(%s, %#o) Failed, errno=%d :%s",
 			 TEMP_FILE, FILE_MODE, errno, strerror(errno));
-	 }
+	}
 
 	/* Close the temporary file created */
 	if (close(fildes) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "close(%s) Failed, errno=%d : %s:",
 			 TEMP_FILE, errno, strerror(errno));
-	 }
+	}
 
 	/* Get the current time */
 	if ((curr_time = time(&tloc)) < 0) {
 		tst_brkm(TBROK, cleanup,
 			 "time() failed to get current time, errno=%d", errno);
-	 }
+	}
 
 	/*
 	 * Sleep for a second so that mod time and access times will be

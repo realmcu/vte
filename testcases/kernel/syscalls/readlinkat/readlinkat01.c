@@ -71,8 +71,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "readlinkat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "readlinkat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256];
 char dpathname[256];
 char testfile[256];
@@ -85,12 +85,13 @@ int dirfd, fd, ret;
 int fds[TEST_CASES];
 char *filenames[TEST_CASES];
 int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
+
 char expected_buff[TEST_CASES][256];
 char buffer[BUFF_SIZE];
 
 int myreadlinkat(int dirfd, const char *filename, char *buffer, size_t bufsize)
 {
-	return syscall(__NR_readlinkat, dirfd, filename, buffer, bufsize);
+	return ltp_syscall(__NR_readlinkat, dirfd, filename, buffer, bufsize);
 }
 
 int main(int ac, char **av)
@@ -123,7 +124,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call readlinkat

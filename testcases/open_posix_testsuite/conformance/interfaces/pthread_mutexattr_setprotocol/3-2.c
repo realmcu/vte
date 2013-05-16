@@ -20,23 +20,26 @@
 #include <errno.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 
 	pthread_mutexattr_t mta;
 	int ret;
 
 	/* Set the protocol to an invalid value. */
-	ret = pthread_mutexattr_setprotocol(&mta,PTHREAD_PRIO_NONE);
-	if (ret == EINVAL)
-	{
+	ret = pthread_mutexattr_setprotocol(&mta, PTHREAD_PRIO_NONE);
+	if (ret == EINVAL) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
 	} else if (ret == 0) {
-		printf("Test PASSED: NOTE*: Expected error code EINVAL, got %d, though standard states 'may' fail.\n", ret);
+		printf
+		    ("Test PASSED: NOTE*: Expected error code EINVAL, got %d, though standard states 'may' fail.\n",
+		     ret);
 		return PTS_PASS;
 	} else {
-		printf("Test FAILED: Incorrect return code %d.  Expected EINVAL or 0.\n", ret);
+		printf
+		    ("Test FAILED: Incorrect return code %d.  Expected EINVAL or 0.\n",
+		     ret);
 		return PTS_FAIL;
 	}
 }

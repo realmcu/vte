@@ -74,8 +74,8 @@ static int shm_id_arr[MAXIDS];
 static long hugepages = 128;
 static long orig_shmmni;
 static option_t options[] = {
-	{ "s:",	&sflag,	&nr_opt	},
-	{ NULL,	NULL,	NULL	}
+	{"s:", &sflag, &nr_opt},
+	{NULL, NULL, NULL}
 };
 
 int main(int ac, char **av)
@@ -92,19 +92,19 @@ int main(int ac, char **av)
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(shmget(IPC_PRIVATE, shm_size,
-			    SHM_HUGETLB|IPC_CREAT|IPC_EXCL|SHM_RW));
+			    SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW));
 		if (TEST_RETURN != -1) {
 			tst_resm(TFAIL, "shmget succeeded unexpectedly");
 			continue;
 		}
 		if (TEST_ERRNO == ENOSPC)
-			tst_resm(TPASS|TTERRNO, "shmget failed as expected");
+			tst_resm(TPASS | TTERRNO, "shmget failed as expected");
 		else
-			tst_resm(TFAIL|TTERRNO, "shmget failed unexpectedly "
-				    "- expect errno=ENOSPC, got");
+			tst_resm(TFAIL | TTERRNO, "shmget failed unexpectedly "
+				 "- expect errno=ENOSPC, got");
 	}
 	cleanup();
 	tst_exit();
@@ -113,7 +113,6 @@ int main(int ac, char **av)
 void setup(void)
 {
 	long hpage_size;
-	char buf[BUFSIZ];
 
 	tst_require_root(NULL);
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
@@ -125,10 +124,8 @@ void setup(void)
 
 	shm_size = hpage_size;
 
-	read_file(PATH_SHMMNI, buf);
-	orig_shmmni = SAFE_STRTOL(cleanup, buf, 0, LONG_MAX);
-	snprintf(buf, BUFSIZ, "%ld", hugepages / 2);
-	write_file(PATH_SHMMNI, buf);
+	SAFE_FILE_SCANF(NULL, PATH_SHMMNI, "%ld", &orig_shmmni);
+	SAFE_FILE_PRINTF(NULL, PATH_SHMMNI, "%ld", hugepages / 2);
 
 	/*
 	 * Use a while loop to create the maximum number of memory segments.
@@ -136,19 +133,19 @@ void setup(void)
 	 */
 	num_shms = 0;
 	shm_id_1 = shmget(IPC_PRIVATE, shm_size,
-			SHM_HUGETLB|IPC_CREAT|IPC_EXCL|SHM_RW);
+			  SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW);
 	while (shm_id_1 != -1) {
 		shm_id_arr[num_shms++] = shm_id_1;
 		if (num_shms == MAXIDS)
 			tst_brkm(TBROK, cleanup, "The maximum number of "
-				    "shared memory ID's has been reached. "
-				    "Please increase the MAXIDS value in "
-				    "the test.");
+				 "shared memory ID's has been reached. "
+				 "Please increase the MAXIDS value in "
+				 "the test.");
 		shm_id_1 = shmget(IPC_PRIVATE, shm_size,
-			    SHM_HUGETLB|IPC_CREAT|IPC_EXCL|SHM_RW);
+				  SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW);
 	}
 	if (errno != ENOSPC)
-		tst_brkm(TBROK|TERRNO, cleanup, "shmget #setup");
+		tst_brkm(TBROK | TERRNO, cleanup, "shmget #setup");
 
 	TEST_PAUSE;
 }
@@ -156,15 +153,13 @@ void setup(void)
 void cleanup(void)
 {
 	int i;
-	char buf[BUFSIZ];
 
 	TEST_CLEANUP;
 
 	for (i = 0; i < num_shms; i++)
 		rm_shm(shm_id_arr[i]);
 
-	snprintf(buf, BUFSIZ, "%ld", orig_shmmni);
-	write_file(PATH_SHMMNI, buf);
+	SAFE_FILE_PRINTF(NULL, PATH_SHMMNI, "%ld", orig_shmmni);
 	set_sys_tune("nr_hugepages", orig_hugepages, 0);
 
 	tst_rmdir();

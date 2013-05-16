@@ -50,8 +50,8 @@
 #define FAILED 0
 #define PASSED 1
 
-char *TCID = "acct02";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "acct02";
+int TST_TOTAL = 2;
 /**************/
 
 char fname[80];
@@ -77,7 +77,7 @@ char *argv[];
 	/* Attempt to turn off acct as non-root
 	 */
 	if (acct(NULL) != -1) {
-		tst_resm(TBROK|TERRNO,
+		tst_resm(TBROK | TERRNO,
 			 "Non-root attempting to disable acct: didn't fail");
 		tst_exit();
 	}
@@ -89,7 +89,7 @@ char *argv[];
 			tst_resm(TCONF, "Test will not run.");
 			tst_exit();
 		} else {
-			tst_resm(TBROK|TERRNO,
+			tst_resm(TBROK | TERRNO,
 				 "Non-root acct disable failed as we wanted EPERM errno");
 			tst_exit();
 		}
@@ -98,13 +98,13 @@ char *argv[];
 
 //-------------------------------------------------
 	if (acct("/anystring") != -1) {
-		tst_resm(TBROK|TERRNO,
+		tst_resm(TBROK | TERRNO,
 			 "Non-root attempting to enable acct: didn't fail");
 		tst_exit();
 	}
 
 	if (errno != EPERM) {
-		tst_resm(TFAIL|TERRNO,
+		tst_resm(TFAIL | TERRNO,
 			 "Non-root acct enable failed as we wanted EPERM errno");
 		tst_exit();
 	} else

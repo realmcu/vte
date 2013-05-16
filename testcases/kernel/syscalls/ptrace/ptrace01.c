@@ -105,7 +105,7 @@ static void parent_handler();
 
 static int got_signal = 0;
 
-char *TCID = "ptrace01";	/* Test program identifier.    */
+char *TCID = "ptrace01";
 static int i;			/* loop test case counter, shared with do_child */
 
 int TST_TOTAL = 2;
@@ -129,7 +129,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 			got_signal = 0;
@@ -138,6 +138,7 @@ int main(int ac, char **av)
 			if (i == 1) {
 				parent_act.sa_handler = parent_handler;
 				parent_act.sa_flags = SA_RESTART;
+				sigemptyset(&parent_act.sa_mask);
 
 				if ((sigaction(SIGUSR2, &parent_act, NULL))
 				    == -1) {
@@ -228,6 +229,7 @@ void do_child()
 		child_act.sa_handler = child_handler;
 	}
 	child_act.sa_flags = SA_RESTART;
+	sigemptyset(&child_act.sa_mask);
 
 	if ((sigaction(SIGUSR2, &child_act, NULL)) == -1) {
 		tst_resm(TWARN, "sigaction() failed in child");

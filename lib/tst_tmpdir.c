@@ -99,12 +99,25 @@ static void tmpdir_cleanup(void);
 extern char *TCID;		/* defined/initialized in main() */
 static char *TESTDIR = NULL;	/* the directory created */
 
+static char test_start_work_dir[PATH_MAX];
+
+
+int tst_tmpdir_created(void)
+{
+	return TESTDIR != NULL;
+}
+
 char *get_tst_tmpdir(void)
 {
 	/* Smack the user for calling things out of order. */
 	if (TESTDIR == NULL)
 		tst_brkm(TBROK, NULL, "you must call tst_tmpdir() first");
 	return strdup(TESTDIR);
+}
+
+const char *tst_get_startwd(void)
+{
+	return test_start_work_dir;
 }
 
 void tst_tmpdir(void)
@@ -119,26 +132,29 @@ void tst_tmpdir(void)
 	 * use our default TEMPDIR.
 	 */
 	if ((env_tmpdir = getenv("TMPDIR")))
-		snprintf(template, PATH_MAX, "%s/%.3sXXXXXX",
-			env_tmpdir, TCID);
+		snprintf(template, PATH_MAX, "%s/%.3sXXXXXX", env_tmpdir, TCID);
 	else
-		snprintf(template, PATH_MAX, "%s/%.3sXXXXXX",
-			TEMPDIR, TCID);
+		snprintf(template, PATH_MAX, "%s/%.3sXXXXXX", TEMPDIR, TCID);
 
 	/* Make the temporary directory in one shot using mkdtemp. */
 	if (mkdtemp(template) == NULL)
-		tst_brkm(TBROK|TERRNO, tmpdir_cleanup,
-			"%s: mkdtemp(%s) failed", __func__, template);
+		tst_brkm(TBROK | TERRNO, tmpdir_cleanup,
+			 "%s: mkdtemp(%s) failed", __func__, template);
 	if ((TESTDIR = strdup(template)) == NULL)
-		tst_brkm(TBROK|TERRNO, tmpdir_cleanup,
-			"%s: strdup(%s) failed", __func__, template);
+		tst_brkm(TBROK | TERRNO, tmpdir_cleanup,
+			 "%s: strdup(%s) failed", __func__, template);
 
 	if (chown(TESTDIR, -1, getgid()) == -1)
-		tst_brkm(TBROK|TERRNO, tmpdir_cleanup,
-			"chown(%s, -1, %d) failed", TESTDIR, getgid());
+		tst_brkm(TBROK | TERRNO, tmpdir_cleanup,
+			 "chown(%s, -1, %d) failed", TESTDIR, getgid());
 	if (chmod(TESTDIR, DIR_MODE) == -1)
-		tst_brkm(TBROK|TERRNO, tmpdir_cleanup,
-			"chmod(%s, %#o) failed", TESTDIR, DIR_MODE);
+		tst_brkm(TBROK | TERRNO, tmpdir_cleanup,
+			 "chmod(%s, %#o) failed", TESTDIR, DIR_MODE);
+
+	if (getcwd(test_start_work_dir, sizeof(test_start_work_dir)) == NULL) {
+		tst_resm(TINFO, "Failed to record test working dir");
+		test_start_work_dir[0] = '\0';
+	}
 
 	/*
 	 * Change to the temporary directory.  If the chdir() fails, issue
@@ -147,13 +163,13 @@ void tst_tmpdir(void)
 	 * fails, also issue a TWARN message.
 	 */
 	if (chdir(TESTDIR) == -1) {
-		tst_brkm(TBROK|TERRNO, NULL, "%s: chdir(%s) failed",
-			__func__, TESTDIR);
+		tst_brkm(TBROK | TERRNO, NULL, "%s: chdir(%s) failed",
+			 __func__, TESTDIR);
 
 		/* Try to remove the directory */
 		if (rmobj(TESTDIR, &errmsg) == -1)
 			tst_resm(TWARN, "%s: rmobj(%s) failed: %s",
-			__func__, TESTDIR, errmsg);
+				 __func__, TESTDIR, errmsg);
 
 		tmpdir_cleanup();
 	}
@@ -171,14 +187,15 @@ void tst_rmdir(void)
 	 */
 	if (TESTDIR == NULL) {
 		tst_resm(TWARN,
-			"%s: TESTDIR was NULL; no removal attempted", __func__);
+			 "%s: TESTDIR was NULL; no removal attempted",
+			 __func__);
 		return;
 	}
 
 	if ((parent_dir = malloc(PATH_MAX)) == NULL) {
 		/* Make sure that we exit quickly and noisily. */
-		tst_brkm(TBROK|TERRNO, NULL,
-			"%s: malloc(%d) failed", __func__, PATH_MAX);
+		tst_brkm(TBROK | TERRNO, NULL,
+			 "%s: malloc(%d) failed", __func__, PATH_MAX);
 	}
 
 	/*
@@ -195,7 +212,7 @@ void tst_rmdir(void)
 	}
 
 	if ((parent_dir = dirname(parent_dir)) == NULL) {
-		tst_resm(TWARN|TERRNO, "%s: dirname failed", __func__);
+		tst_resm(TWARN | TERRNO, "%s: dirname failed", __func__);
 		return;
 	}
 
@@ -203,9 +220,9 @@ void tst_rmdir(void)
 	 * Change directory to parent_dir (The dir above TESTDIR).
 	 */
 	if (chdir(parent_dir) != 0) {
-		tst_resm(TWARN|TERRNO,
-			"%s: chdir(%s) failed\nAttempting to remove temp dir "
-				"anyway", __func__, parent_dir);
+		tst_resm(TWARN | TERRNO,
+			 "%s: chdir(%s) failed\nAttempting to remove temp dir "
+			 "anyway", __func__, parent_dir);
 	}
 
 	/*
@@ -213,9 +230,8 @@ void tst_rmdir(void)
 	 */
 	if (rmobj(TESTDIR, &errmsg) == -1)
 		tst_resm(TWARN, "%s: rmobj(%s) failed: %s",
-			__func__, TESTDIR, errmsg);
+			 __func__, TESTDIR, errmsg);
 }
-
 
 /*
  * tmpdir_cleanup(void) - This function is used when tst_tmpdir()
@@ -226,6 +242,6 @@ void tst_rmdir(void)
 static void tmpdir_cleanup(void)
 {
 	tst_brkm(TWARN, NULL,
-	    "%s: no user cleanup function called before exiting", __func__);
+		 "%s: no user cleanup function called before exiting",
+		 __func__);
 }
-

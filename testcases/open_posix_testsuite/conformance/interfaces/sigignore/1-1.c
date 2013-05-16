@@ -19,21 +19,21 @@ signal is ever raised.
 #include <stdio.h>
 #include "posixtest.h"
 
-int handler_called = 0;
+static int handler_called = 0;
 
-void handler(int signo)
+static void handler(int signo)
 {
 	handler_called = 1;
 }
 
-int main()
+int main(void)
 {
 	struct sigaction act;
 
 	act.sa_handler = handler;
 	act.sa_flags = 0;
 	sigemptyset(&act.sa_mask);
-	if (sigaction(SIGABRT,  &act, 0) == -1) {
+	if (sigaction(SIGABRT, &act, 0) == -1) {
 		perror("Unexpected error while attempting to setup test "
 		       "pre-conditions");
 		return PTS_UNRESOLVED;
@@ -48,9 +48,9 @@ int main()
 	}
 
 	if (handler_called) {
-		printf("FAIL: Signal was not ignored\n");
+		printf("FAILED: Signal was not ignored\n");
 		return PTS_FAIL;
 	}
-	printf("PASS\n");
+	printf("Test PASSED\n");
 	return PTS_PASS;
 }

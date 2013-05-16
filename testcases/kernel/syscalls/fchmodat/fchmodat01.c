@@ -65,8 +65,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "fchmodat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "fchmodat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256] = "";
 char testfile[256] = "";
 char testfile2[256] = "";
@@ -78,7 +78,7 @@ int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0, 0 };
 
 int myfchmodat(int dirfd, const char *filename, mode_t mode)
 {
-	return syscall(__NR_fchmodat, dirfd, filename, mode);
+	return ltp_syscall(__NR_fchmodat, dirfd, filename, mode);
 }
 
 int main(int ac, char **av)
@@ -111,7 +111,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call fchmodat

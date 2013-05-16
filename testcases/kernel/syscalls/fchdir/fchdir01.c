@@ -89,7 +89,7 @@ int main(int ac, char **av)
 	setup();		/* global setup */
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* get the name of the test dirctory */
 		if ((temp_dir = (getcwd(temp_dir, 0))) == NULL)
@@ -108,7 +108,8 @@ int main(int ac, char **av)
 		TEST(fchdir(fd));
 
 		if (TEST_RETURN == -1)
-			tst_brkm(TFAIL|TTERRNO, cleanup, "fchdir call failed");
+			tst_brkm(TFAIL | TTERRNO, cleanup,
+				 "fchdir call failed");
 		else {
 			if (STD_FUNCTIONAL_TEST)
 				check_functionality();
@@ -129,10 +130,10 @@ int main(int ac, char **av)
 
 		/* chdir back to our temporary work directory */
 		if ((r_val = chdir("..")) == -1)
-			tst_resm(TBROK|TERRNO, "chdir failed");
+			tst_resm(TBROK | TERRNO, "chdir failed");
 
 		if ((r_val = rmdir(TEST_DIR)) == -1)
-			tst_resm(TBROK|TERRNO, "rmdir failed");
+			tst_resm(TBROK | TERRNO, "rmdir failed");
 
 		free(temp_dir);
 		temp_dir = NULL;

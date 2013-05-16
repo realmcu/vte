@@ -70,6 +70,9 @@ ksm03_1 ksm03 -u 128
 ksm04 ksm04
 ksm04_1 ksm04 -u 128
 ksm05 ksm05 -I 10
+ksm06 ksm06
+ksm06_1 ksm06 -n 10
+ksn06_2 ksm06 -n 10000
 
 cpuset01 cpuset01 -I 3600
 
@@ -77,12 +80,19 @@ oom01 oom01
 oom02 oom02
 oom03 oom03
 oom04 oom04
+oom05 oom05
 
 swapping01 swapping01 -i 5
 
 thp01 thp01 -I 120
 thp02 thp02
 thp03 thp03
+thp04_1 thp04
+thp04_2 thp04 -n 10 -N 20
+thp04_3 thp04 -n 1 -N 300
+thp05_1 thp05
+thp05_2 thp05 -n 10 -N 20
+thp05_3 thp05 -n 1 -N 300
 
 vma01 vma01
 vma02 vma02
@@ -91,12 +101,12 @@ vma04 vma04
 
 zram01 zram01
 
-overcommit_memory overcommit_memory
-overcommit_memory overcommit_memory -R 0
-overcommit_memory overcommit_memory -R 30
-overcommit_memory overcommit_memory -R 80
-overcommit_memory overcommit_memory -R 100
-overcommit_memory overcommit_memory -R 200
+overcommit_memory01 overcommit_memory
+overcommit_memory02 overcommit_memory -R 0
+overcommit_memory03 overcommit_memory -R 30
+overcommit_memory04 overcommit_memory -R 80
+overcommit_memory05 overcommit_memory -R 100
+overcommit_memory06 overcommit_memory -R 200
 
 max_map_count max_map_count -i 10
 

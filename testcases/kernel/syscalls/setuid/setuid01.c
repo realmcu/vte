@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "setuid01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "setuid01";
+int TST_TOTAL = 1;
 
 int uid;			/* current user id */
 
@@ -149,7 +149,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST CASE:

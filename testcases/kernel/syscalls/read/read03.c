@@ -83,8 +83,8 @@ int main(int ac, char **av)
 	 * The following loop checks looping state if -i option given
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		TEST(read(rfd, &c, 1));
 
@@ -127,13 +127,13 @@ void setup(void)
 
 	if (mknod(fifo, S_IFIFO | 0777, 0) < 0) {
 		tst_brkm(TBROK, cleanup, "mknod() failed, errno: %d", errno);
-	 }
+	}
 	if (stat(fifo, &buf) != 0) {
 		tst_brkm(TBROK, cleanup, "stat() failed, errno: %d", errno);
-	 }
+	}
 	if ((buf.st_mode & S_IFIFO) == 0) {
 		tst_brkm(TBROK, cleanup, "Mode does not indicate fifo file");
-	 }
+	}
 
 	rfd = open(fifo, O_RDONLY | O_NONBLOCK);
 	wfd = open(fifo, O_WRONLY | O_NONBLOCK);

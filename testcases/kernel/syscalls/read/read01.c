@@ -130,10 +130,11 @@
 void setup();
 void cleanup();
 
-char *TCID = "read01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "read01";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
+
 char fname[255];
 int fd, i;
 int offset = 0;
@@ -163,7 +164,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if (write(fd, s, READ_BLOCK_SIZE) == -1) {
 			tst_brkm(TBROK, cleanup,

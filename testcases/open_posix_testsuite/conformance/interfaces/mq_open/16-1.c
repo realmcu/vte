@@ -36,7 +36,7 @@
 #define NAMESIZE 50
 #define TNAME "mq_open/16-1.c"
 
-int main()
+int main(void)
 {
 	char qname[NAMESIZE];
 	char fname[NAMESIZE];
@@ -48,18 +48,17 @@ int main()
 	/*
 	 * initialize both queues
 	 */
-	childqueue = (mqd_t) -1;
-	queue = (mqd_t) -1;
+	childqueue = (mqd_t) - 1;
+	queue = (mqd_t) - 1;
 
 	sprintf(qname, "/mq_open_16-1_%d", getpid());
 
 	sprintf(fname, "/tmp/pts_mq_open_16_1_%d", getpid());
 	unlink(fname);
-	fd = open(fname, O_CREAT | O_RDWR | O_EXCL,
-		 S_IRUSR | S_IWUSR);
+	fd = open(fname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
 	if (fd == -1) {
 		printf(TNAME " Error at open(): %s\n", strerror(errno));
-		exit(PTS_UNRESOLVED);
+		return PTS_UNRESOLVED;
 	}
 	/* file is empty now, will cause "Bus error" */
 	write(fd, fname, sizeof(int));
@@ -69,7 +68,7 @@ int main()
 	if (pa == MAP_FAILED) {
 		printf(TNAME " Error at mmap: %s\n", strerror(errno));
 		close(fd);
-		exit(PTS_FAIL);
+		return PTS_FAIL;
 	}
 	*(int *)pa = 0;
 
@@ -88,7 +87,7 @@ int main()
 
 		childqueue = mq_open(qname, O_CREAT | O_EXCL | O_RDWR,
 				     S_IRUSR | S_IWUSR, NULL);
-		if (childqueue != (mqd_t) -1) {
+		if (childqueue != (mqd_t) - 1) {
 			++*(int *)pa;
 #ifdef DEBUG
 			printf("mq_open() in child succeeded\n");
@@ -105,7 +104,7 @@ int main()
 
 		queue = mq_open(qname, O_CREAT | O_EXCL | O_RDWR,
 				S_IRUSR | S_IWUSR, NULL);
-		if (queue != (mqd_t) -1) {
+		if (queue != (mqd_t) - 1) {
 			++*(int *)pa;
 #ifdef DEBUG
 			printf("mq_open() in parent succeeded\n");

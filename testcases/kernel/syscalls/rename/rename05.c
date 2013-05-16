@@ -68,8 +68,8 @@ void setup();
 void cleanup();
 extern void do_file_setup(char *);
 
-char *TCID = "rename05";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "rename05";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { EISDIR, 0 };	/* List must end with 0 */
 
@@ -103,7 +103,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* attempt to rename a file to a directory */
 		/* Call rename(2) */
@@ -163,11 +163,11 @@ void setup()
 	/* create another directory */
 	if (stat(mdir, &buf2) != -1) {
 		tst_brkm(TBROK, cleanup, "tmp directory %s found!", mdir);
-	 }
+	}
 
 	if (mkdir(mdir, 00770) == -1) {
 		tst_brkm(TBROK, cleanup, "Could not create directory %s", mdir);
-	 }
+	}
 
 	if (stat(mdir, &buf2) == -1) {
 		tst_brkm(TBROK, cleanup, "failed to stat directory %s "

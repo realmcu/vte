@@ -126,7 +126,7 @@
 void setup();
 void cleanup();
 
-char *TCID = "stat06";		/* Test program identifier.    */
+char *TCID = "stat06";
 
 int exp_enos[] = { 0, 0 };
 
@@ -169,6 +169,7 @@ struct test_case_t {
 	{
 	NULL, NULL, NULL, 0, no_setup}
 };
+
 int TST_TOTAL = sizeof(Test_cases) / sizeof(*Test_cases);
 
 /***********************************************************************
@@ -205,7 +206,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 
@@ -249,10 +250,10 @@ int main(int ac, char **av)
 						tst_resm(TFAIL,
 							 "stat(<%s>, &stbuf) Failed, errno=%d, expected errno:%d",
 							 desc, TEST_ERRNO,
-							 Test_cases[ind].
-							 exp_errno);
+							 Test_cases
+							 [ind].exp_errno);
 				} else
-					Tst_count++;
+					tst_count++;
 			} else {
 				tst_resm(TFAIL,
 					 "stat(<%s>, &stbuf) returned %ld, expected -1, errno:%d",

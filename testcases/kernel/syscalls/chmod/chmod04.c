@@ -89,13 +89,13 @@
 				 */
 #define TESTDIR		"testdir_4"
 
-char *TCID = "chmod04";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "chmod04";
+int TST_TOTAL = 1;
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();
+void cleanup();
 
 int main(int ac, char **av)
 {
@@ -111,7 +111,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call chmod(2) with mode argument to
@@ -120,7 +120,7 @@ int main(int ac, char **av)
 		TEST(chmod(TESTDIR, PERMS));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "chmod(%s, %#o) failed",
+			tst_resm(TFAIL | TTERRNO, "chmod(%s, %#o) failed",
 				 TESTDIR, PERMS);
 			continue;
 		}
@@ -173,7 +173,7 @@ void setup()
 	tst_require_root(NULL);
 	ltpuser = getpwnam(nobody_uid);
 	if (setuid(ltpuser->pw_uid) == -1)
-		tst_resm(TINFO|TERRNO, "setuid(%u) failed", ltpuser->pw_uid);
+		tst_resm(TINFO | TERRNO, "setuid(%u) failed", ltpuser->pw_uid);
 
 	TEST_PAUSE;
 

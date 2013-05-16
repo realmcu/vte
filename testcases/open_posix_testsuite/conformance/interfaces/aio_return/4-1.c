@@ -48,15 +48,13 @@ int main(void)
 		return PTS_UNSUPPORTED;
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_return_2_1_%d",
-		  getpid());
+		 getpid());
 	unlink(tmpfname);
-	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL,
-		  S_IRUSR | S_IWUSR);
+	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
 
 	if (fd == -1) {
-		printf(TNAME " Error at open(): %s\n",
-		       strerror(errno));
-		exit(PTS_UNRESOLVED);
+		printf(TNAME " Error at open(): %s\n", strerror(errno));
+		return PTS_UNRESOLVED;
 	}
 
 	unlink(tmpfname);
@@ -64,33 +62,35 @@ int main(void)
 	memset(buf, 0xaa, BUF_SIZE);
 	memset(&aiocb, 0, sizeof(struct aiocb));
 	aiocb.aio_fildes = fd;
-	aiocb.aio_buf    = buf;
+	aiocb.aio_buf = buf;
 	aiocb.aio_nbytes = BUF_SIZE;
 
 	if (aio_write(&aiocb) == -1) {
 		close(fd);
-		printf(TNAME " Error at aio_write(): %s\n",
-		       strerror(errno));
-		exit(PTS_FAIL);
+		printf(TNAME " Error at aio_write(): %s\n", strerror(errno));
+		return PTS_FAIL;
 	}
 
-	while (aio_error(&aiocb) == EINPROGRESS)
-		sleep(1);
+	do {
+		usleep(10000);
+		retval = aio_error(&aiocb);
+	} while (retval == EINPROGRESS);
+
 	retval = aio_error(&aiocb);
 
 	if (retval == 0) {
 
 		memset(&aiocb2, 0, sizeof(struct aiocb));
 		aiocb2.aio_fildes = fd;
-		aiocb2.aio_buf    = buf;
+		aiocb2.aio_buf = buf;
 		aiocb2.aio_nbytes = BUF_SIZE;
 
 		retval = aio_return(&aiocb2);
 
 		if (retval != -1 || aio_error(&aiocb) != EINVAL) {
 			close(fd);
-			printf(TNAME " aio_return() may fail\n");
-			exit(PTS_UNRESOLVED);
+			printf(TNAME "aio_return() have not failed\n");
+			return PTS_UNTESTED;
 		}
 
 		retval = aio_return(&aiocb);
@@ -99,15 +99,15 @@ int main(void)
 			close(fd);
 			printf(TNAME " Error at aio_return(): %d, %s\n", retval,
 			       strerror(aio_error(&aiocb)));
-			exit(PTS_UNRESOLVED);
+			return PTS_UNRESOLVED;
 		}
 
 	} else {
-		printf(TNAME " Error at aio_error(): %s\n",
-			strerror(retval));
-		exit(PTS_UNRESOLVED);
+		close(fd);
+		printf(TNAME " Error at aio_error(): %s\n", strerror(retval));
+		return PTS_UNRESOLVED;
 	}
 	close(fd);
 	printf("Test PASSED\n");
-	exit(PTS_PASS);
+	return PTS_PASS;
 }

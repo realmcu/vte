@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 
 	ret = get_allowed_nodes(NH_MEMS, 2, &from_node, &to_node);
 	if (ret < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "get_allowed_nodes: %d", ret);
+		tst_brkm(TBROK | TERRNO, cleanup, "get_allowed_nodes: %d", ret);
 
 	/* check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
@@ -137,8 +137,8 @@ int main(int argc, char **argv)
 		pid_t cpid;
 		sem_t *sem;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		ret = alloc_shared_pages_on_node(pages, TEST_PAGES, from_node);
 		if (ret == -1)
@@ -187,9 +187,9 @@ int main(int argc, char **argv)
 				 strerror(errno));
 		/* Read the status, no zombies! */
 		wait(NULL);
-	      err_free_sem:
+err_free_sem:
 		free_sem(sem, MAX_SEMS);
-	      err_free_pages:
+err_free_pages:
 		free_shared_pages(pages, TEST_PAGES);
 	}
 #else
@@ -244,4 +244,4 @@ void cleanup(void)
 	 */
 	TEST_CLEANUP;
 
- }
+}

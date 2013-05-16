@@ -71,8 +71,8 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		TEST(pipe(pipes));
 
@@ -83,7 +83,7 @@ int main(int ac, char **av)
 		TEST_ERROR_LOG(TEST_ERRNO);
 
 		if (TEST_ERRNO != EMFILE) {
-			tst_resm(TFAIL|TTERRNO, "pipe failed unexpectedly");
+			tst_resm(TFAIL | TTERRNO, "pipe failed unexpectedly");
 		} else {
 			tst_resm(TPASS, "failed with EMFILE");
 		}
@@ -111,8 +111,8 @@ void setup()
 		pipe_ret = pipe(pipes);
 		if (pipe_ret < 0) {
 			if (errno != EMFILE) {
-				tst_brkm(TBROK|TTERRNO, cleanup,
-				    "didn't get EMFILE");
+				tst_brkm(TBROK | TTERRNO, cleanup,
+					 "didn't get EMFILE");
 			}
 			break;
 		}

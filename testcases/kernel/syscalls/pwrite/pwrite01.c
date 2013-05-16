@@ -88,8 +88,8 @@
 #define K4              (K1 * 4)
 #define NBUFS           4
 
-char *TCID = "pwrite01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "pwrite01";
+int TST_TOTAL = 1;
 int fildes;			/* file descriptor for tempfile */
 char *write_buf[NBUFS];		/* buffer to hold data to be written */
 
@@ -105,7 +105,6 @@ int main(int ac, char **av)
 	char *msg;
 	int nwrite;		/* no. of bytes written by pwrite() */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -113,7 +112,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call pwrite() to write K1 bytes of data (0's) at offset 0
@@ -265,9 +264,9 @@ void l_seek(int fdesc, off_t offset, int whence, off_t checkoff)
 	off_t offloc;		/* offset ret. from lseek() */
 
 	if ((offloc = lseek(fdesc, offset, whence)) != checkoff) {
-		tst_resm(TWARN, "lseek returned %"PRId64", expected %"PRId64, (int64_t)offloc,
-			 (int64_t)checkoff);
-		tst_brkm(TBROK|TERRNO, cleanup, "lseek() on %s Failed",
+		tst_resm(TWARN, "lseek returned %" PRId64 ", expected %" PRId64,
+			 (int64_t) offloc, (int64_t) checkoff);
+		tst_brkm(TBROK | TERRNO, cleanup, "lseek() on %s Failed",
 			 TEMPFILE);
 	}
 }
@@ -296,17 +295,16 @@ void check_file_contents()
 		/* Seek to specified offset position from beginning */
 		offloc = lseek(fildes, count * K1, SEEK_SET);
 		if (offloc != (count * K1)) {
-			tst_brkm(TBROK|TERRNO, cleanup,
-				 "lseek() failed: offloc=%"PRId64,
-				 (int64_t)offloc);
+			tst_brkm(TBROK | TERRNO, cleanup,
+				 "lseek() failed: offloc=%" PRId64,
+				 (int64_t) offloc);
 		}
 
 		/* Read the data from file into a buffer */
 		nread = read(fildes, read_buf, K1);
 		if (nread != K1) {
-			tst_brkm(TBROK|TERRNO, cleanup,
-				 "read() failed: nread=%d",
-				 nread);
+			tst_brkm(TBROK | TERRNO, cleanup,
+				 "read() failed: nread=%d", nread);
 		}
 
 		/* Compare the read data with the data written using pwrite */

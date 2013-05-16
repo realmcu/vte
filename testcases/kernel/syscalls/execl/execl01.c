@@ -122,10 +122,10 @@
 void setup();
 void cleanup();
 
-char *TCID = "execl01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "execl01";
+int TST_TOTAL = 1;
 
-int exp_enos[] = { 0, 0 };	/* Zero terminated list of expected errnos */
+int exp_enos[] = { 0, 0 };
 
 pid_t pid;			/* process id from fork */
 int status;			/* status returned from waitpid */
@@ -134,7 +134,6 @@ int main(int ac, char **av)
 {
 	int lc;
 	char *msg;
-
 
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -146,7 +145,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * TEST CASE:
@@ -161,23 +160,23 @@ int main(int ac, char **av)
 			 */
 			exit(errno);
 		case -1:
-			tst_brkm(TBROK|TERRNO, cleanup, "fork failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "fork failed");
 			break;
 		default:
 			if (waitpid(pid, &status, 0) == -1)
-				tst_brkm(TBROK|TERRNO, cleanup,
-				    "waitpid failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "waitpid failed");
 			if (WIFEXITED(status)) {
 				if (STD_FUNCTIONAL_TEST) {
 					/* No Verification test, yet... */
 					tst_resm(TPASS,
-					    "execl - properly exec's a simple "
-					    "program..");
+						 "execl - properly exec's a simple "
+						 "program..");
 				}
 			} else {
 				tst_resm(TFAIL,
-				    "child exited abnormally; wait status=%d",
-				    status);
+					 "child exited abnormally; wait status=%d",
+					 status);
 			}
 		}
 
@@ -195,9 +194,9 @@ void setup()
 
 	if (STD_TIMING_ON)
 		tst_resm(TINFO,
-		    "There are NO timing statistics produced by this test.\n"
-		    "This is because the test forks to create a child process "
-		    "which then calls execl.\nThe TEST macro is NOT used.");
+			 "There are NO timing statistics produced by this test.\n"
+			 "This is because the test forks to create a child process "
+			 "which then calls execl.\nThe TEST macro is NOT used.");
 
 	TEST_PAUSE;
 

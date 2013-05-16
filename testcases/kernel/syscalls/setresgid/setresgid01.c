@@ -79,7 +79,6 @@
 
 #define EXP_RET_VAL	0
 
-
 struct test_case_t {		/* test case structure */
 	uid_t *rgid;		/* real GID */
 	uid_t *egid;		/* effective GID */
@@ -120,16 +119,15 @@ int main(int argc, char **argv)
 	int lc;
 	char *msg;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 
@@ -200,7 +198,7 @@ void setup(void)
 	/* Check whether we are root  */
 	if (geteuid() != 0) {
 		tst_brkm(TBROK, NULL, "Must be root for this test!");
-	 }
+	}
 
 	if ((passwd_p = getpwnam("root")) == NULL) {
 		tst_brkm(TBROK, NULL, "getpwnam() failed for root");
@@ -236,4 +234,4 @@ void cleanup(void)
 
 	TEST_CLEANUP;
 
- }
+}

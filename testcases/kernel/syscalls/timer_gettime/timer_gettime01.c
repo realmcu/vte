@@ -43,7 +43,6 @@
 #include <stdio.h>
 #include <errno.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
@@ -53,12 +52,9 @@
  */
 typedef int kernel_timer_t;
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "timer_gettime01";  /* Test program identifier.*/
-int  testno;
-int  TST_TOTAL = 3;                   /* total number of tests in this file.   */
+char *TCID = "timer_gettime01";
+int testno;
+int TST_TOTAL = 3;
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -78,7 +74,8 @@ int  TST_TOTAL = 3;                   /* total number of tests in this file.   *
 /*              On success - Exits calling tst_exit(). With '0' return code.  */
 /*                                                                            */
 /******************************************************************************/
-extern void cleanup() {
+extern void cleanup()
+{
 
 	TEST_CLEANUP;
 	tst_rmdir();
@@ -103,7 +100,8 @@ extern void cleanup() {
 /*              On success - returns 0.                                       */
 /*                                                                            */
 /******************************************************************************/
-void setup() {
+void setup()
+{
 	/* Capture signals if any */
 	/* Create temporary directories */
 	TEST_PAUSE;
@@ -112,13 +110,14 @@ void setup() {
 }
 
 #define ENTER(normal) tst_resm(TINFO, "Enter block %d: test %d (%s)", \
-		 block, Tst_count, normal?"NORMAL":"ERROR");
+		 block, tst_count, normal?"NORMAL":"ERROR");
 
 char tmpname[40];
 int parent;
 int block = 1;
 
-int main(int ac, char **av) {
+int main(int ac, char **av)
+{
 	int lc;
 	char *msg;
 
@@ -132,23 +131,23 @@ int main(int ac, char **av) {
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			ENTER(1);
-			ev.sigev_value = (sigval_t)0;
+			ev.sigev_value = (sigval_t) 0;
 			ev.sigev_signo = SIGALRM;
 			ev.sigev_notify = SIGEV_SIGNAL;
-			TEST(syscall(__NR_timer_create, CLOCK_REALTIME, &ev,
-				&created_timer_id));
-			TEST(syscall(__NR_timer_gettime, created_timer_id,
-				&spec));
+			TEST(ltp_syscall(__NR_timer_create, CLOCK_REALTIME, &ev,
+				     &created_timer_id));
+			TEST(ltp_syscall(__NR_timer_gettime, created_timer_id,
+				     &spec));
 			if (TEST_RETURN == 0) {
 				tst_resm(TPASS, "Block %d: test %d PASSED",
-					block, Tst_count);
+					 block, tst_count);
 			} else {
-				tst_brkm(TFAIL|TERRNO, cleanup,
-				    "Block %d: test %d FAILED",
-				    block, Tst_count);
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "Block %d: test %d FAILED",
+					 block, tst_count);
 			}
 
 /*
@@ -158,15 +157,15 @@ ERRORS
 	      An invalid timer_id value was specified.
 */
 			ENTER(0);
-			TEST(syscall(__NR_timer_gettime, -1, &spec));
+			TEST(ltp_syscall(__NR_timer_gettime, -1, &spec));
 			if (TEST_RETURN < 0 && TEST_ERRNO == EINVAL) {
 				tst_resm(TPASS,
-				    "Block %d: test %d PASSED",
-				    block, Tst_count);
+					 "Block %d: test %d PASSED",
+					 block, tst_count);
 			} else {
-				tst_brkm(TFAIL|TERRNO, cleanup,
-				    "Block %d: test %d FAILED",
-				    block, Tst_count);
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "Block %d: test %d FAILED",
+					 block, tst_count);
 			}
 
 /*
@@ -176,16 +175,16 @@ ERRORS
 */
 
 			ENTER(0);
-			TEST(syscall(__NR_timer_gettime, created_timer_id,
-			    NULL));
-			if (TEST_RETURN < 0 && TEST_ERRNO == EFAULT ) {
+			TEST(ltp_syscall(__NR_timer_gettime, created_timer_id,
+				     NULL));
+			if (TEST_RETURN < 0 && TEST_ERRNO == EFAULT) {
 				tst_resm(TPASS,
-				    "Block %d: test %d PASSED",
-				    block, Tst_count);
+					 "Block %d: test %d PASSED",
+					 block, tst_count);
 			} else {
-				tst_brkm(TFAIL|TERRNO, cleanup,
-				    "Block %d: test %d FAILED",
-				    block, Tst_count);
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "Block %d: test %d FAILED",
+					 block, tst_count);
 			}
 
 		}

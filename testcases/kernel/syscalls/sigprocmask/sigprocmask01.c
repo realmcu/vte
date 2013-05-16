@@ -86,9 +86,10 @@ void setup();			/* Main setup function of test */
 void cleanup();			/* cleanup function for the test */
 void sig_handler(int sig);	/* signal catching function */
 
-char *TCID = "sigprocmask01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sigprocmask01";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
+
 int sig_catch = 0;		/* variable to blocked/unblocked signals */
 
 struct sigaction sa_new;	/* struct to hold signal info */
@@ -101,7 +102,6 @@ int main(int ac, char **av)
 	char *msg;
 	pid_t my_pid;		/* test process id */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -115,7 +115,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call sigprocmask() to block (SIGINT) signal
@@ -171,7 +171,7 @@ int main(int ac, char **av)
 						tst_brkm(TFAIL, cleanup,
 							 "sigismember() failed, "
 							 "error:%d", errno);
-					 }
+					}
 
 					/*
 					 * Invoke sigprocmask() again to
@@ -186,7 +186,7 @@ int main(int ac, char **av)
 							 "sigprocmask() failed "
 							 "to unblock signal, "
 							 "error=%d", errno);
-					 }
+					}
 					if (sig_catch) {
 						tst_resm(TPASS, "Functionality "
 							 "of sigprocmask() "
@@ -204,7 +204,7 @@ int main(int ac, char **av)
 			}
 		}
 
-		Tst_count++;	/* incr TEST_LOOP counter */
+		tst_count++;	/* incr TEST_LOOP counter */
 	}
 
 	cleanup();
@@ -236,12 +236,12 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigemptyset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 }
+	}
 	if (sigfillset(&sigset2) == -1) {
 		tst_brkm(TFAIL, cleanup,
 			 "sigfillset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 }
+	}
 
 	/* Set the signal handler function to catch the signal */
 	sa_new.sa_handler = sig_handler;
@@ -249,7 +249,7 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigaction() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 }
+	}
 
 	/*
 	 * Add specified signal (SIGINT) to the signal set
@@ -259,7 +259,7 @@ void setup()
 		tst_brkm(TFAIL, cleanup,
 			 "sigaddset() failed, errno=%d : %s",
 			 errno, strerror(errno));
-	 }
+	}
 }
 
 /*

@@ -124,8 +124,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "dup04";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "dup04";
+int TST_TOTAL = 2;
 
 int exp_enos[] = { 0, 0 };
 
@@ -145,13 +145,13 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(dup(fd[0]));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TERRNO,
-			    "dup of read side of pipe failed");
+			tst_resm(TFAIL | TERRNO,
+				 "dup of read side of pipe failed");
 		else {
 			if (STD_FUNCTIONAL_TEST) {
 				tst_resm(TPASS,
@@ -159,7 +159,7 @@ int main(int ac, char **av)
 					 fd[0], TEST_RETURN);
 
 			} else
-				Tst_count++;
+				tst_count++;
 
 			if (close(TEST_RETURN) == -1)
 				tst_brkm(TBROK, cleanup, "close failed");
@@ -168,8 +168,8 @@ int main(int ac, char **av)
 		TEST(dup(fd[1]));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO,
-			    "dup of write side of pipe failed");
+			tst_resm(TFAIL | TTERRNO,
+				 "dup of write side of pipe failed");
 		else {
 
 			if (STD_FUNCTIONAL_TEST) {
@@ -178,11 +178,11 @@ int main(int ac, char **av)
 					 fd[1], TEST_RETURN);
 
 			} else
-				Tst_count++;
+				tst_count++;
 
 			if (close(TEST_RETURN) == -1)
-				tst_brkm(TBROK|TTERRNO, cleanup,
-				    "close failed");
+				tst_brkm(TBROK | TTERRNO, cleanup,
+					 "close failed");
 		}
 
 	}
@@ -202,7 +202,7 @@ void setup()
 	tst_tmpdir();
 
 	if (pipe(fd) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "pipe failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "pipe failed");
 }
 
 void cleanup()

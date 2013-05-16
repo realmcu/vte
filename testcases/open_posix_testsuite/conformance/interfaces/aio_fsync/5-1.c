@@ -23,26 +23,24 @@
 
 #define BUF_SIZE 1024
 
-int main()
+int main(void)
 {
 	char tmpfname[256];
 	char buf[BUF_SIZE];
 	int fd;
 	struct aiocb aiocb_write;
 	struct aiocb aiocb_fsync;
-	int ret;
+	int ret, err;
 
 	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
 		return PTS_UNSUPPORTED;
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_fsync_5_1_%d",
-		  getpid());
+		 getpid());
 	unlink(tmpfname);
-	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL,
-		  S_IRUSR | S_IWUSR);
+	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
 	if (fd == -1) {
-		printf(TNAME " Error at open(): %s\n",
-		       strerror(errno));
+		printf(TNAME " Error at open(): %s\n", strerror(errno));
 		exit(PTS_UNRESOLVED);
 	}
 
@@ -54,8 +52,7 @@ int main()
 	aiocb_write.aio_nbytes = BUF_SIZE;
 
 	if (aio_write(&aiocb_write) == -1) {
-		printf(TNAME " Error at aio_write(): %s\n",
-		       strerror(errno));
+		printf(TNAME " Error at aio_write(): %s\n", strerror(errno));
 		exit(PTS_FAIL);
 	}
 
@@ -72,15 +69,22 @@ int main()
 		ret = PTS_PASS;
 
 	/* allow to check if aio_error() move from EINPROGRESS to
-	 * something else
-	 * otherwise test hangs
+	 * something else otherwise test hangs
 	 */
-
-	while (aio_error(&aiocb_fsync) == EINPROGRESS);
+	do {
+		usleep(10000);
+		err = aio_error(&aiocb_fsync);
+	} while (err == EINPROGRESS);
+	if (err < 0) {
+		printf(TNAME " Error at aio_error() : %s\n", strerror(ret));
+		exit(PTS_FAIL);
+	}
 
 	close(fd);
 
 	/* we didn't check if the operation is really performed */
+	if (ret == PTS_PASS)
+		printf("Test PASSED\n");
 
 	return ret;
 }

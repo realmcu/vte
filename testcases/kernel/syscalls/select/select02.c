@@ -120,8 +120,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "select02";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "select02";
+int TST_TOTAL = 1;
 
 int Fd[2];
 fd_set saved_Readfds, saved_Writefds;
@@ -155,7 +155,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Assigning the specified seconds within the timeval structure.

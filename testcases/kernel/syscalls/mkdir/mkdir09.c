@@ -73,8 +73,8 @@ int errflg;
  *  * These globals must be defined in the test.
  *   */
 
-char *TCID = "mkdir09";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mkdir09";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { EFAULT, 0 };	/* List must end with 0 */
 
@@ -115,8 +115,7 @@ char *argv[];
 #ifdef UCLINUX
 	char *msg;
 
-	if ((msg =
-	     parse_opts(argc, argv, NULL, NULL)) != NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 	}
 

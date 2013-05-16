@@ -21,14 +21,16 @@
 
 #define SIGTOTEST SIGALRM
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	timer_t tid;
 	struct itimerspec its;
 
-	its.it_interval.tv_sec = 0; its.it_interval.tv_nsec = 0;
-	its.it_value.tv_sec = 0; its.it_value.tv_nsec = 0;
+	its.it_interval.tv_sec = 0;
+	its.it_interval.tv_nsec = 0;
+	its.it_value.tv_sec = 0;
+	its.it_value.tv_nsec = 0;
 
 	ev.sigev_notify = SIGEV_SIGNAL;
 	ev.sigev_signo = SIGTOTEST;

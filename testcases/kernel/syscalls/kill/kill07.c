@@ -104,8 +104,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 		status = 1;
 		exno = 1;
 		my_act.sa_handler = sighandler;
@@ -151,7 +151,7 @@ int main(int ac, char **av)
 		if (TEST_RETURN == -1) {
 			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s",
 				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-		 }
+		}
 
 		if (STD_FUNCTIONAL_TEST) {
 			/*
@@ -178,7 +178,7 @@ int main(int ac, char **av)
 		}
 		if (shmdt(flag)) {
 			tst_brkm(TBROK, cleanup, "shmdt failed ");
-		 }
+		}
 	}
 	cleanup();
 
@@ -204,7 +204,7 @@ void do_child()
 	int exno = 1;
 
 	sleep(300);
-	  tst_resm(TINFO, "Child never recieved a signal");
+	tst_resm(TINFO, "Child never recieved a signal");
 	exit(exno);
 }
 

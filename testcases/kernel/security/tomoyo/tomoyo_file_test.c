@@ -51,25 +51,25 @@ static void show_result(int result)
 	}
 }
 
-static const char *dev_null_path       = "/dev/null";
-static const char *truncate_path       = "/tmp/truncate_test";
-static const char *ftruncate_path      = "/tmp/ftruncate_test";
-static const char *open_creat_path     = "/tmp/open_test";
-static const char *mknod_reg_path      = "/tmp/mknod_reg_test";
-static const char *mknod_chr_path      = "/tmp/mknod_chr_test";
-static const char *mknod_blk_path      = "/tmp/mknod_blk_test";
-static const char *mknod_fifo_path     = "/tmp/mknod_fifo_test";
-static const char *mknod_sock_path     = "/tmp/mknod_sock_test";
-static const char *unlink_path         = "/tmp/unlink_test";
-static const char *mkdir_path          = "/tmp/mkdir_test";
-static const char *rmdir_path          = "/tmp/rmdir_test";
-static const char *link_source_path    = "/tmp/link_source_test";
-static const char *link_dest_path      = "/tmp/link_dest_test";
+static const char *dev_null_path = "/dev/null";
+static const char *truncate_path = "/tmp/truncate_test";
+static const char *ftruncate_path = "/tmp/ftruncate_test";
+static const char *open_creat_path = "/tmp/open_test";
+static const char *mknod_reg_path = "/tmp/mknod_reg_test";
+static const char *mknod_chr_path = "/tmp/mknod_chr_test";
+static const char *mknod_blk_path = "/tmp/mknod_blk_test";
+static const char *mknod_fifo_path = "/tmp/mknod_fifo_test";
+static const char *mknod_sock_path = "/tmp/mknod_sock_test";
+static const char *unlink_path = "/tmp/unlink_test";
+static const char *mkdir_path = "/tmp/mkdir_test";
+static const char *rmdir_path = "/tmp/rmdir_test";
+static const char *link_source_path = "/tmp/link_source_test";
+static const char *link_dest_path = "/tmp/link_dest_test";
 static const char *symlink_source_path = "/tmp/symlink_source_test";
-static const char *symlink_dest_path   = "/tmp/symlink_dest_test";
-static const char *rename_source_path  = "/tmp/rename_source_test";
-static const char *rename_dest_path    = "/tmp/rename_dest_test";
-static const char *socket_path         = "/tmp/socket_test";
+static const char *symlink_dest_path = "/tmp/symlink_dest_test";
+static const char *rename_source_path = "/tmp/rename_source_test";
+static const char *rename_dest_path = "/tmp/rename_dest_test";
+static const char *socket_path = "/tmp/socket_test";
 
 static int ftruncate_fd = EOF;
 
@@ -77,14 +77,11 @@ static void stage_file_test(void)
 {
 	int fd;
 	{
-		static int name[] = { CTL_NET, NET_IPV4,
-				      NET_IPV4_LOCAL_PORT_RANGE };
-		int buffer[2] = { 32768, 61000 };
-		size_t size = sizeof(buffer);
+		const char buffer[] = "32768 61000";
 		show_prompt("sysctl(READ)");
-		show_result(sysctl(name, 3, buffer, &size, 0, 0));
+		show_result(read_sysctl(TEST_SYSCTL_PATH, NULL, 0));
 		show_prompt("sysctl(WRITE)");
-		show_result(sysctl(name, 3, 0, 0, buffer, size));
+		show_result(write_sysctl(TEST_SYSCTL_PATH, buffer));
 	}
 
 	/* QUESTION: Is there a file which can be passed to uselib()? */
@@ -188,7 +185,7 @@ static void stage_file_test(void)
 		strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path) - 1);
 		fd = socket(AF_UNIX, SOCK_STREAM, 0);
 		show_prompt("unix_bind()");
-		show_result(bind(fd, (struct sockaddr *) &addr, sizeof(addr)));
+		show_result(bind(fd, (struct sockaddr *)&addr, sizeof(addr)));
 		if (fd != EOF)
 			close(fd);
 	}

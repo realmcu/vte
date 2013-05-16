@@ -77,8 +77,8 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sysfs04";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "sysfs04";
+int TST_TOTAL = 1;
 static int exp_enos[] = { EINVAL, 0 };
 
 int main(int ac, char **av)
@@ -95,7 +95,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 		TEST(syscall(__NR_sysfs, INVALID_OPTION));
 
 		/* check return code */

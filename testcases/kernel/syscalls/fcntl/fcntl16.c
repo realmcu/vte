@@ -310,6 +310,7 @@ void dochild(int kid)
 	struct sigaction sact;
 	sact.sa_flags = 0;
 	sact.sa_handler = catch_int;
+	sigemptyset(&sact.sa_mask);
 	(void)sigaction(SIGUSR1, &sact, NULL);
 
 	/* Lock should succeed after blocking and parent releases lock */
@@ -461,7 +462,7 @@ int run_test(int file_flag, int file_mode, int start, int end)
 		fd = open(tmpname, file_flag, file_mode);
 		if (fd < 0) {
 			tst_brkm(TBROK, cleanup, "open failed");
-		 }
+		}
 
 		/* write some dummy data to the file */
 		(void)write(fd, FILEDATA, 10);
@@ -671,8 +672,8 @@ int main(int ac, char **av)
 	setup();		/* global setup */
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 /* //block1: */
 		/*

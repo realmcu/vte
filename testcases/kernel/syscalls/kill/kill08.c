@@ -70,7 +70,6 @@ void do_child(void);
 char *TCID = "kill08";
 int TST_TOTAL = 1;
 
-
 #define TEST_SIG SIGKILL
 
 int main(int ac, char **av)
@@ -92,8 +91,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 		status = 1;
 		exno = 1;
 
@@ -124,7 +123,7 @@ int main(int ac, char **av)
 			/* Kill all processes in this process group */
 			TEST(kill(0, TEST_SIG));
 			pause();
-			  exit(exno);
+			exit(exno);
 		} else {
 			waitpid(pid1, &status, 0);
 			if (TEST_RETURN != 0) {
@@ -165,7 +164,7 @@ void do_child()
 	int exno = 1;
 
 	pause();
-	  exit(exno);
+	exit(exno);
 }
 
 /*

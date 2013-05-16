@@ -73,8 +73,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "mlockall01";	/* Test program identifier.    */
-int TST_TOTAL = 3;		/* Total number of test cases. */
+char *TCID = "mlockall01";
+int TST_TOTAL = 3;
 
 int exp_enos[] = { 0 };
 
@@ -107,7 +107,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -117,9 +117,10 @@ int main(int ac, char **av)
 
 			if (TEST_RETURN == -1) {
 				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL|TTERRNO, "mlockall(%s) Failed with "
-					 "return=%ld",
-					 TC[i].fdesc, TEST_RETURN);
+				tst_resm(TFAIL | TTERRNO,
+					 "mlockall(%s) Failed with "
+					 "return=%ld", TC[i].fdesc,
+					 TEST_RETURN);
 			} else {
 				tst_resm(TPASS, "mlockall test passed for %s",
 					 TC[i].fdesc);

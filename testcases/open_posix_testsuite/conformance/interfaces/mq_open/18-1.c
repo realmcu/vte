@@ -23,7 +23,7 @@
 #define NAMESIZE 50
 #define MSGSTR "O123456789"
 
-int main()
+int main(void)
 {
 	char qname[NAMESIZE];
 	const char *msgptr = MSGSTR;
@@ -33,7 +33,7 @@ int main()
 
 	queue = mq_open(qname, O_CREAT | O_RDWR | O_NONBLOCK,
 			S_IRUSR | S_IWUSR, NULL);
-	if (queue == (mqd_t) -1) {
+	if (queue == (mqd_t) - 1) {
 		perror("mq_open() did not return success w/O_NONBLOCK set");
 		printf("Test FAILED\n");
 		return PTS_FAIL;

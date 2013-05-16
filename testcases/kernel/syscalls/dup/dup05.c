@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "dup05";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "dup05";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -143,20 +143,21 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(dup(fd));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "dup failed");
+			tst_resm(TFAIL | TTERRNO, "dup failed");
 		else {
 
 			if (STD_FUNCTIONAL_TEST)
 				tst_resm(TPASS, "dup returned %ld",
-				    TEST_RETURN);
+					 TEST_RETURN);
 
 			if (close(TEST_RETURN) == -1)
-				tst_brkm(TBROK|TERRNO, cleanup, "close failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "close failed");
 		}
 
 	}
@@ -189,7 +190,7 @@ void cleanup()
 
 	if (fd != -1)
 		if (close(fd) == -1)
-			tst_resm(TWARN|TERRNO, "close failed");
+			tst_resm(TWARN | TERRNO, "close failed");
 
 	tst_rmdir();
 

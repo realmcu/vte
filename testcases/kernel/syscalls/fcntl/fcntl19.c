@@ -137,7 +137,7 @@ void do_child()
 	while (1) {
 		child_get(&fl);
 		if (fcntl(fd, F_GETLK, &fl) < 0)
-			tst_resm(TFAIL|TERRNO, "fcntl on file failed");
+			tst_resm(TFAIL | TERRNO, "fcntl on file failed");
 		child_put(&fl);
 	}
 }
@@ -183,13 +183,14 @@ compare_lock(struct flock *fl, short type, short whence, int start, int len,
 
 	if (fl->l_start != start) {
 		tst_resm(TFAIL, "region starts in wrong place, should be"
-			 "%d is %"PRId64, start, (int64_t)fl->l_start);
+			 "%d is %" PRId64, start, (int64_t) fl->l_start);
 		fail = 1;
 	}
 
 	if (fl->l_len != len) {
-		tst_resm(TFAIL, "region length is wrong, should be %d is %"PRId64,
-			 len, (int64_t)fl->l_len);
+		tst_resm(TFAIL,
+			 "region length is wrong, should be %d is %" PRId64,
+			 len, (int64_t) fl->l_len);
 		fail = 1;
 	}
 
@@ -298,8 +299,8 @@ int main(int ac, char **av)
 
 	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		if ((child_pid = FORK_OR_VFORK()) == 0) {	/* child */
 #ifdef UCLINUX

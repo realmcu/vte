@@ -80,8 +80,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "readdir02";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "readdir02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { EBADF, 0 };
 
@@ -115,7 +115,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if ((test_dir = opendir(".")) == NULL) {
 			tst_resm(TFAIL, "opendir(\".\") Failed, errno=%d : %s",
@@ -181,6 +181,8 @@ void setup()
 	tst_sig(NOFORK, DEF_HANDLER, cleanup);
 
 	act.sa_handler = sigsegv_handler;
+	act.sa_flags = 0;
+	sigemptyset(&act.sa_mask);
 	(void)sigaction(SIGSEGV, &act, NULL);
 
 	TEST_PAUSE;

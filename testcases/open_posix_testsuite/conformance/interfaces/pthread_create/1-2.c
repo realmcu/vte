@@ -32,20 +32,18 @@ void *a_thread_func()
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	pthread_t new_th;
 
-	if (pthread_create(&new_th, NULL, a_thread_func, NULL) < 0)
-	{
+	if (pthread_create(&new_th, NULL, a_thread_func, NULL) < 0) {
 		perror("Error creating thread\n");
 		return PTS_UNRESOLVED;
 	}
 
 	/* Try to cancel the newly created thread.  If an error is returned,
 	 * then the thread wasn't created successfully. */
-	if (pthread_cancel(new_th) != 0)
-	{
+	if (pthread_cancel(new_th) != 0) {
 		printf("Test FAILED: A new thread wasn't created\n");
 		return PTS_FAIL;
 	}

@@ -78,10 +78,9 @@ int main(int argc, char **argv)
 	char wbuf[BUFSIZ], rbuf[BUFSIZ];
 	int fd;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	/* global setup */
 	setup();
@@ -89,8 +88,8 @@ int main(int argc, char **argv)
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 //block1:
 		tst_resm(TINFO, "Enter Block 1: test to check if write "
@@ -100,31 +99,31 @@ int main(int argc, char **argv)
 		if (fd < 0) {
 			tst_resm(TBROK, "creating a new file failed");
 			cleanup();
-		 }
+		}
 
 		(void)memset(wbuf, '0', 100);
 
 		if (write(fd, wbuf, 100) == -1) {
 			tst_resm(TFAIL, "failed to write to %s", filename);
 			cleanup();
-		 }
+		}
 
 		if (write(fd, bad_addr, 100) != -1) {
 			tst_resm(TFAIL, "write(2) failed to fail");
 			cleanup();
-		 }
+		}
 		TEST_ERROR_LOG(errno);
 		close(fd);
 
 		if ((fd = open(filename, O_RDONLY)) == -1) {
 			tst_resm(TBROK, "open(2) failed, errno: %d", errno);
 			cleanup();
-		 }
+		}
 
 		if (read(fd, rbuf, 100) == -1) {
 			tst_resm(TBROK, "read(2) failed, errno: %d", errno);
 			cleanup();
-		 }
+		}
 
 		if (memcmp(wbuf, rbuf, 100) == 0) {
 			tst_resm(TPASS, "failure of write(2) didnot corrupt "
@@ -158,7 +157,6 @@ void setup(void)
 
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified
@@ -196,4 +194,4 @@ void cleanup(void)
 	unlink(filename);
 	tst_rmdir();
 
- }
+}

@@ -120,7 +120,7 @@
 void setup();
 void cleanup();
 
-char *TCID = "fpathconf01";	/* Test program identifier.    */
+char *TCID = "fpathconf01";
 
 #define FILENAME	"fpafile01"
 
@@ -163,7 +163,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -171,9 +171,9 @@ int main(int ac, char **av)
 
 			if (TEST_RETURN == -1 && args[i].defined) {
 				TEST_ERROR_LOG(TEST_ERRNO);
-				tst_resm(TFAIL|TTERRNO,
-				    "fpathconf(fd, %s) failed",
-				    args[i].define_tag);
+				tst_resm(TFAIL | TTERRNO,
+					 "fpathconf(fd, %s) failed",
+					 args[i].define_tag);
 			} else {
 				if (STD_FUNCTIONAL_TEST) {
 					tst_resm(TPASS,
@@ -211,7 +211,7 @@ void cleanup()
 
 	if (fd != -1) {
 		if (close(fd) == -1)
-			tst_resm(TWARN|TERRNO, "close failed");
+			tst_resm(TWARN | TERRNO, "close failed");
 		fd = -1;
 	}
 

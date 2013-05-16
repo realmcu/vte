@@ -12,7 +12,7 @@
 #include <time.h>
 #include "posixtest.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct timespec tp;
 
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	tp.tv_sec = 0;
 	tp.tv_nsec = 0;
 	if (clock_gettime(CLOCK_REALTIME, &tp) == 0) {
-		if (0 != tp.tv_sec) { //assume this means time was sent
+		if (0 != tp.tv_sec) {	//assume this means time was sent
 			printf("Test PASSED\n");
 			return PTS_PASS;
 		} else {

@@ -56,14 +56,14 @@ void handler(int signo)
 	printf("Caught signal being tested!\n");
 }
 
-int main()
+int main(void)
 {
 	int i;
 	int failure = 0;
 	struct sigaction act;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 	if (sigemptyset(&act.sa_mask) == -1) {
 		perror("Error calling sigemptyset\n");
 		return PTS_UNRESOLVED;

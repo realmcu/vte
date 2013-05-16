@@ -56,23 +56,19 @@
 #include <sys/syscall.h>
 #include <errno.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 #include "linux_syscall_numbers.h"
 
 #ifndef O_CLOEXEC
-# define O_CLOEXEC 02000000
+#define O_CLOEXEC 02000000
 #endif
 
 #define EFD_NONBLOCK O_NONBLOCK
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "eventfd2_02";	/* test program identifier.              */
+char *TCID = "eventfd2_02";
 int testno;
-int TST_TOTAL = 1;		/* total number of tests in this file.   */
+int TST_TOTAL = 1;
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -131,12 +127,12 @@ int main(int argc, char *argv[])
 
 	if ((tst_kvercmp(2, 6, 27)) < 0) {
 		tst_brkm(TCONF, NULL,
-		    "This test can only run on kernels that are 2.6.27 and higher");
+			 "This test can only run on kernels that are 2.6.27 and higher");
 	}
 	setup();
 
-	Tst_count = 0;
-	fd = syscall(__NR_eventfd2, 1, 0);
+	tst_count = 0;
+	fd = ltp_syscall(__NR_eventfd2, 1, 0);
 	if (fd == -1) {
 		tst_brkm(TFAIL, cleanup, "eventfd2(0) failed");
 	}
@@ -145,12 +141,11 @@ int main(int argc, char *argv[])
 		tst_brkm(TBROK, cleanup, "fcntl failed");
 	}
 	if (fl & O_NONBLOCK) {
-		tst_brkm(TFAIL, cleanup,
-		    "eventfd2(0) sets non-blocking mode");
+		tst_brkm(TFAIL, cleanup, "eventfd2(0) sets non-blocking mode");
 	}
 	close(fd);
 
-	fd = syscall(__NR_eventfd2, 1, EFD_NONBLOCK);
+	fd = ltp_syscall(__NR_eventfd2, 1, EFD_NONBLOCK);
 	if (fd == -1) {
 		tst_brkm(TFAIL, cleanup, "eventfd2(EFD_NONBLOCK) failed");
 	}

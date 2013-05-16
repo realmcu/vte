@@ -54,6 +54,10 @@
 #include <linux/sysctl.h>
 
 char *TCID = "sysctl04";
+
+/* This is an older/deprecated syscall that newer arches are omitting */
+#ifdef __NR_sysctl
+
 int TST_TOTAL = 2;
 
 int sysctl(int *name, int nlen, void *oldval, size_t * oldlenp,
@@ -107,8 +111,8 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -127,8 +131,9 @@ int main(int ac, char **av)
 					 "errno = %d : %s", TEST_ERRNO,
 					 strerror(TEST_ERRNO));
 			} else if (TEST_ERRNO == ENOSYS) {
-				tst_resm(TCONF, "You may need to make CONFIG_SYSCTL_SYSCALL=y"
-						" to your kernel config.");
+				tst_resm(TCONF,
+					 "You may need to make CONFIG_SYSCTL_SYSCALL=y"
+					 " to your kernel config.");
 			} else {
 				tst_resm(TFAIL, "unexpected error - %d : %s - "
 					 "expected %d", TEST_ERRNO,
@@ -165,3 +170,14 @@ void cleanup()
 	TEST_CLEANUP;
 
 }
+
+#else
+int TST_TOTAL = 0;
+
+int main()
+{
+
+	tst_resm(TCONF, "This test needs a kernel that has sysctl syscall.");
+	tst_exit();
+}
+#endif

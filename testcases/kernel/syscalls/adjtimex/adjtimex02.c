@@ -105,13 +105,14 @@ static int setup6();
 static void cleanup();
 static void cleanup6();
 
-char *TCID = "adjtimex02";	/* Test program identifier.    */
+char *TCID = "adjtimex02";
 
 static int hz;			/* HZ from sysconf */
 
 static struct timex tim_save;
 static struct timex buff;
 static int exp_enos[] = { EPERM, EINVAL, EFAULT, 0 };
+
 static char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -149,7 +150,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 			/*
@@ -178,11 +179,12 @@ int main(int ac, char **av)
 
 			if ((TEST_RETURN == -1) && (TEST_ERRNO ==
 						    test_cases[i].exp_errno)) {
-				tst_resm(TPASS|TTERRNO,
+				tst_resm(TPASS | TTERRNO,
 					 "Test Passed, adjtimex() returned -1");
 			} else {
-				tst_resm(TFAIL|TTERRNO,
-					 "Test Failed, adjtimex() returned %ld", TEST_RETURN);
+				tst_resm(TFAIL | TTERRNO,
+					 "Test Failed, adjtimex() returned %ld",
+					 TEST_RETURN);
 			}
 			TEST_ERROR_LOG(TEST_ERRNO);
 			if (test_cases[i].cleanup) {
@@ -217,8 +219,7 @@ void setup()
 	/* set the HZ from sysconf */
 	hz = sysconf(_SC_CLK_TCK);
 	if (hz == -1) {
-		tst_brkm(TBROK, NULL,
-			 "Failed to read the HZ from sysconf\n");
+		tst_brkm(TBROK, NULL, "Failed to read the HZ from sysconf\n");
 	}
 
 	TEST_PAUSE;
@@ -279,7 +280,7 @@ int setup6()
 		tst_brkm(TBROK, NULL, "\"nobody\" user not present");
 	}
 	if (seteuid(ltpuser->pw_uid) == -1) {
-		tst_resm(TWARN|TERRNO, "seteuid(%d) failed", ltpuser->pw_uid);
+		tst_resm(TWARN | TERRNO, "seteuid(%d) failed", ltpuser->pw_uid);
 		return 1;
 	}
 	return 0;
@@ -289,7 +290,7 @@ void cleanup6()
 {
 	/* Set effective user id back to root */
 	if (seteuid(0) == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup, "seteuid failed to set the"
+		tst_brkm(TBROK | TERRNO, cleanup, "seteuid failed to set the"
 			 " effective uid to root");
 	}
 }

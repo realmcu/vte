@@ -78,7 +78,7 @@
 static void setup();
 static void cleanup();
 
-char *TCID = "sysfs06";		/* Test program identifier.    */
+char *TCID = "sysfs06";
 static int option[3] = { 2, 4, 2 };	/* valid and invalid option */
 static int fsindex[3] = { 10000, 0, 1 };	/*invalid and valid fsindex */
 static int exp_enos[] = { EINVAL, EFAULT, 0 };
@@ -93,6 +93,7 @@ static struct test_case_t {
 	"fs_index is out of bounds", EINVAL, "EINVAL"}, {
 	"buf is outside your accessible address space", EFAULT, "EFAULT"}
 };
+
 int TST_TOTAL = sizeof(testcase) / sizeof(*testcase);
 
 char *bad_addr = 0;
@@ -113,7 +114,7 @@ int main(int ac, char **av)
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
-			Tst_count = 0;
+			tst_count = 0;
 			TEST(syscall
 			     (__NR_sysfs, option[i], fsindex[i], bad_addr));
 

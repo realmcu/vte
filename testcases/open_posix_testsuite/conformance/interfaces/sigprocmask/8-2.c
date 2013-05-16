@@ -22,10 +22,11 @@ At
 
 #define NUMSIGNALS (sizeof(siglist) / sizeof(siglist[0]))
 
-int is_changed(sigset_t set, int sig) {
+int is_changed(sigset_t set, int sig)
+{
 
 	int i;
-	int siglist[] = {SIGABRT, SIGALRM, SIGBUS, SIGCHLD,
+	int siglist[] = { SIGABRT, SIGALRM, SIGBUS, SIGCHLD,
 		SIGCONT, SIGFPE, SIGHUP, SIGILL, SIGINT,
 		SIGPIPE, SIGQUIT, SIGSEGV,
 		SIGTERM, SIGTSTP, SIGTTIN, SIGTTOU,
@@ -37,12 +38,13 @@ int is_changed(sigset_t set, int sig) {
 		SIGPROF,
 #endif
 		SIGSYS,
-		SIGTRAP, SIGURG, SIGVTALRM, SIGXCPU, SIGXFSZ };
+		SIGTRAP, SIGURG, SIGVTALRM, SIGXCPU, SIGXFSZ
+	};
 
 	if (sigismember(&set, sig) != 1) {
 		return 1;
 	}
-	for (i=0; i<NUMSIGNALS; i++) {
+	for (i = 0; i < NUMSIGNALS; i++) {
 		if ((siglist[i] != sig)) {
 			if (sigismember(&set, siglist[i]) != 0) {
 				return 1;
@@ -52,7 +54,8 @@ int is_changed(sigset_t set, int sig) {
 	return 0;
 }
 
-int main() {
+int main(void)
+{
 	sigset_t actl, oactl;
 
 	sigemptyset(&actl);
@@ -63,9 +66,9 @@ int main() {
 	sigprocmask(SIG_SETMASK, &actl, NULL);
 	sigprocmask(SIG_SETMASK, NULL, &oactl);
 
-	if (is_changed(oactl, SIGABRT)) {
+	if (is_changed(oactl, SIGABRT))
 		return PTS_FAIL;
-	}
-	printf("PASS: signal mask was not changed.\n");
+
+	printf("Test PASSED: signal mask was not changed.\n");
 	return PTS_PASS;
 }

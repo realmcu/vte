@@ -69,7 +69,6 @@ void do_child(void);
 char *TCID = "kill01";
 int TST_TOTAL = 1;
 
-
 #define TEST_SIG SIGKILL
 
 int main(int ac, char **av)
@@ -91,8 +90,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 		status = 1;
 		exno = 1;
 		pid = FORK_OR_VFORK();
@@ -115,7 +114,7 @@ int main(int ac, char **av)
 		if (TEST_RETURN == -1) {
 			tst_brkm(TFAIL, cleanup, "%s failed - errno = %d : %s",
 				 TCID, TEST_ERRNO, strerror(TEST_ERRNO));
-		 }
+		}
 
 		if (STD_FUNCTIONAL_TEST) {
 			/*
@@ -148,7 +147,7 @@ void do_child()
 	int exno = 1;
 
 	pause();
-	  exit(exno);
+	exit(exno);
 }
 
 /*

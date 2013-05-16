@@ -32,7 +32,7 @@
 
 #define TNAME "lio_listio/6-1.c"
 
-int main()
+int main(void)
 {
 
 	if (sysconf(_SC_ASYNCHRONOUS_IO) < 200112L)
@@ -53,6 +53,6 @@ int main()
 	exit(PTS_FAIL);
 #endif
 
-	printf ("Test PASSED\n");
+	printf("Test PASSED\n");
 	return PTS_PASS;
 }

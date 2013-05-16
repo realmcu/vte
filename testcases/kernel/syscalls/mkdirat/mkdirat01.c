@@ -64,8 +64,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "mkdirat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "mkdirat01";
+int TST_TOTAL = TEST_CASES;
 char testdir[256];
 char testsubdir[256];
 char testsubdir2[256];
@@ -77,7 +77,7 @@ int expected_errno[TEST_CASES] = { 0, 0, ENOTDIR, EBADF, 0 };
 
 int mymkdirat(int dirfd, const char *dirname, int mode)
 {
-	return syscall(__NR_mkdirat, dirfd, dirname, mode);
+	return ltp_syscall(__NR_mkdirat, dirfd, dirname, mode);
 }
 
 int main(int ac, char **av)
@@ -103,7 +103,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call mkdirnat

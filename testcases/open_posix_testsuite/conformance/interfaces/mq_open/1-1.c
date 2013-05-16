@@ -24,7 +24,7 @@
 #define NAMESIZE 50
 #define MSGSTR "0123456789"
 
-int main()
+int main(void)
 {
 	char qname[NAMESIZE];
 	const char *msgptr = MSGSTR;
@@ -34,7 +34,7 @@ int main()
 	sprintf(qname, "/mq_open_1-1_%d", getpid());
 
 	queue = mq_open(qname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, NULL);
-	if (queue == (mqd_t) -1) {
+	if (queue == (mqd_t) - 1) {
 		perror("mq_open() did not return success");
 		printf("Test FAILED\n");
 		return PTS_FAIL;

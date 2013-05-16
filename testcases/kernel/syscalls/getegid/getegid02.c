@@ -88,8 +88,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		TEST(GETEGID());
 
@@ -116,7 +116,8 @@ int main(int ac, char **av)
 						 " %ld unexpected - expected %d",
 						 TEST_RETURN, pwent->pw_gid);
 				} else {
-					tst_resm(TPASS, "effective group id %ld "
+					tst_resm(TPASS,
+						 "effective group id %ld "
 						 "is correct", TEST_RETURN);
 				}
 			}

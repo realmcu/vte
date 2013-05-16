@@ -22,7 +22,7 @@
 
 struct testdata {
 	pthread_mutex_t mutex;
-	pthread_cond_t  cond;
+	pthread_cond_t cond;
 } td;
 
 static int start_num;
@@ -60,7 +60,7 @@ static void *thr_func(void *arg)
 	return NULL;
 }
 
-int main()
+int main(void)
 {
 	int i, rc;
 	pthread_t thread[THREAD_NUM];

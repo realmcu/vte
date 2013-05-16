@@ -85,8 +85,8 @@
 
 #define TEMPFILE	"mmapfile"
 
-char *TCID = "mmap07";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mmap07";
+int TST_TOTAL = 1;
 int exp_enos[] = { EACCES, 0 };
 
 size_t page_sz;			/* system page size */
@@ -101,7 +101,6 @@ int main(int ac, char **av)
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -112,7 +111,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call mmap to map the temporary file 'TEMPFILE'
@@ -125,9 +124,9 @@ int main(int ac, char **av)
 
 		/* Check for the return value of mmap() */
 		if (addr != MAP_FAILED) {
-			tst_resm(TFAIL|TERRNO,
-				"mmap() returned invalid value, expected: %p",
-				MAP_FAILED);
+			tst_resm(TFAIL | TERRNO,
+				 "mmap() returned invalid value, expected: %p",
+				 MAP_FAILED);
 			/* Unmap the mapped memory */
 			if (munmap(addr, page_sz) != 0) {
 				tst_resm(TBROK, "munmap() failed");
@@ -139,8 +138,8 @@ int main(int ac, char **av)
 		if (TEST_ERRNO == EACCES) {
 			tst_resm(TPASS, "mmap failed with EACCES");
 		} else {
-			tst_resm(TFAIL|TERRNO,
-				"mmap failed with unexpected errno");
+			tst_resm(TFAIL | TERRNO,
+				 "mmap failed with unexpected errno");
 		}
 
 	}
@@ -183,15 +182,13 @@ void setup()
 	/* Creat a temporary file used for mapping */
 	if ((fildes = open(TEMPFILE, O_WRONLY | O_CREAT, 0666)) < 0) {
 		free(tst_buff);
-		tst_brkm(TFAIL, cleanup, "open() on %s failed",
-			 TEMPFILE);
+		tst_brkm(TFAIL, cleanup, "open() on %s failed", TEMPFILE);
 	}
 
 	/* Write test buffer contents into temporary file */
 	if (write(fildes, tst_buff, page_sz) < page_sz) {
 		free(tst_buff);
-		tst_brkm(TFAIL, cleanup, "writing to %s failed",
-			 TEMPFILE);
+		tst_brkm(TFAIL, cleanup, "writing to %s failed", TEMPFILE);
 	}
 
 	/* Free the memory allocated for test buffer */

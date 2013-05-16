@@ -108,8 +108,8 @@ int main(int ac, char **av)
 	/* The following loop checks looping state if -i option given */
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/*
 		 * fork a child that will attempt to write a message
@@ -197,8 +197,7 @@ void do_child()
 	exit(0);
 }
 
-void
-sighandler(int sig)
+void sighandler(int sig)
 {
 	if (sig == SIGHUP)
 		return;

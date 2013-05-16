@@ -27,7 +27,7 @@ int main(void)
 {
 	char tmpfname[256];
 	char buf[BUF_SIZE];
-	int fd;
+	int fd, ret;
 	struct aiocb aiocb_write;
 	struct aiocb aiocb_fsync;
 
@@ -35,13 +35,11 @@ int main(void)
 		return PTS_UNSUPPORTED;
 
 	snprintf(tmpfname, sizeof(tmpfname), "/tmp/pts_aio_fsync_2_1_%d",
-		  getpid());
+		 getpid());
 	unlink(tmpfname);
-	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL,
-		  S_IRUSR | S_IWUSR);
+	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
 	if (fd == -1) {
-		printf(TNAME " Error at open(): %s\n",
-		       strerror(errno));
+		printf(TNAME " Error at open(): %s\n", strerror(errno));
 		exit(PTS_UNRESOLVED);
 	}
 
@@ -53,8 +51,7 @@ int main(void)
 	aiocb_write.aio_nbytes = BUF_SIZE;
 
 	if (aio_write(&aiocb_write) == -1) {
-		printf(TNAME " Error at aio_write(): %s\n",
-		       strerror(errno));
+		printf(TNAME " Error at aio_write(): %s\n", strerror(errno));
 		exit(PTS_FAIL);
 	}
 
@@ -66,9 +63,29 @@ int main(void)
 		exit(PTS_FAIL);
 	}
 
+	/* wait for aio_fsync */
+	do {
+		usleep(10000);
+		ret = aio_error(&aiocb_fsync);
+	} while (ret == EINPROGRESS);
+
+	ret = aio_return(&aiocb_fsync);
+	if (ret) {
+		printf(TNAME " Error at aio_return(): %d (%s)\n",
+			ret, strerror(errno));
+		close(fd);
+		return PTS_FAIL;
+	}
+
+	/* check that aio_write is completed at this point */
+	ret = aio_error(&aiocb_write);
+	if (ret == EINPROGRESS) {
+		printf(TNAME " aiocb_write still in progress\n");
+		close(fd);
+		return PTS_FAIL;
+	}
+
 	close(fd);
-
-	/* we didn't check if the operation is really performed */
-
-	return PTS_UNTESTED;
+	printf("Test PASSED\n");
+	return PTS_PASS;
 }

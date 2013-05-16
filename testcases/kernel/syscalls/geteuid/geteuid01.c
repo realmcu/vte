@@ -120,8 +120,8 @@
 void setup();
 void cleanup();
 
-TCID_DEFINE(geteuid01);	        /* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+TCID_DEFINE(geteuid01);
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0 };		/* must be a 0 terminated list */
 
@@ -139,12 +139,12 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(GETEUID());
 
 		if (TEST_RETURN < 0) {
-			tst_resm(TFAIL|TTERRNO, "geteuid failed");
+			tst_resm(TFAIL | TTERRNO, "geteuid failed");
 			continue;	/* next loop for MTKERNEL */
 		}
 

@@ -21,11 +21,11 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 #if !defined(_POSIX_CPUTIME) || _POSIX_CPUTIME == -1
-        printf("_POSIX_CPUTIME unsupported\n");
-        return PTS_UNSUPPORTED;
+	printf("_POSIX_CPUTIME unsupported\n");
+	return PTS_UNSUPPORTED;
 #else
 	struct timespec tp1;
 	clockid_t clockid;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	 */
 	if (clock_gettime(clockid, &tp1) != 0) {
 		printf("clock_getcpuclockid() returned an invalid clockid_t: "
-		    "%d\n", clockid);
+		       "%d\n", clockid);
 		return PTS_FAIL;
 	}
 

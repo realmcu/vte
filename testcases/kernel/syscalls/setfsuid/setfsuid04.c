@@ -66,6 +66,7 @@ char testfile[256] = "";
 struct passwd *ltpuser;
 
 int exp_enos[] = { EACCES, 0 };
+
 int fd = -1;
 
 void setup(void);
@@ -93,7 +94,7 @@ int main(int ac, char **av)
 		do_master_child();
 
 	if (waitpid(pid, &status, 0) == -1)
-		tst_resm(TBROK|TERRNO, "waitpid failed");
+		tst_resm(TBROK | TERRNO, "waitpid failed");
 	if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
 		tst_resm(TFAIL, "child process terminated abnormally");
 
@@ -171,7 +172,7 @@ void do_master_child()
 	/* Test 3: Fallback to initial uid and check we can again open
 	 *         the file with RDWR permissions.
 	 */
-	Tst_count++;
+	tst_count++;
 	if (setfsuid(0) == -1) {
 		perror("setfsuid failed");
 		exit(1);

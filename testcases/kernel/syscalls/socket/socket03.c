@@ -53,20 +53,16 @@
 #include <sys/socket.h>
 #include <sys/syscall.h>
 
-/* Harness Specific Include Files. */
 #include "test.h"
 #include "usctest.h"
 
 #ifndef SOCK_NONBLOCK
-# define SOCK_NONBLOCK O_NONBLOCK
+#define SOCK_NONBLOCK O_NONBLOCK
 #endif
 
-/* Extern Global Variables */
-
-/* Global Variables */
-char *TCID = "socket03";	/* test program identifier.              */
+char *TCID = "socket03";
 int testno;
-int TST_TOTAL = 1;		/* total number of tests in this file.   */
+int TST_TOTAL = 1;
 
 /* Extern Global Functions */
 /******************************************************************************/
@@ -126,7 +122,6 @@ int main(int argc, char *argv[])
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -140,7 +135,7 @@ int main(int argc, char *argv[])
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			fd = socket(PF_INET, SOCK_STREAM, 0);
 			if (fd == -1) {

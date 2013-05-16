@@ -97,8 +97,8 @@ static int setup03(int test);
 static int setup04(int test);
 static void cleanup();
 
-char *TCID = "remap_file_pages02";	/* Test program identifier.    */
-int TST_TOTAL = 4;		/* Total number of test cases. */
+char *TCID = "remap_file_pages02";
+int TST_TOTAL = 4;
 static int exp_enos[] = { EINVAL, 0 };
 
 static char *cache_contents;
@@ -151,7 +151,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			/* do the setup if the test have one */
@@ -313,8 +313,7 @@ void setup()
 	}
 
 	data = mmap((void *)WINDOW_START,
-		    cache_sz,
-		    PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		    cache_sz, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 	if (data == MAP_FAILED) {
 		tst_resm(TFAIL, "mmap Error, errno=%d : %s", errno,

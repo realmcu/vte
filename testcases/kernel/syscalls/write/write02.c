@@ -75,15 +75,15 @@ int main(int argc, char **argv)
 
 	if ((msg = parse_opts(argc, argv, NULL, NULL))) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	setup();		/* global setup for test */
 
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 //block1:
 		tst_resm(TINFO, "Block 1: test to see write() returns proper "
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
 		if ((fild = creat(pfiln, 0777)) == -1) {
 			tst_brkm(TBROK, cleanup, "Can't creat Xwrit");
-		 }
+		}
 		for (iws = BUFSIZ; iws > 0; iws--) {
 			if ((cwrite = write(fild, pwbuf, iws)) != iws) {
 				TEST_ERROR_LOG(errno);

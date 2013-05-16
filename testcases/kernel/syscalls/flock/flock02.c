@@ -85,8 +85,8 @@ void cleanup(void);
 
 int exp_enos[] = { EBADF, EINVAL, 0 };
 
-char *TCID = "flock02";		/* Test program identifier */
-int TST_TOTAL = 3;		/* Total number of test cases */
+char *TCID = "flock02";
+int TST_TOTAL = 3;
 char filename[100];
 int fd;
 
@@ -102,40 +102,37 @@ int main(int argc, char **argv)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(flock(-1, LOCK_SH));
 
 		if (TEST_RETURN == -1 && TEST_ERRNO == EBADF)
-			tst_resm(TPASS,
-				 "flock failed as expected with EBADF");
+			tst_resm(TPASS, "flock failed as expected with EBADF");
 		else if (TEST_RETURN == 0)
 			tst_resm(TFAIL, "flock succeeded unexpectedly");
 		else
-			tst_resm(TFAIL|TTERRNO, "flock failed unexpectedly");
+			tst_resm(TFAIL | TTERRNO, "flock failed unexpectedly");
 
 		/* Test system call with invalid argument */
 		TEST(flock(fd, LOCK_NB));
 
 		if (TEST_RETURN == -1 && TEST_ERRNO == EINVAL)
-			tst_resm(TPASS,
-				 "flock failed as expected with EINVAL");
+			tst_resm(TPASS, "flock failed as expected with EINVAL");
 		else if (TEST_RETURN == 0)
 			tst_resm(TFAIL, "flock succeeded unexpectedly");
 		else
-			tst_resm(TFAIL|TTERRNO, "flock failed unexpectedly");
+			tst_resm(TFAIL | TTERRNO, "flock failed unexpectedly");
 
 		/* Test system call with invalid combination of arguments */
-		TEST(flock(fd, LOCK_SH|LOCK_EX));
+		TEST(flock(fd, LOCK_SH | LOCK_EX));
 
 		if (TEST_RETURN == -1 && TEST_ERRNO == EINVAL) {
-			tst_resm(TPASS,
-				 "flock failed as expected with EINVAL");
+			tst_resm(TPASS, "flock failed as expected with EINVAL");
 			continue;	/*next loop for MTKERNEL  */
 		} else if (TEST_RETURN == 0)
 			tst_resm(TFAIL, "flock succeeded unexpectedly");
 		else
-			tst_resm(TFAIL|TTERRNO, "flock failed unexpectedly");
+			tst_resm(TFAIL | TTERRNO, "flock failed unexpectedly");
 
 	}
 
@@ -162,7 +159,7 @@ void setup(void)
 
 	fd = creat(filename, 0666);
 	if (fd < 0)
-		tst_brkm(TFAIL|TERRNO, cleanup, "creat failed");
+		tst_brkm(TFAIL | TERRNO, cleanup, "creat failed");
 }
 
 void cleanup(void)

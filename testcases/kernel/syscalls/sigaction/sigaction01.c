@@ -230,6 +230,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 }
+
 int main(int ac, char **av)
 {
 	int lc;
@@ -247,8 +248,8 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		testcase_no = 0;
 

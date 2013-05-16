@@ -123,8 +123,8 @@ void setup();
 void help();
 void cleanup();
 
-char *TCID = "link03";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "link03";
+int TST_TOTAL = 2;
 
 int exp_enos[] = { 0, 0 };
 
@@ -154,7 +154,6 @@ int main(int ac, char **av)
 	int cnt;
 	int nlinks;
 	char lname[255];
-
 
     /***************************************************************
      * parse standard options
@@ -189,7 +188,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		if (Nlinks)
 			nlinks = Nlinks;
@@ -243,7 +242,7 @@ int main(int ac, char **av)
 					 nlinks, fbuf.st_nlink);
 			}
 		} else
-			Tst_count++;
+			tst_count++;
 
 		for (cnt = 1; cnt < nlinks; cnt++) {
 

@@ -32,7 +32,7 @@ void handler(int signo)
 	exit(PTS_FAIL);
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct sigevent ev;
 	struct sigaction act;
@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 	ev.sigev_notify = SIGEV_SIGNAL;
 	ev.sigev_signo = SIGTOTEST;
 
-	act.sa_handler=handler;
-	act.sa_flags=0;
+	act.sa_handler = handler;
+	act.sa_flags = 0;
 
 	its.it_interval.tv_sec = 0;
 	its.it_interval.tv_nsec = 0;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (timer_delete(tid) == -1) {
-		if (errno==EINVAL) {
+		if (errno == EINVAL) {
 			printf("fcn returned -1 and set errno=EINVAL\n");
 			return PTS_PASS;
 		} else {

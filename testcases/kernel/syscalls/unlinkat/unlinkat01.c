@@ -69,8 +69,8 @@ void setup();
 void cleanup();
 void setup_every_copy();
 
-char *TCID = "unlinkat01";	/* Test program identifier.    */
-int TST_TOTAL = TEST_CASES;	/* Total number of test cases. */
+char *TCID = "unlinkat01";
+int TST_TOTAL = TEST_CASES;
 char pathname[256];
 char subpathname[256];
 char testfile[256];
@@ -84,7 +84,7 @@ int flags[TEST_CASES] = { 0, 0, 0, 0, 9999, 0, AT_REMOVEDIR };
 
 int myunlinkat(int dirfd, const char *filename, int flags)
 {
-	return syscall(__NR_unlinkat, dirfd, filename, flags);
+	return ltp_syscall(__NR_unlinkat, dirfd, filename, flags);
 }
 
 int main(int ac, char **av)
@@ -117,7 +117,7 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		setup_every_copy();
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call unlinkat

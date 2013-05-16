@@ -56,8 +56,8 @@ void setup();
 void setup1(int);
 void cleanup();
 
-char *TCID = "mlock01";		/* Test program identifier.    */
-int TST_TOTAL = 4;		/* Total number of test cases. */
+char *TCID = "mlock01";
+int TST_TOTAL = 4;
 
 int exp_enos[] = { 0 };
 
@@ -66,16 +66,17 @@ void *addr1;
 struct test_case_t {
 	void **addr;
 	int len;
-	void (*setupfunc)();
+	void (*setupfunc) ();
 } TC[] = {
 	/* mlock should return ENOMEM when some or all of the address
 	 * range pointed to by addr and len are not valid mapped pages
 	 * in the address space of the process
 	 */
-	{ &addr1, 1, setup1},
-	{ &addr1, 1024, setup1},
-	{ &addr1, 1024 * 1024, setup1},
-	{ &addr1, 1024 * 1024 * 10, setup1}
+	{
+	&addr1, 1, setup1}, {
+	&addr1, 1024, setup1}, {
+	&addr1, 1024 * 1024, setup1}, {
+	&addr1, 1024 * 1024 * 10, setup1}
 };
 
 #if !defined(UCLINUX)
@@ -101,7 +102,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -114,7 +115,7 @@ int main(int ac, char **av)
 			 * should fail as designed, but this application
 			 * */
 			if (TEST_RETURN == -1)
-				tst_resm(TFAIL|TTERRNO, "mlock failed");
+				tst_resm(TFAIL | TTERRNO, "mlock failed");
 			else
 				tst_resm(TPASS, "mlock passed");
 		}

@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "fstat01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fstat01";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -145,18 +145,18 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fstat(fd, &statter));
 
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "fstat failed");
+			tst_resm(TFAIL | TTERRNO, "fstat failed");
 		else {
 
 			if (STD_FUNCTIONAL_TEST) {
 				/* No Verification test, yet... */
 				tst_resm(TPASS, "fstat returned %ld",
-				    TEST_RETURN);
+					 TEST_RETURN);
 			}
 		}
 
@@ -177,9 +177,9 @@ void setup()
 	tst_tmpdir();
 
 	sprintf(fname, "tfile_%d", getpid());
-	fd = open(fname, O_RDWR|O_CREAT, 0700);
+	fd = open(fname, O_RDWR | O_CREAT, 0700);
 	if (fd == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open failed");
 }
 
 void cleanup()
@@ -187,7 +187,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 	if (close(fd) == -1)
-		tst_resm(TWARN|TERRNO, "close(%s) failed", fname);
+		tst_resm(TWARN | TERRNO, "close(%s) failed", fname);
 
 	tst_rmdir();
 

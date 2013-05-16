@@ -18,11 +18,11 @@
 #include <unistd.h>
 #include "posixtest.h"
 
-int main(int argc, char *argv[])
+int main(void)
 {
 #if !defined(_POSIX_CPUTIME) || _POSIX_CPUTIME == -1
-        printf("_POSIX_CPUTIME unsupported\n");
-        return PTS_UNSUPPORTED;
+	printf("_POSIX_CPUTIME unsupported\n");
+	return PTS_UNSUPPORTED;
 #else
 	clockid_t clockid_1;
 	int error;
@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
 	 * duration of the test.
 	 */
 	if (getuid() == 0) {
-
 		struct passwd *pwd;
 
 		pwd = getpwnam("nobody");
@@ -40,7 +39,6 @@ int main(int argc, char *argv[])
 			setgid(pwd->pw_gid);
 			setuid(pwd->pw_uid);
 		}
-
 	}
 
 	/* Hmmm -- above steps failed :(... */
@@ -52,11 +50,11 @@ int main(int argc, char *argv[])
 	/* Try and get the cpu clock ID for init(1) :)... */
 	error = clock_getcpuclockid(1, &clockid_1);
 	if (error == 0) {
-		printf("clock_getcpuclockid(1, ..) passed unexpectedly\n");
-		return PTS_UNRESOLVED;
+		printf("clock_getcpuclockid(1, ..) passed\n");
+		return PTS_UNTESTED;
 	} else if (error != EPERM) {
 		printf("clock_getcpuclockid(1, ..) failed with an improper "
-			"error (%d != %d)\n", EPERM, error);
+		       "error (%d != %d)\n", EPERM, error);
 		return PTS_UNRESOLVED;
 	}
 	printf("Test PASSED\n");

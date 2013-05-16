@@ -15,11 +15,11 @@
 #include <signal.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 
 	sigset_t set;
-	sigaddset (&set, SIGABRT);
+	sigaddset(&set, SIGABRT);
 
 	if (pthread_sigmask(SIG_SETMASK, &set, NULL) != 0) {
 		perror("pthread_sigmask failed -- returned -- test aborted");

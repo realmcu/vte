@@ -122,8 +122,8 @@ int main(int ac, char **av)
 	 * The following loop checks looping state if -i option given
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -175,7 +175,7 @@ void setup(void)
 
 	if (write(fd3, "A", 1) != 1) {
 		tst_brkm(TBROK, cleanup, "can't write to fd3");
-	 }
+	}
 	close(fd3);
 	if ((fd3 = open(fname, O_RDWR | O_CREAT, 0666)) == -1) {
 		tst_brkm(TBROK, cleanup, "open of fd3 (temp file) failed");

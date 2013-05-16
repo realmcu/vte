@@ -17,18 +17,20 @@
 
 #define BOGUSTIMERID 99999
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	timer_t tid;
 	int tval = BOGUSTIMERID;
 	tid = (timer_t) & tval;
 
 	if (timer_delete(tid) == -1) {
-		if (errno==EINVAL) {
-			printf("timer_delete() returned -1 and set errno=EINVAL\n");
+		if (errno == EINVAL) {
+			printf
+			    ("timer_delete() returned -1 and set errno=EINVAL\n");
 			return PTS_PASS;
 		} else {
-			printf("timer_delete() returned -1, but didn't set errno!=EINVAL\n");
+			printf
+			    ("timer_delete() returned -1, but didn't set errno!=EINVAL\n");
 			return PTS_FAIL;
 		}
 	}

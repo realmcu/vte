@@ -31,7 +31,7 @@
 
 #define EXPECTEDOVERRUNS 75
 
-int main()
+int main(void)
 {
 	sigset_t set;
 	struct sigevent ev;
@@ -104,7 +104,7 @@ int main()
 		return PTS_PASS;
 	} else {
 		printf("FAIL:  %d overruns sent; expected %d\n",
-				overruns, EXPECTEDOVERRUNS);
+		       overruns, EXPECTEDOVERRUNS);
 		return PTS_FAIL;
 	}
 }

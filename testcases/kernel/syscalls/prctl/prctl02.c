@@ -89,7 +89,7 @@
 static void setup(void);
 static void cleanup(void);
 
-char *TCID = "prctl02";		/* Test program identifier.    */
+char *TCID = "prctl02";
 static int exp_enos[] = { EINVAL, EINVAL, 0 };
 
 struct test_cases_t {
@@ -119,7 +119,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -136,11 +136,12 @@ int main(int ac, char **av)
 				TEST(prctl(test_cases[i].option,
 					   test_cases[i].arg2));
 				if ((TEST_RETURN == -1) && (TEST_ERRNO ==
-							    test_cases[i].
-							    exp_errno)) {
+							    test_cases
+							    [i].exp_errno)) {
 					exit(TEST_ERRNO);
 				} else {
-					tst_resm(TWARN|TTERRNO, "prctl() returned %ld",
+					tst_resm(TWARN | TTERRNO,
+						 "prctl() returned %ld",
 						 TEST_RETURN);
 					exit(TEST_ERRNO);
 				}
@@ -153,8 +154,9 @@ int main(int ac, char **av)
 				}
 
 				if ((WIFEXITED(status)) && (WEXITSTATUS(status)
-							    == test_cases[i].
-							    exp_errno)) {
+							    ==
+							    test_cases
+							    [i].exp_errno)) {
 					tst_resm(TPASS, "Test Passed");
 				} else {
 					tst_resm(TFAIL, "Test Failed");

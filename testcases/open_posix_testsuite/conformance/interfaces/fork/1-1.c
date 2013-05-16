@@ -46,40 +46,19 @@
 #include "../testfrmw/testfrmw.h"
 #include "../testfrmw/testfrmw.c"
 
- /*
-  * This header is responsible for defining the following macros:
-  * UNRESOLVED(ret, descr);
-  *    where descr is a description of the error and ret is an int (error code for example)
-  * FAILED(descr);
-  *    where descr is a short text saying why the test has failed.
-  * PASSED();
-  *    No parameter.
-  *
-  * Both three macros shall terminate the calling process.
-  * The testcase shall not terminate in any other maneer.
-  *
-  * The other file defines the functions
-  * void output_init()
-  * void output(char * string, ...)
-  *
-  * Those may be used to output information.
-  */
-
 #ifndef VERBOSE
 #define VERBOSE 1
 #endif
 
 #define SEM_NAME "/semfork1_1"
 
-/* The main test function. */
-int main(int argc, char * argv[])
+int main(void)
 {
 	int ret, status;
 	pid_t child, ctl;
 	sem_t *sem;
 	struct timespec tsini, tsfin;
 
-	/* Initialize output */
 	output_init();
 
 	/* read current time */
@@ -88,7 +67,7 @@ int main(int argc, char * argv[])
 		UNRESOLVED(errno, "Unable to read CLOCK_REALTIME clock");
 
 	/* Set temporary value in tsfin for semaphore timeout */
-	tsfin.tv_sec  = tsini.tv_sec + 3;
+	tsfin.tv_sec = tsini.tv_sec + 3;
 	tsfin.tv_nsec = tsini.tv_nsec;
 
 	/* Create the child */
@@ -100,7 +79,7 @@ int main(int argc, char * argv[])
 	sem = sem_open(SEM_NAME, O_CREAT, O_RDWR, 0);
 	if (sem == SEM_FAILED)
 		UNRESOLVED(errno, "Failed to open the semaphore (try executing "
-		    "as root)");
+			   "as root)");
 
 	/* sleep 1 second */
 	sleep(1);

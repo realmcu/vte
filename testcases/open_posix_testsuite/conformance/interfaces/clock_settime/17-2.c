@@ -25,6 +25,7 @@
 #include <time.h>
 #include <errno.h>
 #include <stdint.h>
+#include <unistd.h>
 #include "posixtest.h"
 
 #define TESTTIME 1037128358
@@ -32,11 +33,11 @@
 #define NUMINVALIDTESTS 8
 
 static int invalid_tests[NUMINVALIDTESTS] = {
-		INT32_MIN, INT32_MAX, 2147483647, -2147483647, -1073743192,
-		1073743192, -1, 17
+	INT32_MIN, INT32_MAX, 2147483647, -2147483647, -1073743192,
+	1073743192, -1, 17
 };
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct timespec tpset;
 	int i;

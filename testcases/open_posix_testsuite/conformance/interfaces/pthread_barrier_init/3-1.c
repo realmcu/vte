@@ -24,7 +24,7 @@
 #include <string.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
 	int rc;
 	pthread_barrier_t barrier;
@@ -33,10 +33,10 @@ int main()
 
 	rc = pthread_barrier_init(&barrier, NULL, COUNT);
 
-	if (rc != EINVAL)
-	{
-		printf("Test FAILED: pthread_barrier_init() does not return EINVAL when intializing a barrier with count=0,"
-			" return code %d, %s\n", rc, strerror(rc));
+	if (rc != EINVAL) {
+		printf
+		    ("Test FAILED: pthread_barrier_init() does not return EINVAL when intializing a barrier with count=0,"
+		     " return code %d, %s\n", rc, strerror(rc));
 		return PTS_FAIL;
 	}
 

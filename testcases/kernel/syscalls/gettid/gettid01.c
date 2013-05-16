@@ -37,7 +37,7 @@
 void setup();
 void cleanup();
 
-char *TCID = "gettid01";	/* Test program identifier.    */
+char *TCID = "gettid01";
 
 int TST_TOTAL = 1;
 
@@ -61,7 +61,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(my_gettid());
 

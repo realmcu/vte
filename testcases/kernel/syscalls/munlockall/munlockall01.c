@@ -69,8 +69,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "munlockall01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "munlockall01";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
 
 #if !defined(UCLINUX)
@@ -90,15 +90,14 @@ int main(int ac, char **av)
 	/* check looping state */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(munlockall());
 
 		/* check return code */
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "munlockall() Failed with"
-				 " return=%ld",
-				 TEST_RETURN);
+			tst_resm(TFAIL | TTERRNO, "munlockall() Failed with"
+				 " return=%ld", TEST_RETURN);
 		} else {
 			tst_resm(TPASS, "munlockall() passed with"
 				 " return=%ld ", TEST_RETURN);

@@ -84,6 +84,7 @@ int TST_TOTAL = 1;
 static char ltpthost[] = "ltphost";
 static char hname[MAX_LENGTH];
 static int exp_enos[] = { EPERM, 0 };
+
 static char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
@@ -106,7 +107,7 @@ int main(int ac, char **av)
 	/* Check for looping state if -i option is given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* call sethostname() */
 		TEST(sethostname(ltpthost, sizeof(ltpthost)));

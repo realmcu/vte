@@ -34,9 +34,6 @@ char *TCID = "madvise04";
 
 #ifdef MADV_DONTDUMP
 
-/* Uncomment the following line in DEBUG mode */
-//#define MM_DEBUG 1
-
 int TST_TOTAL = 2;
 
 #define BUFFER_SIZE  256
@@ -67,12 +64,12 @@ int main(int argc, char *argv[])
 	sprintf(filename, "%s-out.%d", progname, getpid());
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		fd = open(filename, O_RDWR | O_CREAT, 0664);
 		if (fd < 0)
 			tst_brkm(TBROK, cleanup, "open failed");
-#ifdef MM_DEBUG
+#ifdef DEBUG
 		tst_resm(TINFO, "filename = %s opened successfully", filename);
 #endif
 
@@ -80,14 +77,15 @@ int main(int argc, char *argv[])
 		   [32 * 1280 = 40960] */
 		for (i = 0; i < 1280; i++)
 			if (write(fd, str_for_file, strlen(str_for_file)) == -1)
-				tst_brkm(TBROK|TERRNO, cleanup, "write failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "write failed");
 
 		if (fstat(fd, &stat) == -1)
 			tst_brkm(TBROK, cleanup, "fstat failed");
 
 		file = mmap(NULL, stat.st_size, PROT_READ, MAP_SHARED, fd, 0);
 		if (file == MAP_FAILED)
-			tst_brkm(TBROK|TERRNO, cleanup, "mmap failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "mmap failed");
 
 		/* (1) Test case for MADV_DONTDUMP */
 		TEST(madvise(file, stat.st_size, MADV_DONTDUMP));
@@ -99,7 +97,7 @@ int main(int argc, char *argv[])
 
 		/* Finally Unmapping the whole file */
 		if (munmap(file, stat.st_size) < 0)
-			tst_brkm(TBROK|TERRNO, cleanup, "munmap failed");
+			tst_brkm(TBROK | TERRNO, cleanup, "munmap failed");
 
 		close(fd);
 	}

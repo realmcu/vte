@@ -20,7 +20,7 @@
  *  4)  Verify the return value and the 'sig' value is correct.
  */
 
-int main()
+int main(void)
 {
 	sigset_t newmask, pendingset;
 	int sig;
@@ -50,7 +50,7 @@ int main()
 		return PTS_UNRESOLVED;
 	}
 
-	/* Call sigwait and test if it passed/failed*/
+	/* Call sigwait and test if it passed/failed */
 	if (sigwait(&newmask, &sig) != 0) {
 		printf("Error in sigwait()\n");
 		printf("Test FAILED\n");

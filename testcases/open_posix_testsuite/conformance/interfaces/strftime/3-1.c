@@ -14,23 +14,23 @@
 #include <stdio.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
-    struct tm *tm_ptr;
-    time_t the_time;
-    char buf[256];
-    int result;
+	struct tm *tm_ptr;
+	time_t the_time;
+	char buf[256];
+	int result;
 
-    (void) time(&the_time);
-    tm_ptr = localtime(&the_time);
-    result = strftime(buf, 256, "%A %d %B, %I:%S %p", tm_ptr);
+	(void)time(&the_time);
+	tm_ptr = localtime(&the_time);
+	result = strftime(buf, 256, "%A %d %B, %I:%S %p", tm_ptr);
 
-    if (result != 0) {
-    	printf("strftime gives: %s\n", buf);
-	puts ("PASS");
-	return PTS_PASS;
-    } else {
-	puts ("FAIL");
-	return PTS_FAIL;
-    }
+	if (result != 0) {
+		printf("strftime gives: %s\n", buf);
+		puts("PASS");
+		return PTS_PASS;
+	} else {
+		puts("FAIL");
+		return PTS_FAIL;
+	}
 }

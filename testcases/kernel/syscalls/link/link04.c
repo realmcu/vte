@@ -126,8 +126,8 @@ void cleanup();
 
 extern char *get_high_address();
 
-char *TCID = "link04";		/* Test program identifier.    */
-int TST_TOTAL = 14;		/* Total number of test cases. */
+char *TCID = "link04";
+int TST_TOTAL = 14;
 
 int exp_enos[] = { 0, 0 };
 
@@ -232,7 +232,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc1 != NULL; ind++) {
 
@@ -268,10 +268,10 @@ int main(int ac, char **av)
 							 "link(<%s>, <%s>) Failed, errno=%d, expected errno:%d",
 							 desc1, desc2,
 							 TEST_ERRNO,
-							 Test_cases[ind].
-							 exp_errno);
+							 Test_cases
+							 [ind].exp_errno);
 				} else
-					Tst_count++;
+					tst_count++;
 			} else {
 				tst_resm(TFAIL,
 					 "link(<%s>, <%s>) returned %ld, expected -1, errno:%d",

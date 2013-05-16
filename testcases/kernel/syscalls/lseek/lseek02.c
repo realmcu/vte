@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "lseek02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "lseek02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -157,7 +157,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 *  Call lseek(2)
@@ -181,7 +181,7 @@ int main(int ac, char **av)
 						 strerror(TEST_ERRNO), EBADF);
 
 			} else
-				Tst_count++;
+				tst_count++;
 
 		} else {
 

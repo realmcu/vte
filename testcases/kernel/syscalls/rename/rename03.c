@@ -76,8 +76,8 @@ void setup2();
 void cleanup();
 extern void do_file_setup(char *);
 
-char *TCID = "rename03";	/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "rename03";
+int TST_TOTAL = 2;
 
 char fname[255], mname[255];
 char fdir[255], mdir[255];
@@ -92,8 +92,9 @@ struct test_case_t {
 	dev_t *olddev;
 	ino_t *oldino;
 } TC[] = {
-	{ fname, mname, "file", &f_olddev, &f_oldino},
-	{ fdir, mdir, "directory", &d_olddev, &d_oldino}
+	{
+	fname, mname, "file", &f_olddev, &f_oldino}, {
+	fdir, mdir, "directory", &d_olddev, &d_oldino}
 };
 
 int main(int ac, char **av)
@@ -117,7 +118,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* set up the files and directories for the tests */
 		setup2();
@@ -179,7 +180,7 @@ int main(int ac, char **av)
 		/* remove the new directory */
 		if (rmdir(mdir) == -1) {
 			tst_brkm(TBROK, cleanup, "Couldn't remove directory %s",
-			    mdir);
+				 mdir);
 		}
 	}
 

@@ -71,12 +71,12 @@
 #include "usctest.h"
 #include <sys/wait.h>
 
-
 char *TCID = "setregid03";
 int fail = -1;
 int pass = 0;
 gid_t neg_one = -1;
 int exp_enos[] = { 0 };
+
 gid_t users_gr_gid, root_gr_gid, sys_gr_gid, bin_gr_gid;
 uid_t nobody_pw_uid;
 
@@ -98,23 +98,33 @@ struct test_data_t {
 	struct group *exp_eff_usr;
 	char *test_msg;
 } test_data[] = {
-	{ &sys_gr_gid, &bin_gr_gid, &pass, &sys, &bin, "After setregid(sys, bin)," },
-	{ &neg_one, &sys_gr_gid, &pass, &sys, &sys, "After setregid(-1, sys)" },
-	{ &neg_one, &bin_gr_gid, &pass, &sys, &bin, "After setregid(-1, bin)," },
-	{ &bin_gr_gid, &neg_one, &pass, &bin, &bin, "After setregid(bin, -1)," },
-	{ &neg_one, &neg_one, &pass, &bin, &bin, "After setregid(-1, -1)," },
-	{ &neg_one, &bin_gr_gid, &pass, &bin, &bin, "After setregid(-1, bin)," },
-	{ &bin_gr_gid, &neg_one, &pass, &bin, &bin, "After setregid(bin, -1)," },
-	{ &bin_gr_gid, &bin_gr_gid, &pass, &bin, &bin, "After setregid(bin, bin)," },
-	{ &sys_gr_gid, &neg_one, &fail, &bin, &bin, "After setregid(sys, -1)" },
-	{ &neg_one, &sys_gr_gid, &fail, &bin, &bin, "After setregid(-1, sys)"},
-	{ &sys_gr_gid, &sys_gr_gid, &fail, &bin, &bin, "After setregid(sys, sys)"},
-};
+	{
+	&sys_gr_gid, &bin_gr_gid, &pass, &sys, &bin,
+		    "After setregid(sys, bin),"}, {
+	&neg_one, &sys_gr_gid, &pass, &sys, &sys, "After setregid(-1, sys)"},
+	{
+	&neg_one, &bin_gr_gid, &pass, &sys, &bin, "After setregid(-1, bin),"},
+	{
+	&bin_gr_gid, &neg_one, &pass, &bin, &bin, "After setregid(bin, -1),"},
+	{
+	&neg_one, &neg_one, &pass, &bin, &bin, "After setregid(-1, -1),"}, {
+	&neg_one, &bin_gr_gid, &pass, &bin, &bin, "After setregid(-1, bin),"},
+	{
+	&bin_gr_gid, &neg_one, &pass, &bin, &bin, "After setregid(bin, -1),"},
+	{
+	&bin_gr_gid, &bin_gr_gid, &pass, &bin, &bin,
+		    "After setregid(bin, bin),"}, {
+	&sys_gr_gid, &neg_one, &fail, &bin, &bin, "After setregid(sys, -1)"},
+	{
+	&neg_one, &sys_gr_gid, &fail, &bin, &bin, "After setregid(-1, sys)"},
+	{
+&sys_gr_gid, &sys_gr_gid, &fail, &bin, &bin,
+		    "After setregid(sys, sys)"},};
 
 int TST_TOTAL = sizeof(test_data) / sizeof(test_data[0]);
 
-void setup(void);		/* Setup function for the test */
-void cleanup(void);		/* Cleanup function for the test */
+void setup(void);
+void cleanup(void);
 void gid_verify(struct group *ru, struct group *eu, char *when);
 
 int main(int ac, char **av)
@@ -131,13 +141,13 @@ int main(int ac, char **av)
 		pid_t pid;
 		int status, i;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/* set the appropriate ownership values */
 		if (setregid(sys_gr_gid, bin_gr_gid) == -1) {
 			tst_brkm(TBROK, NULL, "Initial setregid failed");
-		 }
+		}
 
 		if (seteuid(nobody_pw_uid) == -1) {
 			tst_brkm(TBROK, NULL, "Initial seteuid failed");
@@ -159,20 +169,20 @@ int main(int ac, char **av)
 								 "setregid(%d, %d) "
 								 "did not set errno "
 								 "value as expected.",
-								 *test_data[i].
-								 real_gid,
-								 *test_data[i].
-								 eff_gid);
+								 *test_data
+								 [i].real_gid,
+								 *test_data
+								 [i].eff_gid);
 							fail = -1;
 							continue;
 						} else {
 							tst_resm(TPASS,
 								 "setregid(%d, %d) "
 								 "failed as expected.",
-								 *test_data[i].
-								 real_gid,
-								 *test_data[i].
-								 eff_gid);
+								 *test_data
+								 [i].real_gid,
+								 *test_data
+								 [i].eff_gid);
 						}
 					} else {
 						tst_resm(TPASS,

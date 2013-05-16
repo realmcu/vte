@@ -87,8 +87,8 @@
 #define TESTFILE	"testfile"
 
 int fd;				/* file descriptor for test file */
-char *TCID = "fchmod03";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fchmod03";
+int TST_TOTAL = 1;
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
@@ -110,12 +110,12 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		TEST(fchmod(fd, PERMS));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "fchmod failed");
+			tst_resm(TFAIL | TTERRNO, "fchmod failed");
 			continue;
 		}
 		/*
@@ -128,7 +128,8 @@ int main(int ac, char **av)
 			 * fstat(2).
 			 */
 			if (fstat(fd, &stat_buf) == -1)
-				tst_brkm(TFAIL|TERRNO, cleanup, "fstat failed");
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "fstat failed");
 			file_mode = stat_buf.st_mode;
 
 			/* Verify STICKY BIT set on testfile */
@@ -156,9 +157,9 @@ void setup()
 
 	ltpuser = getpwnam(nobody_uid);
 	if (ltpuser == NULL)
-		tst_brkm(TBROK|TERRNO, NULL, "getpwnam failed");
+		tst_brkm(TBROK | TERRNO, NULL, "getpwnam failed");
 	if (seteuid(ltpuser->pw_uid) == -1)
-		tst_brkm(TBROK|TERRNO, NULL, "seteuid failed");
+		tst_brkm(TBROK | TERRNO, NULL, "seteuid failed");
 
 	TEST_PAUSE;
 
@@ -170,7 +171,7 @@ void setup()
 	 * uid/gid of guest user.
 	 */
 	if ((fd = open(TESTFILE, O_RDWR | O_CREAT, FILE_MODE)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open failed");
 }
 
 void cleanup()
@@ -178,7 +179,7 @@ void cleanup()
 	TEST_CLEANUP;
 
 	if (close(fd) == -1)
-		tst_resm(TWARN|TERRNO, "close failed");
+		tst_resm(TWARN | TERRNO, "close failed");
 
 	tst_rmdir();
 

@@ -26,18 +26,17 @@
 #define TEST "7-2"
 #define FUNCTION "mq_unlink"
 
-int main()
+int main(void)
 {
-	char mqname[50]="/123";
+	char mqname[50] = "/123";
 
-//	sprintf(mqname, FUNCTION "_" TEST "_%d", getpid());
+//      sprintf(mqname, FUNCTION "_" TEST "_%d", getpid());
 
 	mq_unlink(mqname);
 	if (ENOENT == errno) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	}
-	else {
+	} else {
 		printf("Test FAILED, error is %s\n", strerror(errno));
 		return PTS_FAIL;
 	}

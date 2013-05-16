@@ -87,7 +87,7 @@
 #define TESTFILE1	"testfile1"
 #define TESTFILE2	"testfile2"
 
-char *TCID = "fchown02";	/* Test program identifier.    */
+char *TCID = "fchown02";
 int TST_TOTAL = 2;		/* Total number of test conditions */
 int Fd1;			/* File descriptor for testfile1 */
 int Fd2;			/* File descriptor for testfile2 */
@@ -127,7 +127,6 @@ int main(int ac, char **av)
 	char *file_name;	/* ptr. for test file name */
 	char *test_desc;	/* test specific message */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -138,7 +137,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 			fildes = Test_cases[ind].fd;
@@ -227,7 +226,7 @@ int main(int ac, char **av)
 
 	cleanup();
 
-	  return (0);
+	return (0);
 }
 
 /*

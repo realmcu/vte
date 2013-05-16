@@ -72,11 +72,11 @@
 #include "usctest.h"
 #include <errno.h>
 
-
 char *TCID = "setregid02";
 gid_t users_gr_gid, root_gr_gid, bin_gr_gid;
 gid_t neg_one = -1;
 int exp_enos[] = { EPERM, 0 };
+
 gid_t inval_user = (USHRT_MAX);
 char nobody_uid[] = "nobody";
 struct passwd *nobody;
@@ -117,8 +117,8 @@ struct test_data_t {
 
 int TST_TOTAL = sizeof(test_data) / sizeof(test_data[0]);
 
-void setup(void);		/* Setup function for the test */
-void cleanup(void);		/* Cleanup function for the test */
+void setup(void);
+void cleanup(void);
 void gid_verify(struct group *ru, struct group *eu, char *when);
 
 int main(int ac, char **av)
@@ -134,8 +134,8 @@ int main(int ac, char **av)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int i;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			/* Set the real or effective group id */
@@ -205,14 +205,14 @@ void setup(void)
 	}
 
 	if (setgid(nobody->pw_gid) == -1) {
-		tst_brkm(TBROK|TERRNO, NULL,
-		    "setgid failed to set the effective gid to %d",
-		    nobody->pw_gid);
+		tst_brkm(TBROK | TERRNO, NULL,
+			 "setgid failed to set the effective gid to %d",
+			 nobody->pw_gid);
 	}
 	if (setuid(nobody->pw_uid) == -1) {
-		tst_brkm(TBROK|TERRNO, NULL,
-		    "setuid failed to to set the effective uid to %d",
-		    nobody->pw_uid);
+		tst_brkm(TBROK | TERRNO, NULL,
+			 "setuid failed to to set the effective uid to %d",
+			 nobody->pw_uid);
 	}
 
 	/* set the expected errnos... */
@@ -248,7 +248,7 @@ void cleanup(void)
 	 * print errno log if that option was specified.
 	 */
 	TEST_CLEANUP;
- }
+}
 
 void gid_verify(struct group *rg, struct group *eg, char *when)
 {

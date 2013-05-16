@@ -37,10 +37,10 @@
 #include "numa_helper.h"
 #include "linux_syscall_numbers.h"
 
-#if HAVE_NUMA_H
-static unsigned long get_max_node()
+unsigned long get_max_node(void)
 {
 	unsigned long max_node = 0;
+#if HAVE_NUMA_H
 #if !defined(LIBNUMA_API_VERSION) || LIBNUMA_API_VERSION < 2
 	max_node = NUMA_NUM_NODES;
 	/*
@@ -53,13 +53,14 @@ static unsigned long get_max_node()
 #else
 	max_node = numa_max_possible_node() + 1;
 #endif
+#endif /* HAVE_NUMA_H */
 	return max_node;
 }
 
-static void get_nodemask_allnodes(nodemask_t *nodemask,
-	unsigned long max_node)
+#if HAVE_NUMA_H
+static void get_nodemask_allnodes(nodemask_t * nodemask, unsigned long max_node)
 {
-	unsigned long nodemask_size = max_node/8+1;
+	unsigned long nodemask_size = max_node / 8 + 1;
 	int i;
 	char fn[64];
 	struct stat st;
@@ -72,18 +73,18 @@ static void get_nodemask_allnodes(nodemask_t *nodemask,
 	}
 }
 
-static int filter_nodemask_mem(nodemask_t *nodemask, unsigned long max_node)
+static int filter_nodemask_mem(nodemask_t * nodemask, unsigned long max_node)
 {
 #if MPOL_F_MEMS_ALLOWED
-	unsigned long nodemask_size = max_node/8+1;
+	unsigned long nodemask_size = max_node / 8 + 1;
 	memset(nodemask, 0, nodemask_size);
 	/*
 	 * avoid numa_get_mems_allowed(), because of bug in getpol()
 	 * utility function in older versions:
 	 * http://www.spinics.net/lists/linux-numa/msg00849.html
 	 */
-	if (syscall(__NR_get_mempolicy, NULL, nodemask->n,
-		max_node, 0, MPOL_F_MEMS_ALLOWED) < 0)
+	if (ltp_syscall(__NR_get_mempolicy, NULL, nodemask->n,
+		    max_node, 0, MPOL_F_MEMS_ALLOWED) < 0)
 		return -2;
 #else
 	int i;
@@ -108,13 +109,13 @@ static int cpumask_has_cpus(char *cpumask, size_t len)
 		if (cpumask[j] == '\0')
 			return 0;
 		else if ((cpumask[j] > '0' && cpumask[j] <= '9') ||
-			(cpumask[j] >= 'a' && cpumask[j] <= 'f'))
+			 (cpumask[j] >= 'a' && cpumask[j] <= 'f'))
 			return 1;
 	return 0;
 
 }
 
-static void filter_nodemask_cpu(nodemask_t *nodemask, unsigned long max_node)
+static void filter_nodemask_cpu(nodemask_t * nodemask, unsigned long max_node)
 {
 	char *cpumask = NULL;
 	char fn[64];
@@ -164,14 +165,14 @@ int get_allowed_nodes_arr(int flag, int *num_nodes, int **nodes)
 
 #if HAVE_NUMA_H
 	unsigned long max_node = get_max_node();
-	unsigned long nodemask_size = max_node/8+1;
+	unsigned long nodemask_size = max_node / 8 + 1;
 
 	nodemask = malloc(nodemask_size);
 	if (nodes)
-		*nodes = malloc(sizeof(int)*max_node);
+		*nodes = malloc(sizeof(int) * max_node);
 
 	do {
-		if (nodemask == NULL ||	(nodes && (*nodes == NULL))) {
+		if (nodemask == NULL || (nodes && (*nodes == NULL))) {
 			ret = -1;
 			break;
 		}
@@ -186,7 +187,7 @@ int get_allowed_nodes_arr(int flag, int *num_nodes, int **nodes)
 		if ((flag & NH_CPUS) == NH_CPUS)
 			filter_nodemask_cpu(nodemask, max_node);
 
-		for (i = 0; i <	max_node; i++) {
+		for (i = 0; i < max_node; i++) {
 			if (nodemask_isset(nodemask, i)) {
 				if (nodes)
 					(*nodes)[*num_nodes] = i;
@@ -263,4 +264,28 @@ void nh_dump_nodes()
 	print_node_info(NH_MEMS);
 	print_node_info(NH_CPUS);
 	print_node_info(NH_MEMS | NH_CPUS);
+}
+
+/*
+ * is_numa - judge a system is NUMA system or not
+ * NOTE: the function is designed to try to find more than
+ *       1 available node, at least each node contains memory.
+ * WARN: Don't use this func in child, as it calls tst_brkm()
+ * RETURNS:
+ *     0 - it's not a NUMA system
+ *     1 - it's a NUMA system
+ */
+int is_numa(void (*cleanup_fn)(void))
+{
+	int ret;
+	int numa_nodes = 0;
+
+	ret = get_allowed_nodes_arr(NH_MEMS, &numa_nodes, NULL);
+	if (ret < 0)
+		tst_brkm(TBROK | TERRNO, cleanup_fn, "get_allowed_nodes_arr");
+
+	if (numa_nodes > 1)
+		return 1;
+	else
+		return 0;
 }

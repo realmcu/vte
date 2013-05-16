@@ -75,7 +75,7 @@ static void setup();
 static void cleanup();
 static int verify_priority(int);
 
-char *TCID = "sched_setparam02";	/* Test program identifier.    */
+char *TCID = "sched_setparam02";
 
 static struct sched_param param;
 static struct sched_param param1 = { 1 };
@@ -106,7 +106,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; ++i) {
 
@@ -130,9 +130,10 @@ int main(int ac, char **av)
 			if ((TEST_RETURN == 0) && (verify_priority(i))) {
 				tst_resm(TPASS, "%s Passed", testcases[i].desc);
 			} else {
-				tst_resm(TFAIL|TTERRNO, "%s Failed. sched_setparam()"
-					 " returned %ld",
-					 testcases[i].desc, TEST_RETURN);
+				tst_resm(TFAIL | TTERRNO,
+					 "%s Failed. sched_setparam()"
+					 " returned %ld", testcases[i].desc,
+					 TEST_RETURN);
 			}
 		}
 	}

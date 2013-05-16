@@ -120,8 +120,8 @@ void setup();
 void cleanup();
 void help();
 
-char *TCID = "pathconf01";	/* Test program identifier.    */
-int TST_TOTAL;			/* Total number of test cases. */
+char *TCID = "pathconf01";
+int TST_TOTAL;
 
 int exp_enos[] = { 0, 0 };
 
@@ -178,7 +178,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 

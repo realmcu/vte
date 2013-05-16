@@ -132,8 +132,8 @@ int main(int ac, char **av)
 	TEST_EXP_ENOS(exp_enos);
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -146,12 +146,12 @@ int main(int ac, char **av)
 			}
 
 			if (TEST_ERRNO == TC[i].error) {
-				tst_resm(TPASS|TTERRNO, "failed as expected");
+				tst_resm(TPASS | TTERRNO, "failed as expected");
 			} else {
-				tst_resm(TFAIL|TTERRNO,
-				    "didn't fail as expected (expected errno "
-				    "= %d : %s)",
-				    TC[i].error, strerror(TC[i].error));
+				tst_resm(TFAIL | TTERRNO,
+					 "didn't fail as expected (expected errno "
+					 "= %d : %s)",
+					 TC[i].error, strerror(TC[i].error));
 			}
 		}
 	}

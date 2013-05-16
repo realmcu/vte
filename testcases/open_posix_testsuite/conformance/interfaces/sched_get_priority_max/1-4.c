@@ -16,7 +16,7 @@
 #include <errno.h>
 #include "posixtest.h"
 
-int main(int argc, char **argv)
+int main(void)
 {
 	int result = -1;
 
@@ -33,5 +33,5 @@ int main(int argc, char **argv)
 	}
 
 	printf("This code should not be executed.\n");
-        return PTS_UNRESOLVED;
+	return PTS_UNRESOLVED;
 }

@@ -84,8 +84,8 @@ void cleanup(void);
 /* 0 terminated list of expected errnos */
 int exp_enos[] = { EWOULDBLOCK, EAGAIN, 0 };
 
-char *TCID = "flock05";		/* Test program identifier */
-int TST_TOTAL = 2;		/* Total number of test cases */
+char *TCID = "flock05";
+int TST_TOTAL = 2;
 char filename[100];
 int fd, fd1, status;
 
@@ -96,10 +96,9 @@ int main(int argc, char **argv)
 	char *msg;
 	pid_t pid;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	/* global setup */
 	setup();
@@ -108,8 +107,8 @@ int main(int argc, char **argv)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		/* Testing Shared lock on Exclusive Locked file */
 		TEST(flock(fd, LOCK_EX));
@@ -167,7 +166,7 @@ int main(int argc, char **argv)
 	cleanup();
 	tst_exit();
 
- }
+}
 
 /*
  * setup()
@@ -178,7 +177,6 @@ void setup(void)
 
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified
@@ -223,4 +221,4 @@ void cleanup(void)
 
 	tst_rmdir();
 
- }
+}

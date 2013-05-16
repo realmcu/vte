@@ -54,7 +54,7 @@
 void setup();
 void cleanup();
 
-TCID_DEFINE(posix_fadvise02);	/* Test program identifier.    */
+TCID_DEFINE(posix_fadvise02);
 
 #define WRONG_FD       42	/* The number has no meaning.
 				   Just used as something wrong fd */
@@ -107,7 +107,7 @@ int main(int ac, char **av)
 	 */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* loop through the test cases */
 		for (i = 0; i < TST_TOTAL; i++) {
@@ -154,7 +154,7 @@ void setup()
 	TEST_PAUSE;
 
 	/* Make WRONG_FD really wrong. */
-      retry:
+retry:
 	errno = 0;
 	if (close(WRONG_FD) != 0) {
 		if (errno == EBADF) ;	/* Good. Do nothing. */

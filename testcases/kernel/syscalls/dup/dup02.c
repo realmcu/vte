@@ -119,8 +119,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "dup02";		/* Test program identifier.    */
-int TST_TOTAL = 2;		/* Total number of test cases. */
+char *TCID = "dup02";
+int TST_TOTAL = 2;
 
 int exp_enos[] = { 0, 0 };
 
@@ -142,7 +142,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; ind < nfds; ind++) {
 
@@ -152,18 +152,18 @@ int main(int ac, char **av)
 				if (STD_FUNCTIONAL_TEST) {
 					if (TEST_ERRNO == EBADF)
 						tst_resm(TPASS,
-						    "dup failed as expected "
-						    "with EBADF");
+							 "dup failed as expected "
+							 "with EBADF");
 					else
-						tst_resm(TFAIL|TTERRNO,
-						    "dup failed unexpectedly");
+						tst_resm(TFAIL | TTERRNO,
+							 "dup failed unexpectedly");
 				}
 			} else {
 				tst_resm(TFAIL, "dup succeeded unexpectedly");
 
 				if (close(TEST_RETURN) == -1)
-					tst_brkm(TBROK|TERRNO, cleanup,
-					    "close failed");
+					tst_brkm(TBROK | TERRNO, cleanup,
+						 "close failed");
 			}
 		}
 	}

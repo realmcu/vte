@@ -23,7 +23,8 @@
 
 #if defined(_POSIX_SPORADIC_SERVER)&&(_POSIX_SPORADIC_SERVER != -1)
 
-int main() {
+int main(void)
+{
 	int policy, result;
 	struct sched_param param;
 
@@ -50,14 +51,15 @@ int main() {
 		printf("The returned code is not -1.\n");
 		return PTS_FAIL;
 	} else if (errno == EPERM) {
-		printf("This process does not have the permission to set its own scheduling policy.\nTry to launch this test as root.\n");
+		printf
+		    ("This process does not have the permission to set its own scheduling policy.\nTry to launch this test as root.\n");
 		return PTS_UNRESOLVED;
 	}
 	perror("Unknow error");
 	return PTS_FAIL;
 }
 #else
-int main()
+int main(void)
 {
 	printf("Does not support SS (SPORADIC SERVER)\n");
 	return PTS_UNSUPPORTED;

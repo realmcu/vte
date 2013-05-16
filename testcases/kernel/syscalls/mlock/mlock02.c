@@ -55,8 +55,8 @@ void setup();
 void setup1();
 void cleanup();
 
-char *TCID = "mlock02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "mlock02";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { ENOMEM, 0 };
 
@@ -72,7 +72,8 @@ struct test_case_t {
 	 * range pointed to by addr and len are not valid mapped pages
 	 * in the address space of the process
 	 */
-	{ &addr1, 1024, ENOMEM, setup1 }
+	{
+	&addr1, 1024, ENOMEM, setup1}
 };
 
 #if !defined(UCLINUX)
@@ -91,7 +92,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 
@@ -102,16 +103,17 @@ int main(int ac, char **av)
 
 			if (TEST_RETURN == -1) {
 				if (TEST_ERRNO != TC[i].error)
-					tst_brkm(TFAIL|TTERRNO, cleanup,
-					    "mlock didn't fail as expected; "
-					    "expected - %d : %s",
-					    TC[i].error, strerror(TC[i].error));
+					tst_brkm(TFAIL | TTERRNO, cleanup,
+						 "mlock didn't fail as expected; "
+						 "expected - %d : %s",
+						 TC[i].error,
+						 strerror(TC[i].error));
 				else
-					tst_resm(TPASS|TTERRNO,
-					    "mlock failed as expected");
+					tst_resm(TPASS | TTERRNO,
+						 "mlock failed as expected");
 			} else
 				tst_brkm(TFAIL, cleanup,
-				    "mlock succeeded unexpectedly");
+					 "mlock succeeded unexpectedly");
 		}
 	}
 

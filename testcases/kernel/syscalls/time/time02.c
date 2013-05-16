@@ -81,8 +81,8 @@
 void setup();			/* setup function for the test */
 void cleanup();			/* cleanup function for the test */
 
-char *TCID = "time02";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "time02";
+int TST_TOTAL = 1;
 int exp_enos[] = { 0 };
 
 int main(int ac, char **av)
@@ -91,7 +91,6 @@ int main(int ac, char **av)
 	char *msg;
 	time_t tloc;		/* time_t variables for time(2) */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -102,7 +101,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call time() to get the time in seconds$
@@ -124,19 +123,19 @@ int main(int ac, char **av)
 				if (tloc == TEST_RETURN) {
 					tst_resm(TPASS, "time() returned value "
 						 "%ld, stored value %jd are same",
-						 TEST_RETURN, (intmax_t)tloc);
+						 TEST_RETURN, (intmax_t) tloc);
 				} else {
 					tst_resm(TFAIL, "time() returned value "
 						 "%ld, stored value %jd are "
 						 "different", TEST_RETURN,
-						 (intmax_t)tloc);
+						 (intmax_t) tloc);
 				}
 			} else {
 				tst_resm(TPASS, "call succeeded");
 			}
 
 		}
-		Tst_count++;	/* incr. TEST_LOOP counter */
+		tst_count++;	/* incr. TEST_LOOP counter */
 	}
 
 	/* cleanup and exit */

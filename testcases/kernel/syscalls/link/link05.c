@@ -122,11 +122,11 @@ void setup();
 void cleanup();
 void help();
 
-char *TCID = "link05";		/* Test program identifier.    */
+char *TCID = "link05";
 #ifdef CRAY
-int TST_TOTAL = 2;		/* Total number of test cases. */
+int TST_TOTAL = 2;
 #else
-int TST_TOTAL = 1;		/* Total number of test cases. */
+int TST_TOTAL = 1;
 #endif
 
 #define BASENAME	"lkfile"
@@ -181,7 +181,7 @@ int main(int ac, char **av)
      ***************************************************************/
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (cnt = 1; cnt < nlinks; cnt++) {
 
@@ -228,7 +228,7 @@ int main(int ac, char **av)
 					 nlinks, fbuf.st_nlink);
 			}
 		} else
-			Tst_count++;
+			tst_count++;
 
 #ifdef CRAY
 /*
@@ -261,7 +261,7 @@ int main(int ac, char **av)
 						 EMLINK);
 				}
 			} else
-				Tst_count++;
+				tst_count++;
 		} else {
 			tst_resm(TFAIL,
 				 "link(%s, %s) ret %d on %d link, expected -1, errno:%d",

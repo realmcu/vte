@@ -84,11 +84,13 @@ static void cleanup(void)
 
 	if (reap_wd_dir && myinotify_rm_watch(fd_notify, wd_dir) == -1)
 		tst_resm(TWARN,
-		    "inotify_rm_watch(%d, %d) [1] failed", fd_notify, wd_dir);
+			 "inotify_rm_watch(%d, %d) [1] failed", fd_notify,
+			 wd_dir);
 
 	if (reap_wd_file && myinotify_rm_watch(fd_notify, wd_file) == -1)
 		tst_resm(TWARN,
-		    "inotify_rm_watch(%d, %d) [2] failed", fd_notify, wd_file);
+			 "inotify_rm_watch(%d, %d) [2] failed", fd_notify,
+			 wd_file);
 
 	if (close(fd_notify) == -1)
 		tst_resm(TWARN, "close(%d) [1] failed", fd_notify);
@@ -115,7 +117,7 @@ static void setup(void)
 
 	fd_notify = myinotify_init();
 	if (fd_notify == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "inotify_init() failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "inotify_init() failed");
 
 	SAFE_MKDIR(cleanup, TEST_DIR, 00700);
 
@@ -123,22 +125,21 @@ static void setup(void)
 
 	wd_dir = myinotify_add_watch(fd_notify, TEST_DIR, IN_ALL_EVENTS);
 	if (wd_dir == -1) {
-		tst_brkm(TBROK|TERRNO, cleanup,
-		    "inotify_add_watch(%d, \"%s\", IN_ALL_EVENTS) [1] failed",
-		    fd_notify, TEST_DIR);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "inotify_add_watch(%d, \"%s\", IN_ALL_EVENTS) [1] failed",
+			 fd_notify, TEST_DIR);
 	}
 	reap_wd_dir = 1;
 
 	wd_file = myinotify_add_watch(fd_notify, TEST_FILE, IN_ALL_EVENTS);
 	if (wd_file == -1)
-		tst_brkm(TBROK|TERRNO, cleanup,
-		    "inotify_add_watch(%d, \"%s\", IN_ALL_EVENTS) [2] failed",
-		    fd_notify, TEST_FILE);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "inotify_add_watch(%d, \"%s\", IN_ALL_EVENTS) [2] failed",
+			 fd_notify, TEST_FILE);
 	reap_wd_file = 1;
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	char *msg;
 	size_t len;
@@ -153,15 +154,15 @@ main(int argc, char **argv)
 
 	setup();
 
-	Tst_count = 0;
+	tst_count = 0;
 
 	rmdir(TEST_DIR);
-	event_set[Tst_count].mask = IN_DELETE_SELF;
-	strcpy(event_set[Tst_count].name, "");
-	Tst_count++;
-	event_set[Tst_count].mask = IN_IGNORED;
-	strcpy(event_set[Tst_count].name, "");
-	Tst_count++;
+	event_set[tst_count].mask = IN_DELETE_SELF;
+	strcpy(event_set[tst_count].name, "");
+	tst_count++;
+	event_set[tst_count].mask = IN_IGNORED;
+	strcpy(event_set[tst_count].name, "");
+	tst_count++;
 
 	unlink(TEST_FILE);
 	/*
@@ -172,27 +173,27 @@ main(int argc, char **argv)
 	 * understand how Unix works.
 	 */
 	if (0 <= tst_kvercmp(2, 6, 25)) {
-		event_set[Tst_count].mask = IN_ATTRIB;
-		strcpy(event_set[Tst_count].name, "");
-		Tst_count++;
+		event_set[tst_count].mask = IN_ATTRIB;
+		strcpy(event_set[tst_count].name, "");
+		tst_count++;
 		TST_TOTAL++;
 	}
-	event_set[Tst_count].mask = IN_DELETE_SELF;
-	strcpy(event_set[Tst_count].name, TEST_FILE);
-	Tst_count++;
-	event_set[Tst_count].mask = IN_IGNORED;
-	strcpy(event_set[Tst_count].name, "");
-	Tst_count++;
+	event_set[tst_count].mask = IN_DELETE_SELF;
+	strcpy(event_set[tst_count].name, TEST_FILE);
+	tst_count++;
+	event_set[tst_count].mask = IN_IGNORED;
+	strcpy(event_set[tst_count].name, "");
+	tst_count++;
 
-	if (Tst_count != TST_TOTAL)
+	if (tst_count != TST_TOTAL)
 		tst_brkm(TBROK, cleanup,
-			 "Tst_count and TST_TOTAL are not equal");
+			 "tst_count and TST_TOTAL are not equal");
 
-	Tst_count = 0;
+	tst_count = 0;
 
 	len = read(fd_notify, event_buf, EVENT_BUF_LEN);
 	if (len == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "read failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "read failed");
 
 	reap_wd_dir = 0;
 	reap_wd_file = 0;
@@ -202,8 +203,7 @@ main(int argc, char **argv)
 		event = (struct inotify_event *)&event_buf[i];
 		if (test_num >= TST_TOTAL) {
 			if (tst_kvercmp(2, 6, 25) < 0
-			    && event_set[TST_TOTAL - 1].mask ==
-			    event->mask)
+			    && event_set[TST_TOTAL - 1].mask == event->mask)
 				tst_resm(TWARN,
 					 "This may be kernel bug. "
 					 "Before kernel 2.6.25, a kernel bug "
@@ -220,8 +220,7 @@ main(int argc, char **argv)
 				 "got unnecessary event: "
 				 "wd=%d mask=%x cookie=%u len=%u "
 				 "name=\"%s\"", event->wd, event->mask,
-				 event->cookie, event->len,
-				 event->name);
+				 event->cookie, event->len, event->name);
 
 		} else if ((event_set[test_num].mask == event->mask)
 			   &&
@@ -242,8 +241,7 @@ main(int argc, char **argv)
 				 event_set[test_num].mask,
 				 event->cookie, event->len, event->name,
 				 event_set[test_num].name,
-				 strcmp(event_set[test_num].name,
-					event->name));
+				 strcmp(event_set[test_num].name, event->name));
 		}
 		test_num++;
 		i += EVENT_SIZE + event->len;

@@ -26,7 +26,7 @@
 
 #define NAMESIZE 50
 
-int main()
+int main(void)
 {
 	char qname[NAMESIZE];
 	mqd_t queue;
@@ -35,7 +35,7 @@ int main()
 
 	queue = mq_open(qname, O_CREAT | O_RDWR | O_WRONLY,
 			S_IRUSR | S_IWUSR, NULL);
-	if (queue != (mqd_t) -1) {
+	if (queue != (mqd_t) - 1) {
 		printf("In this implementation, mq_open() does not fail\n");
 		printf("on invalid flags\n");
 		mq_close(queue);

@@ -323,13 +323,14 @@ getcwd02 getcwd02
 getcwd03 getcwd03
 
 getdents01 getdents01
-getdents01_64 getdents01_64
 getdents02 getdents02
-getdents02_64 getdents02_64
 getdents03 getdents03
-getdents03_64 getdents03_64
 getdents04 getdents04
-getdents04_64 getdents04_64
+
+getdents01_64 getdents01 -l
+getdents02_64 getdents02 -l
+getdents03_64 getdents03 -l
+getdents04_64 getdents04 -l
 
 getdomainname01 getdomainname01
 
@@ -350,12 +351,8 @@ getgid03_16 getgid03_16
 
 getgroups01 getgroups01
 getgroups01_16 getgroups01_16
-getgroups02 getgroups02
-getgroups02_16 getgroups02_16
 getgroups03 getgroups03
 getgroups03_16 getgroups03_16
-getgroups04 getgroups04
-getgroups04_16 getgroups04_16
 
 gethostid01 gethostid01
 
@@ -517,6 +514,9 @@ memset01 memset01
 memcmp01 memcmp01
 memcpy01 memcpy01
 
+migrate_pages01 migrate_pages01
+migrate_pages02 migrate_pages02
+
 mlockall01 mlockall01
 mlockall02 mlockall02
 mlockall03 mlockall03
@@ -603,6 +603,7 @@ mremap01 mremap01
 mremap02 mremap02
 mremap03 mremap03
 mremap04 mremap04
+mremap05 mremap05
 
 msgctl01 msgctl01
 msgctl02 msgctl02
@@ -676,6 +677,7 @@ open07 open07
 open08 open08
 open09 open09
 open10 open10
+open11 open11
 
 #openat test cases
 openat01 openat01
@@ -738,6 +740,8 @@ process_vm_readv02 process_vm_readv02
 process_vm_readv03 process_vm_readv03
 process_vm_writev01 process_vm01 -w
 process_vm_writev02 process_vm_writev02
+
+prot_hsymlinks prot_hsymlinks
 
 pselect01 pselect01
 pselect01_64 pselect01_64
@@ -906,6 +910,7 @@ sendfile08_64 sendfile08_64
 
 
 sendmsg01 sendmsg01
+sendmsg02 sendmsg02
 
 sendto01 sendto01
 
@@ -956,6 +961,9 @@ sethostname03 sethostname03
 setitimer01 setitimer01
 setitimer02 setitimer02
 setitimer03 setitimer03
+
+setns01 setns01
+setns02 setns02
 
 setpgid01 setpgid01
 setpgid02 setpgid02

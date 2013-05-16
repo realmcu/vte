@@ -129,8 +129,8 @@ struct test_case_t {		/* test case struct. to hold ref. test cond's */
 	NULL, NULL, 0, no_setup}
 };
 
-char *TCID = "lstat02";		/* Test program identifier.    */
-int TST_TOTAL = sizeof(Test_cases) / sizeof(*Test_cases);	/* Total number of test cases. */
+char *TCID = "lstat02";
+int TST_TOTAL = sizeof(Test_cases) / sizeof(*Test_cases);
 int exp_enos[] = { EACCES, EFAULT, ENAMETOOLONG, ENOENT, ENOTDIR, 0 };
 
 char nobody_uid[] = "nobody";
@@ -150,7 +150,6 @@ int main(int ac, char **av)
 	char *test_desc;	/* test specific error message */
 	int ind;		/* counter to test different test conditions */
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(ac, av, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -168,7 +167,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (ind = 0; Test_cases[ind].desc != NULL; ind++) {
 			file_name = Test_cases[ind].pathname;
@@ -189,7 +188,8 @@ int main(int ac, char **av)
 
 			/* Check return code from lstat(2) */
 			if (TEST_RETURN != -1) {
-				tst_resm(TFAIL, "lstat(2) returned %ld, expected"
+				tst_resm(TFAIL,
+					 "lstat(2) returned %ld, expected"
 					 " -1, errno:%d", TEST_RETURN,
 					 Test_cases[ind].exp_errno);
 				continue;

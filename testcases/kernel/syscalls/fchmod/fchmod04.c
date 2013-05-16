@@ -90,14 +90,14 @@
 #define TESTDIR		"testdir_4"
 
 int fd;				/* file descriptor for test directory */
-char *TCID = "fchmod04";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "fchmod04";
+int TST_TOTAL = 1;
 
 char nobody_uid[] = "nobody";
 struct passwd *ltpuser;
 
-void setup();			/* Setup function for the test */
-void cleanup();			/* Cleanup function for the test */
+void setup();
+void cleanup();
 
 int main(int ac, char **av)
 {
@@ -113,7 +113,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call fchmod(2) with mode argument to
@@ -122,7 +122,7 @@ int main(int ac, char **av)
 		TEST(fchmod(fd, PERMS));
 
 		if (TEST_RETURN == -1) {
-			tst_resm(TFAIL|TTERRNO, "fchmod failed");
+			tst_resm(TFAIL | TTERRNO, "fchmod failed");
 			continue;
 		}
 		/*
@@ -131,7 +131,8 @@ int main(int ac, char **av)
 		 */
 		if (STD_FUNCTIONAL_TEST) {
 			if (fstat(fd, &stat_buf) == -1)
-				tst_brkm(TFAIL|TERRNO, cleanup, "fstat failed");
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "fstat failed");
 			dir_mode = stat_buf.st_mode;
 
 			if ((dir_mode & PERMS) == PERMS)

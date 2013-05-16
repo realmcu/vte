@@ -20,21 +20,20 @@
 #include <errno.h>
 #include "posixtest.h"
 
-int main()
+int main(void)
 {
-	pthread_mutexattr_t *mta=NULL;
+	pthread_mutexattr_t *mta = NULL;
 	int rc;
 
 	/* Try to destroy a NULL mutex attributes object using pthread_mutexattr_destroy()
 	 * It should return EINVAL */
-	if ((rc=pthread_mutexattr_destroy(mta)) == EINVAL)
-	{
+	if ((rc = pthread_mutexattr_destroy(mta)) == EINVAL) {
 		printf("Test PASSED\n");
 		return PTS_PASS;
-	}
-	else
-	{
-		printf("Test PASSED: *NOTE: Expect %d(EINVAL), but return %d, though standard states 'may' fail\n", EINVAL, rc);
+	} else {
+		printf
+		    ("Test PASSED: *NOTE: Expect %d(EINVAL), but return %d, though standard states 'may' fail\n",
+		     EINVAL, rc);
 		return PTS_PASS;
 	}
 }

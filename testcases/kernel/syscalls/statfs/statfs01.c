@@ -121,8 +121,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "statfs01";	/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "statfs01";
+int TST_TOTAL = 1;
 
 int exp_enos[] = { 0, 0 };
 
@@ -148,7 +148,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* Call fstatfs(2) */
 		TEST(statfs(fname, &stats));
@@ -156,11 +156,11 @@ int main(int ac, char **av)
 		/* check return code */
 		if (TEST_RETURN == -1) {
 			TEST_ERROR_LOG(TEST_ERRNO);
-			tst_resm(TFAIL|TERRNO, "statfs(%s, ..) failed",
-				fname);
+			tst_resm(TFAIL | TERRNO, "statfs(%s, ..) failed",
+				 fname);
 		} else {
 
-	     		/*
+			/*
 			 * only perform functional verification if flag set
 			 * (-f not given)
 			 */

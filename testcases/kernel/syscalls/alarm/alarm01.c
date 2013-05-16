@@ -118,8 +118,8 @@
 void setup();
 void cleanup();
 
-char *TCID = "alarm01";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "alarm01";
+int TST_TOTAL = 1;
 
 int main(int ac, char **av)
 {
@@ -133,7 +133,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/*
 		 * Call alarm(2)
@@ -142,7 +142,7 @@ int main(int ac, char **av)
 
 		/* check return code */
 		if (TEST_RETURN == -1)
-			tst_resm(TFAIL|TTERRNO, "alarm(1) failed");
+			tst_resm(TFAIL | TTERRNO, "alarm(1) failed");
 		else {
 
 			if (STD_FUNCTIONAL_TEST) {

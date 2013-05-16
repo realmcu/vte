@@ -72,8 +72,8 @@
 void setup(void);
 void cleanup(void);
 
-char *TCID = "flock06";		/* Test program identifier */
-int TST_TOTAL = 3;		/* Total number of test cases */
+char *TCID = "flock06";
+int TST_TOTAL = 3;
 char filename[100];
 
 int main(int argc, char **argv)
@@ -81,10 +81,9 @@ int main(int argc, char **argv)
 	int lc;
 	char *msg;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	setup();
 
@@ -93,8 +92,8 @@ int main(int argc, char **argv)
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 		int fd1, fd2;
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 		fd1 = open(filename, O_RDWR);
 		if (fd1 == -1)
@@ -194,4 +193,4 @@ void cleanup(void)
 	unlink(filename);
 	tst_rmdir();
 
- }
+}

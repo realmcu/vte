@@ -68,8 +68,8 @@ static struct shmid_ds buf;
 
 static long hugepages = 128;
 static option_t options[] = {
-	{ "s:",	&sflag,	&nr_opt	},
-	{ NULL,	NULL,	NULL	}
+	{"s:", &sflag, &nr_opt},
+	{NULL, NULL, NULL}
 };
 
 struct test_case_t {
@@ -79,17 +79,17 @@ struct test_case_t {
 	int error;
 } TC[] = {
 	/* EFAULT - IPC_SET & buf isn't valid */
-	{ &shm_id_2,	IPC_SET,	(struct shmid_ds *)-1,	EFAULT },
-
-	/* EFAULT - IPC_STAT & buf isn't valid */
-	{ &shm_id_2,	IPC_STAT,	(struct shmid_ds *)-1,	EFAULT },
-
-	/* EINVAL - the shmid is not valid */
-	{ &shm_id_3,	IPC_STAT,	&buf,			EINVAL },
-
-	/* EINVAL - the command is not valid */
-	{ &shm_id_2,	-1,		&buf,			EINVAL },
-};
+	{
+	&shm_id_2, IPC_SET, (struct shmid_ds *)-1, EFAULT},
+	    /* EFAULT - IPC_STAT & buf isn't valid */
+	{
+	&shm_id_2, IPC_STAT, (struct shmid_ds *)-1, EFAULT},
+	    /* EINVAL - the shmid is not valid */
+	{
+	&shm_id_3, IPC_STAT, &buf, EINVAL},
+	    /* EINVAL - the command is not valid */
+	{
+&shm_id_2, -1, &buf, EINVAL},};
 
 int main(int ac, char **av)
 {
@@ -105,22 +105,22 @@ int main(int ac, char **av)
 	setup();
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
-		Tst_count = 0;
+		tst_count = 0;
 
 		for (i = 0; i < TST_TOTAL; i++) {
 			TEST(shmctl(*(TC[i].shmid), TC[i].cmd, TC[i].sbuf));
 			if (TEST_RETURN != -1) {
 				tst_resm(TFAIL, "shmctl succeeded "
-						"unexpectedly");
+					 "unexpectedly");
 				continue;
 			}
 			if (TEST_ERRNO == TC[i].error)
-				tst_resm(TPASS|TTERRNO, "shmctl failed "
-					    "as expected");
+				tst_resm(TPASS | TTERRNO, "shmctl failed "
+					 "as expected");
 			else
-				tst_resm(TFAIL|TTERRNO, "shmctl failed "
-					    "unexpectedly - expect errno = "
-					    "%d, got", TC[i].error);
+				tst_resm(TFAIL | TTERRNO, "shmctl failed "
+					 "unexpectedly - expect errno = "
+					 "%d, got", TC[i].error);
 		}
 	}
 	cleanup();
@@ -144,15 +144,15 @@ void setup(void)
 	shmkey = getipckey();
 
 	/* create a shared memory segment without read or write permissions */
-	shm_id_1 = shmget(shmkey, shm_size, SHM_HUGETLB|IPC_CREAT|IPC_EXCL);
+	shm_id_1 = shmget(shmkey, shm_size, SHM_HUGETLB | IPC_CREAT | IPC_EXCL);
 	if (shm_id_1 == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "shmget #1");
+		tst_brkm(TBROK | TERRNO, cleanup, "shmget #1");
 
 	/* create a shared memory segment with read and write permissions */
 	shm_id_2 = shmget(shmkey + 1, shm_size,
-		    SHM_HUGETLB|IPC_CREAT|IPC_EXCL|SHM_RW);
+			  SHM_HUGETLB | IPC_CREAT | IPC_EXCL | SHM_RW);
 	if (shm_id_2 == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "shmget #2");
+		tst_brkm(TBROK | TERRNO, cleanup, "shmget #2");
 
 	TEST_PAUSE;
 }

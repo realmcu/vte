@@ -68,8 +68,8 @@ void cleanup(void);
 /* 0 terminated list of expected errnos */
 int exp_enos[] = { 9, 14, 32, 0 };
 
-char *TCID = "write05";		/* Test program identifier */
-int TST_TOTAL = 1;		/* Total number of test cases */
+char *TCID = "write05";
+int TST_TOTAL = 1;
 char filename[100];
 int fd;
 
@@ -84,10 +84,9 @@ int main(int argc, char **argv)
 	int pipefildes[2];
 	int status, pid;
 
-	if ((msg = parse_opts(argc, argv, NULL, NULL)) !=
-	    NULL) {
+	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
-	 }
+	}
 
 	/* global setup */
 	setup();
@@ -95,8 +94,8 @@ int main(int argc, char **argv)
 	/* The following loop checks looping state if -i option given */
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		/* reset Tst_count in case we are looping */
-		Tst_count = 0;
+		/* reset tst_count in case we are looping */
+		tst_count = 0;
 
 //block1:
 		tst_resm(TINFO, "Enter Block 1: test with bad fd");
@@ -117,19 +116,19 @@ int main(int argc, char **argv)
 		if (fd < 0) {
 			tst_resm(TFAIL, "creating a new file failed");
 			cleanup();
-		 }
+		}
 		if (write(fd, bad_addr, 10) != -1) {
 			tst_resm(TFAIL, "write() on an invalid buffer "
 				 "succeeded, but should have failed");
 			cleanup();
-		 } else {
+		} else {
 			TEST_ERROR_LOG(errno);
 			if (errno != EFAULT) {
 				tst_resm(TFAIL, "write() returned illegal "
 					 "errno: expected EFAULT, got %d",
 					 errno);
 				cleanup();
-			 }
+			}
 			tst_resm(TPASS, "received EFAULT as expected.");
 		}
 		tst_resm(TINFO, "Exit Block 2");
@@ -163,7 +162,8 @@ int main(int argc, char **argv)
 				tst_resm(TFAIL, "Fork failed");
 			}
 			wait(&status);
-			if (WIFSIGNALED(status) == SIGPIPE) {
+			if (WIFSIGNALED(status) &&
+				WTERMSIG(status) == SIGPIPE) {
 				tst_resm(TFAIL, "child set SIGPIPE in exit");
 			} else if (WEXITSTATUS(status) != 0) {
 				TEST_ERROR_LOG(WEXITSTATUS(status));
@@ -190,7 +190,6 @@ void setup(void)
 
 	tst_sig(FORK, DEF_HANDLER, cleanup);
 
-	/* Set up the expected error numbers for -e option */
 	TEST_EXP_ENOS(exp_enos);
 
 	/* Pause if that option was specified
@@ -232,4 +231,4 @@ void cleanup(void)
 	unlink(filename);
 	tst_rmdir();
 
- }
+}

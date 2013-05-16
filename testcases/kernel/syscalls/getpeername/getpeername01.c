@@ -55,7 +55,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "getpeername01";	/* Test program identifier.    */
+char *TCID = "getpeername01";
 int testno;
 
 int s, s2;			/* socket descriptors */
@@ -101,17 +101,15 @@ struct test_case_t {		/* test case structure */
 #endif
 };
 
-int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. */
+int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);
 
 int exp_enos[] = { EBADF, ENOTSOCK, ENOTCONN, EFAULT, 0 };
-
 
 int main(int argc, char *argv[])
 {
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	msg = parse_opts(argc, argv, NULL, NULL);
 	if (msg != NULL) {
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
@@ -120,11 +118,10 @@ int main(int argc, char *argv[])
 
 	setup();
 
-	/* set up the expected error numbers */
 	TEST_EXP_ENOS(exp_enos);
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			tdat[testno].setup();
 
@@ -157,7 +154,7 @@ int main(int argc, char *argv[])
 
 void setup(void)
 {
-	TEST_PAUSE;		/* if -P option specified */
+	TEST_PAUSE;
 
 	/* initialize local sockaddr */
 	sin0.sin_family = AF_INET;
@@ -176,7 +173,7 @@ void setup0(void)
 	if (tdat[testno].experrno == EBADF)
 		s = 400;	/* anything not an open file */
 	else if ((s = open("/dev/null", O_WRONLY)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open(/dev/null) failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open(/dev/null) failed");
 
 }
 
@@ -189,12 +186,14 @@ void setup1(void)
 {
 	s = socket(tdat[testno].domain, tdat[testno].type, tdat[testno].proto);
 	if (s < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "socket setup failed for getpeername "
-			 " test %d", testno);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "socket setup failed for getpeername " " test %d",
+			 testno);
 	}
 	if (bind(s, (struct sockaddr *)&sin0, sizeof(sin0)) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "socket bind failed for getpeername "
-			 "test %d", testno);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "socket bind failed for getpeername " "test %d",
+			 testno);
 	}
 	sinlen = sizeof(fsin1);
 }
@@ -211,8 +210,9 @@ void setup2(void)
 
 	if (socketpair(tdat[testno].domain, tdat[testno].type,
 		       tdat[testno].proto, sv) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "socketpair failed for getpeername "
-			 "test %d", testno);
+		tst_brkm(TBROK | TERRNO, cleanup,
+			 "socketpair failed for getpeername " "test %d",
+			 testno);
 	}
 	s = sv[0];
 	s2 = sv[1];

@@ -83,8 +83,8 @@
 #define TEMP_FILE	"tmp_file"
 #define FILE_MODE	S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 
-char *TCID = "lseek07";		/* Test program identifier.    */
-int TST_TOTAL = 1;		/* Total number of test cases. */
+char *TCID = "lseek07";
+int TST_TOTAL = 1;
 int fildes;			/* file handle for temp file */
 size_t file_size;		/* size of temporary file */
 char write_buf1[BUFSIZ];	/* buffer to hold data */
@@ -100,7 +100,6 @@ int main(int ac, char **av)
 	char read_buf[BUFSIZ];	/* data read from temp. file */
 	off_t offset;		/* byte position in temporary file */
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(ac, av, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 
@@ -108,7 +107,7 @@ int main(int ac, char **av)
 
 	for (lc = 0; TEST_LOOPING(lc); lc++) {
 
-		Tst_count = 0;
+		tst_count = 0;
 
 		/* Set the offset position */
 		offset = file_size + (lc * strlen(write_buf2));
@@ -120,8 +119,8 @@ int main(int ac, char **av)
 		TEST(lseek(fildes, offset, SEEK_SET));
 
 		if (TEST_RETURN == (off_t) - 1) {
-			tst_resm(TFAIL|TTERRNO, "lseek on (%s) failed",
-			    TEMP_FILE);
+			tst_resm(TFAIL | TTERRNO, "lseek on (%s) failed",
+				 TEMP_FILE);
 			continue;
 		}
 		/*
@@ -136,7 +135,8 @@ int main(int ac, char **av)
 			if (TEST_RETURN != offset) {
 				tst_resm(TFAIL, "lseek() returned "
 					 "incorrect value %ld, expected "
-					 "%"PRId64, TEST_RETURN, (int64_t)offset);
+					 "%" PRId64, TEST_RETURN,
+					 (int64_t) offset);
 				continue;
 			}
 			/*
@@ -145,8 +145,8 @@ int main(int ac, char **av)
 			 */
 			if (write(fildes, write_buf2, strlen(write_buf2)) !=
 			    strlen(write_buf2)) {
-				tst_brkm(TFAIL|TERRNO, cleanup,
-				    "write() failed to write additional data");
+				tst_brkm(TFAIL | TERRNO, cleanup,
+					 "write() failed to write additional data");
 			}
 
 			/*

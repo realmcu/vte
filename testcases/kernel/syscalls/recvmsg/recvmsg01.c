@@ -72,7 +72,7 @@
 #include "test.h"
 #include "usctest.h"
 
-char *TCID = "recvmsg01";	/* Test program identifier.    */
+char *TCID = "recvmsg01";
 int testno;
 
 char buf[1024], cbuf[1024];
@@ -187,10 +187,9 @@ struct test_case_t {		/* test case structure */
 		    0, 0, setup4, cleanup2, "large cmesg length"}
 ,};
 
-int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);	/* Total number of test cases. */
+int TST_TOTAL = sizeof(tdat) / sizeof(tdat[0]);
 
 int exp_enos[] = { EBADF, ENOTSOCK, EFAULT, EINVAL, 0 };
-
 
 #ifdef UCLINUX
 static char *argv0;
@@ -201,7 +200,6 @@ int main(int argc, char *argv[])
 	int lc;
 	char *msg;
 
-	/* Parse standard options given to run the test. */
 	if ((msg = parse_opts(argc, argv, NULL, NULL)) != NULL)
 		tst_brkm(TBROK, NULL, "OPTION PARSING ERROR - %s", msg);
 #ifdef UCLINUX
@@ -214,7 +212,7 @@ int main(int argc, char *argv[])
 	TEST_EXP_ENOS(exp_enos);
 
 	for (lc = 0; TEST_LOOPING(lc); ++lc) {
-		Tst_count = 0;
+		tst_count = 0;
 		for (testno = 0; testno < TST_TOTAL; ++testno) {
 			tdat[testno].setup();
 
@@ -260,7 +258,7 @@ char tmpsunpath[1024];
 void setup(void)
 {
 	int tfd;
-	TEST_PAUSE;		/* if -P option specified */
+	TEST_PAUSE;
 
 	/* initialize sockaddr's */
 	sin1.sin_family = AF_INET;
@@ -295,7 +293,7 @@ void setup0(void)
 	if (tdat[testno].experrno == EBADF)
 		s = 400;	/* anything not an open file */
 	else if ((s = open("/dev/null", O_WRONLY)) == -1)
-		tst_brkm(TBROK|TERRNO, cleanup, "open(/dev/null) failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "open(/dev/null) failed");
 }
 
 void cleanup0(void)
@@ -311,12 +309,13 @@ void setup1(void)
 
 	s = socket(tdat[testno].domain, tdat[testno].type, tdat[testno].proto);
 	if (s < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "socket setup failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "socket setup failed");
 	if (tdat[testno].type == SOCK_STREAM) {
 		if (tdat[testno].domain == PF_INET) {
 			if (connect(s, (struct sockaddr *)&sin1, sizeof(sin1)) <
 			    0)
-				tst_brkm(TBROK|TERRNO, cleanup, "connect failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "connect failed");
 			/* Wait for something to be readable, else we won't detect EFAULT on recv */
 			FD_ZERO(&rdfds);
 			FD_SET(s, &rdfds);
@@ -329,7 +328,8 @@ void setup1(void)
 		} else if (tdat[testno].domain == PF_UNIX) {
 			if (connect(s, (struct sockaddr *)&sun1, sizeof(sun1)) <
 			    0)
-				tst_brkm(TBROK|TERRNO, cleanup, "UD connect failed");
+				tst_brkm(TBROK | TERRNO, cleanup,
+					 "UD connect failed");
 		}
 	}
 }
@@ -338,7 +338,7 @@ void setup2(void)
 {
 	setup1();
 	if (write(s, "R", 1) < 0)
-		tst_brkm(TBROK|TERRNO, cleanup, "test setup failed: write:");
+		tst_brkm(TBROK | TERRNO, cleanup, "test setup failed: write:");
 	control = (struct cmsghdr *)cbuf;
 	controllen = control->cmsg_len = sizeof(cbuf);
 }
@@ -384,29 +384,29 @@ pid_t start_server(struct sockaddr_in *ssin, struct sockaddr_un *ssun)
 	/* set up inet socket */
 	sfd = socket(PF_INET, SOCK_STREAM, 0);
 	if (sfd < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server socket failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server socket failed");
 		return -1;
 	}
 	if (bind(sfd, (struct sockaddr *)ssin, sizeof(*ssin)) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server bind failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server bind failed");
 		return -1;
 	}
 	if (listen(sfd, 10) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server listen failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server listen failed");
 		return -1;
 	}
 	/* set up UNIX-domain socket */
 	ufd = socket(PF_UNIX, SOCK_STREAM, 0);
 	if (ufd < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server UD socket failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server UD socket failed");
 		return -1;
 	}
 	if (bind(ufd, (struct sockaddr *)ssun, sizeof(*ssun))) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server UD bind failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server UD bind failed");
 		return -1;
 	}
 	if (listen(ufd, 10) < 0) {
-		tst_brkm(TBROK|TERRNO, cleanup, "server UD listen failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server UD listen failed");
 		return -1;
 	}
 
@@ -414,13 +414,14 @@ pid_t start_server(struct sockaddr_in *ssin, struct sockaddr_un *ssun)
 	case 0:		/* child */
 #ifdef UCLINUX
 		if (self_exec(argv0, "dd", sfd, ufd) < 0)
-			tst_brkm(TBROK|TERRNO, cleanup, "server self_exec failed");
+			tst_brkm(TBROK | TERRNO, cleanup,
+				 "server self_exec failed");
 #else
 		do_child();
 #endif
 		break;
 	case -1:
-		tst_brkm(TBROK|TERRNO, cleanup, "server fork failed");
+		tst_brkm(TBROK | TERRNO, cleanup, "server fork failed");
 		/* fall through */
 	default:		/* parent */
 		(void)close(sfd);
