@@ -31,6 +31,7 @@
 #Andy Tian                    05/15/2012       N/A      add wait for background
 #Andy Tian                    12/14/2012       N/A      add GPU thermal test
 #Shelly Cheng                 01/02/2013       N/A      add more test demo
+#Shelly Cheng                 05/17/2013       N/A      add more demo
 # 
 ################################################################################
 
@@ -72,12 +73,6 @@ cleanup()
         modprobe -r galcore
     fi
 
-	if [ -n "$trip_hot_old" ]; then
-	 	echo $trip_hot_old > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
-	fi
-	if [ -n "$trip_act_old" ]; then
-	 	echo $trip_act_old > /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp
-	fi
     return $RC
 }
 
@@ -97,40 +92,61 @@ test_case_01()
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
     #TODO add function test scripte here
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo 3DMark
-    echo "==========================="
-    if [ -e 3DMarkMobile/fsl_imx_linux ]; then
-        cd 3DMarkMobile/fsl_imx_linux/
-        ./fm_oes_player || RC="3Dmark"
-    fi
+    echo "egl Test case"    
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo egl_test
     echo "==========================="
-    #./egl_test || RC=$(echo $RC egl_test)
+    ./egl_test || RC=egl_test
 
-    echo fps triangle
+    echo "ES1.1 Test case"    
+    
+    cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    ./fps_triangle || RC=$(echo $RC fps_triangle)
+    echo cube
+    echo "==========================="
+    ./cube 1000 || RC=$(echo $RC cube)
+
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo mcube stencil test
+    echo "==========================="
+    ./mcube 1000 || RC=$(echo $RC mcube)
 
     echo "==========================="
-    echo simple draw
+    echo gpubench
+    echo "==========================="
+    cd gpubench
+    ./gpuBench || RC=$(echo $RC gpuBench)
+
+    echo "ES2.0 Test case"    
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo simple draw ES2.0
     echo "==========================="
     ./simple_draw 100 || RC=$(echo $RC simple draw)
     ./simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 
     echo "==========================="
-    echo simple triangle
-    echo "==========================="
-    ./simple_triangle || RC=$(echo $RC simple_triangle)
-
-    echo "==========================="
-    echo torusknot
+    echo torusknot ES2.0
     echo "==========================="
     ./torusknot || RC=$(echo $RC torusknot)
+
+    echo "==========================="
+    echo model3d ES2.0
+    echo "==========================="
+    ./model3d 1000 1000 || RC=$(echo $RC model3d)
+
+    echo "==========================="
+    echo sample_test ES2.0
+    echo "==========================="
+    ./sample_test 1000 || RC=$(echo $RC sample_test)
+
+    echo "==========================="
+    echo mcube_es20 stencil test
+    echo "==========================="
+    ./mcube_es2 1000 || RC=$(echo $RC mcube_es20)
 
     if [ "$RC" = "0" ]; then
         RC=0
@@ -166,6 +182,7 @@ test_case_02()
     ./egl_test &
     pid_egl=$!
 
+    echo "==========================="
     echo fps triangle
     echo "==========================="
     ./fps_triangle 10000 &
@@ -191,15 +208,17 @@ test_case_02()
     ./torusknot &
     pid_tor=$!
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    echo 3DMark
+    echo model3d ES2.0
     echo "==========================="
-    if [ -e 3DMarkMobile/fsl_imx_linux ]; then
-        cd 3DMarkMobile/fsl_imx_linux/
-        ./fm_oes_player
-    fi
-    wait $pid_egl && wait $pid_tri && wait $pid_s1 && wait $pid_s2 && wait $pid_sTri && wait $pid_tor
+    ./model3d 1000 1000 &
+    pid_m3d=$!
+    echo "==========================="
+    echo sample_test ES2.0
+    echo "==========================="
+    ./sample_test 1000 &
+
+    wait $pid_egl && wait $pid_tri && wait $pid_s1 && wait $pid_s2 && wait $pid_sTri && wait $pid_tor && wait $pid_m3d
     RC=$?
     wait
 
@@ -304,13 +323,22 @@ test_case_04()
 test_case_05()
 {
     #TODO give TCID 
-    TCID="gles_pm_test"
+    TCID="gles_perf_test"
     #TODO give TST_COUNT
     TST_COUNT=4
     RC=0
 
-    #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
+
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo "3DMark mm06 test"
+	echo "==========================="
+	if [ -e 3DMarkMobile/fsl_imx_linux ]; then
+		cd 3DMarkMobile/fsl_imx_linux/
+		./fm_oes_player || RC="3Dmark"
+	fi
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
@@ -333,6 +361,7 @@ test_case_05()
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo "Mirada test"
+	r
     echo "==========================="
     if [ -e Mirada ]; then
         cd Mirada
@@ -344,7 +373,7 @@ test_case_05()
 
 
 # Function:     test_case_06
-# Description   - Test if gles applications sequence ok
+# Description   - Test if gpu works ok when changed thermal
 #  
 test_case_06()
 {
@@ -359,13 +388,15 @@ test_case_06()
 
 
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-
-	trip_hot_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp`
-	trip_act_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp`
-	cur_temp=`cat /sys/devices/virtual/thermal/thermal_zone0/temp`
+	thermal_dir= 
+	trippoint1_dir=$(find /sys/ -name trip_point_1_temp)
+	thermal_dir=`dirname $trippoint1_dir`
+	trip_hot_old=`cat $trippoint1_dir`
+	trip_act_old=`cat $thermal_dir/trip_point_2_temp`
+	cur_temp=`cat $thermal_dir/temp`
+	cd ${TEST_DIR}/${APP_SUB_DIR}
 	if [ $cur_temp -lt $trip_hot_old ]; then
-    	norm_fps=`./simple_draw 200 | grep FPS | cut -f3 -d:`
+		norm_fps=`./simple_draw 200 | grep FPS | cut -f3 -d:`
 	else
 		echo "Already in trip hot status"
 		exit 6
@@ -373,13 +404,13 @@ test_case_06()
 
 	let trip_hot_new=cur_temp-10
 	let trip_act_new=cur_temp-15
-
 	# Set new trip hot value to trigger the trip_hot flag
-	echo ${trip_act_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp
-	echo ${trip_hot_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
+	echo ${trip_act_new} > $thermal_dir/trip_point_2_temp
+	echo ${trip_hot_new} > $thermal_dir/trip_point_1_temp
+
 	sleep 2
 	if [ $cur_temp -gt $trip_hot_new ]; then
-    	low_fps=`./simple_draw 200 | grep FPS | cut -f3 -d: `
+		low_fps=`./simple_draw 200 | grep FPS | cut -f3 -d: `
 	else
 		echo "Set trip hot flag failure"
 		exit 6
@@ -388,25 +419,39 @@ test_case_06()
 	let drop_fps=norm_fps-low_fps
 	let half_fps=norm_fps/2
 	[ $drop_fps -gt $half_fps ] || RC=6
+	if [ -n "$trip_hot_old" ]; then
+		echo $trip_hot_old >  $thermal_dir/trip_point_1_temp
+	fi
+	if [ -n "$trip_act_old" ]; then
+		echo $trip_act_old >  $thermal_dir/trip_point_2_temp
+	fi
 
     return $RC
 
 }
 # Function:     test_case_07
-# Description   - Test gpu bench
+# Description   - Test directviv_test
 #
 test_case_07()
 {
 	    #TODO give TCID
-		TCID="gpu_bench_test"
+		TCID="directviv_test"
 		#TODO give TST_COUNT
-		TST_COUNT=7
+		TST_COUNT=6
 		RC=0
+
         cd ${TEST_DIR}/${APP_SUB_DIR}
-	    echo "==========================="
-		echo gpubench
-	    echo "==========================="
-	    ./gpuBench
+	echo "==========================="
+        echo directviv_test 
+        echo "==========================="
+        cd directviv_test
+	./TexDirect_ES11 -f 5000 || RC=TexDirect_ES11
+        ./TexDirectMap_ES11 -f 5000 || RC=$(echo $RC TexDirectMap_ES11)
+        ./TexDirectTiledMap_ES11 -f 5000 || RC=$(echo $RC TexDirectTiledMap_ES119t)
+        ./TexDirect_es20 -f 5000 || RC=TexDirect_es20
+        ./TexDirectMap_es20 -f 5000 || RC=$(echo $RC TexDirectMap_es20)
+        ./TexDirectTiledMap_es20 -f 5000 || RC=$(echo $RC TexDirectTiledMap_es20)
+        
         RC=$?
 		if [ $RC -eq 0 ]; then
           echo "TEST PASS"
@@ -418,61 +463,7 @@ test_case_07()
 # Function:     test_case_08
 # Description   - Test sample test
 #
-test_case_08()
-{
-	    #TODO give TCID
-		TCID="sample_test"
-		#TODO give TST_COUNT
-		TST_COUNT=8
-		RC=0
-		cd ${TEST_DIR}/${APP_SUB_DIR}
-		echo "==========================="
-		echo sample test
-		echo "==========================="
-		tmpdir=$(mktemp -d)
-	    mkdir $tmpdir
-	    mkfifo $tmpdir/sample_fifo
-	    sh -c "cat $tmpdir/sample_fifo | ./sample_test" &
-	    sleep 100
-	    echo y > $tmpdir/sample_fifo
-	    rm -rf $tmpdir
-		RC=$?
-		if [ $RC -eq 0 ]; then
-			echo "TEST PASS"
-		else
-			echo "TEST FAIL"
-	    fi
-        return $RC
-}
-# Function:     test_case_09
-# Description   - cube test
-#
-test_case_09()
-{
-	#TODO give TCID
-	TCID="cube_test"
-    #TODO give TST_COUNT
-	TST_COUNT=9
-	RC=0
-	cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo cube test
-	echo "==========================="
-	tmpdir=$(mktemp -d)
-	mkdir $tmpdir
-	mkfifo $tmpdir/cube_fifo
-	sh -c "cat $tmpdir/cube_fifo | ./cube" &
-	sleep 100
-	echo y > $tmpdir/cube_fifo
-	rm -rf $tmpdir
-	RC=$?
-	if [ $RC -eq 0 ]; then
-	   echo "TEST PASS"
-    else
-       echo "TEST FAIL"
-    fi
-    return $RC
-}
+
 
 usage()
 {
@@ -483,9 +474,8 @@ usage()
     echo "4: pm test"
     echo "5: performance test"
     echo "6: Thermal control test"
-    echo "7: gpuBench"
-	echo "8: sample test"
-	echo "9: cube test"
+    echo "7: TexDirect_viv"
+
 }
 
 # main function
@@ -560,12 +550,7 @@ case "$1" in
 7)
     test_case_07 || exit $RC
     ;;
-8)
-    test_case_08 || exit $RC
-    ;;
-9)
-    test_case_09 || exit $RC
-    ;;
+
 *)
     usage
     ;;
