@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2011 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #Author                          Date          Number    Description of Changes
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
+#Shelly Cheng                 20130517     N/A          add more unittest
 # 
 ################################################################################
 
@@ -85,7 +86,6 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-unit_list="clinfo loadstore math threadwalker"
 
 #TODO add function test scripte here
 cd ${TEST_DIR}/${APP_SUB_DIR}
@@ -98,6 +98,15 @@ if [ -e cl11/UnitTest ]; then
 	  do
      ./$i || RC=$(echo $RC $i)
    done
+fi
+
+cd ${TEST_DIR}/${APP_SUB_DIR}
+echo "==========================="
+echo fft
+echo "==========================="
+if [ -e cl11/fft ]; then
+  cd cl11/fft/
+  ./fft 1024 || ./fft 8192 || RC=$(echo $RC fft)
 fi
 
 return $RC
@@ -118,7 +127,6 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-#TODO add function test scripte here
 
 cd ${TEST_DIR}/${APP_SUB_DIR}
 echo "==========================="
@@ -178,6 +186,16 @@ then
 usage
 exit 1 
 fi
+
+unit_list="loadstore math threadwalker"
+unit_list="$unit_list  test_vivante/functions_and_kernels"
+unit_list="$unit_list  test_vivante/illegal_vector_sizes"
+unit_list="$unit_list  test_vivante/initializers"
+unit_list="$unit_list  test_vivante/multi_dimensional_arrays"
+unit_list="$unit_list  test_vivante/reserved_data_types"
+unit_list="$unit_list  test_vivante/structs_and_enums"
+unit_list="$unit_list  test_vivante/unions"
+unit_list="$unit_list  test_vivante/unsupported_extensions"
 
 TEST_DIR=/mnt/nfs/util/Graphics/
 
