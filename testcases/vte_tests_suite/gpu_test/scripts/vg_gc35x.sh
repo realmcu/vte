@@ -28,6 +28,7 @@
 #Author                          Date          Number    Description of Changes
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
+#Shelly Cheng                 20130517     N/A          change concurrent demo
 # 
 ################################################################################
 
@@ -42,21 +43,28 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-    #TODO Total test case
-    export TST_TOTAL=4
+	#TODO Total test case
+	export TST_TOTAL=4
 
-    export TCID="setup"
-    export TST_COUNT=0
-    RC=0
+	export TCID="setup"
+	export TST_COUNT=0
+	RC=0
 
-trap "cleanup" 0
-chip=$(platfm.sh)
-if [ $chip = "IMX6Sololite-ARM2" ];then
-modprobe  galcore baseAddress=0x80000000 
-else
-modprobe  galcore 
-fi
-return $RC
+	trap "cleanup" 0
+	chip=$(platfm.sh)
+	if [ $chip = "IMX6Sololite-ARM2" ];then
+		modprobe  galcore baseAddress=0x80000000 
+	else
+		modprobe  galcore 
+	fi
+
+	if [ -nz "$GPU_DRIVER_PATH" ];then
+		export GPU_DRIVER_PATH=/usr/lib
+	fi
+	rm $GPU_DRIVER_PATH/libOpenVG.so
+	ln -s $GPU_DRIVER_PATH/libOpenVG_355.so $GPU_DRIVER_PATH/libOpenVG.so
+	echo ====== Using 355 VG library =======    
+	return $RC
 }
 
 # Function:     cleanup
@@ -67,13 +75,16 @@ return $RC
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-    RC=0
+	RC=0
 
-#TODO add cleanup code here
-if [ -z "$NOCLEANUP" ];then
-	modprobe -r galcore
-fi
-return $RC
+	#TODO add cleanup code here
+	rm $GPU_DRIVER_PATH/libOpenVG.so
+	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
+
+	if [ -z "$NOCLEANUP" ];then
+		modprobe -r galcore
+	fi
+	return $RC
 }
 
 
@@ -82,39 +93,39 @@ return $RC
 #  
 test_case_01()
 {
-    #TODO give TCID 
-    TCID="vg_test"
-    #TODO give TST_COUNT
-    TST_COUNT=1
-    RC=0
+	#TODO give TCID 
+	TCID="vg_test"
+	#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=0
 
-    #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    #TODO add function test scripte here
-    echo "==========================="
-    echo tiger
-    echo "==========================="
-    ./tiger -rgba 5650 -frameCount 1000 || RC="tiger"
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	#TODO add function test scripte here
+	echo "==========================="
+	echo tiger
+	echo "==========================="
+	./tiger -rgba 5650 -frameCount 1000 || RC="tiger"
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo vgMark
-    echo "==========================="
-    cd VGMark_gc355
-    ./fm_oes_vg_player_gc355 || RC=$(echo $RC vgmark)
-
-    echo $RC
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo sample_testvg
+	echo "==========================="
+	./sample_testvg 1000 || RC=$(echo $RC sample_testvg)
 
 
-    if [ "$RC" = "0" ]; then
-        RC=0
-    else
-        RC=1
-    fi
+	echo $RC
 
-    return $RC
+
+	if [ "$RC" = "0" ]; then
+		RC=0
+	else
+		RC=1
+	fi
+
+	return $RC
 
 }
 
@@ -134,19 +145,21 @@ test_case_02()
 
     #TODO add function test scripte here
     cd ${TEST_DIR}/${APP_SUB_DIR}
-    #TODO add function test scripte here
+    #TODO add function test script here
     echo "==========================="
     echo tiger
     echo "==========================="
-    ./tiger -rgba 5650 -frameCount 90000 &
-
+    ./tiger -rgba 5650 -frameCount 10000 &
+    pid_tiger=$!
+    
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    echo vgMark
+    echo sample_testvg
     echo "==========================="
-    cd VGMark_gc355
-    ./fm_oes_vg_player_gc355 &
-
+    ./sample_testvg 10000 &
+    
+    wait $pid_tiger 
+    RC=$?
     wait
 
     echo $RC
@@ -249,6 +262,35 @@ test_case_05()
     return $RC
 }
 
+test_case_06()
+{
+    #TODO give TCID 
+    TCID="vgmark_test"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=0
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo vgMark
+    echo "==========================="
+    cd VGMark_gc355
+    ./fm_oes_vg_player_gc355 || RC=$(echo $RC vgmark)
+    echo $RC
+
+    if [ "$RC" = "0" ]; then
+        RC=0
+    else
+        RC=1
+    fi
+
+    return $RC
+
+}
+
 usage()
 {
     echo "$0 [case ID]"
@@ -256,7 +298,8 @@ usage()
     echo "2: concurrent test"
     echo "3: conformance test"
     echo "4: pm test"
-	echo "5: 2dperf test"
+    echo "5: 2dperf test"
+    echo "6: vgmark test"
 }
 
 # main function
@@ -329,6 +372,9 @@ case "$1" in
     ;;
 5)
     test_case_05 || exit $RC
+    ;;
+6)
+    test_case_06 || exit $RC
     ;;
 
 *)

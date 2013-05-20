@@ -28,7 +28,8 @@
 #Author                          Date          Number    Description of Changes
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
-#Andy Tian                    05/15/2012       N/A      add wait for background
+#Andy Tian                    05/15/2012   N/A          add wait for background
+#Shelly Cheng                 20130517     N/A          change concurrent demo
 #                                                       process
 # 
 ################################################################################
@@ -44,16 +45,22 @@
 #               - non zero on failure. return value from commands ($RC)
 setup()
 {
-    #TODO Total test case
-    export TST_TOTAL=4
+	#TODO Total test case
+	export TST_TOTAL=4
 
-    export TCID="setup"
-    export TST_COUNT=0
-    RC=0
+	export TCID="setup"
+	export TST_COUNT=0
+	RC=0
 
-    trap "cleanup" 0
-    modprobe galcore
-    return $RC
+	trap "cleanup" 0
+	modprobe galcore
+	if [ -nz "$GPU_DRIVER_PATH" ];then
+		export GPU_DRIVER_PATH=/usr/lib
+	fi
+	rm $GPU_DRIVER_PATH/libOpenVG.so
+	ln -s $GPU_DRIVER_PATH/libOpenVG_3D.so $GPU_DRIVER_PATH/libOpenVG.so
+	echo ====== Using 3D VG library =======    
+	return $RC
 }
 
 # Function:     cleanup
@@ -64,13 +71,15 @@ setup()
 #               - non zero on failure. return value from commands ($RC)
 cleanup()
 {
-    RC=0
+	RC=0
 
-    #TODO add cleanup code here
-    if [ -z "$NOCLEANUP" ];then
-        modprobe -r galcore
-    fi
-    return $RC
+	#TODO add cleanup code here
+	rm $GPU_DRIVER_PATH/libOpenVG.so
+	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
+	if [ -z "$NOCLEANUP" ];then
+		modprobe -r galcore
+	fi
+	return $RC
 }
 
 
@@ -97,10 +106,9 @@ test_case_01()
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    echo vgMark
+    echo sample_testvg
     echo "==========================="
-    cd VGMark
-    ./fm_oes_vg_player || RC=$(echo $RC vgmark)
+    ./sample_testvg 1000 || RC=$(echo $RC sample_testvg)
 
     echo $RC
 
@@ -130,22 +138,20 @@ test_case_02()
 
     #TODO add function test scripte here
     cd ${TEST_DIR}/${APP_SUB_DIR}
-    #TODO add function test scripte here
+    #TODO add function test script here
     echo "==========================="
     echo tiger
     echo "==========================="
-    ./tiger -frameCount 90000 &
+    ./tiger -frameCount 10000 &
     pid_tiger=$!
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    echo vgMark
+    echo sample_testvg
     echo "==========================="
-    cd VGMark
-    ./fm_oes_vg_player &
-    pid_vgMark=$i
-
-    wait $pid_tiger && wait $pid_vgMark
+    ./sample_testvg 10000 &
+    
+    wait $pid_tiger 
     RC=$?
     wait
 
@@ -234,6 +240,35 @@ test_case_04()
     fi
     return $RC
 }
+
+test_case_05()
+{
+    #TODO give TCID 
+    TCID="vgmark_test"
+    #TODO give TST_COUNT
+    TST_COUNT=1
+    RC=0
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+    echo "==========================="
+    echo vgMark
+    echo "==========================="
+    cd VGMark
+    ./fm_oes_vg_player || RC=$(echo $RC vgmark)
+    echo $RC
+
+    if [ "$RC" = "0" ]; then
+        RC=0
+    else
+        RC=1
+    fi
+
+    return $RC
+
+}
 usage()
 {
     echo "$0 [case ID]"
@@ -241,6 +276,7 @@ usage()
     echo "2: concurrent test"
     echo "3: conformance test"
     echo "4: pm test"
+    echo "5: vgmark test"
 }
 
 # main function
@@ -307,6 +343,9 @@ case "$1" in
     ;;
 4)
     test_case_04 || exit $RC
+    ;;
+5)
+    test_case_05 || exit $RC
     ;;
 *)
     usage
