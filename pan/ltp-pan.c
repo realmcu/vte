@@ -68,7 +68,6 @@
 #include "splitstr.h"
 #include "zoolib.h"
 
-
 /* One entry in the command line collection.  */
 struct coll_entry {
 	char *name;		/* tag name */
@@ -338,6 +337,7 @@ int main(int argc, char **argv)
 			fprintf(logfile, "%-30.20s %-10.10s %-10.10s\n",
 				"--------", "------", "------------");
 		}
+		fflush(logfile);
 	}
 
 	coll = get_collection(filename, optind, argc, argv);
@@ -497,6 +497,7 @@ int main(int argc, char **argv)
 	exit_stat = 0;
 	go_idle = 0;
 	while (1) {
+
 		while ((num_active < keep_active) && (starts != 0)) {
 			if (stop || rec_signal || go_idle)
 				break;
@@ -504,45 +505,48 @@ int main(int argc, char **argv)
 			if (!sequential)
 				c = lrand48() % coll->cnt;
 
-	    /* find a slot for the child */
-	    for (i = 0; i < keep_active; ++i) {
-		if (running[i].pgrp == 0)
-		    break;
-	    }
-	    if (i == keep_active) {
-		fprintf(stderr, "pan(%s): Aborting: i == keep_active = %d\n",
-			panname, i);
-		wait_handler(SIGINT);
-		exit_stat++;
-		break;
-	    }
+			/* find a slot for the child */
+			for (i = 0; i < keep_active; ++i) {
+				if (running[i].pgrp == 0)
+					break;
+			}
+			if (i == keep_active) {
+				fprintf(stderr,
+					"pan(%s): Aborting: i == keep_active = %d\n",
+					panname, i);
+				wait_handler(SIGINT);
+				exit_stat++;
+				break;
+			}
 
-	    cpid = run_child(coll->ary[c], running + i, quiet_mode, &failcnt, fmt_print, logfile);
-	    if (cpid != -1)
-		++num_active;
-	    if ((cpid != -1 || sequential) && starts > 0)
-		--starts;
+			cpid =
+			    run_child(coll->ary[c], running + i, quiet_mode,
+				      &failcnt, fmt_print, logfile);
+			if (cpid != -1)
+				++num_active;
+			if ((cpid != -1 || sequential) && starts > 0)
+				--starts;
 
-	    if (sequential)
-		if (++c >= coll->cnt)
-		    c = 0;
+			if (sequential)
+				if (++c >= coll->cnt)
+					c = 0;
 
-	} /* while ((num_active < keep_active) && (starts != 0)) */
+		}		/* while ((num_active < keep_active) && (starts != 0)) */
 
-	if (starts == 0)
-	{
-		if (!quiet_mode)
-			printf("incrementing stop\n");
-		++stop;
-	}
-	else if (starts == -1) //wjh
-	{
-	   FILE *f = (FILE*)-1;
-	   if ((f = fopen(PAN_STOP_FILE, "r")) != 0)
-	   {  printf("Got %s Stopping!\n", PAN_STOP_FILE);
-		  fclose(f); unlink(PAN_STOP_FILE); stop++;
-	   }
-	}
+		if (starts == 0) {
+			if (!quiet_mode)
+				printf("incrementing stop\n");
+			++stop;
+		} else if (starts == -1)	//wjh
+		{
+			FILE *f = (FILE *) - 1;
+			if ((f = fopen(PAN_STOP_FILE, "r")) != 0) {
+				printf("Got %s Stopping!\n", PAN_STOP_FILE);
+				fclose(f);
+				unlink(PAN_STOP_FILE);
+				stop++;
+			}
+		}
 
 		if (rec_signal) {
 			/* propagate everything except sigusr2 */
@@ -582,6 +586,7 @@ int main(int argc, char **argv)
 				wait_handler(SIGINT);
 			}
 		}
+
 		if (stop && (num_active == 0))
 			break;
 
@@ -1158,51 +1163,63 @@ run_child(struct coll_entry *colle, struct tag_pgrp *active, int quiet_mode,
 			termtype = "unknown";
 		}
 		time(&end_time);
-        if (logfile != NULL) {
-            if (!fmt_print) {
-                fprintf(logfile,
-                    "tag=%s stime=%d dur=%d exit=%s "
-                    "stat=%d core=%s cu=%d cs=%d\n",
-                    colle->name, (int)(active->mystime),
-                    (int) (end_time - active->mystime), termtype,
-                    termid, (status & 0200) ? "yes" : "no",
-                    0, 0);
-            } else {
-                if (termid != 0)
-                    ++*failcnt;
+		if (logfile != NULL) {
+			if (!fmt_print) {
+				fprintf(logfile,
+					"tag=%s stime=%d dur=%d exit=%s "
+					"stat=%d core=%s cu=%d cs=%d\n",
+					colle->name, (int)(active->mystime),
+					(int)(end_time - active->mystime),
+					termtype, termid,
+					(status & 0200) ? "yes" : "no", 0, 0);
+			} else {
+				if (termid != 0)
+					++ * failcnt;
 
-                fprintf(logfile, "%-30.30s %-10.10s %-5d\n",
-                    colle->name, ((termid != 0) ? "FAIL" : "PASS"),
-                    termid);
-            }
-            fflush(logfile);
+				fprintf(logfile, "%-30.30s %-10.10s %-5d\n",
+					colle->name,
+					((termid != 0) ? "FAIL" : "PASS"),
+					termid);
+			}
+			fflush(logfile);
 		}
 
-        if (!quiet_mode)
-        {
-            //write_test_start(active, errbuf);
-            write_test_end(active, errbuf, end_time, termtype, status,
-            termid, &notime, &notime);
-        }
+		if (!quiet_mode) {
+			//write_test_start(active, errbuf);
+			write_test_end(active, errbuf, end_time, termtype,
+				       status, termid, &notime, &notime);
+		}
+		if (capturing) {
+			close(c_stdout);
+			unlink(active->output);
+		}
 		return -1;
 	}
-  	active->pgrp = cpid;
+
+	close(errpipe[0]);
+	if (capturing)
+		close(c_stdout);
+
+	active->pgrp = cpid;
 	active->stopping = 0;
 
 	if (zoo_mark_cmdline(zoofile, cpid, colle->name, colle->cmdline)) {
-         fprintf(stderr, "pan(%s): %s\n", panname, zoo_error);
-         exit(1);
-    }
- 
-    if (Debug & Dstartup)
+		fprintf(stderr, "pan(%s): %s\n", panname, zoo_error);
+		exit(1);
+	}
+
+	if (Debug & Dstartup)
 		fprintf(stderr, "started %s cpid=%d at %s",
 			colle->name, cpid, ctime(&active->mystime));
+
 	if (Debug & Dstart) {
-		fprintf(stderr, "Executing test = %s as %s", colle->name, colle->cmdline);
-	if (capturing)
-		fprintf(stderr, "with output file = %s\n", active->output);
-	else
-		fprintf(stderr, "\n");
+		fprintf(stderr, "Executing test = %s as %s", colle->name,
+			colle->cmdline);
+		if (capturing)
+			fprintf(stderr, "with output file = %s\n",
+				active->output);
+		else
+			fprintf(stderr, "\n");
 	}
 
 	return cpid;
