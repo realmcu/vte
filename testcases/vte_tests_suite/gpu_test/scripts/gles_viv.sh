@@ -361,7 +361,6 @@ test_case_05()
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo "Mirada test"
-	r
     echo "==========================="
     if [ -e Mirada ]; then
         cd Mirada
@@ -440,30 +439,132 @@ test_case_07()
 		TST_COUNT=6
 		RC=0
 
-        cd ${TEST_DIR}/${APP_SUB_DIR}
-	echo "==========================="
-        echo directviv_test 
-        echo "==========================="
-        cd directviv_test
-	./TexDirect_ES11 -f 5000 || RC=TexDirect_ES11
-        ./TexDirectMap_ES11 -f 5000 || RC=$(echo $RC TexDirectMap_ES11)
-        ./TexDirectTiledMap_ES11 -f 5000 || RC=$(echo $RC TexDirectTiledMap_ES119t)
-        ./TexDirect_es20 -f 5000 || RC=TexDirect_es20
-        ./TexDirectMap_es20 -f 5000 || RC=$(echo $RC TexDirectMap_es20)
-        ./TexDirectTiledMap_es20 -f 5000 || RC=$(echo $RC TexDirectTiledMap_es20)
-        
-        RC=$?
+		cd ${TEST_DIR}/${APP_SUB_DIR}
+		echo "==========================="
+		echo directviv_test 
+		echo "==========================="
+		cd directviv_test
+		echo "==========================="
+		echo TexDirect_ES11 
+		echo "==========================="
+		./TexDirect_ES11 -f 5000 || RC=TexDirect_ES11
+		echo "==========================="
+		echo TexDirectMap_ES11 
+		echo "==========================="
+		./TexDirectMap_ES11 -f 5000 || RC=$(echo $RC TexDirectMap_ES11)
+		echo "==========================="
+		echo TexDirectTiledMap_ES11 
+		echo "==========================="
+		./TexDirectTiledMap_ES11 -f 5000 || RC=$(echo $RC TexDirectTiledMap_ES11)
+		echo "==========================="
+		echo TexDirect_ES20 
+		echo "==========================="
+		./TexDirect_es20 -f 5000 || RC=TexDirect_es20
+		echo "==========================="
+		echo TexDirectMap_ES20 
+		echo "==========================="
+		./TexDirectMap_ES20 -f 5000 || RC=$(echo $RC TexDirectMap_ES20)
+		echo "==========================="
+		echo TexDirectTiledMap_ES20 
+		echo "==========================="
+		./TexDirectTiledMap_ES20 -f 5000 || RC=$(echo $RC TexDirectTiledMap_ES20)
+
+		RC=$?
 		if [ $RC -eq 0 ]; then
-          echo "TEST PASS"
-        else
-          echo "TEST FAIL"
-        fi
-        return $RC	
+			echo "TEST PASS"
+		else
+			echo "TEST FAIL"
+		fi
+		return $RC	
 }
 # Function:     test_case_08
 # Description   - Test sample test
 #
+test_case_08()
+{
+	    #TODO give TCID
+		TCID="FB MULTIPLEBUFFER test"
+		#TODO give TST_COUNT
+		TST_COUNT=1
+		RC=0
+		cd ${TEST_DIR}/${APP_SUB_DIR}
+		echo "==========================="
+		echo fb multiple buffer test
+		echo "==========================="
+		export FB_MULTI_BUFFER=1
+		echo FB_MULTI_BUFFER=1
+		./cube 300 
+		./model3d 1000 300
+		export FB_MULTI_BUFFER=2
+		echo FB_MULTI_BUFFER=2
+		./cube 300 
+		./model3d 1000 300
+		export FB_MULTI_BUFFER=3
+		echo FB_MULTI_BUFFER=3
+		./cube 300 
+		./model3d 1000 300
+		export FB_MULTI_BUFFER=2
+		echo FB_MULTI_BUFFER=2
+		./cube 300 
+		./model3d 1000 300
+		export FB_MULTI_BUFFER=1
+		echo FB_MULTI_BUFFER=1
+		./cube 300 
+		./model3d 1000 300
+		export FB_MULTI_BUFFER=0
+		echo FB_MULTI_BUFFER=0
+		./cube 300 
+		./model3d 1000 300
+		
+		export FB_FRAMEBUFFER_0=/dev/fb1
+		echo 0 > /sys/class/graphics/fb1/blank
+		./cube 300 
+		./model3d 1000 300
+		echo 1 > /sys/class/graphics/fb1/blank
+		echo 0 > /sys/class/graphics/fb0/blank
+		export FB_FRAMEBUFFER_0=/dev/fb0
+		
+		RC=$?
+		if [ $RC -eq 0 ]; then
+			echo "TEST PASS"
+		else
+			echo "TEST FAIL"
+	    fi
+        return $RC
+}
 
+test_case_09()
+{
+	    #TODO give TCID
+		TCID="vdk test"
+		#TODO give TST_COUNT
+		TST_COUNT=1
+		RC=0
+		cd ${TEST_DIR}/${APP_SUB_DIR}
+		echo "==========================="
+		echo vdk test
+		echo "==========================="
+        cd /opt/viv_samples/vdk; 
+       
+        for i in `ls tutorial*` 
+            do 
+                echo $i;
+                #./$i -f 1000;                 
+            done
+        echo tiger
+        /opt/viv_samples/tiger/tiger
+        echo tvui "Press ESC to exit"
+		cd /opt/viv_samples/hal/
+        ./tvui
+		
+		RC=$?
+		if [ $RC -eq 0 ]; then
+			echo "TEST PASS"
+		else
+			echo "TEST FAIL"
+	    fi
+        return $RC
+}
 
 usage()
 {
@@ -475,6 +576,8 @@ usage()
     echo "5: performance test"
     echo "6: Thermal control test"
     echo "7: TexDirect_viv"
+    echo "8: FB MULTIBUFFER test"
+    echo "9: VDK test"
 
 }
 
@@ -550,7 +653,12 @@ case "$1" in
 7)
     test_case_07 || exit $RC
     ;;
-
+8)
+    test_case_08 || exit $RC
+    ;;
+9)
+    test_case_09 || exit $RC
+    ;;
 *)
     usage
     ;;
