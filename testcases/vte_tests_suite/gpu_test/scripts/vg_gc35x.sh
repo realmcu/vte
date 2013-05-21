@@ -79,7 +79,7 @@ cleanup()
 
 	#TODO add cleanup code here
 	rm $GPU_DRIVER_PATH/libOpenVG.so
-	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
+#	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
 
 	if [ -z "$NOCLEANUP" ];then
 		modprobe -r galcore
@@ -290,7 +290,49 @@ test_case_06()
     return $RC
 
 }
-
+test_case_07()
+{
+	    #TODO give TCID
+		TCID="sample_test"
+		#TODO give TST_COUNT
+		TST_COUNT=1
+		RC=0
+		cd ${TEST_DIR}/${APP_SUB_DIR}
+		echo "==========================="
+		echo fb multiple buffer test
+		echo "==========================="
+		export FB_MULTI_BUFFER=1
+		echo FB_MULTI_BUFFER=1
+		./tiger -rgba 5650 -frameCount 300 
+		export FB_MULTI_BUFFER=2
+		echo FB_MULTI_BUFFER=2
+		./tiger -rgba 5650 -frameCount 300
+		export FB_MULTI_BUFFER=3
+		echo FB_MULTI_BUFFER=3
+		./tiger -rgba 5650 -frameCount 300
+		export FB_MULTI_BUFFER=2
+		echo FB_MULTI_BUFFER=2
+		./tiger -rgba 5650 -frameCount 300
+		export FB_MULTI_BUFFER=1
+		echo FB_MULTI_BUFFER=1
+		./tiger -rgba 5650 -frameCount 300
+		export FB_MULTI_BUFFER=0
+		echo FB_MULTI_BUFFER=0
+		./tiger -rgba 5650 -frameCount 300
+		export FB_FRAMEBUFFER_0=/dev/fb1
+		echo 0 > /sys/class/graphics/fb1/blank
+		./tiger -rgba 5650 -frameCount 300
+		echo 1 > /sys/class/graphics/fb1/blank
+		echo 0 > /sys/class/graphics/fb0/blank
+		export FB_FRAMEBUFFER_0=/dev/fb0
+		RC=$?
+		if [ $RC -eq 0 ]; then
+			echo "TEST PASS"
+		else
+			echo "TEST FAIL"
+	    fi
+        return $RC
+}
 usage()
 {
     echo "$0 [case ID]"
@@ -300,6 +342,7 @@ usage()
     echo "4: pm test"
     echo "5: 2dperf test"
     echo "6: vgmark test"
+    echo "7: FB MULTIBUFFER test"
 }
 
 # main function
@@ -375,6 +418,9 @@ case "$1" in
     ;;
 6)
     test_case_06 || exit $RC
+    ;;
+7)
+    test_case_07 || exit $RC
     ;;
 
 *)
