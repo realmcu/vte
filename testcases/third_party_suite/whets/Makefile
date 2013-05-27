@@ -4,11 +4,21 @@ CC=$(CROSS_COMPILE)gcc
 
 CFLAGS += -Wall -DUNIX
 
-NEON_CFLAGS = -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp -static -Wall -DUNIX
+NEON_CFLAGS = -mcpu=cortex-a9 -mfpu=neon -static -Wall -DUNIX
+ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
+	NEON_CFLAGS += -mfloat-abi=softfp
+else
+	NEON_CFLAGS += -mfloat-abi=hard
+endif
 
 DP_CFLAGS = -DDP $(CFLAGS)
 
-DP_NEON_CFLAGS = -DDP -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp -static -Wall -DUNIX
+DP_NEON_CFLAGS = -DDP -mcpu=cortex-a9 -mfpu=neon -static -Wall -DUNIX
+ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
+	DP_NEON_CFLAGS += -mfloat-abi=softfp
+else
+	DP_NEON_CFLAGS += -mfloat-abi=hard
+endif
 
 all: neon
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) -lm
