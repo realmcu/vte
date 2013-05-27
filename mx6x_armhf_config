@@ -1,0 +1,24 @@
+#kernel header path installed genreated by kernel build with below
+#sudo make ARCH=arm headers_install INSTALL_HDR_PATH=<KLINUX_SRCDIR>
+KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
+
+#kernel source dir
+#KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
+KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
+
+#kernel build dir
+KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
+
+#cross compiler path
+export PATH=$PATH:/opt/freescale/usr/local/gcc-4.6.2-glibc-2.13-linaro-multilib-2011.12/fsl-linaro-toolchain/bin/
+
+#-----------------------------------------------------
+#below you usually do not need to change
+ARCH_CPU=arm
+ARCH_PLATFORM=imx6q
+export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM KERNEL_SRCDIR
+CROSS_COMPILE=/opt/gcc-linaro-arm-linux-gnueabihf-4.7-2013.03/bin/arm-linux-gnueabihf-
+export CROSS_COMPILE
+export CFLAGS="-Wall -O2 -fsigned-char -mcpu=cortex-a9 -mfpu=vfp -mfloat-abi=hard -DFSL_ARM=1 "
+export DEBUG_CFLAGS="-Wall"
+export CC=${CROSS_COMPILE}gcc
