@@ -4,4 +4,6 @@ aclocal -I m4
 autoconf
 automake -a
 make autotools
-./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/install
+#./configure --host=arm-none-linux-gnueabi --prefix=$(pwd)/install
+# auto determine the --host string to fit armhf toolchain
+./configure --host=$(basename $CROSS_COMPILE |sed "s/-$//") --prefix=$(pwd)/install
