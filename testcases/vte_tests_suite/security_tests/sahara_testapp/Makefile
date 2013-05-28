@@ -1,4 +1,5 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+################################################################################
+#Copyright (C) 2005-2009,2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -6,13 +7,12 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-###################################################################################################
+################################################################################
 #
 #    @file   Makefile
 #
 #    @brief  configuration file to compile the sahara_testapp test.
 #
-###################################################################################################
 #Revision History:
 #                            Modification     Tracking
 #Author/Core ID                  Date          Number    Description of Changes
@@ -23,11 +23,12 @@
 #D.Simakov/smkd001c           21/09/2006     TLSbo76069   Compilation issue
 #Spring Zhang                 24/11/2009     ENGR118408   disable -mfpu=vfp in 2.6.28
 #Spring Zhang                 10/12/2009     ENGR118408   disable -O2 in 2.6.31
+#Spring Zhang                 28/05/2012     none         switch between softfp and hard
 #                                                        
-###################################################################################################
+################################################################################
 #Portability: ARM GCC 
 #
-###################################################################################################
+################################################################################
 LTP_DIR = ../../../..
 BIN_DIR = ../../..
 MODULE_DIR = ../../../module_test/vte_test_modules/sahara_module 
@@ -38,7 +39,14 @@ APIINCDIR = $(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include
 #Error: After calling ioctl successfully first time, it will return errno 22(EINVAL) 
 #       at the second time, even not enter ioctl().
 #CFLAGS="-DPROJECT_ELVIS=1 -O2 -fsigned-char -mfloat-abi=softfp"
-CFLAGS="-DPROJECT_ELVIS=1 -fsigned-char -mfloat-abi=softfp -mfpu=neon -march=armv7-a"
+#CFLAGS="-DPROJECT_ELVIS=1 -fsigned-char -mfloat-abi=softfp -mfpu=neon -march=armv7-a"
+#change after armhf toolchain
+CFLAGS="-DPROJECT_ELVIS=1 -fsigned-char -mfpu=neon -march=armv7-a"
+ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
+CFLAGS += -mfloat-abi=softfp
+else
+CFLAGS += -mfloat-abi=hard
+endif
 
 ifeq ($(ARCH_PLATFORM), mxc27530evb)
 CFLAGS += -DCONFIG_ARCH_MXC91231
