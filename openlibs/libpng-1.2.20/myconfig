@@ -1,7 +1,9 @@
 #!/bin/sh
 
+#./configure --host=arm-none-linux-gnueabi \
+
 if [ ! -e Makefile ]; then
-./configure --host=arm-none-linux-gnueabi \
+./configure --host=`basename $CROSS_COMPILE |sed "s/-$//"` \
 CFLAGS="-I../zlib-1.2.3" \
 CXXFLAGS="-I../zlib-1.2.3" \
 CPPFLAGS="-I../zlib-1.2.3" \
