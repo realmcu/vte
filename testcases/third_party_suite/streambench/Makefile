@@ -6,16 +6,16 @@
 #
 #http://www.opensource.org/licenses/gpl-license.html
 #http://www.gnu.org/copyleft/gpl.html
-###################################################################################################
+################################################################################
 #
 #        @file   Makefile
 #
 #        @brief  configuration file to compile the cdrom_driver_testapp.
 #
-###################################################################################################
+################################################################################
 #Portability: ARM GCC
 #
-###################################################################################################
+################################################################################
 LTP_DIR=../../../..
 BIN_DIR=../../
 
@@ -26,7 +26,12 @@ OBJS=$(patsubst %.c,%*.o,$(SRCS))
 
 TARGET=stream_benchmark
 
-CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a  -mfpu=neon -mfloat-abi=softfp
+NEON_CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a  -mfpu=neon
+ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
+NEON_CFLAGS += -mfloat-abi=softfp
+else
+NEON_CFLAGS += -mfloat-abi=hard
+endif
 SOFT_CFLAGS = -Wall -O3 -fsigned-char -march=armv7-a
 
 all: $(TARGET)
@@ -49,6 +54,6 @@ clean:
 	@echo "************************************************"
 
 $(TARGET): Makefile
-	$(CROSS_COMPILE)gcc $(CFLAGS) stream.c -o stream_benchmark
+	$(CROSS_COMPILE)gcc $(NEON_CFLAGS) stream.c -o stream_benchmark
 	$(CROSS_COMPILE)gcc $(SOFT_CFLAGS) stream.c -o stream_benchmark_soft
 
