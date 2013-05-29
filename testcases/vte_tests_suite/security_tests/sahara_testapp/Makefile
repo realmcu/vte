@@ -41,12 +41,12 @@ APIINCDIR = $(KLINUX_SRCDIR)/drivers/mxc/security/sahara2/include
 #CFLAGS="-DPROJECT_ELVIS=1 -O2 -fsigned-char -mfloat-abi=softfp"
 #CFLAGS="-DPROJECT_ELVIS=1 -fsigned-char -mfloat-abi=softfp -mfpu=neon -march=armv7-a"
 #change after armhf toolchain
-CFLAGS="-DPROJECT_ELVIS=1 -fsigned-char -mfpu=neon -march=armv7-a"
 ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
-CFLAGS += -mfloat-abi=softfp
+CFLAGS = -mfloat-abi=softfp
 else
-CFLAGS += -mfloat-abi=hard
+CFLAGS = -mfloat-abi=hard
 endif
+CFLAGS += "-DPROJECT_ELVIS=1 -fsigned-char -mfpu=neon -march=armv7-a"
 
 ifeq ($(ARCH_PLATFORM), mxc27530evb)
 CFLAGS += -DCONFIG_ARCH_MXC91231
