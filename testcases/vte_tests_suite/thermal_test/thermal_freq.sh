@@ -45,7 +45,8 @@ setup()
 
     #TODO add setup scripts
 
-    THERMO_PATH="/sys/devices/virtual/thermal/thermal_zone0"
+#    THERMO_PATH="/sys/devices/virtual/thermal/thermal_zone0" 
+     THERMO_PATH="/sys/devices/soc.0/2000000.aips-bus/21bc4e0.thermal"
 
     loops=10
 
