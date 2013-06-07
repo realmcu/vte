@@ -91,16 +91,8 @@ env_test()
         BL_DIR=/sys/class/backlight/pwm-backlight.0
     fi
 
-    if [ $platfm -eq 61 ]; then  #LVDS
-        BL_DIR=/sys/class/backlight/pwm-backlight.0
-    fi
-
-    if [ $platfm -eq 63 ]; then
-	    if [ "$platStr" = "IMX6Q-Sabre-SD" ]; then  #LVDS
-			BL_DIR=/sys/class/backlight/pwm-backlight.0
-		else 
-			BL_DIR=/sys/class/backlight/pwm-backlight.3
-		fi
+    if [ $platfm -eq 61 ] || [ $platfm -eq 63 ]; then  #LVDS
+	BL_DIR=`find /sys/class/backlight -name "*backlight*" | sed -n '$p'`
     fi
 
     if [ ! -d $BL_DIR ]
@@ -110,7 +102,7 @@ env_test()
         return $RC
     fi
 
-    echo $BL_DIR
+    echo "backlight path is $BL_DIR"
     return $RC
 }
 
@@ -120,7 +112,7 @@ brightness_test()
 
     max=`cat $BL_DIR/max_brightness`
     default=`cat $BL_DIR/brightness`
-    echo $max 
+    echo "MAX brightness is $max"
     # Set brightness from 0~max
     myvar=0
     while [ $myvar -le $max ]
@@ -135,6 +127,9 @@ brightness_test()
             RC=1
         fi
         myvar=$((myvar + 1))
+	if [ $max -le 20 ]; then
+	    sleep 1
+	fi
     done
     myvar=$((myvar - 1))
     while [ $myvar -ge 0 ]
@@ -149,6 +144,9 @@ brightness_test()
             RC=1
         fi
         myvar=$((myvar - 1))
+	if [ $max -le 20 ]; then
+	    sleep 1
+	fi
     done
   
     if [ $RC -eq 0 ]
