@@ -115,6 +115,7 @@ typedef enum {
      eYUY2 = 17,/*YUYV*/
      eYUV444 = 18,
 	 eNV16 = 19,
+     eYVU420 = 20,
      eUNKNOWN
    }eEPType_Format;
 
@@ -146,7 +147,8 @@ static sFmt aFmt[ ]= {
        {"YUY2",17,16},
        {"YUV444",18,24},
 	   {"NV16",19,16},
-       {NULL, 20, 0}
+	   {"YVU420",20, 16},
+       {NULL, 21, 0}
       };
 
 char * options = "i:I:x:y:O:o:b:f:Hi:C";
@@ -191,7 +193,7 @@ static int parse_input(int argc, char ** argv)
 
  strcpy(ofilename,"out.bmp");
  strcpy(oformat,"BMP24");
- while((opt = getopt(argc, argv, options)) > 0)
+ while((opt = getopt(argc, argv, options)) > 0 )
  {
   switch(opt)
   {
@@ -238,6 +240,7 @@ static int parse_input(int argc, char ** argv)
       cflag = 1;
       break;
    default:
+	  printf("opt is %s",optarg);
       printf("wrong parameter \n");
       usage();
   }
@@ -334,7 +337,7 @@ static int process_img()
       if ( strcmp(iformat,"BMP24") ==0)
       {
        int bc=((aFmt[oenc].bs + 7)&(~7)) / 8;
-       if(oenc == eYUV420)
+			if(oenc == eYUV420 || oenc == eYVU420)
        lseek(fdout, (xres * yres * 3) / 2 - 1,SEEK_SET);
        else
        lseek(fdout,xres * yres * bc - 1,SEEK_SET);
@@ -715,6 +718,7 @@ static int process_img()
    break;
 
    case eYUV420:
+   case eYVU420:
    {
 	   long bias = xres * yres;
 	   if(isz - offset < yres * xres * 1.5)
@@ -739,8 +743,17 @@ static int process_img()
 			   long u,v;
 			   long k = 0;
 			   long ky = i * xres + j;
-			   long ku = ((i * xres)>>2) + (j>>1) + bias;/*u plane*/
-			   long kv = ((i * xres)>>2) + (j>>1) + bias + (bias>>2);/*v plane*/   
+						long ku,kv;
+						if(fmt == eYUV420)
+						{
+							ku = ((i * xres)>>2) + (j>>1) + bias;/*u plane*/
+							kv = ((i * xres)>>2) + (j>>1) + bias + (bias>>2);/*v plane*/
+						}
+						else if(fmt == eYVU420)
+						{
+							kv = ((i * xres)>>2) + (j>>1) + bias;/*u plane*/
+							ku = ((i * xres)>>2) + (j>>1) + bias + (bias>>2);/*v plane*/	
+						}
 #if 0 
 			   printf("\r processing %d pixel , line %d, x %d\n",ky,i,j);
 			   printf("\r bias %d, kv %d,ku %d\n",bias, kv,ku );
