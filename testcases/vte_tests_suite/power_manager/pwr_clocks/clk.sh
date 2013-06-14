@@ -46,7 +46,7 @@ setup()
         mount -t debugfs nodev /sys/kernel/debug || return $?
         mount_pt=/sys/kernel/debug
     else
-        mount_pt=$(echo $mountpt | awk '{print $3}')
+        mount_pt=$(echo $mount_pt | awk '{print $3}')
     fi
 
     return $RC
