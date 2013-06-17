@@ -1,6 +1,6 @@
 #!/bin/sh -x
 ##############################################################################
-#Copyright (C) 2012 Freescale Semiconductor, Inc.
+#Copyright (C) 2012, 2013 Freescale Semiconductor, Inc.
 #All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
@@ -17,6 +17,7 @@
 # Spring Zhang          15/03/2012  Initial ver., integrate old separate script
 # Spring Zhang          15/03/2012  Add ethernet clock check
 # Andy Tian             09/04/2012  Add pcie clock check
+# Andy Tian             17/06/2013  Porting for 3.5.7 clk tree
 
 
 # Function:     setup
@@ -70,10 +71,10 @@ get_clk_cnt()
 {
   target=$1
   ct=0
-  list=$(find ${mount_pt}/clock -name "${target}*")
+  list=$(find ${mount_pt}/clk -path ${mount_pt}/dummy -prune -o -name "${target}*" -print)
   for i in $list; do
-    if [ -e $i/usecount ]; then
-        cnt=$(cat ${i}/usecount)
+    if [ -e $i/clk_enable_count ]; then
+        cnt=$(cat ${i}/clk_enable_count)
         ct=$(expr $cnt + $ct)
     fi
   done
