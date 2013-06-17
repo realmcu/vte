@@ -1,4 +1,4 @@
-#Copyright (C) 2005-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright (C) 2005-2009, 2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -13,6 +13,7 @@
 #Author                          Date          Number    Description of Changes
 #-------------------------   ------------    ----------  -------------------------------------------
 #ZiYe Yang                   15/08/2008       n/a        initialization of usb storage probe test application
+#Andy Tian                   17/13/2013       n/a        change g_file_storage to g_mass_storage for 3.5.7 upgrade
 #====================================================================================================
 #Portability:  ARM GCC  gnu compiler
 #==================================================================================================*/
@@ -50,14 +51,14 @@ anal_res()
 }
 remove_test()
 {
-	modprobe -r g_file_storage
+	modprobe -r g_mass_storage
 	TMP_RC=$?
 	anal_res  
 }
 probe_test()
 {
         #$modprobe arcotg_udc
-	modprobe g_file_storage file=${FILES} removable=1
+	modprobe g_mass_storage file=${FILES} removable=1
 	TMP_RC=$?
 	anal_res
 }
