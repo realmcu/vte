@@ -39,7 +39,11 @@ setup()
     if [ $platid -eq 53 ] || [ $platid -eq 60 ]; then
         cable_dir="/sys/devices/platform/sii902x.0"
     else
-        cable_dir="/sys/devices/platform/mxc_hdmi"
+    	  if [ `uname -r` > "3.5" ]; then
+	     cable_dir="/sys/devices/soc.0/20e0000.hdmi_video"
+	  else
+	     cable_dir="/sys/devices/platform/mxc_hdmi"        
+	  fi
     fi
 
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then

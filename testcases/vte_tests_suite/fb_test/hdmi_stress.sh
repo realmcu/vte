@@ -35,11 +35,17 @@ setup()
 	# trap exit and ctrl+c
     trap "cleanup" 0 2
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
-       echo "Already enable HDMI in boot cmdline"
-       if [ $(cat /sys/devices/platform/mxc_hdmi/cable_state) = "plugout" ]; then
-          echo "Not plug in HDMI cable in board"
-          RC=1
-       fi
+    	echo "Already enable HDMI in boot cmdline"
+	if [ `uname -r` > "3.5" ]; then
+		cable_dir="/sys/devices/soc.0/20e0000.hdmi_video"
+	else
+		cable_dir="/sys/devices/platform/mxc_hdmi"
+	fi
+	cstate=$(cat $cable_dir/cable_state)
+       	if [ $cstate = "plugout" ]; then
+        	echo "Not plug in HDMI cable in board"
+          	RC=1
+       	fi
     else
        echo "Not enable HDMI in boot cmdline"
        RC=1
@@ -482,12 +488,21 @@ i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
     mod=$(expr $i % 2)
-    if [ $mod -eq 0 ]; then
-    echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    if [ `uname -r` > "3.5" ]; then
+    	if [ $mod -eq 0 ]; then
+   	echo 1 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	else
+	echo 0 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	fi
+	cat /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
     else
-    echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    	if [ $mod -eq 0 ]; then
+    	echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    	else
+    	echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    	fi
+    	cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
     fi
-    cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
    	for mode in $modes; do
    	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
    	cat /sys/class/graphics/${hdmi_fb}/mode
@@ -526,12 +541,21 @@ i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
     mo=$(expr $i % 2)
-    if [ $mo = 0 ]; then
-    echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    if [ `uname -r` > "3.5" ]; then
+    	if [ $mo -eq 0 ]; then
+	echo 1 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	else
+	echo 0 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	fi
+	cat /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable 
     else
-    echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    	if [ $mo -eq 0 ]; then
+    	echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    	else
+    	echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
+    	fi
+    	cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
     fi
-    cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
    	for mode in $defaudiomodes; do
    	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
    	cat /sys/class/graphics/${hdmi_fb}/mode
