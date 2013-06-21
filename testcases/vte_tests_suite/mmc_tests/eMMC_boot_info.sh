@@ -56,10 +56,14 @@ return $RC
 
 check_emmc_card()
 {
-  cards=$(ls /sys/devices/platform/*/mmc_host/*/*/boot_info)	
+    if [ `uname -r` > "3.5" ]; then
+		cards=$(ls /sys/devices/*/*/*/mmc_host/*/*/boot_info)
+	else
+		cards=$(ls /sys/devices/platform/*/mmc_host/*/*/boot_info)
+	fi
 	for i in $cards
 	do
-   emmc_card=$emmc_card" "$(dirname $i)
+		emmc_card=$emmc_card" "$(dirname $i)
 	done
 }
 RC=0
