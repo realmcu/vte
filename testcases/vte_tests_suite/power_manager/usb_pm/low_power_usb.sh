@@ -22,14 +22,8 @@
 #Andy Tian                   2012/06/19        NA        Add port skip for auto suspend
 #Andy Tian                   2013/03/20        NA        Enable wakeup only for supported
 #Andy Tian                   2013/04/23        NA        Fix a bug when enable device remote wakeup
+#Andy Tian                   2013/06/21        NA        3.5.7 version
 #--------           ------------    ----------  -------------------------------
-
-#control interface for usb host controler
-FSL_EHCI_INTERFACE="fsl-ehci*"
-#control interface for hosts controller
-FSL_USB2_UDC="fsl-usb2-udc"
-#control interface for OTG controller
-FSL_USB2_OTG="fsl-usb2-otg"
 
 SKIP_USBPORT=$1
 
@@ -37,36 +31,12 @@ SYS_USB_DEV="/sys/bus/usb/devices/*"
 
 enable_usb_wakeup()
 {
- #enable host control wakeup
- for i in $(ls /sys/devices/platform/${FSL_USB2_UDC}/power/wakeup)
- do
- echo enabled > $i
- echo "echo enabled > $i" 
- done
- #enable OTG control wakeup
- for i in $(ls /sys/devices/platform/${FSL_USB2_OTG}/power/wakeup)
- do
- echo enabled > $i
- echo "echo enabled > $i" 
- done
- #enable ehci host control  
- for i in $(ls /sys/devices/platform/${FSL_EHCI_INTERFACE}/power/wakeup)
- do
- echo enabled > $i
- echo "echo enabled > $i" 
- done
-
- #enable all usb device wakeup
- usb_ehci_ctrls=$(ls ${SYS_USB_DEV}/configuration)
- for i in $usb_ehci_ctrls
- do
-	 ctrl=$(dirname $i)/power/wakeup
-	if [ -e "$ctrl" ]; then
-       	echo enabled > $ctrl
-   		echo "echo enabled > $ctrl"
-		sleep 2
-	fi
- done
+	#for i in $(ls $SYS_USB_DEV/*/power/wakeup)
+	for i in $(find /sys -name wakeup | grep usb)
+	do
+		echo enabled > $i
+		echo "echo enabled > $i"
+	done
 }
 
 auto_usb_dev()
@@ -101,15 +71,4 @@ enable_usb_wakeup
 auto_usb_dev
 
 sleep 5
-
-#usb_clk_list=$(cat /proc/cpu/clocks | grep usb | cut -c 46-47 | awk {'print $1'})
-
-RT=0
-for i in $usb_clk_list
-do
-  if [ $i -ne 0 ]; then
-     echo "usb clock is not zero"
-     RT=1
-  fi
-done
 exit $RT
