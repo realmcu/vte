@@ -3,21 +3,20 @@
 KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
 
 #kernel source dir
-#KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
 KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
 
 #kernel build dir
 KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 
 #cross compiler path
-export PATH=$PATH:/opt/freescale/usr/local/gcc-4.6.2-glibc-2.13-linaro-multilib-2011.12/fsl-linaro-toolchain/bin/
+export PATH=$PATH:/opt/poky/1.4.1/sysroots/i686-pokysdk-linux/usr/bin/cortexa9hf-vfp-neon-poky-linux-gnueabi
 
 #-----------------------------------------------------
 #below you usually do not need to change
 ARCH_CPU=arm
 ARCH_PLATFORM=imx6q
 export KLINUX_SRCDIR KLINUX_BLTDIR ARCH_CPU ARCH_PLATFORM KERNEL_SRCDIR
-CROSS_COMPILE=/opt/gcc-linaro-arm-linux-gnueabihf-4.7-2013.03/bin/arm-linux-gnueabihf-
+CROSS_COMPILE=/opt/poky/1.4.1/sysroots/i686-pokysdk-linux/usr/bin/cortexa9hf-vfp-neon-poky-linux-gnueabi/arm-poky-linux-gnueabi-
 export CROSS_COMPILE
 export CFLAGS="-Wall -O2 -fsigned-char -mcpu=cortex-a9 -mfpu=vfp -mfloat-abi=hard -DFSL_ARM=1 "
 export DEBUG_CFLAGS="-Wall"
