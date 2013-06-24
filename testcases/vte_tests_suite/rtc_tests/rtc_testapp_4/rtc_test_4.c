@@ -281,9 +281,7 @@ static void sighandlerPrint (FILE *fp, int signo, int code, ucontext_t *context,
   backtrace_symbols_fd (bt, bt_size, fileno (fp));
 }
 
-
-
-static void sighandlerABRT (int signo, struct siginfo *si, void *ctx)
+static void sighandlerABRT (int signo, siginfo_t *si, void *ctx)
 {
   void *bt [128];
   int bt_size;
@@ -295,7 +293,6 @@ static void sighandlerABRT (int signo, struct siginfo *si, void *ctx)
   longjmp(jmpbuf,1);
   /*exit (1);*/
 }
-
 
 int installSignalHandlers (void)
 {
