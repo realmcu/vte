@@ -113,8 +113,13 @@ setup()
     cd $LTPROOT/testcases/bin
     cp red_BGR24 /tmp/red_BGR24
     cp ${STREAM_PATH}/video/mpeg2_720x576.mpg /tmp
-    cp dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt /tmp
+    cp api_storage dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt /tmp
     cd
+    # delete VTE binary PATH for it will meet nfs server no responding error
+    # in Yocto
+    OLD_NFS_PATH=`mount |grep /mnt/nfs|awk '{print $1}'`
+    umount /mnt/nfs
+    PATH=`echo $PATH|sed 's/:\/mnt\/nfs.*$//'`
     export PATH=$PATH:/tmp
 
     modprobe ar6000
@@ -154,7 +159,7 @@ setup()
         echo 1 > $bus_freq_ctl
         res=`cat $bus_freq_ctl | grep "enabled" | wc -l`
         if [ $res -eq 1 ]; then
-            tst_resm TPASS "Bus Freq scaling is enabled"
+            tst_resm TINFO "Bus Freq scaling is enabled"
         else
             tst_resm TFAIL "fail to enable BUS-FREQ"
             RC=1
@@ -171,17 +176,22 @@ setup()
             ifconfig eth0 down
             ifconfig eth1 down 2>/dev/null
 
-            ahb_path=`find /sys/kernel/debug/clock -name "ahb_clk"`
+            ahb_normal=/sys/kernel/debug/clk/osc/pll2_bus/periph_pre/periph/ahb
+            ahb_low_bus=/sys/kernel/debug/clk/osc/periph_clk2_sel/periph_clk2/periph/ahb
+            ahb_audio=/sys/kernel/debug/clk/osc/pll2_bus/pll2_pfd2_396m/pll2_198m/periph_pre/periph/ahb
             # Clock determination for entered low busfreq mode
             sleep 10
-            loop=3
+            loop=6
             k=0
             if_success=0
             while [ $k -lt $loop ]; do
-                ahb_rate=`cat $ahb_path/rate`
-                if [ $ahb_rate -eq 24000000 ]; then
-                    if_success=1
-                    break
+                if [ -e "$ahb_low_bus" ]; then
+                    ahb_path=$ahb_low_bus
+                    ahb_rate=`cat $ahb_path/clk_rate`
+                    if [ $ahb_rate -eq 24000000 ]; then
+                        if_success=1
+                        break
+                    fi
                 fi
                 k=`expr $k + 1`
                 sleep 10
@@ -204,6 +214,9 @@ cleanup()
     cd /tmp
     rm -f red_BGR24 mpeg2_720x576.mpg dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt
     cd -
+    ifconfig eth0 up
+    udhcpc
+    mount -t nfs -o nolock $OLD_NFS_PATH /mnt/nfs
     if [ $platfm -eq 51 ] || [ $platfm -eq 41 ]; then
         echo 0 > $dvfs_per_ctl
     fi
@@ -289,10 +302,6 @@ dvfs_per_stress()
 suspend_stress()
 {
     RC=4
-	cp `which rtc_testapp_6` /tmp/ || {
-        echo "TFAIL: no rtc_testapp_6 found"
-        exit $RC
-    }
     i=0
     while [ $i -lt 200 ]; do
         i=`expr $i + 1`
