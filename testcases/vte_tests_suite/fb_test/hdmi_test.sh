@@ -157,15 +157,16 @@ hdmi_audio_playback_multichannel()
     export TST_COUNT=3   # Set up is initialized as test 0
     RC=4
     tst_resm TINFO "Test HDMI multi channel"
-    for i in "0 1 2 3 4"; do
-        echo 0 > /sys/class/graphic/fb${i}/blank
+    fbx="0 1 2 3 4"
+    for i in $fbx; do
+        echo 0 > /sys/class/graphic/fb$i/blank
     done
 	  echo -e "\033[9;0]" > /dev/tty0
     num=`aplay -l |grep -i "imxhdmisoc" |awk '{ print $2 }'|sed 's/://'`
-    mkdir -p /mnt/temp
-    umount /mnt/temp
-    mount -t tmpfs tmpfs /mnt/temp || exit 1
-    stream_path=$STREAM_PATH/esai_stream/
+    mkdir -p /mnt/usb
+    umount /mnt/usb
+    mount -t ext3 /dev/sda1 /mnt/usb || exit 1
+    stream_path=$STREAM_PATH/esai_stream
     FILELIST="sine-6ch192k16bit.wav sine-6ch176k16bit.wav sine-6ch96k16bit.wav sine-6ch88k16bit.wav sine-6ch48k16bit.wav sine-6ch44k16bit.wav sine-6ch32k16bit.wav \
               sine-8ch192k16bit.wav sine-8ch176k16bit.wav sine-8ch96k16bit.wav sine-8ch88k16bit.wav sine-8ch48k16bit.wav sine-8ch44k16bit.wav sine-8ch32k16bit.wav \
               32k24bit-six-S24_LE.wav 44k24bit-six-S24_LE.wav 48k24bit-six-S24_LE.wav 88k24bit-six-S24_LE.wav 96k24bit-six-S24_LE.wav sine-8ch192k24bit.wav sine-8ch48k24bit.wav"    
