@@ -136,12 +136,15 @@ test_case_01()
     echo "==========================="
     echo model3d ES2.0
     echo "==========================="
-    ./model3d 1000 1000 || RC=$(echo $RC model3d)
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+	cd model3d
+	./model3d 1000 1000 || RC=$(echo $RC model3d)
 
     echo "==========================="
     echo sample_test ES2.0
     echo "==========================="
-    ./sample_test 1000 || RC=$(echo $RC sample_test)
+    cd ${TEST_DIR}/${APP_SUB_DIR}
+	./sample_test 1000 || RC=$(echo $RC sample_test)
 
     echo "==========================="
     echo mcube_es20 stencil test
@@ -264,11 +267,11 @@ test_case_03()
     if [ -e es20_conform/GTF_ES/glsl/GTF/GTF ]; then
         cd es20_conform/GTF_ES/glsl
         ./GTF/GTF -width=64 -height=64 -noimagefileio \
-            -l=/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
+            -l=/home/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
             && ./GTF/GTF -width=113 -height=47 -noimagefileio \
-            -l=/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
+            -l=/home/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
             && ./GTF/GTF -width=640 -height=480 -noimagefileio \
-            -l=/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
+            -l=/home/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
             || RC=$(echo $RC es20_conformance)
     fi
 
@@ -549,7 +552,7 @@ test_case_09()
         for i in `ls tutorial*` 
             do 
                 echo $i;
-                #./$i -f 1000;                 
+                ./$i -f 1000;                 
             done
         echo tiger
         /opt/viv_samples/tiger/tiger
