@@ -389,7 +389,7 @@ test_case_02()
 #TODO give TCID
 TCID="test_storage_multi"
 #TODO give TST_COUNT
-TST_COUNT=1
+TST_COUNT=2
 RC=0
 
 #print test info
