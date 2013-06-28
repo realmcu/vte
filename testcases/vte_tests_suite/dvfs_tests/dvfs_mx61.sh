@@ -86,7 +86,8 @@ cleanup()
     if [ -n "$old_governor" ]; then
         echo $old_governor > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     fi
-    if [ -n "$old_freq" ]; then
+	#only set old freq if governor is userspace
+    if [ "$old_governor" = "userspace" ] && [ -n "$old_freq" ]; then
         echo $old_freq > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
     fi
 
@@ -426,8 +427,8 @@ test_case_06()
 pre_bus_mode()
 {
 	mount -t debugfs nodev /sys/kernel/debug
-	axi_path=$(find /sys/kernel/debug/clock/osc_clk -name axi_clk)
-	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch0_axi_clk)
+	axi_path=$(find /sys/kernel/debug/clk/osc/ -name axi)
+	ddr_path=$(find /sys/kernel/debug/clk/osc/ -name mmdc_ch0_axi)
 	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 	platfm.sh
 	platfm=$?
@@ -451,8 +452,8 @@ clean_bus_mode()
 check_status()
 {
 RC=0
-axi_real=$(cat ${axi_path}/rate)
-ddr_real=$(cat ${ddr_path}/rate)
+axi_real=$(cat ${axi_path}/clk_rate)
+ddr_real=$(cat ${ddr_path}/clk_rate)
 
 declare -a axi;
 declare -a ddr;
@@ -477,8 +478,8 @@ low)
 while [ true ]; do
 	if [ ${axi[0]} -ne $axi_real ];then
 		sleep 1
-		axi_real=$(cat ${axi_path}/rate)
-		ddr_real=$(cat ${ddr_path}/rate)
+		axi_real=$(cat ${axi_path}/clk_rate)
+		ddr_real=$(cat ${ddr_path}/clk_rate)
 	else
 		RC=0
 		break
@@ -489,8 +490,8 @@ audio)
 while [ true ]; do
 	if [ ${ddr[1]} -lt $ddr_real ];then
 		sleep 1
-		axi_real=$(cat ${axi_path}/rate)
-		ddr_real=$(cat ${ddr_path}/rate)
+		axi_real=$(cat ${axi_path}/clk_rate)
+		ddr_real=$(cat ${ddr_path}/clk_rate)
 	else
 		RC=0
 		break
@@ -501,8 +502,8 @@ medium)
 while [ true ]; do
 	if [ ${ddr[2]} -ne $ddr_real ];then
 		sleep 1
-		axi_real=$(cat ${axi_path}/rate)
-		ddr_real=$(cat ${ddr_path}/rate)
+		axi_real=$(cat ${axi_path}/clk_rate)
+		ddr_real=$(cat ${ddr_path}/clk_rate)
 	else
 		RC=0
 		break
@@ -513,8 +514,8 @@ high)
 while [ true ]; do
 	if [ ${ddr[3]} -ne $ddr_real ];then
 		sleep 1
-		axi_real=$(cat ${axi_path}/rate)
-		ddr_real=$(cat ${ddr_path}/rate)
+		axi_real=$(cat ${axi_path}/clk_rate)
+		ddr_real=$(cat ${ddr_path}/clk_rate)
 	else
 		RC=0
 		break
