@@ -283,22 +283,27 @@ determine_platform()
 	find=`cat /proc/cpuinfo | grep "Hardware" | grep "i.MX6 Quad"| wc -l`;		
     if [ $find -eq 1 ]		
     then		
-	find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;		
-	p=IMX6-SABRELITE		
+        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;		
+        p=IMX6-SABRELITE		
     fi
 
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "Device Tree" | wc -l`;
     if [ $find -eq 1 ]
     then
-        find=`cat /proc/cpuinfo | grep "Revision" | grep "63" | wc -l`;
-	if [ $find -eq 1 ]; then
-		p=IMX6Q-Sabre-SD
-	fi
-        find=`cat /proc/cpuinfo | grep "Revision" | grep "61" | wc -l`;
-	if [ $find -eq 1 ]; then
-		p=IMX6DL-Sabre-SD
-	fi
+        if grep imx6q-sabresd /proc/device-tree/compatible > /dev/null; then
+            p=IMX6Q-Sabre-SD
+        fi
+        if grep imx6q-sabreauto /proc/device-tree/compatible > /dev/null; then
+            p=IMX6-SABREAUTO
+        fi
+        if grep imx6dl-sabresd /proc/device-tree/compatible > /dev/null; then
+            p=IMX6DL-Sabre-SD
+        fi
+        if grep imx6dl-sabreauto /proc/device-tree/compatible > /dev/null; then
+            p=IMX6DL-SABREAUTO
+        fi
     fi
+
 
     if [ "$p" = "IMX31-3STACK" ]
     then
@@ -562,6 +567,120 @@ CPU revision    : 10
 Hardware        : Freescale i.MX6 Quad/DualLite (Device Tree)
 Revision        : 63312
 Serial          : 161609d4d72d7838
+
+---MX6Q ARD board with device tree - 3.5.7 1.0 alpha
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 1988.28
+
+processor       : 1
+BogoMIPS        : 1988.28
+
+processor       : 2
+BogoMIPS        : 1988.28
+
+processor       : 3
+BogoMIPS        : 1988.28
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3 tls
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX6 Quad/DualLite (Device Tree)
+Revision        : 63412
+Serial          : 121449d4d72d7394
+
+cat /proc/device-tree/model
+Freescale i.MX6Q SABRE Automotive Infotainment Board
+
+cat /proc/device-tree/compatible
+fsl,imx6q-sabreautofsl,imx6q
+
+---MX6Q SD board with device tree - 3.5.7 1.0 alpha
+Processor       : ARMv7 Processor rev 10 (v7l)                                  
+processor       : 0                                                             
+BogoMIPS        : 790.52                                                        
+                                                                                
+processor       : 1                                                             
+BogoMIPS        : 790.52                                                        
+                                                                                
+processor       : 2                                                             
+BogoMIPS        : 790.52                                                        
+                                                                                
+processor       : 3                                                             
+BogoMIPS        : 790.52                                                        
+                                                                                
+Features        : swp half thumb fastmult vfp edsp neon vfpv3 tls               
+CPU implementer : 0x41                                                          
+CPU architecture: 7                                                             
+CPU variant     : 0x2                                                           
+CPU part        : 0xc09                                                         
+CPU revision    : 10                                                            
+                                                                                
+Hardware        : Freescale i.MX6 Quad/DualLite (Device Tree)                   
+Revision        : 63412                                                         
+Serial          : 1f0d21d4d72d7838                                              
+
+# cat /proc/device-tree/compatible                           
+fsl,imx6q-sabresdfsl,imx6q
+
+# cat /proc/device-tree/model                                
+Freescale i.MX6Q SABRE Smart Device Board
+
+---MX6DL SMD board with device tree - 3.5.7 1.0 alpha
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 790.52
+
+processor       : 1
+BogoMIPS        : 790.52
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3 tls
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX6 Quad/DualLite (Device Tree)
+Revision        : 61411
+Serial          : 080c51d4d72d7421
+
+root@imx6dlsabresd:~# cat /proc/device-tree/compatible
+fsl,imx6dl-sabresdfsl,imx6dl
+
+root@imx6dlsabresd:~# cat /proc/device-tree/model
+Freescale i.MX6 DualLite SABRE Smart Device Board
+
+
+---MX6DL ARD board with device tree - 3.5.7 1.0 alpha
+Processor       : ARMv7 Processor rev 10 (v7l)
+processor       : 0
+BogoMIPS        : 790.52
+
+processor       : 1
+BogoMIPS        : 790.52
+
+Features        : swp half thumb fastmult vfp edsp neon vfpv3 tls 
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x2
+CPU part        : 0xc09
+CPU revision    : 10
+
+Hardware        : Freescale i.MX6 Quad/DualLite (Device Tree)
+Revision        : 61411
+Serial          : 160119d4d72d783b
+
+root@imx6dlsabreauto:~# cat /proc/device-tree/model
+Freescale i.MX6 DualLite SABRE Automotive Infotainment Board
+
+root@imx6dlsabreauto:~# cat /proc/device-tree/compatible
+fsl,imx6dl-sabreautofsl,imx6dl
+
 EOF
 }
 
