@@ -54,7 +54,7 @@ setup()
 
 	trap "cleanup" 0
 	modprobe galcore
-	if [ -nz "$GPU_DRIVER_PATH" ];then
+	if [ -z "$GPU_DRIVER_PATH" ];then
 		export GPU_DRIVER_PATH=/usr/lib
 	fi
 	rm $GPU_DRIVER_PATH/libOpenVG.so
