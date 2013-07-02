@@ -159,7 +159,10 @@ test_case_03()
     TSTCMD="/unit_tests/mxc_vpu_test.out"
     VPATH="${STREAM_PATH}/video/"
     SRCLIST="4+mpeg2_720x576.mpg 3+SD720x480.vc1.rcv 0+akiyo.mp4 2+starwars640x480.264 1+stream.263"
-    EFORMAT="0 1 2 3 7"
+    # 2013.7.2, 3.5.7, VC1 encode is not supported, so removed '3' in EFORMAT
+    # list. Before, unit test don't exit non-zero return code, now unit test
+    # add such error code.
+    EFORMAT="0 1 2 7"
 
     #${TSTCMD} -E "-o enc.264 -w 176 -h 144 -f 0" -D "-i /vectors/vga.264 -f 2"
     echo "test play files while encode"
