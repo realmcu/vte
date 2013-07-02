@@ -1,9 +1,13 @@
 #!/bin/sh  -x
 
 # Default Offset values
-OFF_REDBOOT=1024			# 1K after the start, just after the MBR
-OFF_UCONFIG=786432          # 786K after the start
+OFF_REDBOOT=1024	    # 1K after the start, just after the MBR
+#offset for uboot v2009.08
+OFF_UCONFIG=786432          # 768K after the start
+#offset for uboot v2012.10 - v2013.04
+OFF_UCONFIG_DT=393216        # 384K after the start
 OFF_KERNEL=1048576    		# 1M after the start
+OFF_DTB=7340032		# 7M after the start
 UCONFIG_MAX_SIZE=262144     # max uboot config size 256k
 DEF_DEVNODE="/dev/null"		# default applies to target
 LOGFILE=updater.log
@@ -17,8 +21,10 @@ showhelp() {
 usage $bn [-h] [-k <zImage name>] [-b <redboot name>] [-r <ext2 image file>] [-n <device node>] [-o <offset>] [-i] [-c]
   -h				displays this help message
   -k <uImage/zImage name>       update the kernel.
-  -f <uboot config name>        update the uboot config env
-  -b <uboot/redboot name>		update uboot/redboot
+  -d <fdt name>			update the flatten device tree(.dtb file)
+  -u <uboot config name>        update the uboot config env
+  -f <new uboot config name>    update the new uboot config with DT env
+  -b <uboot/redboot name>	update uboot/redboot
   -r <rootfs image file>        update the root file system, including ext2, gz. Device node is different than -b and -k
   -n <device node>		device node to use. Default is ${DEF_DEVNODE}, so please specify it.
   -o <offset> 			offset to use. In Decimal
@@ -36,7 +42,9 @@ eot
 DO_REDBOOT=0
 DO_KERNEL=0
 DO_UCONFIG=0
-DO_OFFSET=0			# if -k and -r and -o specified, what does offset mean ?
+DO_UCONFIG_DT=0
+DO_DTB=0
+DO_OFFSET=0		# if -k and -r and -o specified, what does offset mean ?
 DO_INIT=0
 DO_CLEAN=0
 DO_RFS=0
@@ -154,7 +162,9 @@ while [ "$moreoptions" = 1  -a $# -gt 0 ] ; do
   case $1 in
     -h) showhelp ; exit ;;
     -k) ZIMAGE=$2; KN_OFFSET=${OFF_KERNEL} ; DO_KERNEL=1 ; shift ;;
-    -f) UCONFIG=$2; UC_OFFSET=${OFF_UCONFIG} ; DO_UCONFIG=1 ; shift ;;
+    -d) DTB=$2; DTB_OFFSET=${OFF_DTB} ; DO_DTB=1 ; shift ;;
+    -u) UCONFIG=$2; UC_OFFSET=${OFF_UCONFIG} ; DO_UCONFIG=1 ; shift ;;
+    -f) UCONFIG_DT=$2; UC_OFFSET_DT=${OFF_UCONFIG_DT} ; DO_UCONFIG_DT=1 ; shift ;;
     -b) REDBOOT=$2 ; BL_OFFSET=${OFF_REDBOOT} ; DO_REDBOOT=1 ; shift ;;
     -r) RFS=$2 ; DO_RFS=1 ; shift ;;
     -o) OFFSET=$2 ; DO_OFFSET=1 ; shift ;;
@@ -185,8 +195,8 @@ fi
 if [ ! -e "${DEVNODE}" ] ; then
 	echo "${DEVNODE}: no such file or directory"
 	exit 254
-elif echo $DEVNODE |grep "sda"; then
-    echo "device node should not be sda"
+elif echo $DEVNODE |grep "sda" || echo $DEVNODE |grep "sdb"; then
+    echo "device node should not be sda, sdb"
     exit 67
 fi
 
@@ -217,8 +227,21 @@ if [ $DO_KERNEL -eq 1 ] ; then
 		echo "${ZIMAGE}: no such file or directory"
 		exit 254
 	fi
-	#            FILE       NODE       OFFSET  
+	#            FILE       NODE       OFFSET
 	update_chunk ${ZIMAGE} ${DEVNODE} ${KN_OFFSET} 	
+	echo " Done"
+fi
+
+# Update FDT
+if [ $DO_DTB -eq 1 ] ; then
+	echo -n "Writing the flatten device tree ${DTB} to ${DEVNODE}..."
+	if [ ! -e ${DTB} ] ; then
+		echo " Failed"
+		echo "${DTB}: no such file or directory"
+		exit 254
+	fi
+	#            FILE       NODE       OFFSET
+	update_chunk ${DTB} ${DEVNODE} ${DTB_OFFSET}
 	echo " Done"
 fi
 
@@ -234,12 +257,30 @@ if [ $DO_UCONFIG -eq 1 ] ; then
         echo " Uboot config file is larger than 256k, will corrupt kernel"
         exit 254
     fi
-	#            FILE       NODE       OFFSET  
+	#            FILE       NODE       OFFSET
 	update_chunk ${UCONFIG} ${DEVNODE} ${UC_OFFSET} 	
 	echo " Done"
 fi
 
-# do I have to update bootloader ?
+# update DT uboot config
+if [ $DO_UCONFIG_DT -eq 1 ] ; then
+	echo -n "Writing the DT uboot config ${UCONFIG_DT} to ${DEVNODE} at offset $UC_OFFSET_DT ..."
+	if [ ! -e ${UCONFIG_DT} ] ; then
+		echo " Failed"
+		echo "${UCONFIG_DT}: no such file or directory"
+		exit 254
+	fi
+    if [ `ls -l ${UCONFIG_DT}|awk '{print $5}'` -gt $UCONFIG_MAX_SIZE ]; then
+        echo " Uboot config file is larger than 256k, will corrupt kernel"
+        exit 254
+    fi
+	#            FILE       NODE       OFFSET
+	update_chunk ${UCONFIG_DT} ${DEVNODE} ${UC_OFFSET_DT}
+	echo " Done"
+fi
+
+
+## do I have to update redboot ?
 if [ $DO_REDBOOT -eq 1 ] ; then
 	echo "Writing redboot ${REDBOOT} to ${DEVNODE}..."
 	if [ ! -e ${REDBOOT} ] ; then
@@ -254,14 +295,14 @@ if [ $DO_REDBOOT -eq 1 ] ; then
 		echo -n "WARNING: ${REDBOOT} seems to have padding (leading zeros). Proceed anyway ? [yes|no]: "
 		read yes_or_no
 		if [ "${yes_or_no}" = "yes" ] ; then
-            #            FILE       NODE       OFFSET  
+            #            FILE       NODE       OFFSET
             ${DD} if=${REDBOOT} of=${DEVNODE} bs=${BL_OFFSET} seek=1 skip=1
 			echo "Proceed with padding data"
         else
             exit 67
 		fi
     else
-        #            FILE       NODE       OFFSET  
+        #            FILE       NODE       OFFSET
         update_chunk ${REDBOOT} ${DEVNODE} ${BL_OFFSET}
 	fi
 
@@ -317,13 +358,13 @@ if [ $DO_RFS -eq 1 ] ; then
         ISCMPD=1
     fi
 
-	echo ${RFS} | egrep -e '\.tar\.gz$' >> ${LOGFILE} 2>&1
+    echo ${RFS} | egrep -e '\.tar\.gz$' >> ${LOGFILE} 2>&1
     ISTAR=$?
     if [ $ISTAR -ne 0 ]; then
         echo ${RFS} | egrep -e '\.tgz$' >> ${LOGFILE} 2>&1
         ISTAR=$?
     fi
-	echo ${RFS} | egrep -e '\.ext2$' >> ${LOGFILE} 2>&1
+    echo ${RFS} | egrep -e '\.ext2$' >> ${LOGFILE} 2>&1
     ISEXT2=$?
 
     mkdir -p /mnt/msc
