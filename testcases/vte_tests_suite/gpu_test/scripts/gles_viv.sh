@@ -54,7 +54,6 @@ setup()
     RC=0
 
     trap "cleanup" 0 3
-    modprobe galcore
     return $RC
 }
 
@@ -69,10 +68,6 @@ cleanup()
     RC=0
 
     #TODO add cleanup code here
-    if [ -z "$NOCLEANUP" ];then
-        modprobe -r galcore
-    fi
-
     return $RC
 }
 
