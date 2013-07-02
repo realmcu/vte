@@ -58,8 +58,6 @@ export DFBARGS=module-dir=/usr/lib/directfb-1.4-0/
 chip=$(platfm.sh)
 if [ $chip = "IMX6Sololite-ARM2" ];then
 modprobe  galcore baseAddress=0x80000000 
-else
-modprobe  galcore 
 fi
 return $RC
 }
@@ -76,7 +74,9 @@ RC=0
 
 #TODO add cleanup code here
 if [ -z "$NOCLEANUP" ];then
+	if [ $chip = "IMX6Sololite-ARM2" ];then
 	modprobe -r galcore
+    fi
 fi
 return $RC
 }
