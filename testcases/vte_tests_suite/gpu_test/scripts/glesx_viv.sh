@@ -51,7 +51,6 @@ setup()
     export TST_COUNT=0
     RC=0
     trap "cleanup" 0 3
-    #modprobe galcore
     return $RC
 }
 
@@ -66,9 +65,6 @@ cleanup()
     RC=0
 
     #TODO add cleanup code here
-    #if [ -z "$NOCLEANUP" ];then
-    #    modprobe -r galcore
-    #fi
 
 	if [ -n "$trip_hot_old" ]; then
 	 	echo $trip_hot_old > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp

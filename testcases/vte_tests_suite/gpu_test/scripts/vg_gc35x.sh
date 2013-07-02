@@ -54,8 +54,6 @@ setup()
 	chip=$(platfm.sh)
 	if [ $chip = "IMX6Sololite-ARM2" ];then
 		modprobe  galcore baseAddress=0x80000000 
-	else
-		modprobe  galcore 
 	fi
 
 	if [ -z "$GPU_DRIVER_PATH" ];then
@@ -82,7 +80,9 @@ cleanup()
 #	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
 
 	if [ -z "$NOCLEANUP" ];then
+		if [ $chip = "IMX6Sololite-ARM2" ];then
 		modprobe -r galcore
+    	fi
 	fi
 	return $RC
 }

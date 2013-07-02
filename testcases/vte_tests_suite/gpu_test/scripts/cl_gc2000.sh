@@ -49,7 +49,6 @@ export TST_TOTAL=4
 export TCID="setup"
 export TST_COUNT=0
 RC=0
-modprobe galcore
 trap "cleanup" 0
 return $RC
 }
@@ -65,9 +64,6 @@ cleanup()
 RC=0
 
 #TODO add cleanup code here
-if [ -z "$NOCLEANUP" ];then
-	modprobe -r galcore
-fi
 return $RC
 }
 
