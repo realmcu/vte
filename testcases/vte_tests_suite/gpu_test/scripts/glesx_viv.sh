@@ -103,7 +103,8 @@ test_case_01()
     echo "==========================="
     echo simple draw
     echo "==========================="
-    ./simple_draw 100 || RC=$(echo $RC simple draw)
+     cd ${TEST_DIR}/${APP_SUB_DIR}
+	./simple_draw 100 || RC=$(echo $RC simple draw)
     ./simple_draw 100 -s || RC=$(echo $RC simple draw -s)
 
 
@@ -221,11 +222,11 @@ test_case_03()
     if [ -e es20_conform/GTF_ES/glsl/GTF/GTF ]; then
         cd es20_conform/GTF_ES/glsl
         ./GTF/GTF -width=64 -height=64 -noimagefileio \
-            -l=/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
+            -l=/home/root/es20_conformance_mustpass_64x64 -run="$(pwd)/GTF/mustpass.run" \
             && ./GTF/GTF -width=113 -height=47 -noimagefileio \
-            -l=/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
+            -l=/home/root/es20_conformance_mustpass_113x47 -run="$(pwd)/GTF/mustpass.run" \
             && ./GTF/GTF -width=640 -height=480 -noimagefileio \
-            -l=/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
+            -l=/home/root/es20_conformance_mustpass_640x480 -run="$(pwd)/GTF/mustpass.run" \
             || RC=$(echo $RC es20_conformance)
     fi
 
@@ -396,12 +397,13 @@ APP_SUB_DIR=
 
 setup || exit $RC
 #judge rootfs type
-rt="Ubuntu"
-cat /etc/issue | grep Linaro || rt="others"
+rt="Yocto"
+cat /etc/issue | grep Yocto || rt="others"
 
-if [ $rt = "Ubuntu" ];then
+if [ $rt = "Yocto" ];then
     APP_SUB_DIR="ubuntu_11.10/test"
-    export DISPLAY=:0.0
+    export VIV_DESKTOP=0
+	export DISPLAY=:0.0
     export XAUTHORITY=/home/linaro/.Xauthority 
 else
     #judge the rootfs
