@@ -218,11 +218,9 @@ test_case_04()
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
-
-    tiger -rgba 5650 -frameCount 1000 &
+    cd ${TEST_DIR}/${APP_SUB_DIR} 
+    ./tiger -rgba 5650 -frameCount 50000 &
     td=$!
-
-    rtc_testapp_6 -T 50
     sleep 1
     rtc_testapp_6 -T 50
     sleep 1
@@ -232,11 +230,10 @@ test_case_04()
     sleep 1
     rtc_testapp_6 -T 50
     sleep 1
-
+    rtc_testapp_6 -T 50
+    sleep 1
     kill -9 $td
-
     echo "test PASS"
-
     return $RC
 }
 # Function:     test_case_05
