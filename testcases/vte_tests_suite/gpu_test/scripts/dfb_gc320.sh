@@ -106,11 +106,6 @@ cd ${TEST_DIR}/${APP_SUB_DIR}/directfb
 #./fusion_reactor || RC=$(echo $RC fusion_reactor)
 ./fusion_skirmish || RC=$(echo $RC fusion_skirmish)
 
-cd /opt/viv_samples/hal/unit_test
-export LD_LIBRARY_PATH=/opt/viv_samples/hal/unit_test
-./runtest.sh || RC=$(echo $RC unittest)
-rm -rf result/*
-
 echo $RC
 if [ "$RC" = "0" ]; then
     tst_resm TINFO "Test Pass"
@@ -126,11 +121,47 @@ return $RC
 
 }
 
+# Function:     test_case_02
+# Description   - Test if dfb vdk test ok
+#
+test_case_02()
+{
+	#TODO give TCID
+	TCID="dfb_vdk_test"
+	#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=0
+
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
+
+	#TODO add function test scripte here
+	cd /opt/viv_samples/hal/unit_test
+	export LD_LIBRARY_PATH=/opt/viv_samples/hal/unit_test
+	./runtest.sh || RC=$(echo $RC unittest)
+	rm -rf result/*
+
+	echo $RC
+	if [ "$RC" = "0" ]; then
+		tst_resm TINFO "Test Pass"
+		RC=0
+	else
+		echo $RC
+		echo "Test Fail, above line inclues the error information."
+		tst_resm TINFO "Test Fail"
+		RC=1
+	fi
+
+	return $RC
+
+}
+
 
 usage()
 {
 echo "$0 [case ID]"
 echo "1: sequence test"
+echo "2: vdk test"
 }
 
 # main function
@@ -180,6 +211,9 @@ case "$1" in
 1)
   test_case_01 || exit $RC 
   ;;
+2)
+	  test_case_02 || exit $RC
+	    ;;
 *)
   usage
   ;;
