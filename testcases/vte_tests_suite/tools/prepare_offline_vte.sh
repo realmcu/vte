@@ -19,8 +19,10 @@
 usage()
 {
     cat <<-EOF
-    ./${0##*/} [SD rootfs root directory path]
+    ./${0##*/} [SD rootfs root directory path] [Server IP] [vte folder name]
     e.g.: ./${0##*/} /mnt/msc
+    armhf VTE: ./${0##*/} /mnt/msc 10.192.244.6 vte_mx63_hf
+    softfp VTE: ./${0##*/} /mnt/msc 10.192.225.222 vte_mx63_d
     /mnt/msc is the mount point of SD rootfs root directory
 EOF
     exit 1
@@ -40,16 +42,22 @@ else
     ip=10.192.225.222
 fi
 
+if [ -n "$3" ]; then
+    VTE=$3
+else
+    VTE=vte_mx63
+fi
+
 folder_list="vte/testcases/bin vte/results vte/output util/Graphics/imx61_rootfs/test/3DMarkMobile test_stream/video"
 for f in $folder_list; do
     mkdir -p $rfs/$f
 done
 
-rsync -avz --progress --delete ${ip}::vte_mx61_d/testcases/bin $rfs/vte/testcases
+rsync -avz --progress --delete ${ip}::${VTE}/testcases/bin $rfs/vte/testcases
 vte_list="lib pan runalltests.sh runltp ltpmenu runtest ver_linux"
 vte_list="$vte_list manual_test"
 for f in $vte_list; do
-    rsync -avz --progress --delete ${ip}::vte_mx61_d/$f $rfs/vte
+    rsync -avz --progress --delete ${ip}::${VTE}/$f $rfs/vte
 done
 
 gpu_list="Graphics/imx61_rootfs/test/3DMarkMobile Graphics/imx61_rootfs/test/fps_triangle Graphics/imx61_rootfs/test/simple_draw \
