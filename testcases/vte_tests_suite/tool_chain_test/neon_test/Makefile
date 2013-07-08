@@ -7,11 +7,23 @@ ALL_TARGET = $(TARGET_vfp) $(TARGET_neon) $(TARGET_intrinsics) $(TARGET_asm)
 
 SOURCE = fir.cpp
 
+ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
 CFLAGS := -O3 -fsigned-char -mcpu=cortex-a9 -mfpu=vfp -mfloat-abi=softfp 
-CFLAGS_NEON = -O3 -fsigned-char -mcpu=cortex-a9 -mfloat-abi=softfp -mfpu=neon \
+else
+CFLAGS := -O3 -fsigned-char -mcpu=cortex-a9 -mfpu=vfp -mfloat-abi=hard
+endif
+
+CFLAGS_NEON = -O3 -fsigned-char -mcpu=cortex-a9 -mfpu=neon \
 -ftree-vectorize -ftree-vectorizer-verbose=6
+ifneq ($(findstring -mfloat-abi=hard,$(CFLAGS)), -mfloat-abi=hard)
+CFLAGS_NEON += -mfloat-abi=softfp
+else
+CFLAGS_NEON += -mfloat-abi=hard
+endif
+
 LDFLAGS = -lm
-CROSS_COMPILE := arm-none-linux-gnueabi-
+#comment following line to switch flexibly between -none- and -poky-
+#CROSS_COMPILE := arm-none-linux-gnueabi-
 CC = $(CROSS_COMPILE)g++
 
 all: vfp neon neon_intrinsics
