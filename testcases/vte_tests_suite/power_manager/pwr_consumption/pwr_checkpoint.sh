@@ -35,10 +35,10 @@ setup()
 {
     #prepare offline scripts
     NFS_BIN_DIR=$LTPROOT/testcases/bin
-    PWD=`pwd`
-    cp $NFS_BIN_DIR/platfm.sh $PWD
-    cp $NFS_BIN_DIR/clocks.sh $PWD
+    cp $NFS_BIN_DIR/platfm.sh /tmp
+    cp $NFS_BIN_DIR/clocks.sh /tmp
     umount /mnt/nfs
+    export PATH=$PATH:/tmp
 
     #general setting
     PLATFM_STRING=`platfm.sh`
@@ -145,16 +145,21 @@ enter_busfreq()
     sys_idle
     echo 1 > $BUSFREQ_DIR/enable 
 
-    ahb_path=`find /sys/kernel/debug/clock -name "ahb_clk"`
     # Clock determination for entered low busfreq mode
     sleep 10
     k=0
-    ahb_rate=`cat $ahb_path/rate`
-    while [ $ahb_rate -gt 24000000 ]; do
+    ahb_low_bus=/sys/kernel/debug/clk/osc/periph_clk2_sel/periph_clk2/periph/ahb
+    
+    while [ ! -e "$ahb_low_bus" ]; do
         k=`expr $k + 1`
         echo "Waiting for enter low busfreq mode $k times"
-        sleep 10
-        ahb_rate=`cat $ahb_path/rate`
+        sleep 5
+        if [ -e "$ahb_low_bus" ]; then
+            ahb_rate=`cat $ahb_low_bus/clk_rate`
+            if [ $ahb_rate -eq 24000000 ]; then
+                break
+            fi
+        fi
     done
 
     echo "Enter low busfreq mode success after waiting $k times"
@@ -330,8 +335,6 @@ check_dvfs()
 
     diff clk_before_op clk_after_op ||RC=$?
 
-    rm clk_before_op clk_after_op
-
     return $RC
 }
 
@@ -354,8 +357,6 @@ check_busfreq()
     echo "Compare clocks before and after DVFS on and off"
 
     diff clk_before_op clk_after_op ||RC=$?
-
-    rm clk_before_op clk_after_op
 
     echo "Please ignore usecount but pay attention to clock freq change, if freq doesn't change, it PASS"
 
