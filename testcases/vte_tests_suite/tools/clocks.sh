@@ -8,16 +8,25 @@ fi
 
 printf "%-24s %-20s %3s %9s\n" "clock" "parent" "use" "flags" "rate"
 
-for foo in $(find /sys/kernel/debug/clock -type d); do
-    if [ "$foo" = '/sys/kernel/debug/clock' ]; then
+for foo in $(find /sys/kernel/debug/clk -type d); do
+    if [ "$foo" = '/sys/kernel/debug/clk' ]; then
         continue
     fi
                 
+    # if directory not exists, and no usecount, rate and flags, will skip
+    # for 3.5.7, it's a temp version
+    # TODO: replace it as a formal one
+    if [ ! -e "$foo" ]; then
+        continue
+    fi
     cd $foo
                     
-    ec="$(cat usecount)"
-    rate="$(cat rate)"
-    flag="$(cat flags)"
+    if [ ! -e clk_enable_count ] || [ ! -e clk_rate ] || [ ! -e clk_flags ]; then
+        continue
+    fi
+    ec="$(cat clk_enable_count)"
+    rate="$(cat clk_rate)"
+    flag="$(cat clk_flags)"
         
     clk="$(basename $foo)"
     cd ..
