@@ -123,8 +123,9 @@ void setup(void)
 void help(void)
 {
         printf("Usage : -D <V4L_Device>.To put V4L device (default /dev/v4l/video0)\n");
-        printf("Usage : -H <height>. To put capture image height\n");
-        printf("Usage : -W <width>. Capture image width\n");
+        printf("Usage : -F <width,><height>. input width & height\n");
+        printf("Usage : -H <height>. output  image height\n");
+        printf("Usage : -W <width>. output image width\n");
         printf("Usage : -S To do interactive resizing\n");
         printf("Usage : -B <left,top,width,height> To do cropping of the video.\n");
         printf("                                   The cropping restangle size is (width,heyght) pixels.\n");
@@ -194,10 +195,12 @@ int main(int argc, char **argv)
             Eflag = 0, 
             Yflag = 0,
             Jflag = 0,
+			Fflag = 0,
             vflag = 0;
 
         char *Dopt, 
              *Hopt, 
+			 *Fopt,
 			 *Mopt,
              *Wopt, 
              *Topt,
@@ -212,8 +215,9 @@ int main(int argc, char **argv)
         option_t options[] =
         {
                 { "D:", &Dflag,         &Dopt },        /* Video capturing device               */
-                { "H:", &Hflag,         &Hopt },        /* Capturing height                     */
-                { "W:", &Wflag,         &Wopt },        /* Capturing width                      */
+                { "H:", &Hflag,         &Hopt },        /* out height                     */
+                { "F:", &Fflag,         &Fopt },        /* Capturing height                     */
+                { "W:", &Wflag,         &Wopt },        /* out width                      */
 				{ "M:", &Mflag,         &Mopt },        /* Camera mode */
                 { "S" , &Sflag,         NULL  },        /* Resize test                          */
                 { "B:", &Bflag,         &Bopt },        /* Cropping test                        */
@@ -254,13 +258,17 @@ int main(int argc, char **argv)
         gV4LTestConfig.mCropRect.height = 480;
         gV4LTestConfig.mOverlayType = Yflag ? atoi(Yopt) : V4L2_FBUF_FLAG_OVERLAY;
 		gV4LTestConfig.mMode = Mflag?atoi(Mopt): 0;
-       
+        gV4LTestConfig.iWidth = 640;
+		gV4LTestConfig.iHeight = 480;
 
         if((gV4LTestConfig.mCaseNum > 4)||(gV4LTestConfig.mCaseNum < 1))
         {
                 tst_resm(TBROK, "Invalid option for -C flag : %d", gV4LTestConfig.mCaseNum);
                 return TFAIL;
         }
+
+		if(Fflag)
+			sscanf(Fopt, "%d,%d", &gV4LTestConfig.iWidth, &gV4LTestConfig.iHeight);
 
         if(Bflag)
         {
@@ -348,7 +356,7 @@ int main(int argc, char **argv)
                 tst_resm(TINFO, "Width = %d", gV4LTestConfig.mWidth);
                 tst_resm(TINFO, "Case number = %d", gV4LTestConfig.mCaseNum);
                 tst_resm(TINFO, "Path to output file : %s", gV4LTestConfig.mOutputFile);
-                tst_resm(TINFO, "Camera mode : %s", gV4LTestConfig.mMode);
+                tst_resm(TINFO, "Camera mode : %d", gV4LTestConfig.mMode);
                
                 if(Bflag)
                         tst_resm(TINFO, 

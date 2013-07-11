@@ -83,6 +83,8 @@ typedef struct
         const char * mV4LDevice;
         const char * mOutputDevice;
         char * mOutputFile;
+		int iWidth;
+		int iHeight;
         int mWidth;
         int mHeight;
 		int mMode;
