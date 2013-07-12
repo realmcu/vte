@@ -1,5 +1,5 @@
 
-TARGETS = ptp_main ptp_main_1.02
+TARGETS = ptp_main ptp_main_1.02 ptp_main_yocto
 
 all:
 	@echo "***********************************************"
