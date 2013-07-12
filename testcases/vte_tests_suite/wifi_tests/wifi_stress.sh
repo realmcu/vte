@@ -19,7 +19,7 @@ setup()
     RC=0
 
     trap "cleanup" 0
-    modprobe ar6000 || return 1
+    modprobe ath6kl_sdio || return 1
     sleep 5
     iwconfig wlan0 mode managed || return 1
     sleep 2
@@ -47,7 +47,7 @@ RC=0
 
 route del -host $WSERVERIP dev wlan0
 route del default dev wlan0
-modprobe -r ar6000
+modprobe -r ath6kl_sdio
 #TODO add cleanup code here
 
 return $RC
