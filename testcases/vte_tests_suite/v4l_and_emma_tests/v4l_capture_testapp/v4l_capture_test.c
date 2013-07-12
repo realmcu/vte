@@ -1,5 +1,5 @@
 /***
-**Copyright 2006-2009 Freescale Semiconductor, Inc. All Rights Reserved.
+**Copyright 2006-2013 Freescale Semiconductor, Inc. All Rights Reserved.
 **
 **The code contained herein is licensed under the GNU General Public
 **License. You may obtain a copy of the GNU General Public License
@@ -59,8 +59,8 @@ extern "C"{
 const char gaPixFormat[7][10] = { 
 	"uyvy",
 	"YUYV",
-	"YUV420"
-		"rgb565"
+	"YUV420",
+	"RGB565"
 };
 
 
@@ -72,7 +72,7 @@ const int gaPixFormatID[7] =   {
 };
 /*======================== LOCAL MACROS =====================================*/
 
-#define PIX_FMT_NUM             3
+#define PIX_FMT_NUM             4
 #define CLEAR(x)                memset(&x, 0, sizeof(x));
 #define MXCFB_MEM_ADDRESS       0x83F00000
 #define MAX_STR_LEN 50
@@ -646,9 +646,7 @@ int init_capture(void)
 		return TFAIL;
 	}
 	/* Get original format */
-
 	CLEAR(gFormat);
-
 
 	gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
@@ -679,42 +677,53 @@ int init_capture(void)
 				gOrigFormatRect.width, gOrigFormatRect.height);        
 		tst_resm(TINFO,"Original pixel format: %s",gOrigPixFmtName);
 	}
-
-	/* Set format */
-
-	CLEAR(gFormat);
+	/*set input format */
 
 	gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	gFormat.fmt.pix.width       = gV4LTestConfig.mWidth;
 	gFormat.fmt.pix.height      = gV4LTestConfig.mHeight;
 	gFormat.fmt.pix.pixelformat = gPixelFormat;
-
 	if(ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0)
 	{
-		tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
+		tst_resm(TWARN, "%s input formatting failed", gV4LTestConfig.mV4LDevice);
 		return TFAIL;
 	}
-	/* Set crop */
 
-	if(gV4LTestConfig.mCrop)
+	/* Set output format */
+#if 1
+	CLEAR(gFormat);
+	gFormat.type = V4L2_BUF_TYPE_VIDEO_OVERLAY;
+	gFormat.fmt.win.w.left = 0;
+	gFormat.fmt.win.w.top = 0;
+	gFormat.fmt.win.w.width = gV4LTestConfig.iWidth;
+	gFormat.fmt.win.w.height = gV4LTestConfig.iHeight;
+	if(ioctl(gFdV4L, VIDIOC_S_FMT, &gFormat) < 0)
 	{
-		if(do_cropping())
-			return TFAIL;
+		tst_resm(TWARN, "%s output formatting failed", gV4LTestConfig.mV4LDevice);
+		return TFAIL;
 	}
+#endif
 
 	/* Verification pixel format of the device */
-
+	CLEAR(gFormat);
+	gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
 	{
 		tst_resm(TWARN, "%s formatting failed", gV4LTestConfig.mV4LDevice);
 		return TFAIL;
 	}
-
 	if(gFormat.fmt.pix.pixelformat != gPixelFormat)
 	{
 		tst_resm(TWARN, "Pixel format %s is not supported by device %s", gPixFmtName, gV4LTestConfig.mV4LDevice);
 		return TFAIL;
-	}   
+	} 
+
+	/* Set crop */
+	if(gV4LTestConfig.mCrop)
+	{
+		if(do_cropping())
+			return TFAIL;
+	}
 
 	if(gV4LTestConfig.mCaseNum == PRP_ENC_ON_D)
 	{
@@ -740,6 +749,7 @@ int init_capture(void)
 	{
 		tst_resm(TINFO,"\tCapture : Format image width = %d", gFormat.fmt.pix.width);
 		tst_resm(TINFO,"\tCapture : Format image height = %d", gFormat.fmt.pix.height);
+		tst_resm(TINFO,"\tCapture : Format image size = %d", gFormat.fmt.pix.sizeimage);
 	}
 
 	return TPASS;
@@ -1585,13 +1595,14 @@ void display_to_fb (unsigned char * aStart, int aLength)
 {
 
 	int dstWidth = gScreenInfo.xres * gScreenInfo.bits_per_pixel / 8;
-	int srcWidth = gFormat.fmt.pix.width * gScreenInfo.bits_per_pixel / 8;
+	/* int srcWidth = gFormat.fmt.pix.width * gScreenInfo.bits_per_pixel / 8; */
+	int srcWidth = gV4LTestConfig.iWidth; 
 
 	unsigned char *pDst = gpFB;
 	unsigned char *pSrc = (unsigned char *)aStart;
 
-	int i = 0, j = 0; 
-	/* RGB565X ounly */
+	int i = 0, j = 0;
+	/* RGB565X only */
 #if 0
 	while(i < 2 * gFormat.fmt.pix.width * gFormat.fmt.pix.height)
 	{
@@ -1608,13 +1619,13 @@ void display_to_fb (unsigned char * aStart, int aLength)
 		}
 	}
 #else
+	printf ("l = %d, dw = %d, sw = %d\n ", aLength, dstWidth, srcWidth);
 	int width = srcWidth < dstWidth ? srcWidth : dstWidth;
-	while(i < 2 * gFormat.fmt.pix.width * gFormat.fmt.pix.height)
+	for (j = 0; j <  gFormat.fmt.pix.height; j++)
 	{
 		memcpy(pDst, pSrc, width);
 		pDst += dstWidth;
 		pSrc += srcWidth;
-		i += 2 * gFormat.fmt.pix.width;
 	}
 #endif
 }
