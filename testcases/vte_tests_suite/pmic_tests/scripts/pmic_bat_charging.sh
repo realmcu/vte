@@ -97,7 +97,6 @@ test_case_01()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test script here
 
     #test list
     clear
@@ -111,7 +110,7 @@ test_case_01()
 
     sleep 2
     bat_status=$(cat $BATTERY)
-    if [ ! "$bat_status" = "Charging"  ];then
+    if [ "$bat_status" != "Charging"  ] || [ "$bat_status" != "Full" ] ;then
         RC=$(expr $RC + 1)
     fi
 
@@ -133,13 +132,11 @@ test_case_02()
     #TODO give TCID 
     TCID="test_usb_charging"
     #TODO give TST_COUNT
-    TST_COUNT=1
+    TST_COUNT=2
     RC=0
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
-
-    #TODO add function test script here
 
     #test list
     clear
@@ -155,7 +152,7 @@ test_case_02()
     fi
 
     bat_status=$(cat $BATTERY)
-    [ "$bat_status" = "Charging" ] || RC=$(expr $RC + 1)
+    [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ] || RC=$(expr $RC + 1)
 
     if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
@@ -176,28 +173,34 @@ test_case_03()
     #TODO give TST_COUNT
     TST_COUNT=3
     RC=0
+	power_type=$1
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test script here
-
     #test list
     clear
     echo "please ensure you boot from battery"
-    read -p "please ensure the usb 5v is in, press Enter to continue"
+	if [ "$power_type" = "ac" ]; then
+		read -p "please ensure the AC 5v is in, press Enter to continue"
+	else
+		read -p "please ensure the usb 5v is in, press Enter to continue"
+	fi
 
     sleep 2
 
     set -x
 
     u_online=$(cat $USB_CHARGER)
+	if [ "$power_type" = "ac" ] ; then
+        u_online=$(cat $AC_CHARGER)
+	fi
     if [ "$u_online" = "0" ]; then
         RC=$(expr $RC + 1)
     fi
 
     bat_status=$(cat $BATTERY)
-    [ "$bat_status" = "Charging" ] ||RC=$(expr $RC + 1)
+    [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ] ||RC=$(expr $RC + 1)
 
     if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
@@ -209,7 +212,7 @@ test_case_03()
     rtc_testapp_6 -T 50
 
     bat_status=$(cat $BATTERY)
-    [ "$bat_status" = "Charging" ] ||RC=$(expr $RC + 1)
+    [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ] ||RC=$(expr $RC + 1)
 
     if [ $platfm_id -eq 50 ]; then
         bat_charge_current=$(cat /sys/class/power_supply/ripley_bat/charge_now | grep "-")
@@ -223,11 +226,108 @@ test_case_03()
     return $RC
 }
 
+test_case_04()
+{
+    TCID="BATTERY_PWR_SWITCH"
+    TST_COUNT=4
+    RC=0
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    #test list
+	# check AC power plugin
+    clear
+    echo "please ensure you boot from battery"
+    read -p "please ensure the AC 5v is switch on, press Enter to continue"
+
+    sleep 2
+
+	set -x
+	tst_resm TINFO "check AC power plugin"
+	ac_online=$(cat $AC_CHARGER)
+    if [ "$ac_online" != "1" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "AC online status is wrong"
+    fi
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ] || RC=$(expr $RC + 1)
+
+    read -p "please plug out the AC 5v, press Enter to continue"
+	tst_resm TINFO "check AC power plugout"
+
+	ac_online=$(cat $AC_CHARGER)
+    if [ "$ac_online" != "0" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "AC online status is wrong"
+    fi
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Discharging" ] || RC=$(expr $RC + 1)
+
+    read -p "please plug in USB 5v, press Enter to continue"
+	tst_resm TINFO "check USB power plugin"
+
+	u_online=$(cat $USB_CHARGER)
+    if [ "$u_online" != "1" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "USB power online status is wrong"
+    fi
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ] || RC=$(expr $RC + 1)
+
+    read -p "please plug out USB 5v, press Enter to continue"
+	tst_resm TINFO "check USB power plugout"
+	u_online=$(cat $USB_CHARGER)
+    if [ "$u_online" != "0" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "USB power online status is wrong"
+    fi
+
+    bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Discharging" ] || RC=$(expr $RC + 1)
+
+    read -p "please plug in AC 5v and USB 5v, press Enter to continue"
+	tst_resm TINFO "check both AC and USB power plugin"
+	ac_online=$(cat $AC_CHARGER)
+    if [ "$ac_online" != "1" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "AC online status is wrong"
+    fi
+   	u_online=$(cat $USB_CHARGER)
+    if [ "$u_online" != "1" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "USB power online status is wrong"
+    fi
+	bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Charging" ] || [ "$bat_status" = "Full" ] || RC=$(expr $RC + 1)
+
+    read -p "please plug out AC 5v and USB 5v, press Enter to continue"
+	tst_resm TINFO "check both AC and USB power plugout"
+	ac_online=$(cat $AC_CHARGER)
+    if [ "$ac_online" != "0" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "AC online status is wrong"
+    fi
+   	u_online=$(cat $USB_CHARGER)
+    if [ "$u_online" != "0" ]; then
+        RC=$(expr $RC + 1)
+		tst_resm TFAIL "USB power online status is wrong"
+    fi
+	bat_status=$(cat $BATTERY)
+    [ "$bat_status" = "Discharging" ] || RC=$(expr $RC + 1)
+	set +x
+
+    return $RC
+}
+
+
 usage()
 {
-    echo "1 aux charging test"	
-    echo "2 usb charging test"	
-    echo "3 charging suspend test"	
+    echo "1: aux charging test"
+    echo "2: usb charging test"
+    echo "3: charging suspend test on USB power"
+    echo "3 ac: charging suspend test on AC power"
+    echo "4: Different power source charging switch test"
 
     exit 1
 }
@@ -241,13 +341,16 @@ setup || exit $RC
 
 case "$1" in
 1)
-    test_case_01 || exit $RC 
+    test_case_01 || exit $RC
     ;;
 2)
     test_case_02 || exit $RC 
     ;;
 3)
-    test_case_03 || exit $RC 
+    test_case_03 $2 || exit $RC
+    ;;
+4)
+    test_case_04 || exit $RC
     ;;
 *)
     usage
