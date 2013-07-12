@@ -91,8 +91,8 @@ setup()
 cleanup()
 {
 
-	# Remove ar6000 and bring up eth0
-	rmmod ar6000
+	# Remove ath6kl_sdio and bring up eth0
+	rmmod ath6kl_sdio
 	count=100
 	#ifconfig eth0 up
 	#udhcpc -i eth0 || dhclient eth0
@@ -115,7 +115,7 @@ cleanup()
 wifi_perf()
 {
 	RC=1
-	modprobe ar6000
+	modprobe ath6kl_sdio
 	sleep 5
 	iwconfig wlan0 mode managed || RC=1
 	iwconfig wlan0 key bbd9837522 || RC=1
@@ -127,7 +127,7 @@ wifi_perf()
 	LOCALIP=$(ifconfig wlan0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'); 
 	time -p iperf -c 10.192.225.222 -n 500M -t 100 -f m
 	sleep 5
-	rmmod ar6000
+	rmmod ath6kl_sdio
 	RC=0
 }
 
