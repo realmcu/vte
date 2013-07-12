@@ -159,6 +159,7 @@ test_case_03()
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
+    tst_resm TINFO "Waiting for test finish, it may take a long time..."
 
     #TODO add function test scripte here
     #test 1hr and check rtc accuracy
