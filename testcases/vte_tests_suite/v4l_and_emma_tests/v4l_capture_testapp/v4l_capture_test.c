@@ -1619,9 +1619,9 @@ void display_to_fb (unsigned char * aStart, int aLength)
 		}
 	}
 #else
-	printf ("l = %d, dw = %d, sw = %d\n ", aLength, dstWidth, srcWidth);
+	//printf ("l = %d, dw = %d, sw = %d\n ", aLength, dstWidth, srcWidth);
 	int width = srcWidth < dstWidth ? srcWidth : dstWidth;
-	for (j = 0; j <  gFormat.fmt.pix.height; j++)
+	for (j = 0; j <  gFormat.fmt.pix.height && j < gV4LTestConfig.iHeight ; j++)
 	{
 		memcpy(pDst, pSrc, width);
 		pDst += dstWidth;
