@@ -58,6 +58,7 @@ SUBDIRS-$(CONFIG_TP_IPERF)       += iperf
 SUBDIRS-$(CONFIG_TP_KEXEC)       += kexec
 SUBDIRS-$(CONFIG_TP_LMBENCH)     += lmbench
 SUBDIRS-$(CONFIG_TP_LINARO_PM)   += linaro-pm-qa
+SUBDIRS-$(CONFIG_TP_MEMTESTER)   += memtester
 SUBDIRS-$(CONFIG_TP_NETWORK)     += network 
 SUBDIRS-$(CONFIG_TP_NUTTCP)      += nuttcp
 SUBDIRS-$(CONFIG_TP_OPROFILE)    +=	oprofile
