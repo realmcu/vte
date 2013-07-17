@@ -384,8 +384,10 @@ test_case_05()
     echo TINFO "test $TST_COUNT: $TCID "
 
     i=1
-    while [ $i -lt 500 ]; do
-        echo $i
+    # 7/17/2013, decrease from 500 times to 50 times to make it finish overnight
+    # On 3.5.7 fastest MX6Q ARD, it finish 60 times in 720 mins.
+    while [ $i -lt 50 ]; do
+        echo "------Stress Test for $i Times------"
         test_case_04 || RC=$(expr $RC + 1)
         i=$(expr $i + 1)
     done
