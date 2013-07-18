@@ -59,7 +59,7 @@ setup()
 	if [ -z "$GPU_DRIVER_PATH" ];then
 		export GPU_DRIVER_PATH=/usr/lib
 	fi
-	rm $GPU_DRIVER_PATH/libOpenVG.so
+	mv $GPU_DRIVER_PATH/libOpenVG.so $GPU_DRIVER_PATH/libOpenVG.so.bak
 	ln -s $GPU_DRIVER_PATH/libOpenVG_355.so $GPU_DRIVER_PATH/libOpenVG.so
 	echo ====== Using 355 VG library =======    
 	return $RC
@@ -77,7 +77,7 @@ cleanup()
 
 	#TODO add cleanup code here
 	rm $GPU_DRIVER_PATH/libOpenVG.so
-#	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
+	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
 
 	if [ -z "$NOCLEANUP" ];then
 		if [ $chip = "IMX6Sololite-ARM2" ];then
@@ -107,13 +107,13 @@ test_case_01()
 	echo "==========================="
 	echo tiger
 	echo "==========================="
-	./tiger -rgba 5650 -frameCount 1000 || RC="tiger"
+	./tiger_vg -rgba 5650 -frameCount 1000 || RC="tiger"
 
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	echo "==========================="
 	echo sample_testvg
 	echo "==========================="
-	./sample_testvg 1000 || RC=$(echo $RC sample_testvg)
+	./sample_testvg355 1000 || RC=$(echo $RC sample_testvg)
 
 
 	echo $RC
@@ -149,14 +149,14 @@ test_case_02()
     echo "==========================="
     echo tiger
     echo "==========================="
-    ./tiger -rgba 5650 -frameCount 10000 &
+    ./tiger_vg  -rgba 5650 -frameCount 10000 &
     pid_tiger=$!
     
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo sample_testvg
     echo "==========================="
-    ./sample_testvg 10000 &
+    ./sample_testvg355 10000 &
     
     wait $pid_tiger 
     RC=$?
@@ -219,7 +219,7 @@ test_case_04()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
     cd ${TEST_DIR}/${APP_SUB_DIR} 
-    ./tiger -rgba 5650 -frameCount 50000 &
+    ./tiger_vg  -rgba 5650 -frameCount 50000 &
     td=$!
     sleep 1
     rtc_testapp_6 -T 50
@@ -290,7 +290,7 @@ test_case_06()
 test_case_07()
 {
 	    #TODO give TCID
-		TCID="sample_test"
+		TCID="multibuffer_test"
 		#TODO give TST_COUNT
 		TST_COUNT=1
 		RC=0
@@ -300,25 +300,25 @@ test_case_07()
 		echo "==========================="
 		export FB_MULTI_BUFFER=1
 		echo FB_MULTI_BUFFER=1
-		./tiger -rgba 5650 -frameCount 300 
+		./tiger_vg  -rgba 5650 -frameCount 300 
 		export FB_MULTI_BUFFER=2
 		echo FB_MULTI_BUFFER=2
-		./tiger -rgba 5650 -frameCount 300
+		./tiger_vg  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=3
 		echo FB_MULTI_BUFFER=3
-		./tiger -rgba 5650 -frameCount 300
+		./tiger_vg  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=2
 		echo FB_MULTI_BUFFER=2
-		./tiger -rgba 5650 -frameCount 300
+		./tiger_vg  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=1
 		echo FB_MULTI_BUFFER=1
-		./tiger -rgba 5650 -frameCount 300
+		./tiger_vg  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=0
 		echo FB_MULTI_BUFFER=0
-		./tiger -rgba 5650 -frameCount 300
+		./tiger_vg  -rgba 5650 -frameCount 300
 		export FB_FRAMEBUFFER_0=/dev/fb1
 		echo 0 > /sys/class/graphics/fb1/blank
-		./tiger -rgba 5650 -frameCount 300
+		./tiger_vg  -rgba 5650 -frameCount 300
 		echo 1 > /sys/class/graphics/fb1/blank
 		echo 0 > /sys/class/graphics/fb0/blank
 		export FB_FRAMEBUFFER_0=/dev/fb0

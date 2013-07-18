@@ -56,8 +56,8 @@ setup()
 	if [ -z "$GPU_DRIVER_PATH" ];then
 		export GPU_DRIVER_PATH=/usr/lib
 	fi
-	rm $GPU_DRIVER_PATH/libOpenVG.so
-	ln -s $GPU_DRIVER_PATH/libOpenVG_3D.so $GPU_DRIVER_PATH/libOpenVG.so
+	mv $GPU_DRIVER_PATH/libOpenVG.so $GPU_DRIVER_PATH/libOpenVG.so.bak
+    ln -s $GPU_DRIVER_PATH/libOpenVG_3D.so $GPU_DRIVER_PATH/libOpenVG.so
 	echo ====== Using 3D VG library =======    
 	return $RC
 }
@@ -74,7 +74,7 @@ cleanup()
 
 	#TODO add cleanup code here
 	rm $GPU_DRIVER_PATH/libOpenVG.so
-	#mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
+	mv $GPU_DRIVER_PATH/libOpenVG.so.bak $GPU_DRIVER_PATH/libOpenVG.so
 	return $RC
 }
 
