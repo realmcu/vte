@@ -105,13 +105,13 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 user=$(clocks.sh | grep caam_mem_clk | awk '{print $3}')
 
-if $user -ne 0
+if [ $user -ne 0 ]; then
 	RC=1
 fi
 
 user=$(clocks.sh | grep caam_mem_clk | awk '{print $4}')
 
-if $user -ne 0
+if [ $user -ne 0 ];then
 	RC=$(expr $RC + 2)
 fi
 
