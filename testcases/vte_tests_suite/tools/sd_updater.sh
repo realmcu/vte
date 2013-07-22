@@ -195,8 +195,8 @@ fi
 if [ ! -e "${DEVNODE}" ] ; then
 	echo "${DEVNODE}: no such file or directory"
 	exit 254
-elif echo $DEVNODE |grep "sda" || echo $DEVNODE |grep "sdb"; then
-    echo "device node should not be sda, sdb"
+elif echo $DEVNODE |grep "sda"; then
+    echo "device node should not be sda"
     exit 67
 fi
 
