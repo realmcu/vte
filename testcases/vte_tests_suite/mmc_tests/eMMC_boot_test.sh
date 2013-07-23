@@ -63,7 +63,7 @@ return $RC
 
 check_emmc_card()
 {
-    if [ `uname -r` > "3.5" ]; then
+    if [ `uname -r` \> "3.5" ]; then
 		cards=$(ls /sys/devices/*/*/*/mmc_host/*/*/boot_info)
 	else
 		cards=$(ls /sys/devices/platform/*/mmc_host/*/*/boot_info)
