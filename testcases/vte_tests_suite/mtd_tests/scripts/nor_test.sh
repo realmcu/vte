@@ -45,12 +45,22 @@ setup()
     RC=1
     trap "cleanup" 0
 
-    mtdnode=/dev/$(cat /proc/mtd | tail -1| cut -d : -f 1)
+    #mtdnode=/dev/$(cat /proc/mtd | tail -1| cut -d : -f 1)
+    if [ `uname -r` \> "3.5" ];then
+   	mtdnode=/dev/$(cat /proc/mtd | grep spi | cut -c 1-4)
+    else
+        mtdnode=/dev/`grep kernel /proc/mtd |awk '{ print $1 }' |cut -d : -f1`
+    fi
     if [ ! -e $mtdnode ];then
         echo "TEST FAIL: No MTD device found, please check..."
         return 1
     fi
-    mtdsize=$(cat /proc/mtd | tail -1|awk '{print $2}')
+    if [ `uname -r` \> "3.5" ];then
+        mtdsize=$(grep spi /proc/mtd |awk '{ print $2 }')
+    else
+        mtdsize=$(grep kernel /proc/mtd |awk '{ print $2 }')
+    fi
+    #mtdsize=$(cat /proc/mtd | tail -1|awk '{print $2}')
 }
 
 cleanup()
