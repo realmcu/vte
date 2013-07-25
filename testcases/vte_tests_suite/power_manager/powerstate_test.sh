@@ -2,7 +2,11 @@
 #refer http://www.kernel.org/doc/Documentation/power/basic-pm-debugging.txt
 
 #do not edit it
-loops=10
+if [ -n "$1" ];then
+	loops=$1
+else
+	loops=10
+fi
 
 setup()
 {
