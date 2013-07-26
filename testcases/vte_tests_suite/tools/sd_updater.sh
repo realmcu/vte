@@ -1,13 +1,15 @@
 #!/bin/sh  -x
 
 # Default Offset values
-OFF_REDBOOT=1024	    # 1K after the start, just after the MBR
+OFF_REDBOOT=1024	        # 1K after the start, just after the MBR
 #offset for uboot v2009.08
 OFF_UCONFIG=786432          # 768K after the start
 #offset for uboot v2012.10 - v2013.04
-OFF_UCONFIG_DT=393216        # 384K after the start
+OFF_UCONFIG_DT=393216       # 384K after the start
+# read from MMC: mmc read ${loadaddr} 0x800 0x2800
 OFF_KERNEL=1048576    		# 1M after the start
-OFF_DTB=7340032		# 7M after the start
+# read from MMC: mmc read ${fdt_addr} 0x4000 0x100
+OFF_DTB=8388608             # 8M after the start
 UCONFIG_MAX_SIZE=262144     # max uboot config size 256k
 DEF_DEVNODE="/dev/null"		# default applies to target
 LOGFILE=updater.log
