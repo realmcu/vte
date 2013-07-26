@@ -84,7 +84,7 @@ tst_resm TINFO "test $TST_COUNT: $TCID "
 
 
 #TODO add function test scripte here
-cd ${TEST_DIR}/${APP_SUB_DIR}
+cd /opt/viv_samples/
 echo "==========================="
 echo unit tests
 echo "==========================="
@@ -96,7 +96,7 @@ if [ -e cl11/UnitTest ]; then
    done
 fi
 
-cd ${TEST_DIR}/${APP_SUB_DIR}
+cd /opt/viv_samples/
 echo "==========================="
 echo fft
 echo "==========================="
@@ -123,8 +123,7 @@ RC=0
 #print test info
 tst_resm TINFO "test $TST_COUNT: $TCID "
 
-
-cd ${TEST_DIR}/${APP_SUB_DIR}
+cd /opt/viv_samples/
 echo "==========================="
 echo unit tests
 echo "==========================="
