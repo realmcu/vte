@@ -245,7 +245,7 @@ int main(int argc, char **argv)
         gV4LTestConfig.mOutputFile = NULL;
         gV4LTestConfig.mWidth = Wflag ? atoi(Wopt) : 640;
         gV4LTestConfig.mHeight = Hflag ? atoi(Hopt) : 480;
-        if((gV4LTestConfig.mCount = Tflag ? atoi(Topt) : 10) <=0)
+        if((gV4LTestConfig.mCount = Tflag ? atoi(Topt) : 1) <=0)
                 tst_resm(TWARN, "Invalid argument for -T  %d", gV4LTestConfig.mCount);;
         gV4LTestConfig.mCaseNum  = Cflag ? atoi(Copt) : PRP_VF;
         gV4LTestConfig.mOutputFormat = Oflag;

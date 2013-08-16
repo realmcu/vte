@@ -1726,20 +1726,22 @@ int VT_v4l_capture_cleanup(void)
 int VT_v4l_capture_test(void)
 {
 	int retValue = TFAIL;
-
-	if(setup_device() != TPASS) 
-	{
-		cleanup_device();
-		return retValue;
-	}
-
-	if (gV4LTestConfig.mCaseNum != PRP_VID_TO_F)
-	{
-		if (process_capture() != TPASS)
+    int loop = gV4LTestConfig.mCount;
+	while (loop --) {
+		if(setup_device() != TPASS) 
 		{
-			tst_resm(TFAIL, "Error image capture!");
 			cleanup_device();
-			return TFAIL;
+			return retValue;
+		}
+
+		if (gV4LTestConfig.mCaseNum != PRP_VID_TO_F)
+		{
+			if (process_capture() != TPASS)
+			{
+				tst_resm(TFAIL, "Error image capture!");
+				cleanup_device();
+				return TFAIL;
+			}
 		}
 	}
 #if 0
