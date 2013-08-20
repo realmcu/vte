@@ -27,7 +27,8 @@ export CFLAGS=-Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
 export LOADLIBES=-L../../../../lib -lltp -lpthread -lm
 
 SUBDIRS = v4l_capture_testapp \
-v4l_output_testapp 
+v4l_output_testapp \
+v4l_capture_uptr
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done
