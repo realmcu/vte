@@ -12,6 +12,8 @@ setup()
     export TCID="GPU_POWER_test"
     # Set up is initialized as test 0
     export TST_COUNT=0
+
+	plt=$(platfm.sh)
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
@@ -45,6 +47,7 @@ test_case_01()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
+	if [ $plt -ne 60 ]; then
     #TODO add function test scripte here
     gles_viv.sh 1 &
 
@@ -61,6 +64,7 @@ test_case_01()
     done
 
     wait
+	fi
 
     echo "now test vg core"
     vg_gc35x.sh 1 &
@@ -117,6 +121,7 @@ test_case_02()
     tloops=100
     count=0
     #TODO add function test scripte here
+	if [ $plt -ne 60 ]; then
     while [ $count -lt $tloops ]
     do
 
@@ -136,7 +141,7 @@ test_case_02()
 
         count=$(expr $count + 1)
     done
-
+	fi
     tloops=100
     count=0
     #TODO add function test scripte here
@@ -206,6 +211,7 @@ test_case_03()
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
     #TODO add function test scripte here
+	if [ $plt -ne 60 ]; then
     gles_viv.sh 1 &
 
     sleep 5
@@ -220,7 +226,7 @@ test_case_03()
     done
 
     wait
-
+	fi
     echo "now test vg core"
     vg_gc35x.sh 1 &
 
