@@ -56,6 +56,7 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	cnt=1
 	ll=0
 	step=1
+    rep=$(cat /proc/cmdline| grep "rep=" | sed 's/rep=/^/'| cut -d '^' -f 2 | cut -d " " -f 1)
 	total_tc=$(cat ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday | grep "TGE-"| wc -l)
 	while [ $search -eq 1 ];do
 	 lct=$(cat ${TEST_PATH}/results/${ARCH_PLATFORM}_${TEST_TYPE}_${CMDFILE}_$tday.txt | grep "TGE-" | wc -l)
@@ -85,7 +86,11 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 				else
 		#4 skip formal fail
 					if [ $total_tc -gt $ll ]; then
-						line=$(expr $ll + 1)
+					    if [ $rep = "1" ]; then
+							line=$ll
+						else
+							line=$(expr $ll + 1)
+						fi
 					echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 					#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 					sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${ll}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
@@ -106,7 +111,11 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 					else
 				#5 has former fail case
 						if [ $total_tc -gt $ll ]; then
-							line=$(expr $ll + 1)
+					    	if [ $rep = "1" ]; then
+								line=$ll
+							else
+								line=$(expr $ll + 1)
+							fi
 							echo $line > ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday
 							#sh -c "sed -i '1,${line}s/^/#/g' ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
 							sh -c "cat ${TEST_PATH}/runtest/$CMDFILE | sed '1,${ll}s/^/#/g' > ${TEST_PATH}/runtest/temp_test_${CMDFILE}_$tday"
@@ -151,14 +160,26 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 	#3 has last success case 
 					if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-						line=$(expr $ll + 1)
+					    	if [ $rep = "1" ]; then
+								line=$ll
+							else
+								line=$(expr $ll + 1)
+							fi
 					else
 			#4 former fail cases is before the last success cases 
-						line=$(expr $line + 1)
+					    	if [ $rep = "1" ]; then
+								line=$line
+							else
+								line=$(expr $line + 1)
+							fi
 					fi
 				else
 	#3 has not last success cases
-					line=$(expr $ll + 1)
+					if [ $rep = "1" ]; then
+						line=$ll
+					else
+						line=$(expr $ll + 1)
+					fi
 				fi
 			else
 			#3 timeout cases
@@ -166,13 +187,25 @@ if [ -e ${TEST_PATH}/temp_cnt_${CMDFILE}_$tday ]; then
 		#3 has last success case 
 					if [ $ll -gt $line ]; then
 			#4 former fail cases is after current success case
-						line=$(expr $ll + 1)
+					    if [ $rep = "1" ]; then
+								line=$ll
+						else
+							line=$(expr $ll + 1)
+						fi
 					else
 			#4 former fail cases is before the last success cases 
-						line=$(expr $line + 1)
+					    if [ $rep = "1" ]; then
+							line=$line
+						else
+							line=$(expr $line + 1)
+						fi
 					fi
 				else
-					line=$(expr $ll + 1)
+					    if [ $rep = "1" ]; then
+							line=$ll
+						else
+							line=$(expr $ll + 1)
+						fi
 				fi
 			fi
 			if [ -z "$line" ]; then
