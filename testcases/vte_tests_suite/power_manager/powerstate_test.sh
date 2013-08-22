@@ -8,6 +8,8 @@ else
 	loops=10
 fi
 
+RC=0
+
 setup()
 {
     trap "clean" 0
@@ -36,6 +38,14 @@ do
     echo standby > /sys/power/state
 done
 
+lines=$(dmesg | grep "PM: early resume of devices complete after" | cut -d " " -f 7)
+for li in $lines
+do
+  if [ $li -lt 1000 ]; then
+    RC=1
+  fi
+done
+
 #test the freezing of processes, suspending of devices, platform
 #global control methods(*) and the disabling of nonboot CPUs
 echo "===Power state processors test==="
@@ -46,6 +56,14 @@ do
     i=$(expr $i + 1)
     echo mem > /sys/power/state
     echo standby > /sys/power/state
+done
+
+lines=$(dmesg | grep "PM: early resume of devices complete after" | cut -d " " -f 7)
+for li in $lines
+do
+  if [ $li -lt 1000 ]; then
+    RC=2
+  fi
 done
 
 #test the freezing of processes, suspending of devices and platform
@@ -60,6 +78,14 @@ do
     echo standby > /sys/power/state
 done
 
+lines=$(dmesg | grep "PM: early resume of devices complete after" | cut -d " " -f 7)
+for li in $lines
+do
+  if [ $li -lt 1000 ]; then
+    RC=3
+  fi
+done
+
 #test the freezing of processes and suspending of devices
 echo "===Power state devices test==="
 i=0
@@ -69,6 +95,14 @@ do
     i=$(expr $i + 1)
     echo mem > /sys/power/state
     echo standby > /sys/power/state
+done
+
+lines=$(dmesg | grep "PM: early resume of devices complete after" | cut -d " " -f 7)
+for li in $lines
+do
+  if [ $li -lt 1000 ]; then
+    RC=4
+  fi
 done
 
 #test the freezing of processes
@@ -81,5 +115,17 @@ do
     echo mem > /sys/power/state
     echo standby > /sys/power/state
 done
-
+lines=$(dmesg | grep "PM: early resume of devices complete after" | cut -d " " -f 7)
+for li in $lines
+do
+  if [ $li -lt 1000 ]; then
+    RC=5
+  fi
+done
+echo $RC
+if [ $RC -eq 0 ]; then
 echo "Test Pass"
+else
+echo "Test Failure"
+fi
+exit $RC
