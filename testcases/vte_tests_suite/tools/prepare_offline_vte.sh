@@ -74,6 +74,7 @@ video="$video WMV9_MPHL_NTSCV9.rcv blue_sky_mp8_2mbps_sh7_1920x1088.vp8"
 video="$video 12_zju_0_0_6.0_foreman_cif.avs"
 video="$video ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264 \
 	Mpeg4_SP3_1920x1080_23.97fps_9760kbps_AACLC_44KHz_2ch_track1_track1.cmp"
+video="$video H264_ML_1920x1080_10Mbps_15fps_noaudio.h264"
 
 for v in $video; do
     rsync -avz --progress --delete ${ip}::test_stream/video/$v $rfs/test_stream/video
