@@ -1,6 +1,6 @@
 #!/bin/bash
 ##############################################################################
-#Copyright 2008-2011 Freescale Semiconductor, Inc. All Rights Reserved.
+#Copyright 2008-2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 #The code contained herein is licensed under the GNU General Public
 #License. You may obtain a copy of the GNU General Public License
@@ -26,6 +26,7 @@
 # Hake                  03/23/2011       n/a        Add MX50 rdp3 etc
 # Spring                07/04/2011       n/a        Add MX53SMD TO2.1 support
 # Spring                11/22/2011       n/a        Add MX6Q description
+# Spring                09/02/2013       n/a        Use L3.10 new framework
 #############################################################################
 # Usage1(return string):
 #   platform=`platfm.sh`
@@ -47,13 +48,14 @@
 #   IMX50ARM2   IMX50ARM2
 #   IMX50RDP    IMX50RDP
 #   IMX50-RDP3    IMX50-RDP3
+#   IMX6Q-Sabre-SD IMX6Q-Sabre-SD
 #   IMX6-SABREAUTO IMX6-SABREAUTO
+#   IMX6DL-Sabre-SD IMX6DL-Sabre-SD
 #   IMX6Solo-SABREAUTO IMX6Solo-SABREAUTO
 #   IMX6DL-SABREAUTO IMX6DL-SABREAUTO
 #   IMX6SL-EVK IMX6SL-EVK
 #   IMX6-SABRELITE IMX6-SABRELITE
 #   IMX6ARM2    IMX6ARM2
-#   IMX6DL-Sabre-SD IMX6DL-Sabre-SD
 #
 # Usage2(return number): 
 #   platfm.sh || platform=$?
@@ -80,6 +82,50 @@
 # Some Platform Info
 #35 TO2 platform:
 #Revision        : 35120
+
+
+# Find platform type in DT kernel
+determine_platform_dt()
+{
+    local find=0
+    RC=67
+
+    find=`grep "MX6Q" /sys/devices/soc0/soc_id |wc -l`
+    if [ $find -eq 1 ]
+    then
+        RC=63
+    fi
+
+    find=`grep "MX6DL" /sys/devices/soc0/soc_id |wc -l`
+    if [ $find -eq 1 ]
+    then
+        RC=61
+    fi
+
+    find=`grep "MX6 Quad SABRE Smart Device" /sys/devices/soc0/machine |wc -l`
+    if [ $find -eq 1 ]
+    then
+        p=IMX6Q-Sabre-SD
+    fi
+
+    find=`grep "MX6 DualLite SABRE Smart Device" /sys/devices/soc0/machine |wc -l`
+    if [ $find -eq 1 ]
+    then
+        p=IMX6DL-Sabre-SD
+    fi
+
+    find=`grep "MX6 Quad SABRE Automotive" /sys/devices/soc0/machine |wc -l`
+    if [ $find -eq 1 ]
+    then
+        p=IMX6-SABREAUTO
+    fi
+
+    find=`grep "MX6 DualLite SABRE Automotive" /sys/devices/soc0/machine |wc -l`
+    if [ $find -eq 1 ]
+    then
+        p=IMX6DL-SABREAUTO
+    fi
+}
 
 # Find the platform type
 determine_platform()
@@ -287,6 +333,7 @@ determine_platform()
         p=IMX6-SABRELITE		
     fi
 
+    # L3.5.7 way
     find=`cat /proc/cpuinfo | grep "Hardware" | grep "Device Tree" | wc -l`;
     if [ $find -eq 1 ]
     then
@@ -369,7 +416,13 @@ determine_platform()
 
 # main
 RC=0
-determine_platform
+
+if [ -e /sys/devices/soc0/machine ]; then
+    determine_platform_dt
+else
+    determine_platform
+fi
+
 echo "$p"
 
 exit $RC
@@ -680,6 +733,26 @@ Freescale i.MX6 DualLite SABRE Automotive Infotainment Board
 
 root@imx6dlsabreauto:~# cat /proc/device-tree/compatible
 fsl,imx6dl-sabreautofsl,imx6dl
+
+---MX6DL SD board with DT - 3.10 alpha
+root@imx6qsabresd:~# cat /sys/devices/soc0/machine
+Freescale i.MX6 DualLite SABRE Smart Device Board
+root@imx6qsabresd:~# cat /sys/devices/soc0/family
+Freescale i.MX
+root@imx6qsabresd:~# cat /sys/devices/soc0/soc_id
+i.MX6DL
+root@imx6qsabresd:~# cat /sys/devices/soc0/revision
+1.1
+
+---MX6Q ARD board with DT - 3.10 alpha
+root@imx6qsabreauto:~# cat /sys/devices/soc0/machine
+Freescale i.MX6 Quad SABRE Automotive Board
+root@imx6qsabreauto:~# cat /sys/devices/soc0/family
+Freescale i.MX
+root@imx6qsabreauto:~# cat /sys/devices/soc0/soc_id
+i.MX6Q
+root@imx6qsabreauto:~# cat /sys/devices/soc0/revision
+1.2
 
 EOF
 }
