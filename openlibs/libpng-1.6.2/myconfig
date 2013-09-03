@@ -1,6 +1,10 @@
 #!/bin/sh
 
-#./configure --host=arm-none-linux-gnueabi \
+#./configure --host=arm-none-linux-gnueabi
+
+mkdir -p m4
+aclocal -I m4
+autoconf
 
 if [ ! -e Makefile ]; then
 ./configure --host=`basename $CROSS_COMPILE |sed "s/-$//"` \
