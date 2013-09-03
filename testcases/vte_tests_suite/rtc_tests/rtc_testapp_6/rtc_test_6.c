@@ -22,6 +22,7 @@ Author              Date          Number    Description of Changes
 Blake            12/29/2008                   Initial version
 Spring Zhang     01/19/2010                  Add standby/mem options 
 Spring Zhang     12/31/2012                  Make C style of standby/mem
+Spring Zhang     09/03/2013                  Add freeze suspend mode
 ===============================================================================
 Portability:  ARM GCC
 =============================================================================*/
@@ -308,9 +309,9 @@ int VT_rtc_test6_cleanup(void)
 {
         int rv = TFAIL;
         int ret = 0;
-        int i;
 
 #if 0
+        int i;
         for( i = 0; i < RTC_TOTAL_STATES; ++i )
         {
                 if( saved_states[i] != 0 )
