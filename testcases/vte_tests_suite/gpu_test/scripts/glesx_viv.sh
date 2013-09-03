@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# Copyright (C) 2011,2012 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011-2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #
 ###############################################################################
 #
-#    @file   gles_test.sh
+#    @file   glesx_test.sh
 #
 #    @brief  shell script template for testcase design "gpu" is where to modify block.
 #
@@ -30,6 +30,7 @@
 #Hake Huang/-----             20110817     N/A          Initial version
 #Andy Tian                    05/15/2012       N/A      add wait for background
 #Andy Tian                    12/14/2012       N/A      add GPU thermal test
+#Shelly Cheng                 09/02/2013       N/A      add more test demo and restructure the sceipt
 # 
 ################################################################################
 
@@ -87,29 +88,70 @@ test_case_01()
     TST_COUNT=1
     RC=0
 
-    #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo 3DMark
-    echo "==========================="
-    if [ -e fsl_imx_linux ]; then
-        cd fsl_imx_linux/
-        ./fm_oes_player || RC="3Dmark"
-    fi
+	#TODO add function test scripte here
+	echo "egl Test case" 
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo egl_test
+	echo "==========================="
+	./egl_2 "width=800,height=600"|| RC=$(echo $RC egl_test) 
 
-    echo "==========================="
-    echo simple draw
-    echo "==========================="
-     cd ${TEST_DIR}/${APP_SUB_DIR}
-	./simple_draw 100 || RC=$(echo $RC simple draw)
-    ./simple_draw 100 -s || RC=$(echo $RC simple draw -s)
+	echo "ES1.1 Test case"
+	echo "==========================="
+	echo simple_draw
+	echo "==========================="
+	cd eglx_es1_1
+	./eglx_es1_1 "width=800,height=600, subcase=0, loop=300" || RC=$(echo $RC simple_draw)
+
+	echo "==========================="
+	echo texture fence
+	echo "==========================="
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	./eglx_es1_2 "width=800,height=600, subcase=0, loop=10,texwidth=1024,texheight=1024"|| RC=$(echo $RC eglx_es1_2_test)
+	./eglx_es1_2 "width=400,height=600, subcase=0, loop=20,texwidth=32,texheight=32"|| RC=$(echo $RC eglx_es1_2_test)
+
+	echo "==========================="
+	echo shared context
+	echo "==========================="
+	./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test)
 
 
-    if [ "$RC" = "0" ]; then
-        RC=0
+	echo "ES2.0 Test case"
+	echo "==========================="
+	echo simple draw vertex color
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=0,loop=300" || RC=$(echo $RC simple_draw_vertex__test)
+
+	echo "==========================="
+	echo test synchronization of eglSwapbuffers
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=0,loop=10,eglsynctest=20" || RC=$(echo $RC sync_eglswap_test)
+	echo "==========================="
+	echo rgb texture
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=2,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC rgb_testure_es2_1_test)
+
+	echo "==========================="
+	echo pure eglSwapBuffers
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=3,loop=30" || RC=$(echo $RC pure_eglswapbuffer_test)
+
+	echo "==========================="
+	echo test texture fence
+	echo "==========================="
+	./eglx_es2_2 "width=800,height=600,subcase=0,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC test_texture_fence_test)
+
+	#echo glx test
+	#echo "==========================="
+	#echo draw quad
+	#echo "==========================="
+	#./glx_quad_1 "width=800,height=600" || RC=$(echo $RC draw_quad_test)
+	
+	if [ "$RC" = "0" ]; then
+		RC=0
     else
         RC=1
     fi
@@ -123,61 +165,93 @@ test_case_01()
 #  
 test_case_02()
 {
-    #TODO give TCID 
-    TCID="gles_con_test"
-    #TODO give TST_COUNT
-    TST_COUNT=2
-    RC=0
+	#TODO give TCID 
+	TCID="gles_con_test"
+	#TODO give TST_COUNT
+	TST_COUNT=2
+	RC=0
 
-    #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
+	#TODO add function test scripte here
 
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo egl_test
-    echo "==========================="
-    ./egl_test &
-    pid_egl=$!
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo egl_test
+	echo "==========================="
+	./egl_2 "width=800,height=600"|| RC=$(echo $RC egl_test) &
+	pid_egl=$!
 
-    echo fps triangle
-    echo "==========================="
-    ./fps_triangle 10000 &
-    pid_tri=$!
+	echo "ES1.1 Test case"
+	echo "==========================="
+	echo simple_draw
+	echo "==========================="
+	cd eglx_es1_1
+	./eglx_es1_1 "width=800,height=600, subcase=0, loop=300" || RC=$(echo $RC simple_draw) &
+	pid_es1_simdra=$!
 
-    echo "==========================="
-    echo simple draw
-    echo "==========================="
-    ./simple_draw 1000 &
-    pid_s1=$!
-    ./simple_draw 1000 -s &
-    pid_s2=$!
+	echo "==========================="
+	echo texture fence            
+	echo "==========================="	
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	./eglx_es1_2 "width=800,height=600, subcase=0, loop=10,texwidth=1024,texheight=1024"|| RC=$(echo $RC eglx_es1_2_test) &
+	pid_es1_texfen_1=$!
+	./eglx_es1_2 "width=400,height=600, subcase=0, loop=20,texwidth=32,texheight=32"|| RC=$(echo $RC eglx_es1_2_test) &
+	pid_es1_texfen_2=$!
 
-    echo "==========================="
-    echo simple triangle
-    echo "==========================="
-    ./simple_triangle &
-    pid_sTri=$!
+	echo "==========================="
+	echo shared context
+	echo "==========================="
+	./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test) &
+	pid_es1_shacon=$!
 
-    echo "==========================="
-    echo torusknot
-    echo "==========================="
-    ./torusknot &
-    pid_tor=$!
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo 3DMark
-    echo "==========================="
-    if [ -e 3DMarkMobile/fsl_imx_linux ]; then
-        cd 3DMarkMobile/fsl_imx_linux/
-        ./fm_oes_player
-    fi
-    wait $pid_egl && wait $pid_tri && wait $pid_s1 && wait $pid_s2 && wait $pid_sTri && wait $pid_tor
-    RC=$?
-    wait
+	echo "ES2.0 Test case"
+	echo "==========================="
+	echo simple draw vertex color
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=0,loop=300" || RC=$(echo $RC simple_draw_vertex__test) &
+	pid_es2_simvercol=$!
+
+	echo "==========================="
+	echo test synchronization of eglSwapbuffers
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=0,loop=10,eglsynctest=20" || RC=$(echo $RC sync_eglswap_test) &
+	pid_es2_synswapbuf=$!
+
+	echo "==========================="
+	echo rgb texture
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=2,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC rgb_testure_es2_1_test) &
+	pid_es2_rgbtex=$!
+
+	echo "==========================="
+	echo pure eglSwapBuffers
+	echo "==========================="
+	./eglx_es2_1 "width=800,height=600,subcase=3,loop=30" || RC=$(echo $RC pure_eglswapbuffer_test) &
+	pid_es2_purswapbuf=$!
+
+	echo "==========================="
+	echo test texture fence
+	echo "==========================="
+	./eglx_es2_2 "width=800,height=600,subcase=0,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC test_texture_fence_test) &
+	pid_es2_texfen=$!
+
+	echo glx test
+	#echo "==========================="
+	#echo draw quad
+	#echo "==========================="
+	#./glx_quad_1 "width=800,height=random600" || RC=$(echo $RC draw_quad_test) &
+	#pid_quad_1=$!
+    
+
+  	wait $pid_egl && wait $pid_es1_simdra && wait $pid_es1_texfen_1 && wait $pid_es1_texfen_2 && wait $pid_es1_shacon && wait $pid_es2_simvercol &&
+	wait $pid_es2_synswapbuf && wait $pid_es2_rgbtex && wait $pid_es2_purswapbuf && wait $pid_es2_texfen 
+
+	RC=$?
+	#wait
 
     if [ $RC -eq 0 ]; then
         echo "TEST PASS"
@@ -253,7 +327,7 @@ test_case_04()
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
-    ./simple_draw 10000 &
+    ./eglx_es2_1 "width=800,height=600,subcase=0,loop=1000" &
     pid=$!
 
     rtc_testapp_6 -T 50
@@ -286,15 +360,29 @@ test_case_05()
     TST_COUNT=4
     RC=0
 
-    #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
+	echo "==========================="
+	echo "glmark2 test"
+	echo "==========================="
+	glmark2-es2
+
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo "3DMark mm06 test"
+	echo "==========================="
+    cd	mm06/bin/fsl_imx_linux
+	if [ -e mm06/bin/fsl_imx_linux ]; then
+		cd mm06/bin/fsl_imx_linux
+		./fm_oes_player || RC="3Dmark"
+	fi
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
     echo "3Dmark20 mm07 test"
     echo "==========================="
-    if [ -e mm07_v21 ]; then
-        cd mm07_v21
+    if [ -e mm07 ]; then
+        cd mm07
         ./fm_oes2_mobile_player
     fi
 
@@ -311,8 +399,8 @@ test_case_05()
     echo "==========================="
     echo "Mirada test"
     echo "==========================="
-    if [ -e Mirada ]; then
-        cd Mirada
+    if [ -e mirada ]; then
+        cd mirada
         ./Mirada
     fi
 
@@ -320,55 +408,6 @@ test_case_05()
 }
 
 
-# Function:     test_case_06
-# Description   - Test if gles applications sequence ok
-#  
-test_case_06()
-{
-    #TODO give TCID 
-    TCID="gles_thermal_test"
-    #TODO give TST_COUNT
-    TST_COUNT=6
-    RC=0
-
-    #print test info
-    tst_resm TINFO "test $TST_COUNT: $TCID "
-
-
-
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-
-	trip_hot_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp`
-	trip_act_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp`
-	cur_temp=`cat /sys/devices/virtual/thermal/thermal_zone0/temp`
-	if [ $cur_temp -lt $trip_hot_old ]; then
-    	norm_fps=`./simple_draw 200 | grep FPS | cut -f3 -d:`
-	else
-		echo "Already in trip hot status"
-		exit 6
-	fi
-
-	let trip_hot_new=cur_temp-10
-	let trip_act_new=cur_temp-15
-
-	# Set new trip hot value to trigger the trip_hot flag
-	echo ${trip_act_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_2_temp
-	echo ${trip_hot_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_1_temp
-	sleep 2
-	if [ $cur_temp -gt $trip_hot_new ]; then
-    	low_fps=`./simple_draw 200 | grep FPS | cut -f3 -d: `
-	else
-		echo "Set trip hot flag failure"
-		exit 6
-	fi
-
-	let drop_fps=norm_fps-low_fps
-	let half_fps=norm_fps/2
-	[ $drop_fps -gt $half_fps ] || RC=6
-
-    return $RC
-
-}
 usage()
 {
     echo "$0 [case ID]"
@@ -377,7 +416,6 @@ usage()
     echo "3: conformance test"
     echo "4: pm test"
     echo "5: performance test"
-    echo "6: Thermal control test"
 }
 
 # main function
@@ -401,7 +439,7 @@ rt="Yocto"
 cat /etc/issue | grep Yocto || rt="others"
 
 if [ $rt = "Yocto" ];then
-    APP_SUB_DIR="ubuntu_11.10/test"
+    APP_SUB_DIR="yocto_1.5_x/bin"
     export VIV_DESKTOP=0
 	export DISPLAY=:0.0
     export XAUTHORITY=/home/linaro/.Xauthority 
