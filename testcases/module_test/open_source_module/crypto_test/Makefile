@@ -14,4 +14,5 @@ install:
 all: modules modules_install
 
 clean:
-	-rm -f *.ko *.o *.mod.c modules.order  Module.symvers .*
+	-rm -f *.ko *.o *.mod.c modules.order Module.symvers .*.cmd
+	-rm -rf .tmp_versions
