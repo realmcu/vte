@@ -132,7 +132,6 @@ test_case_01()
     echo model3d ES2.0
     echo "==========================="
     cd ${TEST_DIR}/${APP_SUB_DIR}
-	cd model3d
 	./model3d 1000 1000 || RC=$(echo $RC model3d)
 
     echo "==========================="
