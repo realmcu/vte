@@ -219,9 +219,10 @@ int main(int argc, char **argv)
         }
         if (!m_opt){
             sleep_mode = (char *)dfl_mode;
-        } else if (strcmp(sleep_mode, "standby") && strcmp(sleep_mode, "mem")){
+        } else if (strcmp(sleep_mode, "standby") && strcmp(sleep_mode, "mem")
+               && strcmp(sleep_mode, "freeze")){
             help();
-            tst_resm(TFAIL,"sleep mode can only be standby|mem");
+            tst_resm(TFAIL,"sleep mode can only be standby|mem|freeze");
             return VT_rv;
         }
         if (t_opt)
@@ -266,7 +267,7 @@ void help(void)
 {
         printf("RTC driver option\n");
         printf("  -d rtc|rtc0|rtc1\t Select RTC device\n");
-        printf("  -m standby|mem\t Set sleep mode\n");
+        printf("  -m standby|freeze|mem\t Set sleep mode\n");
         printf("  -T seconds\t Set RTC alarm time in second\n");
 }
 
