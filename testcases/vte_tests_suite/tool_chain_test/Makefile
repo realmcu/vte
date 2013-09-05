@@ -9,7 +9,7 @@ SRC_spread = spread.c
 SRC_membm = memcpybm.c
 SRC = $(SRC_memcpy) $(SRC_spread) $(SRC_membm) 
 #OBJ =$(patsubst %.c,%.o,$(SRC))
-CFLAGS = -Wall -O2 -lrt -std=gnu99
+CFLAGS += -Wall -O2 -lrt -std=gnu99
 
 all: $(Target_memcpy) $(Target_spread) $(Target_membm) 
 	$(MAKE) -C neon_test
