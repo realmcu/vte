@@ -18,6 +18,9 @@
 #                                 to make the cpu frequency change event easy to see;
 #                                 2, re-struct the code according to the template
 #Spring              04/12/2012   Change cpufreq governor for it's enabled
+#Lina                06/09/2013   Modify code for 3.10 change
+#                                 1, Delete trip_point_2_temp
+#                                 2, Modify THERMAL_PATH 
 ################################################################################
 
 
@@ -44,9 +47,7 @@ setup()
 
 
     #TODO add setup scripts
-
-#    THERMO_PATH="/sys/devices/virtual/thermal/thermal_zone0" 
-     THERMO_PATH="/sys/devices/soc.0/2000000.aips-bus/21bc4e0.thermal"
+    THERMO_PATH="/sys/devices/virtual/thermal/thermal_zone0"
 
     loops=10
 
@@ -54,7 +55,6 @@ setup()
     normal_temp=$(cat ${THERMO_PATH}/temp)
     trip0=$(cat ${THERMO_PATH}/trip_point_0_temp)
     trip1=$(cat ${THERMO_PATH}/trip_point_1_temp)
-    trip2=$(cat ${THERMO_PATH}/trip_point_2_temp)
 
     RC=0
     return $RC
@@ -73,8 +73,9 @@ cleanup()
     #TODO add cleanup code here
     # Recover the original thermal setting
 
-    echo $trip2 > ${THERMO_PATH}/trip_point_2_temp
-    echo $trip1 > ${THERMO_PATH}/trip_point_1_temp
+    echo $trip0 > ${THERMO_PATH}/trip_point_0_temp;
+    echo $trip1 > ${THERMO_PATH}/trip_point_1_temp;
+
     if [ $RC -ne 0 ]
     then
         tst_resm TINFO "Test FAIL"
@@ -88,7 +89,6 @@ usage()
     echo "Usage: $0"
     exit 1
 }
-
 test_case_01()
 {
     RC=1
@@ -99,7 +99,6 @@ test_case_01()
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
-
 
     # change cpufreq to userspace governor
     cpufreq-set -g userspace
@@ -114,16 +113,12 @@ test_case_01()
         #change the hot value
         # we expect the cpufreq is lower when hot critical is meet
 
-        test_temp_hot=$(expr $normal_temp - 5)
-        test_temp_active=$(expr $normal_temp - 15)
+        # Set temp test hot temperature to 30C
+        test_temp_hot=$(expr $normal_temp - 5000);
 
         old_cpufreq=$(cpufreq-info -f)
-
-        echo $test_temp_active > ${THERMO_PATH}/trip_point_2_temp
-        echo $test_temp_hot > ${THERMO_PATH}/trip_point_1_temp
-
-        sleep 5
-
+        echo $test_temp_hot > ${THERMO_PATH}/trip_point_0_temp;
+        sleep 3 
         cur_cpufreq=$(cpufreq-info -f)
 
         if [ $cur_cpufreq -lt $old_cpufreq ];then
@@ -136,14 +131,13 @@ test_case_01()
 
         #move the trip temp back
         # we expect the cpufreq up
-        echo $trip2 > ${THERMO_PATH}/trip_point_2_temp
-        echo $trip1 > ${THERMO_PATH}/trip_point_1_temp
 
-        sleep 5
+        old_cpufreq=$(cpufreq-info -f)
+        echo $trip0 > ${THERMO_PATH}/trip_point_0_temp;
+        sleep 3
+        cur_cpufreq=$(cpufreq-info -f)
 
-        cur_cpufreq2=$(cpufreq-info -f)
-
-        if [ $cur_cpufreq2 -gt $cur_cpufreq ];then
+        if [ $cur_cpufreq -gt $old_cpufreq ];then
             echo "PASS 2"
         else
             echo "Fail 2"
@@ -163,7 +157,7 @@ test_case_02()
     echo "System will auto power off, pay attention"
     
     # make system critical temp to system current temp, so system will power off
-    echo $normal_temp > ${THERMO_PATH}/trip_point_0_temp
+    echo $normal_temp > ${THERMO_PATH}/trip_point_1_temp
 
     return 0
 }
