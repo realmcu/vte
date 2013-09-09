@@ -36,8 +36,8 @@ setup()
     trap "cleanup" 0 2
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
     	echo "Already enable HDMI in boot cmdline"
-	if [ `uname -r` \> "3.5" ]; then
-		cable_dir="/sys/devices/soc.0/20e0000.hdmi_video"
+	if [ `uname -r` \> "3.0.35" ]; then
+		cable_dir="/sys/devices/soc0/soc.1/20e0000.hdmi_video"
 	else
 		cable_dir="/sys/devices/platform/mxc_hdmi"
 	fi
@@ -488,13 +488,13 @@ i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
     mod=$(expr $i % 2)
-    if [ `uname -r` \> "3.5" ]; then
+    if [ `uname -r` \> "3.0.35" ]; then
     	if [ $mod -eq 0 ]; then
-   	echo 1 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+   	echo 1 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
 	else
-	echo 0 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	echo 0 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
 	fi
-	cat /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	cat /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
     else
     	if [ $mod -eq 0 ]; then
     	echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
@@ -541,13 +541,13 @@ i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
     mo=$(expr $i % 2)
-    if [ `uname -r` \> "3.5" ]; then
+    if [ `uname -r` \> "3.0.35" ]; then
     	if [ $mo -eq 0 ]; then
-	echo 1 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	echo 1 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
 	else
-	echo 0 > /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable
+	echo 0 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
 	fi
-	cat /sys/devices/soc.0/20e0000.hdmi_video/rgb_out_enable 
+	cat /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable 
     else
     	if [ $mo -eq 0 ]; then
     	echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
