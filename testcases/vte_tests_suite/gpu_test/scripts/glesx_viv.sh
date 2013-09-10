@@ -97,7 +97,7 @@ test_case_01()
 	echo "==========================="
 	echo egl_test
 	echo "==========================="
-	./egl_2 "width=800,height=600"|| RC=$(echo $RC egl_test) 
+	./egl_2 "width=800,height=600"|| RC=$(echo $RC egl_test)
 
 	echo "ES1.1 Test case"
 	echo "==========================="
@@ -116,7 +116,7 @@ test_case_01()
 	echo "==========================="
 	echo shared context
 	echo "==========================="
-	./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test)
+    ./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test)
 
 
 	echo "ES2.0 Test case"
@@ -144,12 +144,24 @@ test_case_01()
 	echo "==========================="
 	./eglx_es2_2 "width=800,height=600,subcase=0,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC test_texture_fence_test)
 
-	#echo glx test
+	echo glx test
+	echo "==========================="
+	echo glxs demo
+	echo "==========================="
+	if [ -e GLXS ]; then
+		cd GLXS/
+		./glxs &
+	fi
+	pid_glxs=$!
+    sleep 40
+    kill  $pid_glxs
+	RC=$(echo $RC glxs_demo)
 	#echo "==========================="
 	#echo draw quad
 	#echo "==========================="
 	#./glx_quad_1 "width=800,height=600" || RC=$(echo $RC draw_quad_test)
-	
+
+	wait	
 	if [ "$RC" = "0" ]; then
 		RC=0
     else
@@ -184,7 +196,7 @@ test_case_02()
 	./egl_2 "width=800,height=600"|| RC=$(echo $RC egl_test) &
 	pid_egl=$!
 
-	echo "ES1.1 Test case"
+	echo "ES1.1 Test case"    
 	echo "==========================="
 	echo simple_draw
 	echo "==========================="
@@ -193,19 +205,17 @@ test_case_02()
 	pid_es1_simdra=$!
 
 	echo "==========================="
-	echo texture fence            
+	echo texture fence                
 	echo "==========================="	
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	./eglx_es1_2 "width=800,height=600, subcase=0, loop=10,texwidth=1024,texheight=1024"|| RC=$(echo $RC eglx_es1_2_test) &
 	pid_es1_texfen_1=$!
-	./eglx_es1_2 "width=400,height=600, subcase=0, loop=20,texwidth=32,texheight=32"|| RC=$(echo $RC eglx_es1_2_test) &
-	pid_es1_texfen_2=$!
 
 	echo "==========================="
 	echo shared context
 	echo "==========================="
-	./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test) &
-	pid_es1_shacon=$!
+	#./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test) &
+	#pid_es1_shacon=$!
 
 
 	echo "ES2.0 Test case"
@@ -245,14 +255,9 @@ test_case_02()
 	#echo "==========================="
 	#./glx_quad_1 "width=800,height=random600" || RC=$(echo $RC draw_quad_test) &
 	#pid_quad_1=$!
-    
-
-  	wait $pid_egl && wait $pid_es1_simdra && wait $pid_es1_texfen_1 && wait $pid_es1_texfen_2 && wait $pid_es1_shacon && wait $pid_es2_simvercol &&
-	wait $pid_es2_synswapbuf && wait $pid_es2_rgbtex && wait $pid_es2_purswapbuf && wait $pid_es2_texfen 
-
+	wait $pid_egl&&wait $pid_es1_texfen_1&&wait $pid_es2_simvercol&&wait $pid_es2_synswapbuf&&wait $pid_es2_rgbtex&&wait $pid_es2_purswapbuf&&wait $pid_es2_texfen
 	RC=$?
-	#wait
-
+	wait
     if [ $RC -eq 0 ]; then
         echo "TEST PASS"
     else
@@ -372,7 +377,7 @@ test_case_05()
 	echo "==========================="
 	echo "3DMark mm06 test"
 	echo "==========================="
-    cd	mm06/bin/fsl_imx_linux
+
 	if [ -e mm06/bin/fsl_imx_linux ]; then
 		cd mm06/bin/fsl_imx_linux
 		./fm_oes_player || RC="3Dmark"
@@ -442,7 +447,8 @@ if [ $rt = "Yocto" ];then
     APP_SUB_DIR="yocto_1.5_x/bin"
     export VIV_DESKTOP=0
 	export DISPLAY=:0.0
-    export XAUTHORITY=/home/linaro/.Xauthority 
+    export LD_LIBRARY_PATH=$TEST_DIR/yocto_1.5_x/lib
+
 else
     #judge the rootfs
     platfm.sh
