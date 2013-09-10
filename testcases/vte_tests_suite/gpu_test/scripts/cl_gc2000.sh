@@ -102,7 +102,7 @@ echo fft
 echo "==========================="
 if [ -e cl11/fft ]; then
   cd cl11/fft/
-  ./fft 1024 || ./fft 8192 || RC=$(echo $RC fft)
+  ./fft 1024 || ./fft 8192 || RC=$(echo $RC $fft)
 fi
 
 return $RC
@@ -127,7 +127,7 @@ cd /opt/viv_samples/
 echo "==========================="
 echo unit tests
 echo "==========================="
-if [ -e cl11/conform ]; then
+if [ -e cl11/UnitTest ]; then
   cd cl11/UnitTest/
   for i in $unit_list
 	  do
