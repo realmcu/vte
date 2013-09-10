@@ -21,20 +21,19 @@ check_platform_camera()
 {
  #only check i2c camera
  find=0
- if [ `uname -r` \< "3.5" ]; then
-	bus_if=$(ls -d /sys/devices/platform/imx-i2c.*)
- else
-	#on 3.5.7, i2c dir is /sys/class/i2c-dev/i2c-0, i2c-1, i2c-2
+ if [ `uname -r` \> "3.0.35" ]; then
+	#on 3.5.7 and later kernel, i2c dir is /sys/class/i2c-dev/i2c-0, i2c-1, i2c-2
 	bus_if=$(ls -d /sys/class/i2c-dev/i2c-*)
+ else
+	bus_if=$(ls -d /sys/devices/platform/imx-i2c.*)
  fi
  #if there are multi camera support then choice the given one or last one
  for j in $bus_if; do
     set -x
-	if [ `uname -r` \< "3.5" ]; then
-		names=$(find $j -name name | xargs grep ov)
-	else
-		#in case recursive loop
+	if [ `uname -r` \> "3.0.35" ]; then
 		names=$(cat $j/device/*/name |grep ov)
+	else
+		names=$(find $j -name name | xargs grep ov)
 	fi
 
     set +x
