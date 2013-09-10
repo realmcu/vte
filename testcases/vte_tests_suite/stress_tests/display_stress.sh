@@ -56,6 +56,11 @@ setup()
     echo 0 > /sys/class/graphics/fb2/blank
     echo 0 > /sys/class/graphics/fb1/blank
     echo -e "\033[9;0]" > /dev/tty0
+    if [ `uname -r |cut -c -6` \> "3.0.35" ]; then
+        vidir=soc0/v4l2_out.31/video4linux
+    else
+        vidir=v4l2_out.21/video4linux
+    fi
     return $RC
 }
 
@@ -284,10 +289,10 @@ b_stream_path=/mnt/nfs/test_stream/video/Mpeg4_SP3_1920x1080_23.97fps_9760kbps_A
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path} -a 100" &
 pid1=$!
 
-if [ -e /sys/devices/v4l2_out.21/video4linux/video19 ]; then
+if [ -e /sys/devices/$vidir/video19 ]; then
 	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 19 -a 100" &
 	pid2=$!
-elif [ -e /sys/devices/v4l2_out.21/video4linux/video18 ]; then
+elif [ -e /sys/devices/$vidir/video18 ]; then
 	/unit_tests/mxc_vpu_test.out -D "-f 0 -i ${b_stream_path} -x 18 -a 100" &
 	pid2=$!
 fi
@@ -398,10 +403,10 @@ a_stream=${STREAM}/h264_bp_l31_mp3_1280x720_30fps_3955kbps_a_48khz_64kbps_stereo
 /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -a 100" &
 pid1=$!
 
-if [ -e /sys/devices/v4l2_out.21/video4linux/video19 ]; then
+if [ -e /sys/devices/$vidir/video19 ]; then
 	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 19 -a 100" &
 	pid2=$!
-elif [ -e /sys/devices/v4l2_out.21/video4linux/video18 ]; then
+elif [ -e /sys/devices/$vidir/video18 ]; then
 	/unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream} -x 18 -a 100" &
 	pid2=$!
 fi
@@ -434,10 +439,10 @@ while [ $loop -gt 0 ]; do
 
 vpu_performance.sh 5 &
 
-if [ -e /sys/devices/v4l2_out.21/video4linux/video19 ]; then
+if [ -e /sys/devices/$vidir/video19 ]; then
 	vpu_performance.sh 5 "-x19" &
 	pid2=$!
-elif [ -e /sys/devices/v4l2_out.21/video4linux/video18 ]; then
+elif [ -e /sys/devices/$vidir/video18 ]; then
 	vpu_performance.sh 5 "-x18" &
 	pid2=$!
 fi
