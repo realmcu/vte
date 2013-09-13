@@ -41,13 +41,8 @@ extern "C"{
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/compiler.h>
-#include <mtd/mtd-user.h>
 #include <sys/time.h>
-
-
-#include <test.h>
-#include <usctest.h>
+#include <mtd/mtd-user.h>
 
 /*==================================================================================================
                                         DEFINES AND MACROS

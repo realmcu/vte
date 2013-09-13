@@ -35,9 +35,13 @@ Portability:  ARM GCC
 /*==================================================================================================
                                         INCLUDE FILES
 ==================================================================================================*/
-#include "nor_mtd_test.h"
 #include <errno.h>
 #include <linux/version.h>
+#include <test.h>
+#include <usctest.h>
+
+#include "nor_mtd_test.h"
+
 /*==================================================================================================
                                         GLOBAL VARIABLES
 ==================================================================================================*/
@@ -302,7 +306,7 @@ int VT_nor_mtd_test_badblk(void)
 	//int     number_of_regions = 0;
        //struct region_info_user mxc_region_info;
 	struct erase_info_user  erase;
-	int rc=0;
+	/*int rc=0; */
 	char *rwbuff;
 	
 	tst_resm(TINFO,"numblocks 0x%lx, offset 0x%lx\n",numblocks,offset);
@@ -324,7 +328,7 @@ int VT_nor_mtd_test_badblk(void)
 		}
 		else
 		{
-			tst_resm(TINFO,"get good block, offs=%d !",offs);
+			tst_resm(TINFO,"get good block, offs=%lld !", offs);
 			goodBlockFlag=1;
 			break;
 		}
@@ -522,7 +526,7 @@ int VT_nor_mtd_test_perform(void)
 		return TFAIL;
 	}
 	//allocate buffer for read or write
-	if (!(buf = (char *) malloc(sizeof(char) * (writepage))))
+	if (!(buf = (unsigned char *) malloc(sizeof(unsigned char) * (writepage))))
         {
                 tst_resm(TFAIL, "nor performance test() Failed allocate memory");
                 return TFAIL;
@@ -770,8 +774,10 @@ int erase_flash_block(long offset, long length)
         /* Erase */
         for (i = offset; i < (offset + length); i += mxc_info_mtd.erasesize)
         {
+                /*
                 loff_t o_ffset = i;
-                //int ret = ioctl(file_desc, MEMGETBADBLOCK, &o_ffset);
+                int ret = ioctl(file_desc, MEMGETBADBLOCK, &o_ffset);
+                */
                 /* 
                 if (ret > 0)
                 {
@@ -794,9 +800,9 @@ int erase_flash_block(long offset, long length)
                         mxc_erase_mtd.length = mxc_info_mtd.erasesize;
                         if (ioctl(file_desc, MEMERASE, &mxc_erase_mtd) != 0)
                         {
-                       					tst_resm(TINFO,"start:=%d",i);
-                       					tst_resm(TINFO,"length:=%d",mxc_info_mtd.erasesize); 
-                                tst_resm(TFAIL, "%s: MTD Erase failure: %s", file_desc, strerror(errno));
+                       			tst_resm(TINFO,"start:=%d",i);
+                       			tst_resm(TINFO,"length:=%d",mxc_info_mtd.erasesize); 
+                                tst_resm(TFAIL, "%d: MTD Erase failure: %s", file_desc, strerror(errno));
                                 free(temp_buf);
                                 return TFAIL;
                         }
