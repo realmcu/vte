@@ -27,7 +27,8 @@
 #Portability: ARM GCC
 #
 ###################################################################################################
-CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
+#CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
+CFLAGS+= -Wall -I../../../../include
 LOADLIBES+=	-L../../../../lib -lltp
 include $(KLINUX_BLTDIR)/.config
 

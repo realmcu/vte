@@ -25,7 +25,8 @@
 #Rakesh S Joshi/r65956        25/07/2007     ENGR42511   Added CFLAG for MXC92323 ARCH.
 #
 ####################################################################################################
-CFLAGS    +=     -Wall -I../../../../include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/include
+#CFLAGS    +=     -Wall -I../../../../include -I$(KLINUX_BLTDIR)/include -I$(KLINUX_SRCDIR)/include
+CFLAGS    +=     -Wall -I../../../../include
 LOADLIBES +=     -L../../../../lib -lltp
 
 #include $(KLINUX_BLTDIR)/.config

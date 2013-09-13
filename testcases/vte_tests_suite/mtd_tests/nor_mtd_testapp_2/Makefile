@@ -26,7 +26,8 @@
 #             If not, indicate specific reasons why is it not portable.
 #
 ###################################################################################################
-CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
+#CFLAGS+= -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
+CFLAGS+= -Wall -I../../../../include
 LOADLIBES+=	-L../../../../lib -lltp
 
 SRCS=$(wildcard *.c)

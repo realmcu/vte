@@ -41,7 +41,6 @@ extern "C"{
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/compiler.h>
 #include <mtd/mtd-user.h>
 #include <sys/time.h>
 
