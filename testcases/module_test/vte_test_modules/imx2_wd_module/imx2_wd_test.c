@@ -33,8 +33,9 @@
 #include <linux/uaccess.h>
 #include <linux/timer.h>
 #include <linux/jiffies.h>
-#include "../hardware.h"
-//#include <mach/hardware.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+#include <mach/hardware.h>
+#endif
 #include <linux/slab.h>
 
 #ifdef CONFIG_OF
