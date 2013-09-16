@@ -33,7 +33,8 @@
 #include <linux/uaccess.h>
 #include <linux/timer.h>
 #include <linux/jiffies.h>
-#include <mach/hardware.h>
+#include "../hardware.h"
+//#include <mach/hardware.h>
 #include <linux/slab.h>
 
 #ifdef CONFIG_OF
