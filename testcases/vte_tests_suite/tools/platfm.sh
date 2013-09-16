@@ -102,6 +102,12 @@ determine_platform_dt()
         RC=61
     fi
 
+    find=`grep "MX6SL" /sys/devices/soc0/soc_id |wc -l`
+    if [ $find -eq 1 ]
+    then
+        RC=60
+    fi
+
     find=`grep "MX6 Quad SABRE Smart Device" /sys/devices/soc0/machine |wc -l`
     if [ $find -eq 1 ]
     then
@@ -124,6 +130,12 @@ determine_platform_dt()
     if [ $find -eq 1 ]
     then
         p=IMX6DL-SABREAUTO
+    fi
+
+    find=`grep "MX6 SoloLite EVK" /sys/devices/soc0/machine |wc -l`
+    if [ $find -eq 1 ]
+    then
+        p=IMX6SL-EVK
     fi
 }
 
@@ -753,6 +765,11 @@ root@imx6qsabreauto:~# cat /sys/devices/soc0/soc_id
 i.MX6Q
 root@imx6qsabreauto:~# cat /sys/devices/soc0/revision
 1.2
+
+---MX6SL EVK board with DT - 3.10 alpha
+Freescale i.MX6 SoloLite EVK Board
+Freescale i.MX
+i.MX6SL
 
 EOF
 }
