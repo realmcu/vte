@@ -73,7 +73,7 @@ highlight_SRS_nodir = $(notdir $(highlight_SRS))
 highlight_OBJS = $(patsubst %.c,%.o,$(highlight_SRS_nodir))
 
 ifeq (apps-epd/linux, $(wildcard apps-epd/linux))
-all: epdc apps-epd
+all: epdc
 else
 all: epdc
 endif
