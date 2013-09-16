@@ -28,7 +28,6 @@
 #include <linux/sched.h>
 #include <linux/gpio.h>
 #include <asm/atomic.h>
-#include <mach/hardware.h>
 #ifdef CONFIG_OF
 #include <linux/of.h>
 #include <linux/of_address.h>
@@ -63,8 +62,8 @@ static int test_init(void)
 	unsigned long speed = 0;
 	void __iomem *reg;
 	u32 l;
+	unsigned int np;
 #ifdef CONFIG_OF
-	struct device_node *np;
 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-gpio");
 	reg = of_iomap(np, 0);
 #else
@@ -74,10 +73,19 @@ static int test_init(void)
 
 	printk(KERN_INFO "gpio test on disp0-reset\n");
 	/*test memory io*/
+#ifdef CONFIG_OF
+	np = of_find_compatible_node(NULL, "disp0-reset", 0);
+	gpio_request_one(np, GPIOF_OUT_INIT_LOW, "disp0-reset");
+#else
 	gpio_request(SABRESD_DISP0_RST_B, "disp0-reset");
+#endif
 	do_gettimeofday(&start);
 	while(count--){
+#ifdef CONFIG_OF
+		gpio_direction_output(np, 0);
+#else
 		gpio_direction_output(SABRESD_DISP0_RST_B, 0);
+#endif
 	}
 	do_gettimeofday(&finish);
 	speed = calc_time(test_count);

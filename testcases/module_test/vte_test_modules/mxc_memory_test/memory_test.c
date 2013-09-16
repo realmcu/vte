@@ -27,7 +27,6 @@
 #include <linux/vmalloc.h>
 #include <linux/sched.h>
 #include <asm/atomic.h>
-#include <mach/hardware.h>
 
 
 static unsigned vmsize = (1024*1024);

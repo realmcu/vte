@@ -33,6 +33,7 @@
 #include <linux/uaccess.h>
 #include <linux/timer.h>
 #include <linux/jiffies.h>
+#include <linux/version.h>
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
 #include <mach/hardware.h>
 #endif

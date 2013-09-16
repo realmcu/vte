@@ -29,7 +29,6 @@
 #include <linux/device.h>
 #include <linux/platform_device.h>
 #include <asm/atomic.h>
-#include <mach/hardware.h>
 
 #include "secvio.h"
 

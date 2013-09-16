@@ -30,7 +30,6 @@
 #include <linux/timer.h>
 #include <linux/delay.h>
 #include <asm/atomic.h>
-#include <mach/hardware.h>
 
 #ifdef CONFIG_OF
 #include <linux/of.h>
