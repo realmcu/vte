@@ -126,7 +126,7 @@ determine_platform_dt()
         p=IMX6-SABREAUTO
     fi
 
-    find=`grep "MX6 DualLite SABRE Automotive" /sys/devices/soc0/machine |wc -l`
+    find=`grep "MX6 DualLite/Solo SABRE Automotive" /sys/devices/soc0/machine |wc -l`
     if [ $find -eq 1 ]
     then
         p=IMX6DL-SABREAUTO
@@ -747,14 +747,14 @@ root@imx6dlsabreauto:~# cat /proc/device-tree/compatible
 fsl,imx6dl-sabreautofsl,imx6dl
 
 ---MX6DL SD board with DT - 3.10 alpha
-root@imx6qsabresd:~# cat /sys/devices/soc0/machine
-Freescale i.MX6 DualLite SABRE Smart Device Board
-root@imx6qsabresd:~# cat /sys/devices/soc0/family
-Freescale i.MX
-root@imx6qsabresd:~# cat /sys/devices/soc0/soc_id
-i.MX6DL
-root@imx6qsabresd:~# cat /sys/devices/soc0/revision
+# cat /sys/devices/soc0/revision
 1.1
+# cat /sys/devices/soc0/family
+Freescale i.MX
+# cat /sys/devices/soc0/soc_id
+i.MX6DL
+# cat /sys/devices/soc0/machine
+Freescale i.MX6 DualLite/Solo SABRE Automotive Board
 
 ---MX6Q ARD board with DT - 3.10 alpha
 root@imx6qsabreauto:~# cat /sys/devices/soc0/machine
