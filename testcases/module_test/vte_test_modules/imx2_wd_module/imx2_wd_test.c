@@ -228,7 +228,7 @@ static int wdt_probe(struct platform_device * pdev)
 	         return -EBUSY;
 
 #ifdef CONFIG_OF
-    np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-wdt");
+    np = of_find_compatible_node(NULL, NULL, "fsl,imx21-wdt");
     imx2_wdt.base = of_iomap(np, 0);
     WARN_ON(!imx2_wdt.base);
 #else
