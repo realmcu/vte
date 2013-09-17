@@ -65,7 +65,7 @@ static int test_init(void)
     printk("Allocate memory failure!\n");
     return -ENOMEM;
   }
-  printk("Allocate memory at %x\n",kernel_memaddr);
+  printk("Allocate memory at %lx\n",kernel_memaddr);
   do_gettimeofday(&start);
   while(count--){
   	i = kmalloc_size;
