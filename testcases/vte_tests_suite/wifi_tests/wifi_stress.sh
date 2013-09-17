@@ -20,6 +20,7 @@ setup()
 
     trap "cleanup" 0
     modprobe ath6kl_sdio || return 1
+    modprobe ath6kl_core || return 1
     sleep 5
     iwconfig wlan0 mode managed || return 1
     sleep 2
