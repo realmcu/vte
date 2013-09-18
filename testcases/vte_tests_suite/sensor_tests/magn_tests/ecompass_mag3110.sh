@@ -142,11 +142,14 @@ ecompass_test()
     export TST_COUNT=1
     RC=0    # Return value from setup, and test functions.
 
-    is_suspend=$1
+    is_suspend=0
+    if [ -n "$1" ]; then
+        is_suspend=$1
+    fi
 
     tst_resm TINFO "Magnetic ecompass function."
     tst_resm TINFO "Operation directory in i2c is: ${SYS_DIR}"
-    echo ======enable mag3110
+    echo ======enable mag3110======
     find_event_entry
     echo 1 > /sys/devices/virtual/input/input${event_no}/enable
 
@@ -159,12 +162,12 @@ ecompass_test()
     TMPDIR=`mktemp -d`
     sh -c "$EV_TEST_APP $event_entry 2>&1 | tee $TMPDIR/mag3110.output" &
 
-    if [ $is_suspend -eq 1 ]; then
+    if [ $is_suspend -eq 2 ]; then
         rtc_testapp_6 -m mem -T 50 || RC=$?
         #clean up the data before suspend
         #echo > $TMPDIR/mag3110.output
     fi
-    if [ $is_suspend -eq 2 ]; then
+    if [ $is_suspend -eq 3 ]; then
         sleep 1800
     fi
     #10 seconds to allow data capturing
@@ -221,10 +224,10 @@ case $1 in
     ecompass_test || exit $RC
     ;;
 	2)
-    ecompass_test 1 || exit $RC
-    ;;
-        3)
     ecompass_test 2 || exit $RC
+    ;;
+    3)
+    ecompass_test 3 || exit $RC
     ;;
 	*)
     usage
