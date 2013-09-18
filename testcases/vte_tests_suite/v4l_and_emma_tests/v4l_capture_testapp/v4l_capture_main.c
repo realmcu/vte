@@ -240,7 +240,7 @@ int main(int argc, char **argv)
         
         /* Init struct sV4LTestConfig*/
         
-        gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/video0";
+        gV4LTestConfig.mV4LDevice =  Dflag ? Dopt : "/dev/video1";
         gV4LTestConfig.mOutputDevice =  uflag ? uopt : "/dev/fb0";
         gV4LTestConfig.mOutputFile = NULL;
         gV4LTestConfig.mWidth = Wflag ? atoi(Wopt) : 640;
