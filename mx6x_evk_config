@@ -1,9 +1,8 @@
 #kernel header path installed genreated by kernel build with below
 #sudo make ARCH=arm headers_install INSTALL_HDR_PATH=<KLINUX_SRCDIR>
-KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
+KLINUX_SRCDIR=/rootfs/imx63_rootfs/usr/src/linux/
 
 #kernel source dir
-#KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
 KERNEL_SRCDIR=/home/vobs/linux-2.6-imx
 
 #kernel build dir
