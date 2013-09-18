@@ -53,8 +53,7 @@ sleep 1
 echo -e "\033[9;0]" > /dev/tty0
 trap "cleanup" 0
 
-export DFBARGS=module-dir=/usr/lib/directfb-1.4-0/
-
+fbset -fb /dev/fb0 -g 1024 768 1024 2304 32
 chip=$(platfm.sh)
 if [ $chip = "IMX6Sololite-ARM2" ];then
 modprobe  galcore baseAddress=0x80000000 
