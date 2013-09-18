@@ -395,8 +395,8 @@ test_case_06()
 pre_bus_mode()
 {
 	mount -t debugfs nodev /sys/kernel/debug
-	axi_path=$(find /sys/kernel/debug/clock/osc_clk -name axi_clk)
-	ddr_path=$(find /sys/kernel/debug/clock/osc_clk -name mmdc_ch1_axi_clk)
+	axi_path=$(find /sys/kernel/debug/ -name epdc_axi_sel)
+	ddr_path=$(find /sys/kernel/debug/  -name mmdc)
 	a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
 	platfm.sh
 	platfm=$?
@@ -418,8 +418,8 @@ clean_bus_mode()
 check_status()
 {
 RC=0
-axi_real=$(cat ${axi_path}/rate)
-ddr_real=$(cat ${ddr_path}/rate)
+axi_real=$(cat ${axi_path}/clk_rate)
+ddr_real=$(cat ${ddr_path}/clk_rate)
 
 declare -a axi;
 declare -a ddr;
@@ -445,8 +445,8 @@ low)
 	 do 
 		 echo "$1 mode pedning wait more"
 		 sleep 1
-		 axi_real=$(cat ${axi_path}/rate)
-		 ddr_real=$(cat ${ddr_path}/rate)
+		 axi_real=$(cat ${axi_path}/clk_rate)
+		 ddr_real=$(cat ${ddr_path}/clk_rate)
 	 done
     ;;
 audio)
@@ -454,8 +454,8 @@ audio)
 	while [ ${ddr[1]} -lt $ddr_real ] || [ ${ddr[1]} -eq $ddr_real ]
 	do
 		echo "$1 mode pedning wait more"
-		 axi_real=$(cat ${axi_path}/rate)
-		 ddr_real=$(cat ${ddr_path}/rate)
+		 axi_real=$(cat ${axi_path}/clk_rate)
+		 ddr_real=$(cat ${ddr_path}/clk_rate)
 		 if [ $count -lt 1 ];then
 		 	break
 		 fi
@@ -467,8 +467,8 @@ medium)
     while [ ${ddr[2]} -ne  $ddr_real ]
 	do
 		echo "$1 mode pedning wait more"
-		 axi_real=$(cat ${axi_path}/rate)
-		 ddr_real=$(cat ${ddr_path}/rate)
+		 axi_real=$(cat ${axi_path}/clk_rate)
+		 ddr_real=$(cat ${ddr_path}/clk_rate)
 		sleep 1
 	done
     ;;
@@ -476,8 +476,8 @@ high)
     while [ ${ddr[3]} -ne $ddr_real ]
 	do
 		echo "$1 mode pedning wait more"
-		 axi_real=$(cat ${axi_path}/rate)
-		 ddr_real=$(cat ${ddr_path}/rate)
+		 axi_real=$(cat ${axi_path}/clk_rate)
+		 ddr_real=$(cat ${ddr_path}/clk_rate)
 		sleep 1
 	done
     ;;
