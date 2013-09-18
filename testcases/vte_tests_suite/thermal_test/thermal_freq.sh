@@ -21,6 +21,7 @@
 #Lina                06/09/2013   Modify code for 3.10 change
 #                                 1, Delete trip_point_2_temp
 #                                 2, Modify THERMAL_PATH 
+#                    18/09/2013   Add import sleep time in test_case_02
 ################################################################################
 
 
@@ -158,6 +159,7 @@ test_case_02()
     
     # make system critical temp to system current temp, so system will power off
     echo $normal_temp > ${THERMO_PATH}/trip_point_1_temp
+    sleep 5
 
     return 0
 }
