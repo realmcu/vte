@@ -382,13 +382,10 @@ test_case_06()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-
-
-	thermal_dir= 
-	trippoint1_dir=$(find /sys/ -name trip_point_1_temp)
+	thermal_dir=
+	trippoint1_dir=$(find /sys/ -name trip_point_0_temp)
 	thermal_dir=`dirname $trippoint1_dir`
-	trip_hot_old=`cat $trippoint1_dir`
-	trip_act_old=`cat $thermal_dir/trip_point_2_temp`
+	trip_hot_old=`cat $thermal_dir/trip_point_0_temp`
 	cur_temp=`cat $thermal_dir/temp`
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	if [ $cur_temp -lt $trip_hot_old ]; then
@@ -397,13 +394,9 @@ test_case_06()
 		echo "Already in trip hot status"
 		exit 6
 	fi
-
-	let trip_hot_new=cur_temp-10
-	let trip_act_new=cur_temp-15
+	let trip_hot_new=cur_temp-10000
 	# Set new trip hot value to trigger the trip_hot flag
-	echo ${trip_act_new} > $thermal_dir/trip_point_2_temp
-	echo ${trip_hot_new} > $thermal_dir/trip_point_1_temp
-
+	echo ${trip_hot_new} > $thermal_dir/trip_point_0_temp
 	sleep 2
 	if [ $cur_temp -gt $trip_hot_new ]; then
 		low_fps=`./simple_draw 200 | grep FPS | cut -f3 -d: `
@@ -416,10 +409,7 @@ test_case_06()
 	let half_fps=norm_fps/2
 	[ $drop_fps -gt $half_fps ] || RC=6
 	if [ -n "$trip_hot_old" ]; then
-		echo $trip_hot_old >  $thermal_dir/trip_point_1_temp
-	fi
-	if [ -n "$trip_act_old" ]; then
-		echo $trip_act_old >  $thermal_dir/trip_point_2_temp
+		echo $trip_hot_old >  $thermal_dir/trip_point_0_temp
 	fi
 
     return $RC
