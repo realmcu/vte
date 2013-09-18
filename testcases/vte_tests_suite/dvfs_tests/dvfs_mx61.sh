@@ -386,7 +386,9 @@ test_case_05()
     i=1
     # 7/17/2013, decrease from 500 times to 50 times to make it finish overnight
     # On 3.5.7 fastest MX6Q ARD, it finish 60 times in 720 mins.
-    while [ $i -lt 50 ]; do
+    # On 3.10.9 fastest MX6Q ARD, it finish 50 times in 200 mins, so extend loop
+    # times to 100 times.
+    while [ $i -lt 100 ]; do
         echo "------Stress Test for $i Times------"
         test_case_04 || RC=$(expr $RC + 1)
         i=$(expr $i + 1)
