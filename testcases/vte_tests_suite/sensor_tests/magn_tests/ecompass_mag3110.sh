@@ -27,6 +27,7 @@
 # Andy Tian             Apr.16,2012    Remove clean up log operation before 
 #                                      suspend, otherwise the case will failed
 #                                      with err code 69
+# Lina                  Sep.18,2013    Modify DEVICE_BASE_DIR for 3.10
 ############################################################################
 
 # Function:     setup
@@ -74,7 +75,7 @@ find_sys_dir()
     CLASS_BASE_DIR=/sys/class/i2c-dev/i2c-1/device/
     #subfolders in class dir is linked to device dir
     #The attached i2c sequence may change in the future
-    DEVICE_BASE_DIR=/sys/devices/platform/imx-i2c.*
+    DEVICE_BASE_DIR=/sys/devices
     entries=`find $DEVICE_BASE_DIR -name "name"`
     for entry in $entries; do
         if [ "`cat $entry`" = "mag3110" ]; then
