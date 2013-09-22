@@ -57,7 +57,7 @@ setup()
     echo 0 > /sys/class/graphics/fb1/blank
     echo -e "\033[9;0]" > /dev/tty0
     if [ `uname -r |cut -c -6` \> "3.0.35" ]; then
-        vidir=soc0/v4l2_out.31/video4linux
+        vidir=soc0/v4l2_out.*/video4linux
     else
         vidir=v4l2_out.21/video4linux
     fi
@@ -528,4 +528,4 @@ case "$1" in
   ;;
 esac
 
- echo "Test PASS"
+echo "Test PASS"
