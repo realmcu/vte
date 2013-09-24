@@ -97,7 +97,7 @@ run_test()
 			'GPU' )
 			echo GPU
 			export FB_FRAMEBUFFER_0=/dev/fb2
-			gles_viv.sh 1 &
+			glesx_viv.sh 1 &
 			pGPU=$!
 			;;
 			'VPU' )

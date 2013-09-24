@@ -171,33 +171,33 @@ run_manual_test_list()
 run_auto_test_list()
 {
     RC=0
-    echo "uart test"
+    echo "======uart test======"
     cat /etc/passwd > ${UART} || RC=$(expr $RC + 1)
-    echo "frame buffer test"
+    echo "======frame buffer test======"
     dd if=/dev/urandom of=/dev/fb0 bs=1k count=150 || RC=$(expr $RC + 3)
-    echo "tv out test"
+    echo "======tv out test======"
     echo 0 > /sys/class/graphics/fb0/blank || RC=$(expr $RC + 5)
-    echo "core test"
+    echo "======core test======"
     coremark_F4.exe  0x0 0x0 0x66 0 7 1 2000 &&  coremark_F4.exe  0x3415 0x3415 0x66 0 7 1 2000 \
         && coremark_F4.exe 8 8 8 0 7 1 1200 || RC=$(expr $RC + 7)
-    echo "storage"
+    echo "======storage test======"
     modprobe ahci_platform
     storage_all.sh 4 || RC=$(expr $RC + 9)
     modprobe -r ahci_platform
-    echo "v4l"
+    echo "======v4l test======"
     v4l_output_testapp -B 0,0,2048,2048 -C 2 -R 3 -F $LTPROOT/testcases/bin/green_RGB24 || RC=$(expr $RC + 11)
-    echo "vpu dec"
+    echo "======vpu dec test======"
     vpu_dec_test.sh 1 || RC=$(expr $RC + 13)
-    echo "vpu_enc"
+    echo "======vpu_enc test======"
     vpu_enc_test.sh 1 || RC=$(expr $RC + 17)
-    echo "gpu"
-    gles_viv.sh 1 || RC=$(expr $RC + 19)
-    echo "ALSA test"
+    echo "======gpu test======"
+    glesx_viv.sh 1 || RC=$(expr $RC + 19)
+    echo "======ALSA test======"
     aplay -vv $STREAM_PATH/alsa_stream/audio44k16M.wav || RC=$(expr $RC + 23)
-    echo "display video"
+    echo "======display video======"
     a_stream_path=/mnt/nfs/test_stream/video/ToyStory3_H264HP_1920x1080_10Mbps_24fps_AAC_48kHz_192kbps_2ch_track1.h264
     /unit_tests/mxc_vpu_test.out -D "-f 2 -i ${a_stream_path}" || RC=$(expr $RC + 29)
-	echo "timer interrupt"
+	echo "======timer interrupt======"
 	timer_interrupt
     return $RC
 }
