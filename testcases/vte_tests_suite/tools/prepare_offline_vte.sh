@@ -48,7 +48,7 @@ else
     VTE=vte_mx63
 fi
 
-folder_list="vte/testcases/bin vte/results vte/output util/Graphics/imx61_rootfs/test/3DMarkMobile test_stream/video"
+folder_list="vte/testcases/bin vte/results vte/output util/Graphics/imx61_rootfs/test/3DMarkMobile test_stream/video util/Graphics/yocto_1.5_x/lib util/Graphics/yocto_1.5_x/bin"
 for f in $folder_list; do
     mkdir -p $rfs/$f
 done
@@ -60,12 +60,23 @@ for f in $vte_list; do
     rsync -avz --progress --delete ${ip}::${VTE}/$f $rfs/vte
 done
 
-gpu_list="Graphics/imx61_rootfs/test/3DMarkMobile Graphics/imx61_rootfs/test/fps_triangle Graphics/imx61_rootfs/test/simple_draw \
+if [ "$ip" = "10.192.244.6" ]; then
+    gpu_list="Graphics/yocto_1.5_x/bin/egl_2 Graphics/yocto_1.5_x/bin/eglx_es1_1 \
+    Graphics/yocto_1.5_x/bin/eglx_es1_2 Graphics/yocto_1.5_x/bin/eglx_es1_3 \
+    Graphics/yocto_1.5_x/bin/eglx_es2_1 Graphics/yocto_1.5_x/bin/eglx_es2_2 \
+    Graphics/yocto_1.5_x/bin/GLXS"
+    #sync GPU materials
+    rsync -avz --progress --delete ${ip}::util/Graphics/yocto_1.5_x/lib $rfs/util/Graphics/yocto_1.5_x
+    for f in $gpu_list; do
+        rsync -avz --progress --delete ${ip}::util/$f $rfs/util/Graphics/yocto_1.5_x/bin
+    done
+else
+    gpu_list="Graphics/imx61_rootfs/test/3DMarkMobile Graphics/imx61_rootfs/test/fps_triangle Graphics/imx61_rootfs/test/simple_draw \
 	Graphics/imx61_rootfs/test/simple_triangle Graphics/imx61_rootfs/test/torusknot"
-#sync GPU materials
-for f in $gpu_list; do
-    rsync -avz --progress --delete ${ip}::util/$f $rfs/util/Graphics/imx61_rootfs/test
-done
+    for f in $gpu_list; do
+        rsync -avz --progress --delete ${ip}::util/$f $rfs/util/Graphics/imx61_rootfs/test
+    done
+fi
 
 video="mpeg2_720x576.mpg SD720x480.vc1.rcv divx311_320x240.avi akiyo.mp4"
 video="$video COASTGUARD_CIF_IJT.263 cif.263 HPCV_BRCM_A.264 starwars640x480.264"
