@@ -3,7 +3,7 @@
 setup()
 {
     # Total number of test cases in this file. 
-    export TST_TOTAL=1
+    export TST_TOTAL=3
 
     # The TCID and TST_COUNT variables are required by the LTP 
     # command line harness APIs, these variables are not local to this program.
@@ -13,7 +13,7 @@ setup()
     # Set up is initialized as test 0
     export TST_COUNT=0
 
-	plt=$(platfm.sh)
+	platfm.sh || plt=$?
     # Initialize cleanup function to execute on program exit.
     # This function will be called before the test program exits.
     trap "cleanup" 0
@@ -38,32 +38,30 @@ usage()
 #  
 test_case_01()
 {
-    #TODO give TCID 
-    TCID="vpu_PM_NOBOOTCORE"
-    #TODO give TST_COUNT
+    TCID="GPU_PM_NOBOOTCORE"
     TST_COUNT=1
     RC=1
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-	if [ $plt -ne 60 ]; then
-    #TODO add function test scripte here
-    gles_viv.sh 1 &
-
-    sleep 5
-    echo "core test"
-    i=0
-    loops=10
     echo core > /sys/power/pm_test
-    while [ $i -lt $loops ]
-    do
-        i=$(expr $i + 1)
-        echo mem > /sys/power/state
-        echo standby > /sys/power/state
-    done
 
-    wait
+	if [ $plt -ne 60 ]; then
+        gles_viv.sh 1 &
+
+        sleep 5
+        echo "core test"
+        i=0
+        loops=10
+        while [ $i -lt $loops ]
+        do
+            i=$(expr $i + 1)
+            echo mem > /sys/power/state
+            echo standby > /sys/power/state
+        done
+
+        wait
 	fi
 
     echo "now test vg core"
@@ -110,44 +108,39 @@ test_case_01()
 #  
 test_case_02()
 {
-    #TODO give TCID 
-    TCID="vpu_PM_BOOTCORE"
-    #TODO give TST_COUNT
-    TST_COUNT=1
+    TCID="GPU_PM_BOOTCORE"
+    TST_COUNT=2
     RC=1
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
     tloops=100
     count=0
-    #TODO add function test scripte here
 	if [ $plt -ne 60 ]; then
-    while [ $count -lt $tloops ]
-    do
-
-        gles_viv.sh 1 &
-
-        sleep 5
-        i=0
-        loops=100
-        while [ $i -lt $loops ]
+        while [ $count -lt $tloops ]
         do
-            i=$(expr $i + 1)
-            rtc_testapp_6 -T 50 -m mem
-            rtc_testapp_6 -T 50 -m standby
+            gles_viv.sh 1 &
+
+            sleep 5
+            i=0
+            loops=100
+            while [ $i -lt $loops ]
+            do
+                i=$(expr $i + 1)
+                rtc_testapp_6 -T 50 -m mem
+                rtc_testapp_6 -T 50 -m standby
+            done
+
+            wait
+
+            count=$(expr $count + 1)
         done
-
-        wait
-
-        count=$(expr $count + 1)
-    done
 	fi
+
     tloops=100
     count=0
-    #TODO add function test scripte here
     while [ $count -lt $tloops ]
     do
-
         echo "now test vg core"
         vg_gc35x.sh 1 &
 
@@ -168,10 +161,8 @@ test_case_02()
 
     tloops=100
     count=0
-    #TODO add function test scripte here
     while [ $count -lt $tloops ]
     do
-
         echo "now test gc320 core"
         dfb_gc320.sh 1 &
 
@@ -201,31 +192,29 @@ test_case_02()
 #  
 test_case_03()
 {
-    #TODO give TCID 
-    TCID="vpu_PM_WAITMODE"
-    #TODO give TST_COUNT
-    TST_COUNT=1
+    TCID="GPU_PM_WAITMODE"
+    TST_COUNT=3
     RC=1
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    #TODO add function test scripte here
-	if [ $plt -ne 60 ]; then
-    gles_viv.sh 1 &
-
-    sleep 5
-    echo "core test"
-    i=0
-    loops=10
     echo core > /sys/power/pm_test
-    while [ $i -lt $loops ]
-    do
-        i=$(expr $i + 1)
-        echo standby > /sys/power/state
-    done
 
-    wait
+	if [ $plt -ne 60 ]; then
+        gles_viv.sh 1 &
+
+        sleep 5
+        echo "core test"
+        i=0
+        loops=10
+        while [ $i -lt $loops ]
+        do
+            i=$(expr $i + 1)
+            echo standby > /sys/power/state
+        done
+
+        wait
 	fi
     echo "now test vg core"
     vg_gc35x.sh 1 &
