@@ -394,7 +394,7 @@ test_case_06()
 		echo "Already in trip hot status"
 		exit 6
 	fi
-	let trip_hot_new=cur_temp-10000
+	trip_hot_new=$(expr $cur_temp - 10000)
 	# Set new trip hot value to trigger the trip_hot flag
 	echo ${trip_hot_new} > $thermal_dir/trip_point_0_temp
 	sleep 2
@@ -553,6 +553,45 @@ test_case_09()
         return $RC
 }
 
+# Function:     test_case_10
+# Description   - Test if gpu works ok when change  minimum 3d clock
+#
+test_case_10()
+{
+	#TODO give TCID
+	TCID="GLES_THERMAL_TEST"
+	#TODO give TST_COUNT
+	TST_COUNT=6
+	RC=0
+
+	#print test info
+	tst_resm TINFO "test $TST_COUNT: $TCID "
+
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	trip_hot_old=`cat /sys/devices/virtual/thermal/thermal_zone0/trip_point_0_temp`
+	cur_temp=`cat /sys/devices/virtual/thermal/thermal_zone0/temp`
+	cd /opt/viv_samples/vdk
+	./tutorial4_es20 -f 300 &
+	pid_egl=$!
+	sleep 10
+	trip_hot_new=$(expr $cur_temp - 10000)
+	# Set new trip hot value to trigger the trip_hot flag
+	echo 10 > /sys/module/galcore/parameters/gpu3DMinClock
+	echo ${trip_hot_new} > /sys/devices/virtual/thermal/thermal_zone0/trip_point_0_temp
+
+	sleep 10
+	wait $pid_egl
+	echo 1  > /sys/module/galcore/parameters/gpu3DMinClock
+	RC=$?
+	if [ $RC -eq 0 ]; then
+		echo "TEST PASS"
+	else
+		echo "TEST FAIL"
+	fi
+	return $RC
+
+}
+
 usage()
 {
     echo "$0 [case ID]"
@@ -565,6 +604,7 @@ usage()
     echo "7: TexDirect_viv"
     echo "8: FB MULTIBUFFER test"
     echo "9: VDK test"
+    echo "10: minimum 3d clock export verify"
 
 }
 
@@ -591,7 +631,7 @@ cat /etc/issue | grep Ubuntu || rt="others"
 if [ $rt = "Ubuntu" ];then
     APP_SUB_DIR="ubuntu_11.10/test"
     export DISPLAY=:0.0
-    export XAUTHORITY=/home/linaro/.Xauthority 
+    #export XAUTHORITY=/home/linaro/.Xauthority
 else
     #judge the rootfs
     platfm.sh
@@ -648,6 +688,9 @@ case "$1" in
     ;;
 9)
     test_case_09 || exit $RC
+    ;;
+10)
+    test_case_10 || exit $RC
     ;;
 *)
     usage
