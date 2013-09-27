@@ -23,6 +23,7 @@ SUBDIRS-$(CONFIG_VM_SPI)      += spi_test_module
 SUBDIRS-$(CONFIG_VM_GPIO)     += mxc_gpio_test
 SUBDIRS-$(CONFIG_VM_EPIT)     += epit_timer
 SUBDIRS-$(CONFIG_VM_SNVS)     += snvs_test_module
+SUBDIRS-$(CONFIG_CMA_TEST)    += cma_test_module
 
 all:
 	@set -e; for i in $(SUBDIRS-y); do $(MAKE) -C $$i ; done
