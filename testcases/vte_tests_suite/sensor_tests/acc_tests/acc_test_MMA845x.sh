@@ -144,8 +144,10 @@ setup()
     enable_list=$(find /sys/devices/virtual/input -name enable)
     for i in $enable_list
     do
-        echo $i
-        echo 1 > $i
+        if grep mma `dirname $i`/name; then
+            echo $i
+            echo 1 > $i
+        fi
     done
 
     return $RC 
@@ -159,7 +161,16 @@ setup()
 cleanup() 
 { 
     RC=0 
-    #TODO add cleanup code here 
+
+    #disable sensors
+    for i in $enable_list
+    do
+        if grep mma `dirname $i`/name; then
+            echo $i
+            echo 0 > $i
+        fi
+    done
+
     return $RC 
 } 
 
@@ -184,18 +195,18 @@ acc_test()
     #TODO add function test scripte here
 
     if [ -e $device ]; then 
-        echo "test start"
+        echo "Test start"
         acctmp=$(mktemp)
         evtest $device > $acctmp &
         pth=$!
-        echo "now shake the board!! for 30seconds"
-        if [ $mode = "SUSPEND"  ]; then
+        echo "Now shake the board!! for 30 seconds"
+        if [ "$mode" = "SUSPEND"  ]; then
             rtc_testapp_6 -T 50
         fi
         sleep 30
-        ret=$(cat $acctmp | wc -l)
-        echo "test done $ret"
-        if [ ! -z $ret ]; then
+        ret=$(cat $acctmp | grep "(X)" |wc -l)
+        echo "Test done $ret"
+        if [ $ret -gt 0 ]; then
             RC=0
         fi
         kill -9 $pth
@@ -303,7 +314,7 @@ done
 
 setup || exit $RC
 
-if [ ! "$mode" = "MODE_STANDBY" ];then
+if [ "$mode" != "MODE_STANDBY" ];then
     acc_test || exit $RC
 fi
 
