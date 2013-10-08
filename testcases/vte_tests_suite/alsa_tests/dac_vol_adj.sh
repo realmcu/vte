@@ -189,6 +189,7 @@ max_vol()
     MAX_MX31=99
     MAX_SGTL5K=127
     MAX_MX37=255
+    MAX_WM8962=127
     MAX_CS42888=255
 
     if [ $platfm -eq 31 ]
@@ -203,10 +204,14 @@ max_vol()
         return $MAX_CS42888
     fi
 
-    # wm8962: MX6 SabreSD
     # sgtl5000: Babbage, MX51 3DS, MX53 SMD, MX53 LOCO
     if aplay -l |grep -i sgtl5000; then
         return $MAX_SGTL5K
+    fi
+
+    # wm8962: MX6 SabreSD
+    if aplay -l |grep -i wm8962; then
+        return $MAX_WM8962
     fi
 
     return 0
@@ -225,7 +230,7 @@ adj_vol()
     RC=0    # Return value from setup, and test functions.
 
     tst_resm TINFO "Test #1: play the audio stream, please check the HEADPHONE,\
- hear if the voice is from MIN(0) to MAX(MX31:100, MX51:128, MX37:256)."
+ hear if the voice is from MIN(0) to MAX."
 
     STEP=5
     #if DECREASE=0, vol: MIN->MAX; DECREASE=1, vol: MAX->MIN
