@@ -104,6 +104,7 @@ export CONFIG_OM_CRYPTO=y
 export CONFIG_OM_USB=y
 export CONFIG_OM_MMC=y
 export CONFIG_OM_IMX2_WD=y
+export CONFIG_CMA_TEST=y
 #export CONFIG_VM_MXC_WD=y
 #export CONFIG_MMDC_PROFILE=y
 export CONFIG_HRTIMER=y
