@@ -36,13 +36,13 @@ setup()
     trap "cleanup" 0 2
     if [ $(cat /proc/cmdline | grep hdmi | wc -l) -eq 1 ]; then
     	echo "Already enable HDMI in boot cmdline"
-	if [ `uname -r` \> "3.0.35" ]; then
-		cable_dir="/sys/devices/soc0/soc.1/20e0000.hdmi_video"
-	else
-		cable_dir="/sys/devices/platform/mxc_hdmi"
-	fi
-	cstate=$(cat $cable_dir/cable_state)
-       	if [ $cstate = "plugout" ]; then
+        if [ `uname -r|cut -c -6` \> "3.0.35" ]; then
+            cable_dir="/sys/devices/soc0/soc.1/20e0000.hdmi_video"
+        else
+            cable_dir="/sys/devices/platform/mxc_hdmi"
+        fi
+        cstate=$(cat $cable_dir/cable_state)
+       	if [ "$cstate" = "plugout" ]; then
         	echo "Not plug in HDMI cable in board"
           	RC=1
        	fi
@@ -64,10 +64,10 @@ setup()
 	for name in $dev_names; do
 		if [ "$name" = "hdmi" ]; then
 			hdmi_fb="fb$i"
-			let out_video=17+i
+			out_video=`expr 17 + $i`
 			break
 		fi
-		let i=i+1
+		i=`$i + 1`
 	done
 	if [ $platfm -eq 60 ]; then
 		modes=`cat /sys/class/graphics/fb0/modes`
@@ -95,6 +95,7 @@ cleanup()
 	umount /mnt/temp
     RC=0
 }
+
 usage()
 {
    echo "1: display mode stress test"
@@ -110,6 +111,7 @@ usage()
    echo "11: RGB YCbCr switch default test"
    echo "12: Normal modes switch audio and video stress test"
 }
+
 test_case_01()
 {
 #TODO give TCID 
@@ -240,7 +242,7 @@ while [ $i -lt $loops ]; do
     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || return $RC
     aplay -Dplughw:$num -M /mnt/temp/audio*.wav || return $RC
 	wait $pid_video || return $RC
-	let i=i+1
+	i=`expr $i + 1`
 done
 
 RC=0
@@ -344,6 +346,7 @@ done
 RC=0
 return $RC
 }
+
 test_case_07()
 {
 #TODO give TCID 
@@ -423,6 +426,7 @@ done
 RC=0
 return $RC
 }
+
 test_case_09()
 {
 #TODO give TCID 
@@ -463,6 +467,7 @@ done
 RC=0
 return $RC
 }
+
 test_case_10()
 {
 #TODO give TCID 
@@ -488,29 +493,21 @@ i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
     mod=$(expr $i % 2)
-    if [ `uname -r` \> "3.0.35" ]; then
-    	if [ $mod -eq 0 ]; then
-   	echo 1 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
-	else
-	echo 0 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
-	fi
-	cat /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
+    if [ $mod -eq 0 ]; then
+        echo 1 > $cable_dir/rgb_out_enable
     else
-    	if [ $mod -eq 0 ]; then
-    	echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
-    	else
-    	echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
-    	fi
-    	cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
+        echo 0 > $cable_dir/rgb_out_enable
     fi
-   	for mode in $modes; do
-   	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
-   	cat /sys/class/graphics/${hdmi_fb}/mode
-	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
-   	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=100; return $RC; }
-	  wait $pid_video || { RC=101; return $RC; }
-	  done
+    cat $cable_dir/rgb_out_enable
+
+    for mode in $modes; do
+        echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+        cat /sys/class/graphics/${hdmi_fb}/mode
+        /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
+        pid_video=$!
+        aplay -Dplughw:$num -M /mnt/temp/audio*.wav || { RC=100; return $RC; }
+        wait $pid_video || { RC=101; return $RC; }
+	done
 done
 RC=0
 return $RC
@@ -540,34 +537,27 @@ loops=20
 i=0
 while [ $i -lt $loops ]; do
     i=`expr $i + 1`
-    mo=$(expr $i % 2)
-    if [ `uname -r` \> "3.0.35" ]; then
-    	if [ $mo -eq 0 ]; then
-	echo 1 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
-	else
-	echo 0 > /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable
-	fi
-	cat /sys/devices/soc0/soc.1/20e0000.hdmi_video/rgb_out_enable 
+    mod=$(expr $i % 2)
+    if [ $mod -eq 0 ]; then
+        echo 1 > $cable_dir/rgb_out_enable
     else
-    	if [ $mo -eq 0 ]; then
-    	echo 1 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
-    	else
-    	echo 0 > /sys/devices/platform/mxc_hdmi/rgb_out_enable
-    	fi
-    	cat /sys/devices/platform/mxc_hdmi/rgb_out_enable
+        echo 0 > $cable_dir/rgb_out_enable
     fi
-   	for mode in $defaudiomodes; do
-   	echo $mode > /sys/class/graphics/${hdmi_fb}/mode
-   	cat /sys/class/graphics/${hdmi_fb}/mode
-	  /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
-   	pid_video=$!
-    aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || { RC=110; return $RC; }
-	  wait $pid_video || { RC=111; return $RC; }
-	  done
+    cat $cable_dir/rgb_out_enable
+
+    for mode in $defaudiomodes; do
+        echo $mode > /sys/class/graphics/${hdmi_fb}/mode
+        cat /sys/class/graphics/${hdmi_fb}/mode
+        /unit_tests/mxc_vpu_test.out -D "-f 2 -i /mnt/temp/H264_DAKEAI1080.avi -x $out_video" &
+        pid_video=$!
+        aplay -Dplughw:$num -M /mnt/temp/audio44k16S.wav || { RC=110; return $RC; }
+        wait $pid_video || { RC=111; return $RC; }
+    done
 done
 RC=0
 return $RC
 }
+
 test_case_12()
 {
 #TODO give TCID 
@@ -608,6 +598,7 @@ done
 RC=0
 return $RC
 }
+
 # Function:     main
 #
 # Description:  - Execute all tests, exit with test status.
