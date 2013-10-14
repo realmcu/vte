@@ -188,7 +188,7 @@ done
 #fi
 
 # anything to do ?
-if [ $DO_REDBOOT -eq 0 -a $DO_UCONFIG -eq 0 -a $DO_KERNEL -eq 0 -a $DO_INIT -eq 0 -a $DO_CLEAN -eq 0 -a $DO_RFS -eq 0 ] ; then
+if [ $DO_REDBOOT -eq 0 -a $DO_UCONFIG -eq 0 -a $DO_UCONFIG_DT -eq 0 -a $DO_KERNEL -eq 0 -a $DO_INIT -eq 0 -a $DO_CLEAN -eq 0 -a $DO_RFS -eq 0 -a $DO_DTB -eq 0 ] ; then
 	echo "Nothing to do. Exit"
 	exit 0
 fi
