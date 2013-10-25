@@ -144,10 +144,18 @@ test_case_01()
 	echo "==========================="
 	./eglx_es2_2 "width=800,height=600,subcase=0,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC test_texture_fence_test)
 
+	echo "==========================="
+	echo sample_test ES2.0
+	echo "==========================="
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	cd sample_test
+	./sample_test 1000 || RC=$(echo $RC sample_test)
+	
 	echo glx test
 	echo "==========================="
 	echo glxs demo
 	echo "==========================="
+	cd ${TEST_DIR}/${APP_SUB_DIR}
 	if [ -e GLXS ]; then
 		cd GLXS/
 		./glxs &
@@ -249,13 +257,19 @@ test_case_02()
 	./eglx_es2_2 "width=800,height=600,subcase=0,loop=30,texwidth=1024,texheight=1024" || RC=$(echo $RC test_texture_fence_test) &
 	pid_es2_texfen=$!
 
-	echo glx test
+	echo "==========================="
+	echo sample_test ES2.0
+	echo "==========================="
+	cd sample_test
+	./sample_test 1000 &
+	pid_sample_test=$!
+	#echo glx test
 	#echo "==========================="
 	#echo draw quad
 	#echo "==========================="
 	#./glx_quad_1 "width=800,height=random600" || RC=$(echo $RC draw_quad_test) &
 	#pid_quad_1=$!
-	wait $pid_egl&&wait $pid_es1_texfen_1&&wait $pid_es2_simvercol&&wait $pid_es2_synswapbuf&&wait $pid_es2_rgbtex&&wait $pid_es2_purswapbuf&&wait $pid_es2_texfen
+	wait $pid_egl&&wait $pid_es1_texfen_1&&wait $pid_es2_simvercol&&wait $pid_es2_synswapbuf&&wait $pid_es2_rgbtex&&wait $pid_es2_purswapbuf&&wait $pid_es2_texfen&&$pid_sample_test
 	RC=$?
 	wait
     if [ $RC -eq 0 ]; then
