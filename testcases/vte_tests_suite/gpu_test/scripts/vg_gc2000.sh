@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2011, 2013 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2011-2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,8 +29,9 @@
 #------------------------   ------------    ----------  -----------------------
 #Hake Huang/-----             20110817     N/A          Initial version
 #Andy Tian                    05/15/2012   N/A          add wait for background
-#Shelly Cheng                 20130517     N/A          change concurrent demo
-#                                                       process
+#Shelly Cheng                 20130517     N/A          change concurrent demo process
+#Shelly Cheng                 20131028     N/A          add X backend vg perf
+#                    
 # 
 ################################################################################
 
@@ -248,21 +249,24 @@ test_case_05()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo vgMark
-    echo "==========================="
-    cd VGMark
-    ./fm_oes_vg_player || RC=$(echo $RC vgmark)
-    echo $RC
-
-    if [ "$RC" = "0" ]; then
-        RC=0
-    else
-        RC=1
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo vgMark
+	echo "==========================="
+	if [ $rt = "Yocto" ];then
+		cd vgmark_10
+	else
+		cd VGMark
     fi
+	./fm_oes_vg_player || RC=$(echo $RC vgmark)
+    echo $RC
+	if [ "$RC" = "0" ]; then
+		RC=0
+	else
+		RC=1
+	fi
 
-    return $RC
+	return $RC
 
 }
 test_case_06()
@@ -337,14 +341,15 @@ APP_SUB_DIR=
 
 setup || exit $RC
 #judge rootfs type
-rt="Ubuntu"
-cat /etc/issue | grep Ubuntu || rt="others"
-
-if [ $rt = "Ubuntu" ];then
-    APP_SUB_DIR="ubuntu_10.10/test"
-    export DISPLAY=:0.0
+rt="Yocto"
+cat /etc/issue | grep Yocto || rt="others"
+if [ $rt = "Yocto" ];then
+	APP_SUB_DIR="yocto_1.5_x/bin"
+	export VIV_DESKTOP=0
+	export DISPLAY=:0.0
+	export LD_LIBRARY_PATH=$TEST_DIR/yocto_1.5_x/lib
 else
-    #judge the rootfs
+	#judge the rootfs
     platfm.sh
     case "$?" in
     50)
