@@ -76,15 +76,11 @@ static int test_init(void)
 #ifndef CONFIG_OF
 	gpio_request(SABRESD_DISP0_RST_B, "disp0-reset");
 #endif
-	do_gettimeofday(&start);
 #ifndef CONFIG_OF
 	while(count--){
 		gpio_direction_output(SABRESD_DISP0_RST_B, 0);
 	}
 #endif
-	do_gettimeofday(&finish);
-	speed = calc_time(test_count);
-	printk(KERN_INFO "gpio set speed is %ld us\n", speed);
 	count = test_count;
 	do_gettimeofday(&start);
 	l = (__raw_readl(reg + GPIO_DR) & (~(1 << 8))) | (!!1 << 8);
