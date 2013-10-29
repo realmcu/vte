@@ -64,7 +64,7 @@ static int test_init(void)
 	u32 l;
 	unsigned int np;
 #ifdef CONFIG_OF
-	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-gpio");
+	np = of_find_compatible_node(NULL, NULL, "gpio-reset");
 	reg = of_iomap(np, 0);
 #else
 	/*map GPIO3*/
@@ -74,7 +74,6 @@ static int test_init(void)
 	printk(KERN_INFO "gpio test on disp0-reset\n");
 	/*test memory io*/
 #ifdef CONFIG_OF
-	//np = of_find_compatible_node(NULL, NULL, "gpio-reset");
 	gpio_request_one(np, GPIOF_OUT_INIT_LOW, "gpio-reset");
 #else
 	gpio_request(SABRESD_DISP0_RST_B, "disp0-reset");
