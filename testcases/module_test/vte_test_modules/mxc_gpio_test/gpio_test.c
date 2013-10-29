@@ -73,19 +73,15 @@ static int test_init(void)
 
 	printk(KERN_INFO "gpio test on disp0-reset\n");
 	/*test memory io*/
-#ifdef CONFIG_OF
-	gpio_request_one(np, GPIOF_OUT_INIT_LOW, "gpio-reset");
-#else
+#ifndef CONFIG_OF
 	gpio_request(SABRESD_DISP0_RST_B, "disp0-reset");
 #endif
 	do_gettimeofday(&start);
+#ifndef CONFIG_OF
 	while(count--){
-#ifdef CONFIG_OF
-		gpio_direction_output(np, 0);
-#else
 		gpio_direction_output(SABRESD_DISP0_RST_B, 0);
-#endif
 	}
+#endif
 	do_gettimeofday(&finish);
 	speed = calc_time(test_count);
 	printk(KERN_INFO "gpio set speed is %ld us\n", speed);
