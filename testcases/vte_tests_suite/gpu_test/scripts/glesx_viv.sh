@@ -150,8 +150,18 @@ test_case_01()
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	cd sample_test
 	./sample_test 1000 || RC=$(echo $RC sample_test)
+
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo mcube stencil test
+	echo "==========================="
+	./mcube 1000 || RC=$(echo $RC mcube)
+
+	echo "==========================="
+	echo mcube_es20 stencil test
+	echo "==========================="
+	./mcube_es2 1000 || RC=$(echo $RC mcube_es20)
 	
-	echo glx test
 	echo "==========================="
 	echo glxs demo
 	echo "==========================="
