@@ -51,7 +51,7 @@ static long calc_time(unsigned long size)
 	us = (finish.tv_sec - start.tv_sec) * 1000 * 1000 +
 	     (finish.tv_usec - start.tv_usec);
 	pr_info("Total time is %ldus\n", us);
-	speed = us / size;
+	speed = us * 1000 / size;
 	return speed;
 }
 
@@ -63,8 +63,13 @@ static int test_init(void)
 	void __iomem *reg;
 	u32 l;
 	unsigned int np;
+	struct resource res;
 #ifdef CONFIG_OF
-	np = of_find_compatible_node(NULL, NULL, "gpio-reset");
+	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-gpio");
+	if (of_address_to_resource(np, 0, &res)) {
+	  pr_err("can not find the gpio-reset resource\n");
+	  return -EINVAL;
+	}
 	reg = of_iomap(np, 0);
 #else
 	/*map GPIO3*/
@@ -88,8 +93,9 @@ static int test_init(void)
 		__raw_writel(l ,reg + GPIO_DR);
 	}
 	do_gettimeofday(&finish);
+	printk("calculate the time now\n");
 	speed = calc_time(test_count);
-	printk(KERN_INFO "gpio set speed is %ld us\n", speed);
+	printk(KERN_INFO "gpio set speed is %ld ns pre time \n", speed);
 	return -ENODEV;
 }
 
