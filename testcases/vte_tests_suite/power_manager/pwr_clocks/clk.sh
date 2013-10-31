@@ -330,7 +330,7 @@ test_case_07()
     get_clk_cnt uart
     uart_cnt=$?
 
-    if [ $uart_cnt -gt 1 ]; then
+    if [ $uart_cnt -gt 3 ]; then
         RC=7
     else
         RC=0
@@ -484,6 +484,30 @@ test_case_12()
     return $RC
 }
 
+test_case_13()
+{
+    #TODO give TCID
+    TCID="spi clock"
+    #TODO give TST_COUNT
+    TST_COUNT=13
+    RC=13
+
+    #print test info
+    tst_resm TINFO "test $TST_COUNT: $TCID "
+
+    #TODO add function test script here
+    get_clk_cnt ecspi
+    spi_cnt=$?
+
+    if [ $spi_cnt -gt 0 ]; then
+        RC=13
+    else
+        RC=0
+    fi
+
+    return $RC
+}
+
 
 usage()
 {
@@ -501,7 +525,9 @@ usage()
     8: USB
     9: VPU
     10: Ethernet
-	11: PCIe
+    11: PCIe
+    12: MIPI_PLLREF
+    13: SPI
 EOF
 
     exit 1
@@ -564,6 +590,9 @@ case "$1" in
     ;;
 12|"mipi_pllref_clk")
     test_case_12 || check_result
+    ;;
+13|"spi")
+    test_case_13 || check_result
     ;;
 *)
     usage
