@@ -31,6 +31,7 @@
 #Andy Tian                    05/15/2012       N/A      add wait for background
 #Andy Tian                    12/14/2012       N/A      add GPU thermal test
 #Shelly Cheng                 09/02/2013       N/A      add more test demo and restructure the sceipt
+#Shelly Cheng                 11/01/2013       N/A      add PowerVR sdk demo test    
 # 
 ################################################################################
 
@@ -421,19 +422,70 @@ test_case_05()
     echo "==========================="
     if [ -e basemark_v2 ]; then
         cd basemark_v2
-        ./fm_oes2_player
-    fi
+		./fm_oes2_player
+	fi
 
-    cd ${TEST_DIR}/${APP_SUB_DIR}
-    echo "==========================="
-    echo "Mirada test"
-    echo "==========================="
-    if [ -e mirada ]; then
-        cd mirada
-        ./Mirada
-    fi
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo "Mirada test"
+	echo "==========================="
+	if [ -e mirada ]; then
+		cd mirada
+		./Mirada
+	fi
 
-    return 0
+	return 0
+}
+test_case_06()
+{
+	#TODO give TCID
+	TCID="PowerVR SDK test"
+	#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=0
+	cd ${TEST_DIR}/${APP_SUB_DIR}
+	echo "==========================="
+	echo PowerVR3 test
+	echo "==========================="
+	cd PowerVR3.1
+    
+	cd Advanced
+	for i in `ls OGLES*`
+	do
+		echo $i
+		./$i &
+		pid_case6=$!
+		sleep 15
+	    kill -9  $pid_case6
+	done
+
+	cd Beginner
+	for i in `ls OGLES*`
+	do
+		echo $i
+		./$i &
+		pid_case6=$!
+		sleep 15
+		kill  $pid_case6
+	done
+
+	cd Intermediate
+	for i in `ls OGLES*`
+	do
+		echo $i
+		./$i &
+		pid_case6=$!
+		sleep 15
+		kill  $pid_case6
+	done
+
+	RC=$?
+	if [ $RC -eq 0 ]; then
+		echo "TEST PASS"
+	else
+		echo "TEST FAIL"
+	fi
+	return $RC
 }
 
 
@@ -445,6 +497,7 @@ usage()
     echo "3: conformance test"
     echo "4: pm test"
     echo "5: performance test"
+	echo "6: PowerVR sdk demo test"
 }
 
 # main function
