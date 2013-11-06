@@ -117,13 +117,19 @@ test_case_01()
 	echo "==========================="
 	echo shared context
 	echo "==========================="
-    ./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test)
+	./eglx_es1_3 "width=800,height=600, loop=300"|| RC=$(echo $RC eglx_es1_3_test)
 
+	echo "==========================="
+	echo gpubench
+	echo "==========================="
+	cd gpubench
+	./gpuBench || RC=$(echo $RC gpuBench)
 
 	echo "ES2.0 Test case"
 	echo "==========================="
 	echo simple draw vertex color
 	echo "==========================="
+	cd ${TEST_DIR}/${APP_SUB_DIR}
 	./eglx_es2_1 "width=800,height=600,subcase=0,loop=300" || RC=$(echo $RC simple_draw_vertex__test)
 
 	echo "==========================="
