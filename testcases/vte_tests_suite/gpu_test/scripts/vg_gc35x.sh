@@ -107,24 +107,20 @@ test_case_01()
 	echo "==========================="
 	echo tiger
 	echo "==========================="
-	./tiger_vg -rgba 5650 -frameCount 1000 || RC="tiger"
+	./tiger_gc355 -rgba 5650 -frameCount 1000 || RC="tiger"
 
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	echo "==========================="
-	echo sample_testvg
+	echo sample_test
 	echo "==========================="
-	./sample_testvg355 1000 || RC=$(echo $RC sample_testvg)
-
-
+	./sample_test_gc355 1000 || RC=$(echo $RC sample_test)
 	echo $RC
-
 
 	if [ "$RC" = "0" ]; then
 		RC=0
 	else
 		RC=1
 	fi
-
 	return $RC
 
 }
@@ -149,14 +145,14 @@ test_case_02()
     echo "==========================="
     echo tiger
     echo "==========================="
-    ./tiger_vg  -rgba 5650 -frameCount 10000 &
+    ./tiger_gc355  -rgba 5650 -frameCount 10000 &
     pid_tiger=$!
     
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
     echo sample_testvg
     echo "==========================="
-    ./sample_testvg355 10000 &
+    ./sample_test_gc355 10000 &
     
     wait $pid_tiger 
     RC=$?
@@ -219,7 +215,7 @@ test_case_04()
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
     cd ${TEST_DIR}/${APP_SUB_DIR} 
-    ./tiger_vg  -rgba 5650 -frameCount 50000 &
+    ./tiger_gc355  -rgba 5650 -frameCount 50000 &
     td=$!
     sleep 1
     rtc_testapp_6 -T 50
@@ -274,7 +270,8 @@ test_case_06()
     echo "==========================="
     echo vgMark
     echo "==========================="
-    cd VGMark_gc355
+    cd vgmark_10
+    cp script.lua_gc355 script.lua
     ./fm_oes_vg_player_gc355 || RC=$(echo $RC vgmark)
     echo $RC
 
@@ -300,25 +297,25 @@ test_case_07()
 		echo "==========================="
 		export FB_MULTI_BUFFER=1
 		echo FB_MULTI_BUFFER=1
-		./tiger_vg  -rgba 5650 -frameCount 300 
+		./tiger_gc355  -rgba 5650 -frameCount 300 
 		export FB_MULTI_BUFFER=2
 		echo FB_MULTI_BUFFER=2
-		./tiger_vg  -rgba 5650 -frameCount 300
+		./tiger_gc355  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=3
 		echo FB_MULTI_BUFFER=3
-		./tiger_vg  -rgba 5650 -frameCount 300
+		./tiger_gc355  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=2
 		echo FB_MULTI_BUFFER=2
-		./tiger_vg  -rgba 5650 -frameCount 300
+		./tiger_gc355  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=1
 		echo FB_MULTI_BUFFER=1
-		./tiger_vg  -rgba 5650 -frameCount 300
+		./tiger_gc355  -rgba 5650 -frameCount 300
 		export FB_MULTI_BUFFER=0
 		echo FB_MULTI_BUFFER=0
-		./tiger_vg  -rgba 5650 -frameCount 300
+		./tiger_gc355  -rgba 5650 -frameCount 300
 		export FB_FRAMEBUFFER_0=/dev/fb1
 		echo 0 > /sys/class/graphics/fb1/blank
-		./tiger_vg  -rgba 5650 -frameCount 300
+		./tiger_gc355  -rgba 5650 -frameCount 300
 		echo 1 > /sys/class/graphics/fb1/blank
 		echo 0 > /sys/class/graphics/fb0/blank
 		export FB_FRAMEBUFFER_0=/dev/fb0
@@ -359,12 +356,15 @@ APP_SUB_DIR=
 
 setup || exit $RC
 #judge rootfs type
-rt="Ubuntu"
-cat /etc/issue | grep Ubuntu || rt="others"
-
-if [ $rt = "Ubuntu" ];then
-    APP_SUB_DIR="ubuntu_10.10/test"
-    export DISPLAY=:0.0
+if [ -e /etc/X11 ];then
+	APP_SUB_DIR="yocto_1.5_x/bin"
+	export VIV_DESKTOP=0
+	export DISPLAY=:0.0
+	export LD_LIBRARY_PATH=$TEST_DIR/yocto_1.5_x/lib
+elif [ -e /usr/lib/directfb-1.6-0 ];then
+	echo "directfb rootfs"
+elif [ -e /usr/lib/weston ];then
+	APP_SUB_DIR="wayland"
 else
 #judge the rootfs
 platfm.sh
