@@ -103,9 +103,9 @@ test_case_01()
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    echo sample_testvg
+    echo sample_test
     echo "==========================="
-    ./sample_testvg 1000 || RC=$(echo $RC sample_testvg)
+	./sample_test_vg 1000 || RC=$(echo $RC sample_test)
 
     echo $RC
 
@@ -144,9 +144,9 @@ test_case_02()
 
     cd ${TEST_DIR}/${APP_SUB_DIR}
     echo "==========================="
-    echo sample_testvg
+    echo sample_test
     echo "==========================="
-    ./sample_testvg 10000 &
+	./sample_test_vg 10000 &
     
     wait $pid_tiger 
     RC=$?
@@ -253,11 +253,8 @@ test_case_05()
 	echo "==========================="
 	echo vgMark
 	echo "==========================="
-	if [ $rt = "Yocto" ];then
-		cd vgmark_10
-	else
-		cd VGMark
-    fi
+	cd vgmark_10
+	cp script.lua_gc2000 script.lua
 	./fm_oes_vg_player || RC=$(echo $RC vgmark)
     echo $RC
 	if [ "$RC" = "0" ]; then
@@ -272,7 +269,7 @@ test_case_05()
 test_case_06()
 {
 	    #TODO give TCID
-		TCID="sample_test"
+		TCID="MULTI_BUFFER"
 		#TODO give TST_COUNT
 		TST_COUNT=1
 		RC=0
@@ -341,13 +338,15 @@ APP_SUB_DIR=
 
 setup || exit $RC
 #judge rootfs type
-rt="Yocto"
-cat /etc/issue | grep Yocto || rt="others"
-if [ $rt = "Yocto" ];then
+if [ -e /etc/X11 ];then
 	APP_SUB_DIR="yocto_1.5_x/bin"
 	export VIV_DESKTOP=0
 	export DISPLAY=:0.0
 	export LD_LIBRARY_PATH=$TEST_DIR/yocto_1.5_x/lib
+elif [ -e /usr/lib/directfb-1.6-0 ];then
+    echo "directfb rootfs"
+elif [ -e /usr/lib/weston ];then
+	APP_SUB_DIR="wayland"
 else
 	#judge the rootfs
     platfm.sh
