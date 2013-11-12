@@ -203,14 +203,40 @@ test_case_04()
 	fi
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	echo "==========================="
-    echo "3Dmark20 mm07 test"
-    echo "==========================="
-    if [ -e mm07 ]; then
-        cd mm07
-        ./fm_oes2_mobile_player
-    fi
+	echo "3Dmark20 mm07 test"
+	echo "==========================="
+	if [ -e mm07 ]; then
+		cd mm07
+		./fm_oes2_mobile_player
+	fi
 
 	return 0
+}
+test_case_05()
+{
+	#TODO give TCID
+	TCID="VDK TEST"
+	#TODO give TST_COUNT
+	TST_COUNT=1
+	RC=0
+	echo "==========================="
+	echo vdk test
+	echo "==========================="
+	cd /opt/viv_samples/vdk;
+
+	for i in `ls tutorial*`
+	do
+		echo $i;
+		./$i -f 1000;
+	done
+
+	RC=$?
+	if [ $RC -eq 0 ]; then
+		echo "TEST PASS"
+	else
+		echo "TEST FAIL"
+	fi
+	return $RC
 }
 
 
@@ -222,6 +248,7 @@ usage()
     echo "2: concurrent test"
     echo "3: pm test"
     echo "4: performance test"
+	echo "5: vdk test"
 }
 
 # main function
@@ -252,11 +279,14 @@ case "$1" in
     test_case_03 || exit $RC
     ;;
 4)
-    test_case_04 || exit $RC
-    ;;
+	test_case_04 || exit $RC
+	;;
+5)
+	test_case_05 || exit $RC
+	;;
 
 *)
-    usage
+	usage
     ;;
 esac
 
