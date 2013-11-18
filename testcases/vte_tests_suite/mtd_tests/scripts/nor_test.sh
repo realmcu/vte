@@ -45,27 +45,27 @@ setup()
     export TST_COUNT=0
     RC=1
     trap "cleanup" 0
-    if [ $(cat /proc/cmdline | grep spi-nor | wc -l) -eq 1 ]; then
-	    if [ `uname -r |cut -c -6` \> "3.0.35" ];then
-   		mtdnode=/dev/$(cat /proc/mtd | grep spi | cut -c 1-4)
-		mtdsize=$(grep spi /proc/mtd |awk '{ print $2 }')
-		device=$(cat /proc/mtd | grep spi | cut -c 1-4);
-    	    else
-        	mtdnode=/dev/`grep kernel /proc/mtd |awk '{ print $1 }' |cut -d : -f1`
-        	mtdsize=$(grep kernel /proc/mtd |awk '{ print $2 }')
-		device=$(cat /proc/mtd | grep kernel | cut -c 1-4);
-            fi
-    elif [ $(cat /proc/cmdline | grep weim-nor | wc -l) -eq 1 ]; then
-            if [ `uname -r|cut -c -6` \> "3.0.35" ];then
-                mtdnode=/dev/$(cat /proc/mtd | grep Kernel | cut -c 1-4)
-                mtdsize=$(grep Kernel /proc/mtd |awk '{ print $2 }')
-		device=$(cat /proc/mtd | grep Kernel | cut -c 1-4);	
-            else
-                mtdnode=/dev/`grep rootfs /proc/mtd |awk '{ print $1 }' |cut -d : -f1`
-                mtdsize=$(grep rootfs /proc/mtd |awk '{ print $2 }')
-		device=$(cat /proc/mtd | grep rootfs | cut -c 1-4);
-            fi
-   fi
+if [ `uname -r |cut -c -6` \> "3.0.35" ];then
+   if [ $(cat /proc/mtd | grep spi | wc -l) -eq 1 ]; then			 
+   			 mtdnode=/dev/$(cat /proc/mtd | grep spi | cut -c 1-4)
+		  	 mtdsize=$(grep spi /proc/mtd |awk '{ print $2 }')
+		  	 device=$(cat /proc/mtd | grep spi | cut -c 1-4);
+	 elif [ $(cat /proc/mtd | grep kernel | wc -l) -eq 1 ]; then	
+       	 mtdnode=/dev/`grep kernel /proc/mtd |awk '{ print $1 }' |cut -d : -f1`
+         mtdsize=$(grep kernel /proc/mtd |awk '{ print $2 }')
+		     device=$(cat /proc/mtd | grep kernel | cut -c 1-4);	 
+	 fi
+else
+		if [ $(cat /proc/cmdline | grep spi-nor | wc -l) -eq 1 ]; then
+		     mtdnode=/dev/`grep kernel /proc/mtd |awk '{ print $1 }' |cut -d : -f1`
+         mtdsize=$(grep kernel /proc/mtd |awk '{ print $2 }')
+		     device=$(cat /proc/mtd | grep kernel | cut -c 1-4);
+		elif [ $(cat /proc/cmdline | grep weim-nor | wc -l) -eq 1 ]; then
+         mtdnode=/dev/`grep rootfs /proc/mtd |awk '{ print $1 }' |cut -d : -f1`
+         mtdsize=$(grep rootfs /proc/mtd |awk '{ print $2 }')
+		     device=$(cat /proc/mtd | grep rootfs | cut -c 1-4);		
+		fi
+fi
    if [ ! -e $mtdnode ];then
         echo "TEST FAIL: No MTD device found, please check..."
         return 1
