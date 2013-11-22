@@ -143,7 +143,7 @@ do
   #1. find devices node
   # grep out "boot" in case list including mmcblk0bootX on SMD board eMMC,
   # which can not be fdisk
-  d_list=$(cat /proc/partitions | grep -i $i | awk '{print $4}'| grep -vi "boot"| grep -vi "${i}p")
+  d_list=$(cat /proc/partitions | grep -i $i | awk '{print $4}'| grep -vi "boot"| grep -vi "rpmb" | grep -vi "${i}p")
   #2. deteminate partition
 	for j in $d_list
 	do
