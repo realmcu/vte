@@ -1,5 +1,5 @@
 #!/bin/sh -x
-# Copyright (C) 2010 Freescale Semiconductor, Inc. All Rights Reserved.
+# Copyright (C) 2010,2013 Freescale Semiconductor, Inc. All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,16 +63,13 @@ return $RC
 
 check_emmc_card()
 {
-    if [ `uname -r` \> "3.0.35" ]; then
-		cards=$(ls /sys/devices/*/*/*/mmc_host/*/*/boot_info)
-	else
-		cards=$(ls /sys/devices/platform/*/mmc_host/*/*/boot_info)
-	fi
+    cards=$(find /sys/devices/ -name "boot_info")
 	for i in $cards
 	do
-   emmc_cards="$emmc_cards $(dirname $i)"
+        emmc_cards="$emmc_cards $(dirname $i)"
 	done
 }
+
 RC=0
 emmc_cards=""
 check_emmc_card
@@ -90,8 +87,9 @@ if [ -n "$emmc_cards" ];then
 	 sleep 1
 	 card_path=$(ls $emmc_card/block)
 	 card_node=$(basename $card_path)
-	 dd if=urandom.bin of=/dev/${card_node} bs=512 count=100
-	 dd if=/dev/${card_node} of=emmc.bin bs=512 count=100
+     # avoid ruin partition table and uboot
+	 dd if=urandom.bin of=/dev/${card_node} bs=512 count=100 seek=2048
+	 dd if=/dev/${card_node} of=emmc.bin bs=512 count=100 skip=2048
 	 cmp urandom.bin emmc.bin || RC=1
  done
  rm -f urandom.bin emmc.bin
