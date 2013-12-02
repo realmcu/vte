@@ -280,13 +280,14 @@ test_case_02()
 	cd sample_test
 	./sample_test 1000 &
 	pid_sample_test=$!
+	
 	#echo glx test
 	#echo "==========================="
 	#echo draw quad
 	#echo "==========================="
 	#./glx_quad_1 "width=800,height=random600" || RC=$(echo $RC draw_quad_test) &
 	#pid_quad_1=$!
-	wait $pid_egl&&wait $pid_es1_texfen_1&&wait $pid_es2_simvercol&&wait $pid_es2_synswapbuf&&wait $pid_es2_rgbtex&&wait $pid_es2_purswapbuf&&wait $pid_es2_texfen&&$pid_sample_test
+	wait $pid_egl&&wait $pid_es1_texfen_1&&wait $pid_es2_simvercol&&wait $pid_es2_synswapbuf&&wait $pid_es2_rgbtex&&wait $pid_es2_purswapbuf&&wait $pid_es2_texfen&&wait $pid_sample_test
 	RC=$?
 	wait
     if [ $RC -eq 0 ]; then
