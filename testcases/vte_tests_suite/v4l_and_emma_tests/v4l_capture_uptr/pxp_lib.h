@@ -22,7 +22,7 @@
 #ifndef	PXP_LIB_H
 #define	PXP_LIB_H
 
-#include <linux/pxp_dma.h>
+#include <uapi/linux/pxp_dma.h>
 
 #ifndef true
 #define true    1
