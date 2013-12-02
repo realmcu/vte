@@ -204,24 +204,7 @@ ioprio_get 283
 inotify_init 284
 inotify_add_watch 285
 inotify_rm_watch 286
->>>>>>> ltp:testcases/kernel/include/s390x.in
 openat 288
-<<<<<<< HEAD:testcases/kernel/include/s390x.in
-mkdirat (__NR_openat + 1)
-mknodat (__NR_openat + 2)
-fchownat (__NR_openat + 3)
-futimesat (__NR_openat + 4)
-newfstatat (__NR_openat + 5)
-fstatat64 (__NR_openat + 5)
-unlinkat (__NR_openat + 6)
-renameat (__NR_openat + 7)
-linkat (__NR_openat + 8)
-symlinkat (__NR_openat + 9)
-readlinkat (__NR_openat + 10)
-fchmodat (__NR_openat + 11)
-faccessat (__NR_openat + 12)
-eventfd 318
-=======
 mkdirat 289
 mknodat 290
 fchownat 291
@@ -245,10 +228,7 @@ vmsplice 309
 getcpu 311
 epoll_pwait 312
 utimes 313
->>>>>>> ltp:testcases/kernel/include/s390x.in
 fallocate 314
-<<<<<<< HEAD:testcases/kernel/include/s390x.in
-=======
 utimensat 315
 signalfd 316
 timerfd 317
