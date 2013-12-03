@@ -399,6 +399,7 @@ test_case_05()
 
 	#print test info
 	tst_resm TINFO "test $TST_COUNT: $TCID "
+    cpufreq-set -g performance
 
 	echo "==========================="
 	echo "glmark2 test"
@@ -440,7 +441,7 @@ test_case_05()
 		cd mirada
 		./Mirada
 	fi
-
+    cpufreq-set -g interactive
 	return 0
 }
 test_case_06()

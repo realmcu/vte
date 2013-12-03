@@ -248,7 +248,8 @@ test_case_05()
 
     #print test info
     tst_resm TINFO "test $TST_COUNT: $TCID "
-
+    
+	cpufreq-set -g performance
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	echo "==========================="
 	echo vgMark
@@ -262,7 +263,7 @@ test_case_05()
 	else
 		RC=1
 	fi
-
+    cpufreq-set -g interactive
 	return $RC
 
 }
