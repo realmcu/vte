@@ -327,7 +327,8 @@ test_case_05()
 
 	#print test info
 	tst_resm TINFO "test $TST_COUNT: $TCID "
-
+    
+	cpufreq-set -g performance
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	echo "==========================="
 	echo "3DMark mm06 test"
@@ -363,7 +364,7 @@ test_case_05()
         cd Mirada
         ./Mirada
     fi
-
+    cpufreq-set -g interactive
     return 0
 }
 
