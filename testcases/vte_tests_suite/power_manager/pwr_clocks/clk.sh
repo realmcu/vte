@@ -18,6 +18,7 @@
 # Spring Zhang          15/03/2012  Add ethernet clock check
 # Andy Tian             09/04/2012  Add pcie clock check
 # Andy Tian             17/06/2013  Porting for 3.5.7 clk tree
+# Andy Tian             10/12/2013  Porting for 3.17 clk tree
 
 
 # Function:     setup
@@ -71,7 +72,7 @@ get_clk_cnt()
 {
   target=$1
   ct=0
-  list=$(find ${mount_pt}/clk -path ${mount_pt}/dummy -prune -o -name "${target}*" -print)
+  list=$(find ${mount_pt}/clk -path ${mount_pt}/*dummy -prune -o -name "${target}*" -print)
   for i in $list; do
     if [ -e $i/clk_enable_count ]; then
         cnt=$(cat ${i}/clk_enable_count)
