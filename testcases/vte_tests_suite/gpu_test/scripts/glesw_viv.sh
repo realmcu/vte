@@ -75,12 +75,12 @@ test_case_01()
     #TODO give TST_COUNT
     TST_COUNT=1
     RC=0
-    simple-egl -f &
+    weston-simple-egl -f &
     pid_egl=$!
 	sleep 5
 	kill $pid_egl
 	
-	simple-shm&
+	weston-simple-shm&
 	pid_shm=$!
 	sleep 5
 	kill $pid_shm
@@ -107,13 +107,13 @@ test_case_02()
 	echo "==========================="
 	echo simple-egl
 	echo "==========================="
-	simple-egl &
+	weston-simple-egl &
 	pid_egl=$!
 
 	echo "==========================="
 	echo simple_shm
 	echo "==========================="
-	simple-shm & 
+	weston-simple-shm & 
 	pid_shm=$!
 
     echo "==========================="
@@ -155,9 +155,9 @@ test_case_03()
     ./tiger -frameCount 1000 &
 	pid_tiger=$!
 
-    simple-egl&
+    weston-simple-egl&
 	pid_egl=$!
-
+    sleep 5
     rtc_testapp_6 -T 50
     sleep 1
     rtc_testapp_6 -T 50
