@@ -1040,15 +1040,7 @@ int uninit_device (void)
 	int retValue = TPASS;
 	unsigned int i;
 
-	if(gUsecase == V4L2_BUF_TYPE_VIDEO_CAPTURE)  
-	{    
-		for(i = 0; i < gBuffNumber; i++)    
-		{      
-			if(munmap(gpBuffers[i].mpStart, gpBuffers[i].mLength) < 0)      
-				retValue = TFAIL;    
-		}
-	}  
-	else
+	if(gUsecase != V4L2_BUF_TYPE_VIDEO_CAPTURE)  
 	{
 		ioctl(gFdV4L, VIDIOC_S_FBUF, &fbuffer_save);
 	}
@@ -1616,7 +1608,7 @@ void display_to_fb (unsigned char * aStart, int aLength)
 	unsigned char *pDst = gpFB;
 	unsigned char *pSrc = (unsigned char *)aStart;
 
-	int i = 0, j = 0;
+	int j = 0;
 	/* RGB565X only */
 #if 0
 	while(i < 2 * gFormat.fmt.pix.width * gFormat.fmt.pix.height)

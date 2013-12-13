@@ -649,6 +649,8 @@ int init_capture(void)
 	CLEAR(gFormat);
 
 	gFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	gOrigFormatRect.width = 640;
+	gOrigFormatRect.height = 480;
 
 	if(ioctl(gFdV4L, VIDIOC_G_FMT, &gFormat) < 0)
 	{
