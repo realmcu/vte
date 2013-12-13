@@ -46,7 +46,7 @@ extern "C"{
 #include <stdio.h>              /* sscanf() & perror() */
 
 #include <stdlib.h>             /* atoi()       */
-#include <asm/types.h>          /* for videodev2.h */
+#include <sys/types.h>          /* for videodev2.h */
 #include <linux/fb.h>
 #include <sys/mman.h>
 #include <sys/time.h>

@@ -11,7 +11,7 @@
 ##############################################################################
 
 LIBPATH = ../../epxp_test
-CFLAGS += -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
+CFLAGS += -Wall -I../../../../include -I${KERNEL_SRCDIR}/include -I${KLINUX_SRCDIR}/include
 LOADLIBES += $(LIBPATH)/lib/libpxp.a  -L../../../../lib -lltp -lpthread
 
 SRCS=$(wildcard *.c)

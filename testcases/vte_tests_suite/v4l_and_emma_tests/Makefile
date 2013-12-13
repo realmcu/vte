@@ -27,8 +27,8 @@ export CFLAGS=-Wall
 export LOADLIBES=-lm
 
 SUBDIRS = v4l_capture_testapp \
-v4l_output_testapp# \
-#v4l_capture_uptr
+v4l_output_testapp \
+v4l_capture_uptr
 
 all:
 	@set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i ; done

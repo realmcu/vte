@@ -826,7 +826,7 @@ int YCbCrToRGB(unsigned char *Y, int xsize,
 int YCbYCrToRGB (unsigned char * YCbYCr, int stride,  unsigned char *rgbPixelPtr, 
                  int width, int height, int rgbOrientation, int colorFormat)
 {
-        char *YPtr, *CbPtr, *CrPtr;
+        unsigned char *YPtr, *CbPtr, *CrPtr;
         int i, j, err;
         if (width  % 2 != 0) width  -= 1;
         if (height % 2 != 0) height -= 1;
