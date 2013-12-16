@@ -175,17 +175,13 @@ test_case_01()
 	cd ${TEST_DIR}/${APP_SUB_DIR}
 	if [ -e GLXS ]; then
 		cd GLXS/
-		./glxs &
+		./glxs || RC=$(echo $RC glxs)
 	fi
-	pid_glxs=$!
-    sleep 40
-    kill  $pid_glxs
-	RC=$(echo $RC glxs_demo)
+	#RC=$(echo $RC)
 	#echo "==========================="
 	#echo draw quad
 	#echo "==========================="
 	#./glx_quad_1 "width=800,height=600" || RC=$(echo $RC draw_quad_test)
-
 	wait	
 	if [ "$RC" = "0" ]; then
 		RC=0
