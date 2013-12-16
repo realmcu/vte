@@ -211,10 +211,11 @@ setup()
 
 cleanup()
 {
-    echo "Cleanup temp binaries in /tmp"
+    echo "Log: Cleanup temp binaries in /tmp"
     cd /tmp
     rm -f api_storage red_BGR24 mpeg2_720x576.mpg dvfs_per.sh lcd_testapp storage_all.sh v4l_output_testapp vpu_dec_test.sh rtc_testapp_6 adc_test1.sh clocks.sh dump-clocks tst_* platfm.sh bonnie++ dt
     cd -
+    echo "Log: Probe up ethernet"
     ifconfig eth0 up
     udhcpc
     mount -t nfs -o nolock $OLD_NFS_PATH /mnt/nfs
