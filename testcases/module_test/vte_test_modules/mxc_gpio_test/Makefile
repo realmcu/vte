@@ -7,7 +7,7 @@ obj-m += wdt_gpio.o
 TARGET= gpio_test.ko wdt_gpio.ko 
 
 all: 
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@rm -rf *.mod.ko *.mod.c .*.cmd *.o .tmp_versions
 	@echo "***********************************************"
 	@echo "** ALL : $(TARGET)                    **"

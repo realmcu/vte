@@ -30,14 +30,14 @@
 #
 ####################################################################################################
 #CFLAGS += -Wall
-EXTRA_CFLAGS += -Wall -I$(KERNEL_SRCDIR)/include -I$(KLINUX_BLTDIR)/include 
+EXTRA_CFLAGS += -Wall -I$(KLINUX_BLTDIR)/include -I$(KLINUX_BLTDIR)/include 
 LOADLIBES +=
 
 obj-m = mxc_sdma_mem_test.o
 TARGET = mxc_sdma_mem_test.ko
 
 all: 
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@echo "***********************************************"
 	@echo "** ALL : TEST_SDMA_MODULE                    **"
 	@echo "***********************************************"

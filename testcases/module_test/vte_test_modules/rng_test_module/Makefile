@@ -26,9 +26,9 @@
 ####################################################################################################
 
 BIN_DIR = ../../../
-EXTRA_CFLAGS += -DLINUX_KERNEL -I$(KERNEL_SRCDIR)/drivers/mxc \
-                -I$(KERNEL_SRCDIR)/drivers/mxc/security/rng/include \
-		-I$(KERNEL_SRCDIR)/drivers/mxc/security/sahara2/include \
+EXTRA_CFLAGS += -DLINUX_KERNEL -I$(KLINUX_BLTDIR)/drivers/mxc \
+                -I$(KLINUX_BLTDIR)/drivers/mxc/security/rng/include \
+		-I$(KLINUX_BLTDIR)/drivers/mxc/security/sahara2/include \
 		-DCONFIG_PM
 
 LOADLIBES=
@@ -38,7 +38,7 @@ obj-m= rng_test_module.o
 
 all: 
 	echo $(CFLAGS)
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
 	@rm -rf ./.tmp_versions
 	@echo "***********************************************"

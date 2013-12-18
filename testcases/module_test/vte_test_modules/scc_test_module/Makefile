@@ -20,8 +20,8 @@
 #A.Urusov/NONE                26/09/2005     TLSbo55835  Initial version
 #
 ####################################################################################################
-EXTRA_CFLAGS += -I$(KERNEL_SRCDIR)/include \
-          -I$(KERNEL_SRCDIR)/arch/arm/plat-mxc/include \
+EXTRA_CFLAGS += -I$(KLINUX_BLTDIR)/include \
+          -I$(KLINUX_BLTDIR)/arch/arm/plat-mxc/include \
 	  -I$(KLINUX_BLTDIR)/include \
           -DSCC_MODULE \
           -DSCC_DEBUG  \
@@ -33,7 +33,7 @@ TARGET = scc_test_module.ko
 obj-m= scc_test_module.o
 
 all:
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
 	@rm -rf ./.tmp_versions
 	@echo "***********************************************"

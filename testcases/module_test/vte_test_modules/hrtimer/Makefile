@@ -2,7 +2,7 @@
 obj-m := hrtimer_test.o
 TARGETS = hrtimer_test.ko
 all:
-	$(MAKE) -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	$(MAKE) -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 
 install:
 	ln -f $(TARGETS) ../../../bin/

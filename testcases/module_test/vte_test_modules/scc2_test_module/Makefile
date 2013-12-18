@@ -20,9 +20,9 @@
 #A.Urusov/NONE                26/09/2005     TLSbo55835  Initial version
 #
 ####################################################################################################
-EXTRA_CFLAGS += -I$(KERNEL_SRCDIR)/drivers/mxc/security \
-          -I$(KERNEL_SRCDIR)/include \
-          -I$(KERNEL_SRCDIR)/include/asm-arm/arch-mxc \
+EXTRA_CFLAGS += -I$(KLINUX_BLTDIR)/drivers/mxc/security \
+          -I$(KLINUX_BLTDIR)/include \
+          -I$(KLINUX_BLTDIR)/include/asm-arm/arch-mxc \
 	  -I$(KLINUX_BLTDIR)/include \
           -DSCC2_MODULE \
           -DSCC2_DEBUG
@@ -33,7 +33,7 @@ TARGET = scc2_test_module.ko
 obj-m= scc2_test_module.o
 
 all:
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@rm -f *.mod.ko *.mod.c .*.cmd *.o
 	@rm -rf ./.tmp_versions
 	@echo "***********************************************"

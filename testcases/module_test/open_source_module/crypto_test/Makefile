@@ -3,10 +3,10 @@ export ARCH=$(ARCH_CPU)
 obj-m += tcrypt.o
 
 modules:
-	make -C $(KERNEL_SRCDIR) SUBDIRS=$$PWD modules
+	make -C $(KLINUX_BLTDIR) SUBDIRS=$$PWD modules
 
 modules_install:
-	make -C $(KERNEL_SRCDIR) SUBDIRS=$$PWD modules_install
+	make -C $(KLINUX_BLTDIR) SUBDIRS=$$PWD modules_install
 
 install:
 	ln -f  tcrypt.ko ../../../bin/

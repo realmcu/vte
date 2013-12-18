@@ -36,7 +36,7 @@ obj-m = sdma_test_module.o
 TARGET = sdma_test_module.ko
 
 all: 
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_BLTDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@echo "***********************************************"
 	@echo "** ALL : TEST_SDMA_MODULE                    **"
 	@echo "***********************************************"

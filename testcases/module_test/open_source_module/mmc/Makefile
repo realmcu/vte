@@ -20,7 +20,7 @@ obj-m = mmc_test.o
 TARGET = mmc_test.ko
 
 all: 
-	@make -C $(KERNEL_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
+	@make -C $(KLINUX_SRCDIR) SUBDIRS=`pwd` KBUILD_OUTPUT=$(KLINUX_BLTDIR) ARCH=$(ARCH_CPU) modules
 	@echo "***********************************************"
 	@echo "** ALL : TEST_RAMDISK_MODULE                 **"
 	@echo "***********************************************"
