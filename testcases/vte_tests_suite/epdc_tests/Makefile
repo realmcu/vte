@@ -16,7 +16,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -trigraphs
+CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -I$(KERNEL_SRCDIR)/include -trigraphs
 LDFLAGS += -L../../../lib -lltp -lpthread
 
 TARGET = epdc_test
@@ -30,7 +30,7 @@ app-epd_DIR = apps-epd/linux/demo
 demoColorEpd_SRS_PATH = $(app-epd_DIR)/democolorepd
 CFLAGS_demoColorEpd = $(CFLAGS)
 CFLAGS_demoColorEpd +=  -I../../../openlibs/include -I$(demoColorEpd_SRS_PATH)
-LDFLAGS_demoColorEpd += -L../../../openlibs/lib -static -lpng -ljpeg -lz -lm
+LDFLAGS_demoColorEpd += -L../../../openlibs/lib  -lpng -ljpeg -lz
 
 demoColorEpd_SRS = $(wildcard $(demoColorEpd_SRS_PATH)/*.c)
 demoColorEpd_SRS_nodir = $(notdir $(demoColorEpd_SRS))
@@ -73,7 +73,7 @@ highlight_SRS_nodir = $(notdir $(highlight_SRS))
 highlight_OBJS = $(patsubst %.c,%.o,$(highlight_SRS_nodir))
 
 ifeq (apps-epd/linux, $(wildcard apps-epd/linux))
-all: epdc
+all: epdc apps-epd
 else
 all: epdc
 endif
