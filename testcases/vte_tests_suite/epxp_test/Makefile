@@ -6,7 +6,7 @@ CC = $(CROSS_COMPILE)gcc
 SRC = $(wildcard *.c)
 OBJ=$(patsubst %.c,%.o,$(SRC))
 LIBPATH = .
-CFLAGS += -I$(KLINUX_SRCDIR)/include  -I./lib
+CFLAGS += -I$(KLINUX_SRCDIR)/include -I$(KERNEL_SRCDIR)/include -I$(KERNEL_SRCDIR)/include/uapi  -I./lib
 
 LIBS += -L$(LIBPATH)/lib lib/libpxp.a -lpthread
 
