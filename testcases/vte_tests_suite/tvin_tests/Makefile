@@ -31,7 +31,8 @@ TARGET_SCRIPT = tvin_test.sh
 SOURCE = mxc_v4l2_tvin.c
 
 CFLAGS += -I$(KLINUX_SRCDIR)/include \
-          -I$(KLINUX_BLTDIR)/include
+          -I$(KERNEL_SRCDIR)/include \
+          -I$(KERNEL_SRCDIR)/include/uapi
 
 all: $(TARGET)
 	@echo "***********************************************"
