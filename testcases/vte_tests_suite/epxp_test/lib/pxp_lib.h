@@ -22,7 +22,7 @@
 #ifndef	PXP_LIB_H
 #define	PXP_LIB_H
 
-#include <linux/pxp_dma.h>
+#include <linux/pxp_device.h>
 
 #ifndef true
 #define true    1
@@ -31,10 +31,7 @@
 #define false   0
 #endif
 
-typedef struct pxp_chan_handle {
-	int chan_id;
-	int hist_status;
-} pxp_chan_handle_t;
+typedef struct pxp_chan_handle pxp_chan_handle_t;
 
 int pxp_init();
 void pxp_uninit();
