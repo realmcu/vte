@@ -5,7 +5,7 @@
 
 CC = $(CROSS_COMPILE)gcc
 OBJ = pxp_lib.o
-INCLUDE = -I$(KLINUX_SRCDIR)/include
+INCLUDE = -I$(KLINUX_SRCDIR)/include -I$(KERNEL_SRCDIR)/include/uapi -I$(KERNEL_SRCDIR)/include
 #INCLUDE = -I/home/smb/nfs_server/linux-2.6-testbuild/include
 LIBNAME = libpxp
 
