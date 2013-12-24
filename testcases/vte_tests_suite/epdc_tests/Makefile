@@ -16,7 +16,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -I$(KERNEL_SRCDIR)/include -trigraphs
+CFLAGS += -I../../../include/ -I$(KLINUX_SRCDIR)/include -I$(KERNEL_SRCDIR)/include  -I$(KERNEL_SRCDIR)/include/uapi -trigraphs
 LDFLAGS += -L../../../lib -lltp -lpthread
 
 TARGET = epdc_test
