@@ -20,11 +20,12 @@
 #KLINUX_SRCDIR=/home/vobs/linux-2.6-imx
 #KLINUX_BLTDIR=/home/vobs/linux-2.6-imx
 
-CFLAGS+=	-Wall -I../../../../include -I$(KLINUX_SRCDIR)/include
-LOADLIBES+=	-L../../../../lib -lltp
+CFLAGS += -Wall -I../../../../include -I$(KLINUX_SRCDIR)/include -I$(KERNEL_SRCDIR)/include \
+			-I$(KERNEL_SRCDIR)/include/uapi
+LOADLIBES +=	-L../../../../lib -lltp
 
-SRCS=$(wildcard *.c)
-OBJS=$(patsubst %.c,%.o,$(SRCS))
+SRCS = $(wildcard *.c)
+OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 #TO BE UPDATED WITH THE TEST APPLICATION NAME
 TARGET=mxcfb_test
