@@ -412,8 +412,13 @@ test_case_06()
 	if [ -n "$trip_hot_old" ]; then
 		echo $trip_hot_old >  $thermal_dir/trip_point_0_temp
 	fi
+	if [ $RC -eq 0 ]; then
+		echo "TEST PASS"
+	else
+		echo "TEST FAIL"
+	fi
 
-    return $RC
+	return $RC
 
 }
 # Function:     test_case_07
