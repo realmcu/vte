@@ -42,7 +42,7 @@ extern "C" {
 #include <asm/types.h>
 #include <time.h>
 #include <linux/mxcfb.h>
-#include <linux/pxp_dma.h>
+#include <linux/pxp_device.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <pthread.h>
