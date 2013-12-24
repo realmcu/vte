@@ -70,10 +70,10 @@ setup()
 		i=`$i + 1`
 	done
 	if [ $platfm -eq 60 ]; then
-		modes=`cat /sys/class/graphics/fb0/modes`
+		modes=`cat /sys/class/graphics/fb0/modes | grep -v U:`
 		hdmi_fb=fb0
 	else
-		modes=`cat /sys/class/graphics/${hdmi_fb}/modes`
+		modes=`cat /sys/class/graphics/${hdmi_fb}/modes | grep '[SD]:'`
 	fi
   defvideomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60 U:640x480p-60 V:1280x1024p-60 V:1024x768p-60" 
   defaudiomodes="U:1920x1080p-30 U:1920x1080p-50 U:1920x1080p-60 U:720x576p-50 U:720x480p-60 U:1280x720p-50 U:1280x720p-60 U:640x480p-60" 
